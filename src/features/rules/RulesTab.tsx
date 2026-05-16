@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { MaterialIcon } from "../../components/MaterialIcon";
-import { ruleSources, type RuleSource } from "../../data/repositories";
+import type { RuleSource } from "../../data/repositories";
 
 type RulesTabProps = {
-  query: string;
+  rules: RuleSource[];
 };
 
 function pathToFileUrl(filePath: string) {
@@ -14,24 +14,18 @@ function pathToFileUrl(filePath: string) {
   return `file://${normalized}`;
 }
 
-export function RulesTab({ query }: RulesTabProps) {
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return ruleSources;
-    return ruleSources.filter((rule) => [rule.label, rule.summary, rule.path].join(" ").toLowerCase().includes(q));
-  }, [query]);
-
-  const [selectedLabel, setSelectedLabel] = useState(filtered[0]?.label ?? "");
-  const selected = filtered.find((rule) => rule.label === selectedLabel) ?? filtered[0];
+export function RulesTab({ rules }: RulesTabProps) {
+  const [selectedLabel, setSelectedLabel] = useState(rules[0]?.label ?? "");
+  const selected = rules.find((rule) => rule.label === selectedLabel) ?? rules[0];
   const [preview, setPreview] = useState("");
   const [previewError, setPreviewError] = useState("");
   const [loadingPreview, setLoadingPreview] = useState(false);
 
   useEffect(() => {
-    if (!filtered.some((rule) => rule.label === selectedLabel)) {
-      setSelectedLabel(filtered[0]?.label ?? "");
+    if (!rules.some((rule) => rule.label === selectedLabel)) {
+      setSelectedLabel(rules[0]?.label ?? "");
     }
-  }, [filtered, selectedLabel]);
+  }, [rules, selectedLabel]);
 
   useEffect(() => {
     if (!selected?.previewPath) {
@@ -81,7 +75,7 @@ export function RulesTab({ query }: RulesTabProps) {
   return (
     <section className="rules-layout">
       <div className="rules-list">
-        {filtered.map((rule) => (
+        {rules.map((rule) => (
           <button
             type="button"
             key={rule.label}
@@ -96,7 +90,7 @@ export function RulesTab({ query }: RulesTabProps) {
             </div>
           </button>
         ))}
-        {filtered.length === 0 ? <p className="muted-inline">Không có rule khớp bộ lọc.</p> : null}
+        {rules.length === 0 ? <p className="muted-inline">Không có rule khớp bộ lọc.</p> : null}
       </div>
 
       {selected ? (

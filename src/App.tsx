@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { MaterialIcon, Metric, SideNavButton, ThemeToggle, ToolFilterBar, ToolPickerBar } from "./components";
+import { MaterialIcon, Metric, SideNavButton, ThemeToggle, ToolFilterBar } from "./components";
 import { AdminTab, PublishTab, RulesTab, StoreTab } from "./features";
+import { ruleSources } from "./data/repositories";
 import { useGitHubActions, useRepositories, useTheme } from "./hooks";
 import { formatDate } from "./lib/tooling";
 
@@ -58,11 +59,21 @@ function App() {
     });
   }, [query, resolvedTools, statusFilter]);
 
-  const pickerTools = useMemo(() => {
+  const filteredRules = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return resolvedTools;
-    return resolvedTools.filter((tool) => [tool.name, tool.code, tool.repo].join(" ").toLowerCase().includes(q));
-  }, [query, resolvedTools]);
+    if (!q) return ruleSources;
+    return ruleSources.filter((rule) => [rule.label, rule.summary, rule.path].join(" ").toLowerCase().includes(q));
+  }, [query]);
+
+  const publishPickerTools = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const byStatus = resolvedTools.filter((tool) => {
+      if (statusFilter === "All") return true;
+      return tool.healthLabel === statusFilter || tool.status === statusFilter;
+    });
+    if (!q) return byStatus;
+    return byStatus.filter((tool) => [tool.name, tool.code, tool.repo].join(" ").toLowerCase().includes(q));
+  }, [query, resolvedTools, statusFilter]);
 
   const stats = useMemo(() => {
     const ready = resolvedTools.filter((tool) => tool.healthLabel === "Ready").length;
@@ -73,6 +84,10 @@ function App() {
 
   const tab = TAB_META[activeTab];
   const registryLive = Boolean(localRegistry?.generatedAt) && !registryError;
+  const isRulesTab = activeTab === "rules";
+  const filterShown = isRulesTab ? filteredRules.length : filteredTools.length;
+  const filterTotal = isRulesTab ? ruleSources.length : resolvedTools.length;
+  const headerMeta = isRulesTab ? `${filteredRules.length} rules` : `${filteredTools.length} tools`;
 
   return (
     <div className="app-shell">
@@ -104,7 +119,7 @@ function App() {
           <button className="btn icon-only" type="button" onClick={() => void loadLocalRegistry()} title="Registry">
             <MaterialIcon name="upload" size={18} />
           </button>
-          <button className="btn primary icon-only" type="button" onClick={() => void refreshAll()} disabled={loadingAll} title="Refresh">
+          <button className="btn primary icon-only" type="button" onClick={() => void refreshAll()} disabled={loadingAll} title="Refresh catalog">
             <MaterialIcon name="refresh" size={18} className={loadingAll ? "spin" : ""} />
           </button>
         </div>
@@ -130,7 +145,7 @@ function App() {
             </div>
           </div>
           <div className="header-actions">
-            <span className="filter-meta">{filteredTools.length} tools</span>
+            <span className="filter-meta">{headerMeta}</span>
             <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
           </div>
         </header>
@@ -158,46 +173,21 @@ function App() {
               </div>
             ) : null}
 
-            {(activeTab === "store" || activeTab === "admin") && (
-              <ToolFilterBar
-                query={query}
-                statusFilter={statusFilter}
-                shown={filteredTools.length}
-                total={resolvedTools.length}
-                onQueryChange={setQuery}
-                onStatusFilterChange={setStatusFilter}
-              />
-            )}
-
-            {activeTab === "publish" && (
-              <ToolPickerBar tools={pickerTools} selectedId={selectedId} query={query} onQueryChange={setQuery} onSelect={setSelectedId} />
-            )}
-
-            {activeTab === "rules" && (
-              <div className="filter-toolbar">
-                <label className="search-box grow">
-                  <MaterialIcon name="search" size={16} />
-                  <input
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Tim rule, path..."
-                    type="search"
-                    aria-label="Tim rule"
-                  />
-                </label>
-              </div>
-            )}
+            <ToolFilterBar
+              variant={isRulesTab ? "rules" : "tools"}
+              query={query}
+              shown={filterShown}
+              total={filterTotal}
+              onQueryChange={setQuery}
+              statusFilter={statusFilter}
+              onStatusFilterChange={isRulesTab ? undefined : setStatusFilter}
+              pickerTools={activeTab === "publish" ? publishPickerTools : undefined}
+              selectedId={selectedId}
+              onSelectTool={activeTab === "publish" ? setSelectedId : undefined}
+            />
 
             <section className="panel">
-              {activeTab === "store" && (
-                <StoreTab
-                  tools={filteredTools}
-                  selectedId={selectedId}
-                  onSelect={setSelectedId}
-                  onRefreshCatalog={() => void refreshAll()}
-                  loadingCatalog={loadingAll}
-                />
-              )}
+              {activeTab === "store" && <StoreTab tools={filteredTools} selectedId={selectedId} onSelect={setSelectedId} />}
               {activeTab === "admin" && (
                 <AdminTab
                   tools={filteredTools}
@@ -222,7 +212,7 @@ function App() {
                   onCreateVersionSyncPr={createVersionSyncPrForSelected}
                 />
               )}
-              {activeTab === "rules" && <RulesTab query={query} />}
+              {activeTab === "rules" && <RulesTab rules={filteredRules} />}
             </section>
           </div>
         </div>

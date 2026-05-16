@@ -13,4 +13,3 @@ export { InfoItem } from "./InfoItem";
 export { Metric } from "./Metric";
 export { SideNavButton } from "./SideNavButton";
 export { ToolFilterBar } from "./ToolFilterBar";
-export { ToolPickerBar } from "./ToolPickerBar";

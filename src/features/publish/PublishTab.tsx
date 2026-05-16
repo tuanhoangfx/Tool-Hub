@@ -1,4 +1,6 @@
+import { useMemo, useState } from "react";
 import { MaterialIcon } from "../../components/MaterialIcon";
+import { buildPublishChecks, formatPublishChecklist } from "../../lib/publish-checklist";
 import type { ResolvedTool } from "../../types";
 
 type PublishTabProps = {
@@ -20,19 +22,20 @@ export function PublishTab({
   onCreateRelease,
   onCreateVersionSyncPr,
 }: PublishTabProps) {
-  const files = selectedTool.remote?.files ?? [];
-  const checks = [
-    { label: "README", passed: Boolean(files.find((f) => f.path === "README.md" && f.ok)) },
-    {
-      label: "CHANGELOG",
-      passed: Boolean(files.find((f) => f.path === "CHANGELOG.md" && f.ok)) && selectedTool.driftAlerts.every((a) => !a.includes("CHANGELOG")),
-    },
-    { label: "Manifest", passed: Boolean(files.find((f) => f.path === selectedTool.manifestPath && f.ok)) },
-    { label: "No drift", passed: selectedTool.driftAlerts.length === 0 },
-    { label: "Release", passed: Boolean(selectedTool.remote?.latestRelease) },
-    { label: "Scripts", passed: selectedTool.scriptFiles.every((s) => files.find((f) => f.path === s && f.ok)) },
-  ];
+  const checks = useMemo(() => buildPublishChecks(selectedTool), [selectedTool]);
   const passed = checks.filter((c) => c.passed).length;
+  const [copyStatus, setCopyStatus] = useState("");
+
+  async function copyChecklist() {
+    const text = formatPublishChecklist(selectedTool, checks);
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyStatus("ÄÃ£ copy checklist");
+    } catch {
+      setCopyStatus("KhÃ´ng copy Ä‘Æ°á»£c");
+    }
+    window.setTimeout(() => setCopyStatus(""), 2400);
+  }
 
   return (
     <section className="publish-layout">
@@ -43,7 +46,12 @@ export function PublishTab({
           <span className={passed === checks.length ? "status-dot ok" : "status-dot warn"}>
             {passed}/{checks.length} checks
           </span>
+          <button className="btn secondary" type="button" onClick={() => void copyChecklist()} title="Copy checklist">
+            <MaterialIcon name="content_copy" size={16} />
+            Copy checklist
+          </button>
         </div>
+        {copyStatus ? <p className="muted-inline">{copyStatus}</p> : null}
 
         <div className="checklist compact-checks">
           {checks.map((check) => (
@@ -122,7 +130,7 @@ export function PublishTab({
         <section className="info-block compact">
           <h3>
             <MaterialIcon name="lightbulb" size={14} />
-            Gợi ý
+            Gá»£i Ã½
           </h3>
           {selectedTool.suggestions.length > 0 ? (
             <ul className="suggestions">
@@ -131,7 +139,7 @@ export function PublishTab({
               ))}
             </ul>
           ) : (
-            <p className="muted-inline">Sẵn sàng publish</p>
+            <p className="muted-inline">Sáºµn sÃ ng publish</p>
           )}
         </section>
       </aside>
