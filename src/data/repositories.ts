@@ -2,6 +2,28 @@ import type { ToolRepository } from "../types";
 
 export const defaultRepositories: ToolRepository[] = [
   {
+    id: "github-tool-manager",
+    code: "P0004",
+    name: "GitHub Tool Manager",
+    repo: "tuanhoangfx/GitHub-Tool-Manager",
+    branch: "main",
+    category: "Web",
+    audience: "Tool maintainers",
+    status: "Ready",
+    summary: "Public card catalog and GitHub repository management console for published tools.",
+    localPath: "E:\\Dev\\Tool\\GitHub-Tool-Manager",
+    tags: ["React", "TypeScript", "Vite", "GitHub Pages"],
+    usage: [
+      "Install dependencies with corepack pnpm install.",
+      "Run locally with corepack pnpm dev (http://127.0.0.1:5176).",
+      "Production: https://infix1.io.vn after push to main.",
+    ],
+    downloadHint: "Use https://infix1.io.vn or clone the repository.",
+    manifestPath: "tool.manifest.json",
+    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
+    scriptFiles: ["scripts/scan-local-workspace.cjs", "scripts/publish-github-repo.cjs"],
+  },
+  {
     id: "gpm-automation-console",
     code: "P0001",
     name: "GPM Automation Console",
@@ -64,7 +86,7 @@ export const defaultRepositories: ToolRepository[] = [
     ],
     downloadHint: "Clone https://github.com/tuanhoangfx/zalo-ai-bot — runtime data is not in the repo.",
     manifestPath: "tool.manifest.json",
-    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md"],
+    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
     scriptFiles: ["scripts/health-check.ps1", "scripts/install-autostart.ps1", "scripts/patch-admin-botlist.mjs"],
   },
 ];
