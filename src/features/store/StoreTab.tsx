@@ -2,7 +2,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { DriftHint } from "../../components/DriftHint";
 import { HealthBar } from "../../components/HealthBar";
 import { InfoItem } from "../../components/InfoItem";
-import { MaterialIcon } from "../../components/MaterialIcon";
+import { MaterialIcon, StackTagIcon } from "../../components";
 import { StatusBadge } from "../../components/StatusBadge";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { formatDate } from "../../lib/tooling";
@@ -51,7 +51,7 @@ export function StoreTab({ tools, selectedId, onSelect }: StoreTabProps) {
               <div className="tag-row">
                 {tool.tags.slice(0, 3).map((tag) => (
                   <span key={tag}>
-                    <MaterialIcon name="label" size={12} />
+                    <StackTagIcon tag={tag} size={12} />
                     {tag}
                   </span>
                 ))}

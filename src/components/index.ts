@@ -1,4 +1,5 @@
 export { MaterialIcon } from "./MaterialIcon";
+export { StackTagIcon } from "./StackTagIcon";
 export { ThemeToggle } from "./ThemeToggle";
 export { DriftHint } from "./DriftHint";
 export { HealthBar } from "./HealthBar";
