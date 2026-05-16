@@ -193,9 +193,6 @@ function App() {
                   tools={filteredTools}
                   allTools={repositories}
                   selectedTool={selectedTool}
-                  repoDraft={repoDraft}
-                  onRepoDraftChange={setRepoDraft}
-                  onAddRepo={addRepo}
                   onRefresh={refreshOne}
                   onSelect={setSelectedId}
                   onRemoveCustom={removeCustomRepo}

@@ -1,3 +1,5 @@
+import type { MouseEvent } from "react";
+import { useState } from "react";
 import { FileListBlock } from "../../components/FileListBlock";
 import { DriftHint } from "../../components/DriftHint";
 import { HealthBar } from "../../components/HealthBar";
@@ -6,6 +8,7 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { StatusBadge } from "../../components/StatusBadge";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { formatDate } from "../../lib/tooling";
+import { canLaunchTool, folderFileUrl, launchCommandLabel, launchTool } from "../../lib/tool-launch";
 import { fileHealthPercent, statusIcon, toolIconName } from "../../lib/visual";
 import type { ResolvedTool, ToolRepository } from "../../types";
 
@@ -13,9 +16,6 @@ type AdminTabProps = {
   tools: ResolvedTool[];
   allTools: ToolRepository[];
   selectedTool: ResolvedTool;
-  repoDraft: string;
-  onRepoDraftChange: (value: string) => void;
-  onAddRepo: () => void;
   onRefresh: (tool: ToolRepository) => Promise<void>;
   onSelect: (id: string) => void;
   onRemoveCustom: (id: string) => void;
@@ -33,45 +33,39 @@ function statusText(tool: ResolvedTool) {
   return tool.healthLabel;
 }
 
-export function AdminTab({
-  tools,
-  allTools,
-  selectedTool,
-  repoDraft,
-  onRepoDraftChange,
-  onAddRepo,
-  onRefresh,
-  onSelect,
-  onRemoveCustom,
-}: AdminTabProps) {
+export function AdminTab({ tools, allTools, selectedTool, onRefresh, onSelect, onRemoveCustom }: AdminTabProps) {
   const selectedBase = allTools.find((tool) => tool.id === selectedTool.id) ?? selectedTool;
   const manifest = selectedTool.remote?.manifest;
   const files = selectedTool.remote?.files ?? [];
   const scripts = files.filter((file) => selectedTool.scriptFiles.includes(file.path));
   const custom = selectedTool.code === "CUSTOM";
   const selectedPct = fileHealthPercent(files);
+  const [launchStatus, setLaunchStatus] = useState("");
+  const [launchingId, setLaunchingId] = useState<string | null>(null);
+  const selectedLaunchable = canLaunchTool(selectedTool);
+
+  async function handleLaunch(tool: ResolvedTool, event?: MouseEvent) {
+    event?.stopPropagation();
+    if (!canLaunchTool(tool)) return;
+    setLaunchingId(tool.id);
+    setLaunchStatus("");
+    const result = await launchTool(tool.id);
+    setLaunchStatus(result.message);
+    setLaunchingId(null);
+    window.setTimeout(() => setLaunchStatus(""), 5000);
+  }
 
   return (
     <section className="admin-layout">
       <div className="admin-main admin-cards-area">
-        <div className="toolbar-card">
-          <MaterialIcon name="add_link" size={20} className="toolbar-card-icon" />
-          <input
-            value={repoDraft}
-            onChange={(e) => onRepoDraftChange(e.target.value)}
-            placeholder="owner/repo hoặc URL GitHub"
-          />
-          <button className="btn primary" type="button" onClick={onAddRepo}>
-            <MaterialIcon name="add" size={18} />
-            Thêm
-          </button>
-        </div>
+        {launchStatus ? <div className="inline-banner ok">{launchStatus}</div> : null}
 
         <div className="provider-grid">
           {tools.map((tool) => {
             const pct = fileHealthPercent(tool.remote?.files);
             const tone = statusTone(tool);
             const selected = tool.id === selectedTool.id;
+            const launchable = canLaunchTool(tool);
 
             return (
               <article
@@ -89,6 +83,17 @@ export function AdminTab({
                     </a>
                   </div>
                   <div className="provider-card-actions">
+                    {launchable ? (
+                      <button
+                        className="icon-button run"
+                        type="button"
+                        title={`Chạy: ${launchCommandLabel(tool)}`}
+                        disabled={launchingId === tool.id}
+                        onClick={(e) => void handleLaunch(tool, e)}
+                      >
+                        <MaterialIcon name="play_arrow" size={16} className={launchingId === tool.id ? "spin" : ""} />
+                      </button>
+                    ) : null}
                     <button
                       className="icon-button"
                       type="button"
@@ -175,14 +180,29 @@ export function AdminTab({
         ) : null}
 
         <div className="action-row">
-          <a className="btn secondary wide" href={selectedTool.repoUrl} target="_blank" rel="noreferrer">
+          {selectedLaunchable ? (
+            <button className="btn primary wide" type="button" disabled={launchingId === selectedTool.id} onClick={() => void handleLaunch(selectedTool)}>
+              <MaterialIcon name="play_arrow" size={16} className={launchingId === selectedTool.id ? "spin" : ""} />
+              Chạy tool
+            </button>
+          ) : null}
+          {selectedTool.localPath ? (
+            <a className="btn secondary" href={folderFileUrl(selectedTool.localPath)} title="Mở thư mục local">
+              <MaterialIcon name="folder_open" size={16} />
+            </a>
+          ) : null}
+          <a className="btn secondary" href={selectedTool.repoUrl} target="_blank" rel="noreferrer" title="GitHub">
             <MaterialIcon name="open_in_new" size={16} />
-            GitHub
           </a>
-          <button className="btn secondary" type="button" onClick={() => void onRefresh(selectedBase)}>
+          <button className="btn secondary" type="button" onClick={() => void onRefresh(selectedBase)} title="Refresh metadata">
             <MaterialIcon name="refresh" size={16} />
           </button>
         </div>
+        {selectedLaunchable ? (
+          <p className="muted-inline launch-hint">
+            Cần <code>pnpm run launcher</code> hoặc <code>launch.bat</code> — lệnh: {launchCommandLabel(selectedTool)}
+          </p>
+        ) : null}
 
         {custom ? (
           <button className="danger-action" type="button" onClick={() => onRemoveCustom(selectedTool.id)}>

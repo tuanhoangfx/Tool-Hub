@@ -1,0 +1,18 @@
+{
+  "github-tool-manager": {
+    "cwd": "E:\\Dev\\Tool\\GitHub-Tool-Manager",
+    "command": "corepack pnpm dev"
+  },
+  "gpm-automation-console": {
+    "cwd": "E:\\Dev\\Tool\\GPM-Automation-Console",
+    "command": "corepack pnpm dev"
+  },
+  "yt-multistream-console": {
+    "cwd": "E:\\Dev\\Tool\\YT-Multistream-Console",
+    "command": "corepack pnpm dev"
+  },
+  "zalo-ai-bot": {
+    "cwd": "E:\\Dev\\Tool\\zalo-ai-bot",
+    "command": "admin.bat"
+  }
+}

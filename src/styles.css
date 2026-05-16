@@ -703,6 +703,22 @@ html:not(.fonts-loaded) .material-symbols-outlined {
   color: var(--color-text-main);
 }
 
+.icon-button.run {
+  background: color-mix(in srgb, var(--color-primary) 14%, var(--color-surface-2));
+  border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border));
+  color: var(--color-primary);
+}
+
+.launch-hint {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.launch-hint code {
+  font-size: 0.68rem;
+}
+
 .btn:disabled,
 .primary-action:disabled,
 .ghost-action:disabled {
