@@ -8,7 +8,7 @@ export const LAUNCHER_SETUP_HINT =
 export const LAUNCHER_HTTPS_HINT =
   "Từ infix1.io.vn, trình duyệt không gọi được localhost. Bấm Chạy tool → tab mở http://127.0.0.1:5190 — nếu trang trắng/lỗi, chạy launch.bat trước.";
 
-export type LauncherRunning = { id: string; pid: number };
+export type LauncherRunning = { id: string; pid: number; devUrl?: string | null };
 
 export type LauncherHealth = {
   ok: boolean;
@@ -60,7 +60,16 @@ export async function checkLauncherOnline() {
 
 export function formatRunningTools(running: LauncherRunning[] | undefined) {
   if (!running?.length) return "";
-  return running.map((item) => `${item.id} (PID ${item.pid})`).join(", ");
+  return running
+    .map((item) => {
+      const port = item.devUrl ? ` → ${item.devUrl}` : "";
+      return `${item.id} (PID ${item.pid})${port}`;
+    })
+    .join(", ");
+}
+
+export function toolDevUrlFromHealth(toolId: string, running: LauncherRunning[] | undefined) {
+  return running?.find((item) => item.id === toolId)?.devUrl ?? null;
 }
 
 /** Launch tool via local launcher (works from https://infix1.io.vn by opening a tab). */

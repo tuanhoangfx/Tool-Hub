@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon, Metric, SideNavButton, ThemeToggle, ToolFilterBar } from "./components";
 import { AdminTab, PublishTab, RulesTab, StoreTab } from "./features";
 import { ruleSources } from "./data/repositories";
 import { useGitHubActions, useRepositories, useTheme } from "./hooks";
+import { fetchLatestDeployStatus, GITHUB_ACTIONS_URL, GITHUB_PAGES_URL, SITE_URL, type DeployRunStatus } from "./lib/github-deploy";
 import { formatDate } from "./lib/tooling";
 
 type ActiveTab = "store" | "admin" | "publish" | "rules";
@@ -17,6 +18,7 @@ const TAB_META: Record<ActiveTab, { title: string; desc: string; icon: string }>
 function App() {
   const { isDark, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<ActiveTab>("store");
+  const [deployStatus, setDeployStatus] = useState<DeployRunStatus | null>(null);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const {
@@ -75,6 +77,20 @@ function App() {
     return byStatus.filter((tool) => [tool.name, tool.code, tool.repo].join(" ").toLowerCase().includes(q));
   }, [query, resolvedTools, statusFilter]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const tick = async () => {
+      const status = await fetchLatestDeployStatus();
+      if (!cancelled) setDeployStatus(status);
+    };
+    void tick();
+    const timer = window.setInterval(() => void tick(), 60000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, []);
+
   const stats = useMemo(() => {
     const ready = resolvedTools.filter((tool) => tool.healthLabel === "Ready").length;
     const releases = resolvedTools.filter((tool) => Boolean(tool.remote?.latestRelease)).length;
@@ -124,6 +140,29 @@ function App() {
           </button>
         </div>
 
+        <div className="sidebar-deploy">
+          <a
+            className="sidebar-deploy-link"
+            href={deployStatus?.url ?? GITHUB_ACTIONS_URL}
+            target="_blank"
+            rel="noreferrer"
+            title="GitHub Actions — Deploy GitHub Pages"
+          >
+            <MaterialIcon name="rocket_launch" size={16} />
+            <span>Deploy</span>
+            {deployStatus ? (
+              <span className={`deploy-badge ${deployStatus.tone}`}>{deployStatus.label}</span>
+            ) : null}
+          </a>
+          <a className="sidebar-deploy-link subtle" href={GITHUB_PAGES_URL} target="_blank" rel="noreferrer" title="GitHub Pages settings">
+            <MaterialIcon name="language" size={16} />
+            <span>Pages</span>
+          </a>
+          <a className="sidebar-deploy-link subtle" href={SITE_URL} target="_blank" rel="noreferrer" title="Production site">
+            <MaterialIcon name="public" size={16} />
+            <span>Live</span>
+          </a>
+        </div>
         <div className="sidebar-foot">
           <span className={registryLive ? "dot live" : "dot"} />
           <span>{registryLive ? formatDate(localRegistry!.generatedAt) : "No registry"}</span>

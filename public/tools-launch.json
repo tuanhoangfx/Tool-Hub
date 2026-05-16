@@ -1,18 +1,22 @@
 {
   "github-tool-manager": {
     "cwd": "E:\\Dev\\Tool\\GitHub-Tool-Manager",
-    "command": "corepack pnpm dev"
+    "command": "corepack pnpm dev",
+    "devUrl": "http://127.0.0.1:5176"
   },
   "gpm-automation-console": {
     "cwd": "E:\\Dev\\Tool\\GPM-Automation-Console",
-    "command": "corepack pnpm dev"
+    "command": "corepack pnpm dev",
+    "devUrl": "http://127.0.0.1:5173"
   },
   "yt-multistream-console": {
     "cwd": "E:\\Dev\\Tool\\YT-Multistream-Console",
-    "command": "corepack pnpm dev"
+    "command": "corepack pnpm dev",
+    "devUrl": "http://127.0.0.1:5174"
   },
   "zalo-ai-bot": {
     "cwd": "E:\\Dev\\Tool\\zalo-ai-bot",
-    "command": "admin.bat"
+    "command": "admin.bat",
+    "devUrl": "http://127.0.0.1:3920/p0005/"
   }
 }

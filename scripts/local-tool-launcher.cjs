@@ -31,7 +31,11 @@ function healthPayload() {
     ok: true,
     port: PORT,
     configured: Object.keys(config),
-    running: [...running.entries()].map(([id, pid]) => ({ id, pid })),
+    running: [...running.entries()].map(([id, pid]) => ({
+      id,
+      pid,
+      devUrl: config[id]?.devUrl ?? null,
+    })),
   };
 }
 

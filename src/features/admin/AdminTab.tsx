@@ -116,11 +116,25 @@ export function AdminTab({ tools, allTools, selectedTool, onRefresh, onSelect, o
           <span className="launcher-bar-label">{launcherBarLabel()}</span>
           {!onHttps && launcherHealth?.running?.length ? (
             <div className="launcher-running-chips" aria-label="Tools đang chạy">
-              {launcherHealth.running.map((item) => (
-                <span className="launcher-chip" key={item.id}>
-                  {item.id}
-                </span>
-              ))}
+              {launcherHealth.running.map((item) =>
+                item.devUrl ? (
+                  <a
+                    className="launcher-chip link"
+                    key={item.id}
+                    href={item.devUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={`Mở ${item.devUrl}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {item.id}
+                  </a>
+                ) : (
+                  <span className="launcher-chip" key={item.id}>
+                    {item.id}
+                  </span>
+                ),
+              )}
             </div>
           ) : null}
           <button className="btn secondary" type="button" onClick={handleOpenLauncher}>

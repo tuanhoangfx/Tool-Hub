@@ -192,6 +192,68 @@ html:not(.fonts-loaded) .material-symbols-outlined {
   padding: 0 1rem 0.5rem;
 }
 
+.sidebar-deploy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.65rem 1rem;
+  border-top: 1px solid var(--color-border-subtle);
+}
+
+.sidebar-deploy-link {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-deploy-link:hover {
+  background: var(--color-surface-2);
+  color: var(--color-text-main);
+}
+
+.sidebar-deploy-link.subtle {
+  opacity: 0.85;
+}
+
+.deploy-badge {
+  margin-left: auto;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.12rem 0.4rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+}
+
+.deploy-badge.ok {
+  color: var(--color-success, #22c55e);
+  border-color: rgba(34, 197, 94, 0.4);
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.deploy-badge.warn {
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.4);
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.deploy-badge.bad {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.deploy-badge.neutral {
+  color: var(--color-text-muted);
+}
+
 .sidebar-foot {
   display: flex;
   align-items: center;
@@ -1587,6 +1649,16 @@ td a {
   background: rgba(34, 197, 94, 0.15);
   color: var(--color-success, #22c55e);
   border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.launcher-chip.link {
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.launcher-chip.link:hover {
+  background: rgba(34, 197, 94, 0.28);
+  transform: translateY(-1px);
 }
 
 .toolbar-card {
