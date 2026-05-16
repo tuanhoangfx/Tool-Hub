@@ -1,4 +1,6 @@
 import type {
+  GitHubRelease,
+  GitHubRepoInfo,
   PackageJson,
   RemoteFileState,
   ToolManifest,
@@ -74,6 +76,22 @@ async function readJson<T>(repo: ToolRepository, path: string): Promise<T | unde
   }
 }
 
+async function readPublicGitHub<T>(repo: ToolRepository, path: string): Promise<T | undefined> {
+  try {
+    const response = await fetchWithTimeout(`https://api.github.com/repos/${repo.repo}${path}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+    if (!response.ok) return undefined;
+
+    return (await response.json()) as T;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function hydrateRepository(repo: ToolRepository): Promise<ToolRemoteState> {
   if (repo.remoteEnabled === false || !repo.repo) {
     return {
@@ -109,10 +127,12 @@ export async function hydrateRepository(repo: ToolRepository): Promise<ToolRemot
   const uniqueFiles = Array.from(new Set([repo.manifestPath, ...repo.trackedFiles, ...repo.scriptFiles]));
 
   try {
-    const [manifest, packageJson, files] = await Promise.all([
+    const [manifest, packageJson, files, repoInfo, latestRelease] = await Promise.all([
       readJson<ToolManifest>(repo, repo.manifestPath),
       readJson<PackageJson>(repo, "package.json"),
       Promise.all(uniqueFiles.map((path) => readRemoteFile(repo, path))),
+      readPublicGitHub<GitHubRepoInfo>(repo, ""),
+      readPublicGitHub<GitHubRelease>(repo, "/releases/latest"),
     ]);
 
     return {
@@ -120,12 +140,18 @@ export async function hydrateRepository(repo: ToolRepository): Promise<ToolRemot
       loading: false,
       checkedAt: new Date().toISOString(),
       repoInfo: {
-        html_url: repoUrl(repo.repo),
-        default_branch: repo.branch,
-        visibility: "public",
+        html_url: repoInfo?.html_url ?? repoUrl(repo.repo),
+        description: repoInfo?.description,
+        pushed_at: repoInfo?.pushed_at,
+        updated_at: repoInfo?.updated_at,
+        stargazers_count: repoInfo?.stargazers_count,
+        open_issues_count: repoInfo?.open_issues_count,
+        default_branch: repoInfo?.default_branch ?? repo.branch,
+        visibility: repoInfo?.visibility ?? "public",
       },
       manifest,
       packageJson,
+      latestRelease,
       files,
     };
   } catch (error) {

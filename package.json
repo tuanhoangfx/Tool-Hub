@@ -2,6 +2,7 @@
   "name": "github-tool-manager",
   "private": true,
   "version": "0.1.0",
+  "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Two-mode public catalog and GitHub operations console for published workspace tools.",
   "author": "Tool Workspace",

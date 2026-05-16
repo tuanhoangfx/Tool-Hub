@@ -87,7 +87,7 @@ export const ruleSources = [
   },
   {
     label: "Design Base CSS",
-    path: "E:\\Dev\\Rules\\design\\workspace-design-base.css",
-    summary: "Canonical imported CSS baseline synchronized from existing production tools.",
+    path: "E:\\Dev\\Tool\\GitHub-Tool-Manager\\src\\styles.css",
+    summary: "Local inlined design baseline (no runtime dependency on shared Rules CSS files).",
   },
 ];

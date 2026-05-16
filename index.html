@@ -3,8 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#FDFAF6" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+      rel="stylesheet"
+    />
     <title>GitHub Tool Manager</title>
+    <script>
+      (function () {
+        var t = localStorage.getItem("gtm-theme");
+        if (t === "dark") document.documentElement.classList.add("dark");
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(function () {
+            document.documentElement.classList.add("fonts-loaded");
+          });
+        } else {
+          document.documentElement.classList.add("fonts-loaded");
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
