@@ -55,7 +55,7 @@ export const defaultRepositories: ToolRepository[] = [
     audience: "Tool maintainers",
     status: "Ready",
     summary: "Workspace registry and scanner for tools, web apps, extensions, and scripts inside the local Dev workspace.",
-    localPath: "E:\\Dev\\Tool\\Workspace Center",
+    localPath: "E:\\Dev\\Tool\\Unified-Tool-Admin",
     tags: ["React", "Vite", "Registry", "Scanner"],
     usage: [
       "Run scan:workspaces to regenerate registry data.",
@@ -66,6 +66,28 @@ export const defaultRepositories: ToolRepository[] = [
     manifestPath: "tool.manifest.json",
     trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "PROJECT_CONTEXT.md"],
     scriptFiles: ["scripts/scan-workspaces.cjs", "scripts/watch-workspaces.cjs", "scripts/push-github-api.cjs"],
+  },
+  {
+    id: "zalo-ai-bot",
+    code: "P0005",
+    name: "Zalo AI Bot",
+    repo: "tuanhoangfx/zalo-ai-bot",
+    branch: "main",
+    category: "Bot",
+    audience: "Zalo group operators",
+    status: "Ready",
+    summary: "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
+    localPath: "E:\\Dev\\Tool\\zalo-ai-bot",
+    tags: ["Node.js", "zca-js", "9Router", "Admin UI"],
+    usage: [
+      "Copy config.example.json to config.json and configure 9Router.",
+      "pnpm install && pnpm run login for Zalo QR login.",
+      "Run admin.bat or pnpm run admin (http://127.0.0.1:3920).",
+    ],
+    downloadHint: "Clone https://github.com/tuanhoangfx/zalo-ai-bot — runtime data is not in the repo.",
+    manifestPath: "tool.manifest.json",
+    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md"],
+    scriptFiles: ["scripts/health-check.ps1", "scripts/install-autostart.ps1", "scripts/patch-admin-botlist.mjs"],
   },
 ];
 

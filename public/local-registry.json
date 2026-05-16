@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-30T09:44:19.584Z",
+  "generatedAt": "2026-05-16T20:46:53.771Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -36,6 +36,7 @@
       ],
       "scriptFiles": [
         "scripts/publish-github-repo.cjs",
+        "scripts/push-and-deploy.ps1",
         "scripts/scan-local-workspace.cjs"
       ]
     },
@@ -46,7 +47,7 @@
       "repo": "tuanhoangfx/GPM-Automation-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.8",
+      "localVersion": "0.2.24",
       "category": "Desktop",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -73,11 +74,11 @@
       ],
       "scriptFiles": [
         "scripts/audit-cleanup.mjs",
+        "scripts/auto-commit-if-dirty.mjs",
         "scripts/bump-patch-version.mjs",
+        "scripts/check-version-sync.mjs",
         "scripts/install-git-hooks.mjs",
-        "scripts/stamp-prompt-log.mjs",
-        "scripts/sync-metadata-version.mjs",
-        "scripts/sync-release-log.mjs"
+        "scripts/release-stamp-if-code-change.mjs"
       ]
     },
     {
@@ -92,7 +93,7 @@
       "audience": "Tool maintainers",
       "status": "Ready",
       "summary": "Central operations console for tools, webapps, extensions, and scripts inside D:\\Dev.",
-      "localPath": "E:\\Dev\\Tool\\Workspace Center",
+      "localPath": "E:\\Dev\\Tool\\Unified-Tool-Admin",
       "tags": [
         "React",
         "TypeScript",
@@ -124,7 +125,7 @@
       "repo": "tuanhoangfx/YT-Multistream-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.0",
+      "localVersion": "0.1.27",
       "category": "Desktop",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -152,10 +153,83 @@
       "scriptFiles": [
         "scripts/audit-cleanup.mjs",
         "scripts/bump-patch-version.mjs",
+        "scripts/check-version-sync.mjs",
+        "scripts/install-git-hooks.mjs",
         "scripts/live-test.cjs",
-        "scripts/smoke-test.cjs",
-        "scripts/sync-changelog.mjs",
-        "scripts/sync-metadata-version.mjs"
+        "scripts/release-stamp-if-code-change.mjs"
+      ]
+    },
+    {
+      "id": "zalo-ai-bot",
+      "code": "P0005",
+      "name": "Zalo AI Bot",
+      "repo": "tuanhoangfx/zalo-ai-bot",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "1.0.0",
+      "category": "Bot",
+      "audience": "Tool maintainers",
+      "status": "Ready",
+      "summary": "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
+      "localPath": "E:\\Dev\\Tool\\zalo-ai-bot",
+      "tags": [
+        "Node.js",
+        "zca-js",
+        "9Router",
+        "Admin UI"
+      ],
+      "usage": [
+        "Dev: pnpm run admin",
+        "Run the configured build command from package.json."
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/health-check.ps1",
+        "scripts/install-autostart.ps1",
+        "scripts/patch-admin-botlist.mjs",
+        "scripts/patch-login-html.mjs"
+      ]
+    },
+    {
+      "id": "9router-app",
+      "code": "LOCAL-008",
+      "name": "_9router-ref",
+      "repo": "",
+      "branch": "main",
+      "remoteEnabled": false,
+      "localVersion": "0.4.50",
+      "category": "Local",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "9Router web dashboard",
+      "localPath": "E:\\Dev\\Tool\\_9router-ref",
+      "tags": [
+        "Local",
+        "Workspace"
+      ],
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/translate-readme.js"
       ]
     }
   ]
