@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-16T20:46:53.771Z",
+  "generatedAt": "2026-05-16T20:50:16.541Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -79,43 +79,6 @@
         "scripts/check-version-sync.mjs",
         "scripts/install-git-hooks.mjs",
         "scripts/release-stamp-if-code-change.mjs"
-      ]
-    },
-    {
-      "id": "unified-tool-admin",
-      "code": "P0003",
-      "name": "Unified Tool Admin",
-      "repo": "tuanhoangfx/Unified-Tool-Admin",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Desktop",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Central operations console for tools, webapps, extensions, and scripts inside D:\\Dev.",
-      "localPath": "E:\\Dev\\Tool\\Unified-Tool-Admin",
-      "tags": [
-        "React",
-        "TypeScript",
-        "Vite"
-      ],
-      "usage": [
-        "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/push-github-api.cjs",
-        "scripts/scan-workspaces.cjs",
-        "scripts/watch-workspaces.cjs"
       ]
     },
     {
@@ -200,7 +163,7 @@
     },
     {
       "id": "9router-app",
-      "code": "LOCAL-008",
+      "code": "LOCAL-007",
       "name": "_9router-ref",
       "repo": "",
       "branch": "main",
