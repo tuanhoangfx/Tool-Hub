@@ -51,10 +51,12 @@ function toToolRepository(dir, index) {
     summary: manifest?.summary || packageJson?.description || "Local workspace tool discovered by scanner.",
     localPath: dir,
     tags: manifest?.stack || ["Local", "Workspace"],
+    appUrl: manifest?.urls?.app,
     usage: [
       manifest?.commands?.dev ? `Dev: ${manifest.commands.dev}` : "Run the configured dev command from package.json.",
       manifest?.commands?.build ? `Build: ${manifest.commands.build}` : "Run the configured build command from package.json.",
-    ],
+      manifest?.urls?.app ? `App: ${manifest.urls.app}` : undefined,
+    ].filter(Boolean),
     downloadHint: "Use GitHub release asset when available, otherwise clone the repository.",
     manifestPath: manifest?.github?.manifestPath || "tool.manifest.json",
     trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],

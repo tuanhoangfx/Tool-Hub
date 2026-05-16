@@ -15,6 +15,7 @@ export type ToolRepository = {
   localPath: string;
   tags: string[];
   usage: string[];
+  appUrl?: string;
   downloadHint: string;
   manifestPath: string;
   trackedFiles: string[];

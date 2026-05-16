@@ -82,13 +82,31 @@ export function StoreTab({ tools, selectedId, onSelect }: StoreTabProps) {
           <p className="detail-summary">{selectedTool.summary}</p>
 
           <div className="action-row">
-            <a className="btn primary wide" href={selectedTool.downloadUrl} target="_blank" rel="noreferrer">
-              <MaterialIcon name="download" size={18} />
-              Tải về
+            {selectedTool.appUrl ? (
+              <a className="btn primary wide" href={selectedTool.appUrl} target="_blank" rel="noreferrer">
+                <MaterialIcon name="launch" size={18} />
+                Mở app
+              </a>
+            ) : (
+              <a className="btn primary wide" href={selectedTool.downloadUrl} target="_blank" rel="noreferrer">
+                <MaterialIcon name="download" size={18} />
+                Tải về
+              </a>
+            )}
+            <a
+              className="btn secondary"
+              href={selectedTool.appUrl ? selectedTool.downloadUrl : selectedTool.repoUrl}
+              target="_blank"
+              rel="noreferrer"
+              title={selectedTool.appUrl ? "Tải về / release" : "Mở repo GitHub"}
+            >
+              <MaterialIcon name={selectedTool.appUrl ? "download" : "open_in_new"} size={18} />
             </a>
-            <a className="btn secondary" href={selectedTool.repoUrl} target="_blank" rel="noreferrer">
-              <MaterialIcon name="open_in_new" size={18} />
-            </a>
+            {selectedTool.appUrl ? (
+              <a className="btn secondary" href={selectedTool.repoUrl} target="_blank" rel="noreferrer" title="Mở repo GitHub">
+                <MaterialIcon name="open_in_new" size={18} />
+              </a>
+            ) : null}
           </div>
 
           <HealthBar percent={fileHealthPercent(selectedTool.remote?.files)} files={selectedTool.remote?.files} />

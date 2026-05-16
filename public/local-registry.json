@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-16T20:54:01.430Z",
+  "generatedAt": "2026-05-16T21:02:32.579Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -141,9 +141,11 @@
         "9Router",
         "Admin UI"
       ],
+      "appUrl": "https://infix1.io.vn/p0005",
       "usage": [
         "Dev: pnpm run admin",
-        "Run the configured build command from package.json."
+        "Run the configured build command from package.json.",
+        "App: https://infix1.io.vn/p0005"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

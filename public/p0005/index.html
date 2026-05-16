@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zalo AI Bot — P0005</title>
+    <meta name="description" content="Chuyển tới Zalo AI Bot Admin trên máy local." />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: #0b1220;
+        color: #e8eefc;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+      }
+      main {
+        max-width: 28rem;
+        text-align: center;
+        line-height: 1.5;
+      }
+      a {
+        color: #7dd3fc;
+      }
+      code {
+        background: #1e293b;
+        padding: 0.15rem 0.4rem;
+        border-radius: 0.25rem;
+      }
+    </style>
+    <script>
+      (function () {
+        var local = "http://127.0.0.1:3920/p0005/";
+        var params = new URLSearchParams(location.search);
+        if (params.get("stay") === "1") return;
+        location.replace(local);
+      })();
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Zalo AI Bot (P0005)</h1>
+      <p>Đang chuyển tới admin trên máy bạn…</p>
+      <p>
+        <a href="http://127.0.0.1:3920/p0005/">Mở admin local</a>
+      </p>
+      <p>
+        Chưa chạy server? Mở <code>admin.bat</code> trong repo
+        <code>zalo-ai-bot</code>.
+      </p>
+      <p><a href="?stay=1">Ở lại trang này</a></p>
+    </main>
+  </body>
+</html>

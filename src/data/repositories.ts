@@ -79,10 +79,11 @@ export const defaultRepositories: ToolRepository[] = [
     summary: "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
     localPath: "E:\\Dev\\Tool\\zalo-ai-bot",
     tags: ["Node.js", "zca-js", "9Router", "Admin UI"],
+    appUrl: "https://infix1.io.vn/p0005",
     usage: [
       "Copy config.example.json to config.json and configure 9Router.",
       "pnpm install && pnpm run login for Zalo QR login.",
-      "Run admin.bat or pnpm run admin (http://127.0.0.1:3920).",
+      "Run admin.bat or open https://infix1.io.vn/p0005 (redirects to local admin).",
     ],
     downloadHint: "Clone https://github.com/tuanhoangfx/zalo-ai-bot — runtime data is not in the repo.",
     manifestPath: "tool.manifest.json",
