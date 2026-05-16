@@ -735,12 +735,37 @@ html:not(.fonts-loaded) .material-symbols-outlined {
 /* Layouts */
 .store-layout,
 .admin-layout,
+.publish-layout,
 .github-layout,
 .release-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 360px;
   gap: 0.85rem;
   align-items: start;
+}
+
+.store-toolbar {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.publish-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-subtle);
+  margin: 0.65rem 0;
+}
+
+.publish-section-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .card-grid {
@@ -1022,16 +1047,94 @@ td a {
   color: var(--color-brand-300);
 }
 
-.rules-page {
+.rules-layout {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 42%);
+  gap: 0.75rem;
+  align-items: start;
+}
+
+.rules-list {
+  display: grid;
   gap: 0.5rem;
+  align-content: start;
 }
 
 .rule-card {
   display: flex;
   gap: 0.6rem;
   padding: 0.75rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rule-card.selected {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
+.rule-card p {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+.rule-path {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.rule-path.mono {
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+.rules-preview {
+  position: sticky;
+  top: 0;
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.85rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-brand-lg);
+  box-shadow: var(--shadow-elev);
+  max-height: min(70vh, 720px);
+}
+
+.rules-preview-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.rules-preview-head h2 {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.rules-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.rules-preview-body {
+  margin: 0;
+  padding: 0.65rem;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow: auto;
+  max-height: min(52vh, 560px);
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-brand-md);
 }
 
 .rule-card svg,
@@ -1643,8 +1746,10 @@ td a {
   }
   .store-layout,
   .admin-layout,
+  .publish-layout,
   .github-layout,
-  .release-layout {
+  .release-layout,
+  .rules-layout {
     grid-template-columns: 1fr;
   }
   .detail-panel,
@@ -1661,7 +1766,7 @@ td a {
     display: none;
   }
   .card-grid,
-  .rules-page,
+  .rules-layout,
   .action-cards {
     grid-template-columns: 1fr;
   }

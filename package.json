@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "scan:local": "node scripts/scan-local-workspace.cjs",
     "icons:sync": "node scripts/sync-thesvg-icons.cjs",
+    "rules:sync": "node scripts/sync-rules-preview.cjs",
     "publish:github": "node scripts/publish-github-repo.cjs",
     "preview": "vite preview --host 127.0.0.1 --port 4176"
   },

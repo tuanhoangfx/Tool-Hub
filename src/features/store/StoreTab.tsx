@@ -13,6 +13,8 @@ type StoreTabProps = {
   tools: ResolvedTool[];
   selectedId: string;
   onSelect: (id: string) => void;
+  onRefreshCatalog: () => void;
+  loadingCatalog: boolean;
 };
 
 function statusTone(tool: ResolvedTool): "ok" | "warn" | "bad" | "neutral" {
@@ -27,11 +29,17 @@ function statusText(tool: ResolvedTool) {
   return tool.healthLabel;
 }
 
-export function StoreTab({ tools, selectedId, onSelect }: StoreTabProps) {
+export function StoreTab({ tools, selectedId, onSelect, onRefreshCatalog, loadingCatalog }: StoreTabProps) {
   const selectedTool = tools.find((tool) => tool.id === selectedId) ?? tools[0];
 
   return (
     <section className="store-layout">
+      <div className="store-toolbar">
+        <button className="btn secondary" type="button" onClick={onRefreshCatalog} disabled={loadingCatalog} title="Cập nhật metadata GitHub cho catalog">
+          <MaterialIcon name="refresh" size={18} className={loadingCatalog ? "spin" : ""} />
+          Làm mới catalog
+        </button>
+      </div>
       <div className="card-grid">
         {tools.map((tool) => {
           const pct = fileHealthPercent(tool.remote?.files);

@@ -1,16 +1,15 @@
 import { useMemo, useState } from "react";
 import { MaterialIcon, Metric, SideNavButton, ThemeToggle, ToolFilterBar, ToolPickerBar } from "./components";
-import { AdminTab, GitHubActionsTab, ReleaseChecklistTab, RulesTab, StoreTab } from "./features";
+import { AdminTab, PublishTab, RulesTab, StoreTab } from "./features";
 import { useGitHubActions, useRepositories, useTheme } from "./hooks";
 import { formatDate } from "./lib/tooling";
 
-type ActiveTab = "store" | "admin" | "github" | "release" | "rules";
+type ActiveTab = "store" | "admin" | "publish" | "rules";
 
 const TAB_META: Record<ActiveTab, { title: string; desc: string; icon: string }> = {
   store: { title: "Tool Store", desc: "Catalog & download", icon: "store" },
   admin: { title: "Repo Admin", desc: "Repos & drift", icon: "table_chart" },
-  github: { title: "GitHub Actions", desc: "Issue · PR · Release", icon: "merge" },
-  release: { title: "Release", desc: "Pre-publish checks", icon: "rocket_launch" },
+  publish: { title: "Publish", desc: "Checks · Issue · Release", icon: "rocket_launch" },
   rules: { title: "Rules", desc: "Workspace standards", icon: "rule" },
 };
 
@@ -97,8 +96,7 @@ function App() {
         <nav className="nav" aria-label="Navigation">
           <SideNavButton active={activeTab === "store"} icon="store" label="Store" onClick={() => setActiveTab("store")} />
           <SideNavButton active={activeTab === "admin"} icon="table_chart" label="Admin" onClick={() => setActiveTab("admin")} />
-          <SideNavButton active={activeTab === "github"} icon="merge" label="Actions" onClick={() => setActiveTab("github")} />
-          <SideNavButton active={activeTab === "release"} icon="rocket_launch" label="Release" onClick={() => setActiveTab("release")} />
+          <SideNavButton active={activeTab === "publish"} icon="rocket_launch" label="Publish" onClick={() => setActiveTab("publish")} />
           <SideNavButton active={activeTab === "rules"} icon="rule" label="Rules" onClick={() => setActiveTab("rules")} />
         </nav>
 
@@ -106,7 +104,7 @@ function App() {
           <button className="btn icon-only" type="button" onClick={() => void loadLocalRegistry()} title="Registry">
             <MaterialIcon name="upload" size={18} />
           </button>
-          <button className="btn primary icon-only" type="button" onClick={refreshAll} disabled={loadingAll} title="Refresh">
+          <button className="btn primary icon-only" type="button" onClick={() => void refreshAll()} disabled={loadingAll} title="Refresh">
             <MaterialIcon name="refresh" size={18} className={loadingAll ? "spin" : ""} />
           </button>
         </div>
@@ -171,7 +169,7 @@ function App() {
               />
             )}
 
-            {(activeTab === "github" || activeTab === "release") && (
+            {activeTab === "publish" && (
               <ToolPickerBar tools={pickerTools} selectedId={selectedId} query={query} onQueryChange={setQuery} onSelect={setSelectedId} />
             )}
 
@@ -191,7 +189,15 @@ function App() {
             )}
 
             <section className="panel">
-              {activeTab === "store" && <StoreTab tools={filteredTools} selectedId={selectedId} onSelect={setSelectedId} />}
+              {activeTab === "store" && (
+                <StoreTab
+                  tools={filteredTools}
+                  selectedId={selectedId}
+                  onSelect={setSelectedId}
+                  onRefreshCatalog={() => void refreshAll()}
+                  loadingCatalog={loadingAll}
+                />
+              )}
               {activeTab === "admin" && (
                 <AdminTab
                   tools={filteredTools}
@@ -205,8 +211,8 @@ function App() {
                   onRemoveCustom={removeCustomRepo}
                 />
               )}
-              {activeTab === "github" && (
-                <GitHubActionsTab
+              {activeTab === "publish" && (
+                <PublishTab
                   selectedTool={selectedTool}
                   token={githubToken}
                   actionStatus={actionStatus}
@@ -216,7 +222,6 @@ function App() {
                   onCreateVersionSyncPr={createVersionSyncPrForSelected}
                 />
               )}
-              {activeTab === "release" && <ReleaseChecklistTab selectedTool={selectedTool} />}
               {activeTab === "rules" && <RulesTab query={query} />}
             </section>
           </div>

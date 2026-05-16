@@ -1,5 +1,4 @@
 export { AdminTab } from "./admin/AdminTab";
-export { GitHubActionsTab } from "./github-actions/GitHubActionsTab";
-export { ReleaseChecklistTab } from "./release/ReleaseChecklistTab";
+export { PublishTab } from "./publish/PublishTab";
 export { RulesTab } from "./rules/RulesTab";
 export { StoreTab } from "./store/StoreTab";

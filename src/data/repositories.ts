@@ -92,25 +92,36 @@ export const defaultRepositories: ToolRepository[] = [
   },
 ];
 
-export const ruleSources = [
+export type RuleSource = {
+  label: string;
+  path: string;
+  summary: string;
+  previewPath?: string;
+};
+
+export const ruleSources: RuleSource[] = [
   {
     label: "Working Rules",
     path: "E:\\Dev\\Rules\\rules\\Working_Rules.md",
+    previewPath: "/rules/working-rules.md",
     summary: "Caution, surgical scope, verification before closing, and concise communication.",
   },
   {
     label: "Workspace Design Standard",
     path: "E:\\Dev\\Rules\\standards\\Workspace_Design_Standard.md",
+    previewPath: "/rules/workspace-design-standard.md",
     summary: "Shared design tokens, compact table header patterns, dropdown rules, typography, and spacing rhythm.",
   },
   {
-    label: "Changelog Standard",
-    path: "E:\\Dev\\Rules\\standards\\Changelog_Standard.md",
+    label: "Changelog Entry Template",
+    path: "E:\\Dev\\Rules\\templates\\tool-docs\\CHANGELOG_ENTRY_TEMPLATE.md",
+    previewPath: "/rules/changelog-entry-template.md",
     summary: "Parseable release history format with version, type, status, verification, and rollback sections.",
   },
   {
     label: "Design Base CSS",
     path: "E:\\Dev\\Tool\\GitHub-Tool-Manager\\src\\styles.css",
+    previewPath: "/rules/design-base.md",
     summary: "Local inlined design baseline (no runtime dependency on shared Rules CSS files).",
   },
 ];
