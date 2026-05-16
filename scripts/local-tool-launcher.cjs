@@ -2,6 +2,7 @@ const http = require("node:http");
 const path = require("node:path");
 const fs = require("node:fs");
 const { spawn } = require("node:child_process");
+const { URL } = require("node:url");
 
 const HOST = "127.0.0.1";
 const PORT = 5190;
@@ -20,6 +21,14 @@ function sendJson(res, status, data) {
     "Access-Control-Allow-Headers": "Content-Type",
   });
   res.end(JSON.stringify(data));
+}
+
+function sendHtml(res, status, title, body) {
+  res.writeHead(status, { "Content-Type": "text/html; charset=utf-8" });
+  res.end(`<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/><title>${title}</title>
+<style>body{font-family:Segoe UI,system-ui;margin:2rem;background:#0b1220;color:#e8eefc}
+.ok{color:#6ee7b7}.bad{color:#fca5a5}code{background:#1e293b;padding:.2rem .4rem;border-radius:4px}</style></head>
+<body><h1>${title}</h1>${body}</body></html>`);
 }
 
 function readBody(req) {
@@ -60,30 +69,64 @@ function launchTool(id, entry) {
   running.set(id, child.pid);
   child.on("exit", () => running.delete(id));
 
-  return { ok: true, message: `Đã khởi chạy ${id} (PID ${child.pid})` };
+  return { ok: true, message: `Đã khởi chạy <strong>${id}</strong> (PID ${child.pid})<br/>Lệnh: <code>${entry.command}</code><br/>Thư mục: <code>${entry.cwd}</code>` };
 }
 
 const server = http.createServer(async (req, res) => {
+  const url = new URL(req.url ?? "/", `http://${HOST}:${PORT}`);
+
   if (req.method === "OPTIONS") {
     return sendJson(res, 204, {});
   }
 
-  if (req.method === "GET" && req.url === "/health") {
+  if (req.method === "GET" && url.pathname === "/health") {
     return sendJson(res, 200, { ok: true, port: PORT });
   }
 
-  if (req.method === "POST" && req.url === "/launch") {
+  if (req.method === "GET" && url.pathname === "/") {
+    const config = loadConfig();
+    const items = Object.keys(config)
+      .map((id) => `<li><a href="/launch?id=${encodeURIComponent(id)}">${id}</a></li>`)
+      .join("");
+    return sendHtml(
+      res,
+      200,
+      "GTM Launcher",
+      `<p class="ok">Launcher đang chạy trên cổng ${PORT}.</p><p>Chạy tool:</p><ul>${items}</ul>`,
+    );
+  }
+
+  if ((req.method === "GET" || req.method === "POST") && url.pathname === "/launch") {
     try {
-      const body = await readBody(req);
       const config = loadConfig();
-      const id = String(body.id ?? "");
+      let id = url.searchParams.get("id") ?? "";
+      if (req.method === "POST" && !id) {
+        const body = await readBody(req);
+        id = String(body.id ?? "");
+      }
       const entry = config[id];
       if (!entry) {
-        return sendJson(res, 404, { ok: false, message: `Chưa cấu hình launch cho: ${id}` });
+        if (req.method === "POST") {
+          return sendJson(res, 404, { ok: false, message: `Chưa cấu hình launch cho: ${id}` });
+        }
+        return sendHtml(res, 404, "Không tìm thấy", `<p class="bad">Chưa cấu hình: ${id}</p>`);
       }
-      return sendJson(res, 200, launchTool(id, entry));
+      const result = launchTool(id, entry);
+      if (req.method === "POST") {
+        return sendJson(res, 200, result);
+      }
+      const klass = result.ok ? "ok" : "bad";
+      return sendHtml(
+        res,
+        200,
+        result.ok ? "Đã chạy" : "Lỗi",
+        `<p class="${klass}">${result.message}</p><p>Có thể đóng tab này.</p><script>setTimeout(()=>window.close(),4000)</script>`,
+      );
     } catch (error) {
-      return sendJson(res, 500, { ok: false, message: error.message });
+      if (req.method === "POST") {
+        return sendJson(res, 500, { ok: false, message: error.message });
+      }
+      return sendHtml(res, 500, "Lỗi", `<p class="bad">${error.message}</p>`);
     }
   }
 
@@ -91,5 +134,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`\n  GTM Local Tool Launcher\n  → http://${HOST}:${PORT}\n`);
+  console.log(`\n  GTM Local Tool Launcher\n  → http://${HOST}:${PORT}\n  → Mở từ https://infix1.io.vn: dùng nút Chạy tool (mở tab này)\n`);
 });

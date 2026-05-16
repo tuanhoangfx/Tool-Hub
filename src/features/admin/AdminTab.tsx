@@ -200,7 +200,8 @@ export function AdminTab({ tools, allTools, selectedTool, onRefresh, onSelect, o
         </div>
         {selectedLaunchable ? (
           <p className="muted-inline launch-hint">
-            Cần <code>pnpm run launcher</code> hoặc <code>launch.bat</code> — lệnh: {launchCommandLabel(selectedTool)}
+            Trước khi chạy: mở <code>launch.bat</code> (giữ cửa sổ). Lệnh: {launchCommandLabel(selectedTool)}. Từ
+            https://infix1.io.vn sẽ mở tab launcher (tránh chặn HTTPS).
           </p>
         ) : null}
 
