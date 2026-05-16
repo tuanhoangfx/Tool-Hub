@@ -1,4 +1,4 @@
-/** Slug overrides for tags that do not match theSVG icon ids. See https://thesvg.org/icon/{slug} */
+/** Slug overrides — catalog pages: https://thesvg.org/icon/{slug} */
 const TAG_SLUG_MAP: Record<string, string> = {
   react: "react",
   typescript: "typescript",
@@ -20,7 +20,43 @@ const TAG_SLUG_MAP: Record<string, string> = {
   docker: "docker",
   java: "java",
   "gpm api": "google",
+  "9router": "openrouter",
+  "9 router": "openrouter",
+  openrouter: "openrouter",
+  automation: "github-actions",
+  "admin ui": "material-ui",
+  "admin panel": "material-ui",
+  dashboard: "material-ui",
+  local: "github",
+  workspace: "github",
+  custom: "github",
 };
+
+const LOCAL_ICON_SLUGS = new Set([
+  "react",
+  "typescript",
+  "vite",
+  "javascript",
+  "npm",
+  "github",
+  "github-actions",
+  "electron",
+  "ffmpeg",
+  "youtube",
+  "zalo",
+  "pnpm",
+  "docker",
+  "java",
+  "google",
+  "openrouter",
+  "openai",
+  "material-ui",
+  "mui",
+  "vercel",
+  "microsoft",
+  "figma",
+  "playwright",
+]);
 
 function slugifyTag(tag: string) {
   return tag
@@ -37,7 +73,21 @@ export function tagToTheSvgSlug(tag: string): string | null {
   return slug.length >= 2 ? slug : null;
 }
 
-/** SVG file served by theSVG (icon page: https://thesvg.org/icon/{slug}) */
-export function theSvgIconUrl(slug: string) {
+/** Bundled copy under /icons/ (see scripts/sync-thesvg-icons.cjs) */
+export function theSvgLocalIconUrl(slug: string) {
+  return `/icons/${slug}.svg`;
+}
+
+/** Remote fallback from theSVG CDN */
+export function theSvgRemoteIconUrl(slug: string) {
   return `https://thesvg.org/icons/${slug}/default.svg`;
+}
+
+export function theSvgIconSources(slug: string) {
+  const sources: string[] = [];
+  if (LOCAL_ICON_SLUGS.has(slug)) {
+    sources.push(theSvgLocalIconUrl(slug));
+  }
+  sources.push(theSvgRemoteIconUrl(slug));
+  return sources;
 }

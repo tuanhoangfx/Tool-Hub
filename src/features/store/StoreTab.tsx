@@ -2,7 +2,7 @@ import { EmptyState } from "../../components/EmptyState";
 import { DriftHint } from "../../components/DriftHint";
 import { HealthBar } from "../../components/HealthBar";
 import { InfoItem } from "../../components/InfoItem";
-import { MaterialIcon, StackTagIcon } from "../../components";
+import { MaterialIcon, TagRow } from "../../components";
 import { StatusBadge } from "../../components/StatusBadge";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { formatDate } from "../../lib/tooling";
@@ -48,14 +48,7 @@ export function StoreTab({ tools, selectedId, onSelect }: StoreTabProps) {
                 </div>
               </div>
               <h2>{tool.name}</h2>
-              <div className="tag-row">
-                {tool.tags.slice(0, 3).map((tag) => (
-                  <span key={tag}>
-                    <StackTagIcon tag={tag} size={12} />
-                    {tag}
-                  </span>
-                ))}
-              </div>
+              <TagRow tags={tool.tags} limit={3} />
               <HealthBar percent={pct} files={tool.remote?.files} />
               <div className="card-footer">
                 <span className="mini-stat">
@@ -80,6 +73,13 @@ export function StoreTab({ tools, selectedId, onSelect }: StoreTabProps) {
           </div>
 
           <p className="detail-summary">{selectedTool.summary}</p>
+
+          {selectedTool.tags.length > 0 ? (
+            <section className="detail-tags">
+              <h3 className="detail-tags-label">Tech stack</h3>
+              <TagRow tags={selectedTool.tags} iconSize={14} />
+            </section>
+          ) : null}
 
           <div className="action-row">
             {selectedTool.appUrl ? (

@@ -1574,6 +1574,20 @@ td a {
   color: var(--color-text-muted);
 }
 
+.detail-tags {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.detail-tags-label {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
 .info-item-label {
   display: inline-flex;
   align-items: center;
