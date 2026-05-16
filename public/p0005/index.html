@@ -38,7 +38,15 @@
         var local = "http://127.0.0.1:3920/p0005/";
         var params = new URLSearchParams(location.search);
         if (params.get("stay") === "1") return;
-        location.replace(local);
+        var tunnel = params.get("tunnel") || localStorage.getItem("zaloAdminTunnel");
+        if (tunnel && !/^https?:\/\//i.test(tunnel)) tunnel = "";
+        var target = (tunnel || local).replace(/\/?$/, "/");
+        if (params.get("tunnel")) {
+          try {
+            localStorage.setItem("zaloAdminTunnel", target);
+          } catch (_) {}
+        }
+        location.replace(target);
       })();
     </script>
   </head>
@@ -54,6 +62,11 @@
         <code>zalo-ai-bot</code>.
       </p>
       <p><a href="?stay=1">Ở lại trang này</a></p>
+      <p style="font-size: 0.9rem; opacity: 0.85">
+        Truy cập từ xa (Cloudflare Tunnel): chạy
+        <code>scripts/setup-cloudflare-tunnel.ps1</code>, rồi mở
+        <code>?tunnel=https://zalo.infix1.io.vn/p0005/</code> một lần để lưu URL.
+      </p>
     </main>
   </body>
 </html>
