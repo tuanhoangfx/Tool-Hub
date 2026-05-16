@@ -1,6 +1,29 @@
 import type { ResolvedTool } from "../types";
 
-const LAUNCHER_URL = "http://127.0.0.1:5190";
+export const LAUNCHER_URL = "http://127.0.0.1:5190";
+
+export const LAUNCHER_SETUP_HINT =
+  "Chạy launch.bat hoặc dev.bat trong thư mục GitHub-Tool-Manager (E:\\Dev\\Tool\\GitHub-Tool-Manager), giữ cửa sổ mở, rồi thử lại.";
+
+export const LAUNCHER_HTTPS_HINT =
+  "Từ infix1.io.vn, trình duyệt không gọi được localhost. Bấm Chạy tool → tab mở http://127.0.0.1:5190 — nếu trang trắng/lỗi, chạy launch.bat trước.";
+
+export type LauncherRunning = { id: string; pid: number };
+
+export type LauncherHealth = {
+  ok: boolean;
+  port?: number;
+  configured?: string[];
+  running?: LauncherRunning[];
+};
+
+export function launcherHomeUrl() {
+  return `${LAUNCHER_URL}/`;
+}
+
+export function openLauncherPage() {
+  window.open(launcherHomeUrl(), "_blank", "noopener,noreferrer");
+}
 
 export function canLaunchTool(tool: ResolvedTool) {
   return Boolean(tool.localPath?.trim());
@@ -14,20 +37,30 @@ export function launcherLaunchPageUrl(toolId: string) {
   return `${LAUNCHER_URL}/launch?id=${encodeURIComponent(toolId)}`;
 }
 
-export async function checkLauncherOnline() {
-  if (isHttpsPage()) {
-    return null;
-  }
+function isHttpsPage() {
+  return typeof window !== "undefined" && window.location.protocol === "https:";
+}
+
+export async function fetchLauncherHealth(): Promise<LauncherHealth | null> {
+  if (isHttpsPage()) return null;
   try {
     const response = await fetch(`${LAUNCHER_URL}/health`, { cache: "no-store" });
-    return response.ok;
+    if (!response.ok) return null;
+    return (await response.json()) as LauncherHealth;
   } catch {
-    return false;
+    return null;
   }
 }
 
-function isHttpsPage() {
-  return typeof window !== "undefined" && window.location.protocol === "https:";
+export async function checkLauncherOnline() {
+  const health = await fetchLauncherHealth();
+  if (health === null && isHttpsPage()) return null;
+  return health?.ok === true;
+}
+
+export function formatRunningTools(running: LauncherRunning[] | undefined) {
+  if (!running?.length) return "";
+  return running.map((item) => `${item.id} (PID ${item.pid})`).join(", ");
 }
 
 /** Launch tool via local launcher (works from https://infix1.io.vn by opening a tab). */
@@ -36,17 +69,15 @@ export async function launchTool(toolId: string) {
     window.open(launcherLaunchPageUrl(toolId), "_blank", "noopener,noreferrer");
     return {
       ok: true,
-      message:
-        "Đã mở tab launcher. Nếu trang không tải được, chạy E:\\Dev\\Tool\\GitHub-Tool-Manager\\launch.bat trước, rồi bấm Chạy lại.",
+      message: `Đã mở tab launcher cho ${toolId}. ${LAUNCHER_HTTPS_HINT}`,
     };
   }
 
-  const online = await checkLauncherOnline();
-  if (online === false) {
+  const health = await fetchLauncherHealth();
+  if (!health?.ok) {
     return {
       ok: false,
-      message:
-        "Launcher chưa chạy. Mở launch.bat hoặc dev.bat trong GitHub-Tool-Manager, giữ cửa sổ mở, rồi thử lại.",
+      message: `Launcher chưa chạy. ${LAUNCHER_SETUP_HINT}`,
     };
   }
 
@@ -61,7 +92,7 @@ export async function launchTool(toolId: string) {
     return { ok: Boolean(data.ok), message: plain || (data.ok ? "Đã khởi chạy" : "Launch thất bại") };
   } catch {
     window.open(launcherLaunchPageUrl(toolId), "_blank", "noopener,noreferrer");
-    return { ok: true, message: "Đã mở tab launcher để chạy tool." };
+    return { ok: true, message: `Đã mở tab launcher. ${LAUNCHER_SETUP_HINT}` };
   }
 }
 

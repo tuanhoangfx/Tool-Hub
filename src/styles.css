@@ -745,6 +745,22 @@ html:not(.fonts-loaded) .material-symbols-outlined {
   border: 1px solid rgba(239, 68, 68, 0.35);
 }
 
+.inline-banner.warn {
+  color: #fde68a;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.inline-banner.ok {
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.launcher-https-hint span {
+  line-height: 1.45;
+}
+
 .panel {
   animation: fadeIn 0.2s ease-out;
 }
@@ -1532,6 +1548,45 @@ td a {
   background: transparent;
   border: none;
   box-shadow: none;
+}
+
+.launcher-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.65rem 0.85rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-brand-lg);
+  box-shadow: var(--shadow-soft);
+}
+
+.launcher-bar-label {
+  flex: 1;
+  min-width: 12rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.dot.bad {
+  background: var(--color-danger, #ef4444);
+}
+
+.launcher-running-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.launcher-chip {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--color-success, #22c55e);
+  border: 1px solid rgba(34, 197, 94, 0.35);
 }
 
 .toolbar-card {

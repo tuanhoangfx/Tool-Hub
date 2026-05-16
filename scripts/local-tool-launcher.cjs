@@ -9,6 +9,32 @@ const PORT = 5190;
 const configPath = path.resolve(__dirname, "..", "public", "tools-launch.json");
 const running = new Map();
 
+function isProcessAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function pruneRunning() {
+  for (const [id, pid] of running.entries()) {
+    if (!isProcessAlive(pid)) running.delete(id);
+  }
+}
+
+function healthPayload() {
+  pruneRunning();
+  const config = loadConfig();
+  return {
+    ok: true,
+    port: PORT,
+    configured: Object.keys(config),
+    running: [...running.entries()].map(([id, pid]) => ({ id, pid })),
+  };
+}
+
 function loadConfig() {
   return JSON.parse(fs.readFileSync(configPath, "utf8"));
 }
@@ -80,19 +106,28 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === "GET" && url.pathname === "/health") {
-    return sendJson(res, 200, { ok: true, port: PORT });
+    return sendJson(res, 200, healthPayload());
   }
 
   if (req.method === "GET" && url.pathname === "/") {
     const config = loadConfig();
+    const health = healthPayload();
+    const runningIds = new Set(health.running.map((item) => item.id));
     const items = Object.keys(config)
-      .map((id) => `<li><a href="/launch?id=${encodeURIComponent(id)}">${id}</a></li>`)
+      .map((id) => {
+        const live = runningIds.has(id) ? ' <span class="ok">(đang chạy)</span>' : "";
+        return `<li><a href="/launch?id=${encodeURIComponent(id)}">${id}</a>${live}</li>`;
+      })
       .join("");
+    const runningLine =
+      health.running.length > 0
+        ? `<p>Đang chạy: ${health.running.map((item) => `<code>${item.id}</code> (PID ${item.pid})`).join(", ")}</p>`
+        : "<p>Chưa có tool nào đang chạy từ launcher.</p>";
     return sendHtml(
       res,
       200,
       "GTM Launcher",
-      `<p class="ok">Launcher đang chạy trên cổng ${PORT}.</p><p>Chạy tool:</p><ul>${items}</ul>`,
+      `<p class="ok">Launcher đang chạy trên cổng ${PORT}.</p>${runningLine}<p>Chạy tool:</p><ul>${items}</ul>`,
     );
   }
 

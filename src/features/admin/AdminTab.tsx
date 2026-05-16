@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileListBlock } from "../../components/FileListBlock";
 import { DriftHint } from "../../components/DriftHint";
 import { HealthBar } from "../../components/HealthBar";
@@ -8,7 +8,18 @@ import { MaterialIcon } from "../../components/MaterialIcon";
 import { StatusBadge } from "../../components/StatusBadge";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { formatDate } from "../../lib/tooling";
-import { canLaunchTool, folderFileUrl, launchCommandLabel, launchTool } from "../../lib/tool-launch";
+import {
+  canLaunchTool,
+  fetchLauncherHealth,
+  folderFileUrl,
+  formatRunningTools,
+  LAUNCHER_HTTPS_HINT,
+  LAUNCHER_SETUP_HINT,
+  launchCommandLabel,
+  launchTool,
+  openLauncherPage,
+  type LauncherHealth,
+} from "../../lib/tool-launch";
 import { fileHealthPercent, statusIcon, toolIconName } from "../../lib/visual";
 import type { ResolvedTool, ToolRepository } from "../../types";
 
@@ -42,7 +53,43 @@ export function AdminTab({ tools, allTools, selectedTool, onRefresh, onSelect, o
   const selectedPct = fileHealthPercent(files);
   const [launchStatus, setLaunchStatus] = useState("");
   const [launchingId, setLaunchingId] = useState<string | null>(null);
+  const [launcherHealth, setLauncherHealth] = useState<LauncherHealth | null>(null);
   const selectedLaunchable = canLaunchTool(selectedTool);
+  const onHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+  const launcherOnline = onHttps ? null : launcherHealth?.ok === true;
+  const runningLabel = formatRunningTools(launcherHealth?.running);
+
+  useEffect(() => {
+    if (onHttps) {
+      setLauncherHealth(null);
+      return;
+    }
+    let cancelled = false;
+    const tick = async () => {
+      const health = await fetchLauncherHealth();
+      if (!cancelled) setLauncherHealth(health);
+    };
+    void tick();
+    const timer = window.setInterval(() => void tick(), 10000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [onHttps]);
+
+  function launcherBarLabel() {
+    if (onHttps) return "Launcher local — không kiểm tra được từ HTTPS";
+    if (launcherHealth === null) return "Đang kiểm tra launcher…";
+    if (!launcherHealth.ok) return `Launcher offline — ${LAUNCHER_SETUP_HINT}`;
+    if (runningLabel) return `Launcher online · đang chạy: ${runningLabel}`;
+    return "Launcher online · chưa có tool nào chạy";
+  }
+
+  function handleOpenLauncher() {
+    openLauncherPage();
+    setLaunchStatus(onHttps ? `Đã mở tab launcher. ${LAUNCHER_HTTPS_HINT}` : "Đã mở trang launcher.");
+    window.setTimeout(() => setLaunchStatus(""), 8000);
+  }
 
   async function handleLaunch(tool: ResolvedTool, event?: MouseEvent) {
     event?.stopPropagation();
@@ -58,6 +105,29 @@ export function AdminTab({ tools, allTools, selectedTool, onRefresh, onSelect, o
   return (
     <section className="admin-layout">
       <div className="admin-main admin-cards-area">
+        {onHttps ? (
+          <div className="inline-banner warn launcher-https-hint">
+            <MaterialIcon name="info" size={16} />
+            <span>{LAUNCHER_HTTPS_HINT}</span>
+          </div>
+        ) : null}
+        <div className="launcher-bar">
+          <span className={launcherOnline === true ? "dot live" : launcherOnline === false ? "dot bad" : "dot"} />
+          <span className="launcher-bar-label">{launcherBarLabel()}</span>
+          {!onHttps && launcherHealth?.running?.length ? (
+            <div className="launcher-running-chips" aria-label="Tools đang chạy">
+              {launcherHealth.running.map((item) => (
+                <span className="launcher-chip" key={item.id}>
+                  {item.id}
+                </span>
+              ))}
+            </div>
+          ) : null}
+          <button className="btn secondary" type="button" onClick={handleOpenLauncher}>
+            <MaterialIcon name="open_in_new" size={16} />
+            Mở launcher
+          </button>
+        </div>
         {launchStatus ? <div className="inline-banner ok">{launchStatus}</div> : null}
 
         <div className="provider-grid">
@@ -200,8 +270,8 @@ export function AdminTab({ tools, allTools, selectedTool, onRefresh, onSelect, o
         </div>
         {selectedLaunchable ? (
           <p className="muted-inline launch-hint">
-            Trước khi chạy: mở <code>launch.bat</code> (giữ cửa sổ). Lệnh: {launchCommandLabel(selectedTool)}. Từ
-            https://infix1.io.vn sẽ mở tab launcher (tránh chặn HTTPS).
+            Local: chạy <code>dev.bat</code> (launcher + UI). Production: <code>launch.bat</code> rồi dùng infix1.io.vn.
+            Lệnh: {launchCommandLabel(selectedTool)}.
           </p>
         ) : null}
 
