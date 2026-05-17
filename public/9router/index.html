@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>9Router — Infix1</title>
+    <meta name="description" content="Chuyển tới 9Router dashboard trên VPS CloudFly." />
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: #0b1220;
+        color: #e8eefc;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+      }
+      main {
+        max-width: 32rem;
+        text-align: center;
+        line-height: 1.55;
+      }
+      a {
+        color: #7dd3fc;
+      }
+      code {
+        background: #1e293b;
+        padding: 0.15rem 0.4rem;
+        border-radius: 0.25rem;
+      }
+    </style>
+    <script>
+      (function () {
+        var vps = "https://9router.infix1.io.vn/dashboard";
+        var vpsFallback = "http://103.82.25.231:20128/dashboard";
+        var params = new URLSearchParams(location.search);
+        if (params.get("stay") === "1") return;
+        var custom = params.get("url") || localStorage.getItem("nineRouterDashboard");
+        if (custom && !/^https?:\/\//i.test(custom)) custom = "";
+        var target = (custom || vps).replace(/\/?$/, "/");
+        if (params.get("url")) {
+          try {
+            localStorage.setItem("nineRouterDashboard", target);
+          } catch (_) {}
+        }
+        if (params.get("ip") === "1") {
+          location.replace(vpsFallback);
+          return;
+        }
+        location.replace(target);
+        setTimeout(function () {
+          if (document.visibilityState === "visible") {
+            location.replace(vpsFallback);
+          }
+        }, 2500);
+      })();
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>9Router</h1>
+      <p>Đang chuyển tới dashboard trên VPS…</p>
+      <p>
+        <a href="https://9router.infix1.io.vn/dashboard">Mở subdomain</a>
+        ·
+        <a href="?ip=1">Mở IP (20128)</a>
+      </p>
+      <p style="font-size: 0.9rem; opacity: 0.85">
+        Gợi ý HTTPS: dùng subdomain <code>9router.infix1.io.vn</code> trỏ A record
+        về VPS + reverse proxy (xem <code>zalo-ai-bot/scripts/vps/nginx-9router.conf</code>).
+      </p>
+      <p><a href="?stay=1">Ở lại trang này</a></p>
+    </main>
+  </body>
+</html>

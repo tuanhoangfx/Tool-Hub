@@ -175,6 +175,7 @@
       "audience": "Tool maintainers",
       "status": "Needs review",
       "summary": "9Router web dashboard",
+      "appUrl": "https://infix1.io.vn/9router",
       "localPath": "E:\\Dev\\Tool\\_9router-ref",
       "tags": [
         "Local",
