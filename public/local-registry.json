@@ -1,7 +1,52 @@
 {
-  "generatedAt": "2026-05-16T21:02:32.579Z",
+  "generatedAt": "2026-05-17T11:08:30.623Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
+    {
+      "id": "9router-infra",
+      "code": "P0006",
+      "name": "9Router Infra",
+      "repo": "tuanhoangfx/9router-infra",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "1.0.0",
+      "category": "Infrastructure",
+      "audience": "Tool maintainers",
+      "status": "Ready",
+      "summary": "VPS deploy, SSL, DNS, and per-tool API keys for shared 9Router on CloudFly.",
+      "localPath": "E:\\Dev\\Tool\\9router-infra",
+      "tags": [
+        "bash",
+        "nginx",
+        "certbot",
+        "docker",
+        "Node.js",
+        "ssh2"
+      ],
+      "appUrl": "https://9router.infix1.io.vn/dashboard",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json.",
+        "App: https://9router.infix1.io.vn/dashboard"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/apply-openresty.mjs",
+        "scripts/deploy-remote.mjs",
+        "scripts/deploy-subdomain.mjs",
+        "scripts/deploy-to-cloudfly.ps1",
+        "scripts/finish-setup.mjs",
+        "scripts/fix-local-dns.ps1"
+      ]
+    },
     {
       "id": "github-tool-manager",
       "code": "P0004",
@@ -35,9 +80,12 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/dev-with-launcher.cjs",
+        "scripts/local-tool-launcher.cjs",
         "scripts/publish-github-repo.cjs",
         "scripts/push-and-deploy.ps1",
-        "scripts/scan-local-workspace.cjs"
+        "scripts/scan-local-workspace.cjs",
+        "scripts/sync-rules-preview.cjs"
       ]
     },
     {
@@ -129,7 +177,7 @@
       "repo": "tuanhoangfx/zalo-ai-bot",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.0.0",
+      "localVersion": "1.1.0",
       "category": "Bot",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -160,12 +208,14 @@
         "scripts/health-check.ps1",
         "scripts/install-autostart.ps1",
         "scripts/patch-admin-botlist.mjs",
-        "scripts/patch-login-html.mjs"
+        "scripts/patch-login-html.mjs",
+        "scripts/push-release.ps1",
+        "scripts/setup-cloudflare-tunnel.ps1"
       ]
     },
     {
       "id": "9router-app",
-      "code": "LOCAL-007",
+      "code": "LOCAL-006",
       "name": "_9router-ref",
       "repo": "",
       "branch": "main",
@@ -175,7 +225,6 @@
       "audience": "Tool maintainers",
       "status": "Needs review",
       "summary": "9Router web dashboard",
-      "appUrl": "https://infix1.io.vn/9router",
       "localPath": "E:\\Dev\\Tool\\_9router-ref",
       "tags": [
         "Local",
