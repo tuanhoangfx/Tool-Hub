@@ -1,93 +1,7 @@
 {
-  "generatedAt": "2026-05-17T11:08:30.623Z",
+  "generatedAt": "2026-05-19T11:41:53.325Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
-    {
-      "id": "9router-infra",
-      "code": "P0006",
-      "name": "9Router Infra",
-      "repo": "tuanhoangfx/9router-infra",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "1.0.0",
-      "category": "Infrastructure",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "VPS deploy, SSL, DNS, and per-tool API keys for shared 9Router on CloudFly.",
-      "localPath": "E:\\Dev\\Tool\\9router-infra",
-      "tags": [
-        "bash",
-        "nginx",
-        "certbot",
-        "docker",
-        "Node.js",
-        "ssh2"
-      ],
-      "appUrl": "https://9router.infix1.io.vn/dashboard",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json.",
-        "App: https://9router.infix1.io.vn/dashboard"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/apply-openresty.mjs",
-        "scripts/deploy-remote.mjs",
-        "scripts/deploy-subdomain.mjs",
-        "scripts/deploy-to-cloudfly.ps1",
-        "scripts/finish-setup.mjs",
-        "scripts/fix-local-dns.ps1"
-      ]
-    },
-    {
-      "id": "github-tool-manager",
-      "code": "P0004",
-      "name": "GitHub Tool Manager",
-      "repo": "tuanhoangfx/GitHub-Tool-Manager",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.1.0",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Public card catalog and GitHub repository management console for published tools.",
-      "localPath": "E:\\Dev\\Tool\\GitHub-Tool-Manager",
-      "tags": [
-        "React",
-        "TypeScript",
-        "Vite",
-        "GitHub public raw API"
-      ],
-      "usage": [
-        "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/dev-with-launcher.cjs",
-        "scripts/local-tool-launcher.cjs",
-        "scripts/publish-github-repo.cjs",
-        "scripts/push-and-deploy.ps1",
-        "scripts/scan-local-workspace.cjs",
-        "scripts/sync-rules-preview.cjs"
-      ]
-    },
     {
       "id": "gpm-automation-console",
       "code": "P0001",
@@ -100,13 +14,15 @@
       "audience": "Tool maintainers",
       "status": "Ready",
       "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
-      "localPath": "E:\\Dev\\Tool\\GPM-Automation-Console",
+      "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
       "tags": [
         "Electron",
         "React",
         "Vite",
         "Playwright CDP"
       ],
+      "localUrl": "http://127.0.0.1:5173",
+      "deployTarget": "github-release",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build"
@@ -123,10 +39,10 @@
       "scriptFiles": [
         "scripts/audit-cleanup.mjs",
         "scripts/auto-commit-if-dirty.mjs",
+        "scripts/build-views.mjs",
         "scripts/bump-patch-version.mjs",
         "scripts/check-version-sync.mjs",
-        "scripts/install-git-hooks.mjs",
-        "scripts/release-stamp-if-code-change.mjs"
+        "scripts/extract-workflow-defaults.mjs"
       ]
     },
     {
@@ -141,13 +57,15 @@
       "audience": "Tool maintainers",
       "status": "Ready",
       "summary": "Local desktop console for running multi-channel YouTube livestream jobs from local video files or Google Drive links.",
-      "localPath": "E:\\Dev\\Tool\\YT-Multistream-Console",
+      "localPath": "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
       "tags": [
         "Electron",
         "React",
         "Vite",
         "FFmpeg"
       ],
+      "localUrl": "http://127.0.0.1:5174",
+      "deployTarget": "github-release",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build"
@@ -171,6 +89,92 @@
       ]
     },
     {
+      "id": "gpm-automation-console",
+      "code": "P0003",
+      "name": "GPM Automation Console",
+      "repo": "tuanhoangfx/GPM-Automation-Console",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.1.0",
+      "category": "Desktop",
+      "audience": "Tool maintainers",
+      "status": "Ready",
+      "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
+      "localPath": "E:\\Dev\\Tool\\P0003-cloak-automation-console",
+      "tags": [
+        "Electron",
+        "React",
+        "Vite",
+        "Playwright CDP"
+      ],
+      "localUrl": "http://127.0.0.1:5174",
+      "deployTarget": "github-release",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/audit-cleanup.mjs",
+        "scripts/auto-commit-if-dirty.mjs",
+        "scripts/bump-patch-version.mjs",
+        "scripts/check-version-sync.mjs",
+        "scripts/install-git-hooks.mjs",
+        "scripts/release-stamp-if-code-change.mjs"
+      ]
+    },
+    {
+      "id": "github-tool-manager",
+      "code": "P0004",
+      "name": "GitHub Tool Manager",
+      "repo": "tuanhoangfx/GitHub-Tool-Manager",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.1.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Ready",
+      "summary": "Public card catalog and GitHub repository management console for published tools.",
+      "localPath": "E:\\Dev\\Tool\\P0004-GitHub-Tool-Manager",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "GitHub public raw API"
+      ],
+      "localUrl": "http://127.0.0.1:5176",
+      "deployTarget": "github-pages",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/dev-with-launcher.cjs",
+        "scripts/local-tool-launcher.cjs",
+        "scripts/publish-github-repo.cjs",
+        "scripts/push-and-deploy.ps1",
+        "scripts/scan-local-workspace.cjs",
+        "scripts/sync-rules-preview.cjs"
+      ]
+    },
+    {
       "id": "zalo-ai-bot",
       "code": "P0005",
       "name": "Zalo AI Bot",
@@ -182,18 +186,20 @@
       "audience": "Tool maintainers",
       "status": "Ready",
       "summary": "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
-      "localPath": "E:\\Dev\\Tool\\zalo-ai-bot",
+      "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
       "tags": [
         "Node.js",
         "zca-js",
         "9Router",
         "Admin UI"
       ],
-      "appUrl": "https://infix1.io.vn/p0005",
+      "appUrl": "https://zaloai.infix1.io.vn/p0005",
+      "localUrl": "http://127.0.0.1:3920",
+      "deployTarget": "vps",
       "usage": [
         "Dev: pnpm run admin",
         "Run the configured build command from package.json.",
-        "App: https://infix1.io.vn/p0005"
+        "App: https://zaloai.infix1.io.vn/p0005"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -205,34 +211,39 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/health-check.ps1",
-        "scripts/install-autostart.ps1",
-        "scripts/patch-admin-botlist.mjs",
-        "scripts/patch-login-html.mjs",
-        "scripts/push-release.ps1",
-        "scripts/setup-cloudflare-tunnel.ps1"
+        "scripts/apply-storage-v2-remote.mjs",
+        "scripts/apply-suggestions-remote.mjs",
+        "scripts/backfill-sqlite-remote.mjs",
+        "scripts/change-admin-pass-remote.mjs",
+        "scripts/deploy-remote.mjs",
+        "scripts/disable-nginx-basic-auth.mjs"
       ]
     },
     {
-      "id": "9router-app",
-      "code": "LOCAL-006",
-      "name": "_9router-ref",
+      "id": "infi-database",
+      "code": "P0006",
+      "name": "Infi Database",
       "repo": "",
       "branch": "main",
       "remoteEnabled": false,
-      "localVersion": "0.4.50",
-      "category": "Local",
+      "localVersion": "2.0.0",
+      "category": "CRM",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "9Router web dashboard",
-      "localPath": "E:\\Dev\\Tool\\_9router-ref",
+      "status": "Ready",
+      "summary": "CRM quản trị tổng thể — đơn hàng, khách, thanh toán, license (Supabase).",
+      "localPath": "E:\\Dev\\Tool\\P0006-Infi-Database",
       "tags": [
-        "Local",
-        "Workspace"
+        "Node.js",
+        "Supabase",
+        "Admin UI"
       ],
+      "appUrl": "https://infi-database.vercel.app/p0006",
+      "localUrl": "http://127.0.0.1:3930",
+      "deployTarget": "vercel",
       "usage": [
         "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Run the configured build command from package.json.",
+        "App: https://infi-database.vercel.app/p0006"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -244,7 +255,58 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/translate-readme.js"
+        "scripts/apply-rpc.mjs",
+        "scripts/apply-schema-pg.mjs",
+        "scripts/apply-schema-via-api.mjs",
+        "scripts/browser-apply-schema.mjs",
+        "scripts/check-tables.mjs",
+        "scripts/clear-import-data.mjs"
+      ]
+    },
+    {
+      "id": "9router-infra",
+      "code": "P0007",
+      "name": "9Router Infra",
+      "repo": "tuanhoangfx/9router-infra",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "1.0.0",
+      "category": "Infrastructure",
+      "audience": "Tool maintainers",
+      "status": "Ready",
+      "summary": "VPS deploy, SSL, DNS, and per-tool API keys for shared 9Router on CloudFly.",
+      "localPath": "E:\\Dev\\Tool\\P0007-9router-infra",
+      "tags": [
+        "bash",
+        "nginx",
+        "certbot",
+        "docker",
+        "Node.js",
+        "ssh2"
+      ],
+      "appUrl": "https://9router.infix1.io.vn/dashboard",
+      "deployTarget": "vps",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json.",
+        "App: https://9router.infix1.io.vn/dashboard"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/apply-https-sync-zalo-to-vps.ps1",
+        "scripts/apply-openresty.mjs",
+        "scripts/check-vps-base-url.mjs",
+        "scripts/check-vps-health.mjs",
+        "scripts/claude-oauth-windows.ps1",
+        "scripts/complete-claude-oauth.mjs"
       ]
     }
   ]

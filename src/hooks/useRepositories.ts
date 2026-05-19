@@ -107,13 +107,6 @@ export function useRepositories() {
   }
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
-      void loadLocalRegistry();
-    }, 0);
-    return () => window.clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
     if (repositories.length === 0) return undefined;
     const timer = window.setTimeout(() => {
       void refreshAll();

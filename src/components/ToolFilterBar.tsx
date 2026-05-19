@@ -11,6 +11,7 @@ const CHIP_META: Record<string, { label: string; icon: string }> = {
 };
 
 export type FilterBarVariant = "tools" | "rules";
+export type ViewMode = "grid" | "table";
 
 type ToolFilterBarProps = {
   variant?: FilterBarVariant;
@@ -23,6 +24,8 @@ type ToolFilterBarProps = {
   pickerTools?: ResolvedTool[];
   selectedId?: string;
   onSelectTool?: (id: string) => void;
+  viewMode?: ViewMode;
+  onViewModeChange?: (mode: ViewMode) => void;
 };
 
 export function ToolFilterBar({
@@ -36,6 +39,8 @@ export function ToolFilterBar({
   pickerTools,
   selectedId,
   onSelectTool,
+  viewMode,
+  onViewModeChange,
 }: ToolFilterBarProps) {
   const isRules = variant === "rules";
   const chips = ["All", ...STATUS_ORDER];
@@ -79,6 +84,28 @@ export function ToolFilterBar({
           <MaterialIcon name="filter_alt" size={14} />
           {shown}/{total}
         </span>
+        {viewMode && onViewModeChange ? (
+          <div className="view-toggle" role="group" aria-label="View mode">
+            <button
+              type="button"
+              className={viewMode === "grid" ? "toggle-btn active" : "toggle-btn"}
+              onClick={() => onViewModeChange("grid")}
+              title="Card view"
+            >
+              <MaterialIcon name="grid_view" size={14} />
+              <span>Cards</span>
+            </button>
+            <button
+              type="button"
+              className={viewMode === "table" ? "toggle-btn active" : "toggle-btn"}
+              onClick={() => onViewModeChange("table")}
+              title="Table view"
+            >
+              <MaterialIcon name="table_rows" size={14} />
+              <span>Table</span>
+            </button>
+          </div>
+        ) : null}
       </div>
       {pickerTools && onSelectTool ? (
         <div className="tool-pills" role="listbox" aria-label="Tools">

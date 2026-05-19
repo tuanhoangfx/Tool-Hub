@@ -10,9 +10,20 @@ import type {
 
 const REQUEST_TIMEOUT_MS = 9000;
 
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN as string | undefined;
+
+export function githubAuthHeaders(): Record<string, string> {
+  return GITHUB_TOKEN ? { Authorization: `Bearer ${GITHUB_TOKEN}` } : {};
+}
+
 async function fetchWithTimeout(url: string, init?: RequestInit) {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  // Authorization is only safe for api.github.com. raw.githubusercontent.com
+  // rejects the CORS preflight when Authorization is attached.
+  const isApiCall = url.startsWith("https://api.github.com");
+  const authHeaders = isApiCall ? githubAuthHeaders() : {};
 
   try {
     return await fetch(url, {
@@ -20,6 +31,7 @@ async function fetchWithTimeout(url: string, init?: RequestInit) {
       signal: controller.signal,
       headers: {
         Accept: "application/vnd.github+json, text/plain, */*",
+        ...authHeaders,
         ...(init?.headers ?? {}),
       },
     });

@@ -16,6 +16,9 @@ export type ToolRepository = {
   tags: string[];
   usage: string[];
   appUrl?: string;
+  localUrl?: string;
+  icon?: string;
+  deployTarget?: "github-pages" | "vercel" | "vps" | "github-release" | "local";
   downloadHint: string;
   manifestPath: string;
   trackedFiles: string[];
@@ -28,6 +31,9 @@ export type ToolManifest = {
   name?: string;
   status?: string;
   summary?: string;
+  type?: string;
+  owner?: string;
+  aliases?: string[];
   stack?: string[];
   commands?: Record<string, string>;
   docs?: Record<string, string>;
@@ -35,10 +41,22 @@ export type ToolManifest = {
     repo?: string;
     branch?: string;
     manifestPath?: string;
+    url?: string;
   };
   release?: {
     version?: string;
     readiness?: string[];
+    latestPublished?: {
+      tag?: string;
+      url?: string;
+      publishedAt?: string;
+      asset?: {
+        name?: string;
+        downloadUrl?: string;
+        size?: number;
+        sha256?: string;
+      };
+    };
   };
   health?: {
     status?: string;

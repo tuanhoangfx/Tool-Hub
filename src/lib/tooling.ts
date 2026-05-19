@@ -18,6 +18,30 @@ export function normalizeVersion(value?: string) {
   return value?.replace(/^v/i, "") ?? "";
 }
 
+export type Freshness = "fresh" | "week" | "month" | "stale" | "unknown";
+
+export function freshnessLevel(updatedAt?: string): Freshness {
+  if (!updatedAt) return "unknown";
+  const t = new Date(updatedAt).getTime();
+  if (Number.isNaN(t)) return "unknown";
+  const days = (Date.now() - t) / (1000 * 60 * 60 * 24);
+  if (days < 1) return "fresh";
+  if (days < 7) return "week";
+  if (days < 30) return "month";
+  return "stale";
+}
+
+export function freshnessLabel(level: Freshness, updatedAt?: string): string {
+  if (level === "unknown" || !updatedAt) return "—";
+  const t = new Date(updatedAt).getTime();
+  const days = Math.floor((Date.now() - t) / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((Date.now() - t) / (1000 * 60 * 60));
+  if (level === "fresh") return hours <= 1 ? "just now" : `${hours}h`;
+  if (level === "week") return `${days}d`;
+  if (level === "month") return `${days}d`;
+  return `${days}d`;
+}
+
 function firstReleaseAsset(remote?: ToolRemoteState) {
   return remote?.latestRelease?.assets?.[0]?.browser_download_url;
 }
@@ -114,31 +138,36 @@ export function countOkFiles(files?: RemoteFileState[]) {
   return `${files.filter((file) => file.ok).length}/${files.length}`;
 }
 
+function mergeKey(repo: ToolRepository) {
+  const slug = repo.repo?.trim().toLowerCase();
+  return slug ? slug : `local:${repo.id}`;
+}
+
 export function mergeRepos(defaultRepos: ToolRepository[], localRepos: ToolRepository[], customRepos: ToolRepository[]) {
-  const byRepo = new Map<string, ToolRepository>();
+  const byKey = new Map<string, ToolRepository>();
 
   for (const repo of defaultRepos) {
-    byRepo.set(repo.repo.toLowerCase(), repo);
+    byKey.set(mergeKey(repo), repo);
   }
 
   for (const repo of localRepos) {
-    const key = repo.repo.toLowerCase();
-    const current = byRepo.get(key);
-    byRepo.set(
+    const key = mergeKey(repo);
+    const current = byKey.get(key);
+    byKey.set(
       key,
       current
         ? {
             ...current,
-            localPath: repo.localPath,
-            localVersion: repo.localVersion,
+            localPath: repo.localPath || current.localPath,
+            localVersion: repo.localVersion || current.localVersion,
           }
         : repo,
     );
   }
 
   for (const repo of customRepos) {
-    byRepo.set(repo.repo.toLowerCase(), repo);
+    byKey.set(mergeKey(repo), repo);
   }
 
-  return Array.from(byRepo.values());
+  return Array.from(byKey.values());
 }

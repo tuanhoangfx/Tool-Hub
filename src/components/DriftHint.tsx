@@ -7,14 +7,15 @@ type DriftHintProps = {
   compact?: boolean;
 };
 
-export function DriftHint({ alerts, compact = false }: DriftHintProps) {
+// Render only when there ARE drift alerts. Clean cards otherwise.
+export function DriftHint({ alerts }: DriftHintProps) {
+  if (alerts.length === 0) return null;
   const tip = buildDriftTooltip(alerts);
-  const hasDrift = alerts.length > 0;
 
   const chip = (
-    <span className={`mini-stat ${hasDrift ? "mini-stat-warn" : "mini-stat-ok"}`}>
-      <MaterialIcon name={hasDrift ? "warning" : "verified"} size={15} />
-      {hasDrift ? `${alerts.length} drift` : compact ? "OK" : "Synced"}
+    <span className="mini-stat mini-stat-warn">
+      <MaterialIcon name="warning" size={15} />
+      {alerts.length} drift
     </span>
   );
 
