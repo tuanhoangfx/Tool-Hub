@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-19T11:41:53.325Z",
+  "generatedAt": "2026-05-19T18:24:58.225Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -89,49 +89,6 @@
       ]
     },
     {
-      "id": "gpm-automation-console",
-      "code": "P0003",
-      "name": "GPM Automation Console",
-      "repo": "tuanhoangfx/GPM-Automation-Console",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.1.0",
-      "category": "Desktop",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
-      "localPath": "E:\\Dev\\Tool\\P0003-cloak-automation-console",
-      "tags": [
-        "Electron",
-        "React",
-        "Vite",
-        "Playwright CDP"
-      ],
-      "localUrl": "http://127.0.0.1:5174",
-      "deployTarget": "github-release",
-      "usage": [
-        "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/audit-cleanup.mjs",
-        "scripts/auto-commit-if-dirty.mjs",
-        "scripts/bump-patch-version.mjs",
-        "scripts/check-version-sync.mjs",
-        "scripts/install-git-hooks.mjs",
-        "scripts/release-stamp-if-code-change.mjs"
-      ]
-    },
-    {
       "id": "github-tool-manager",
       "code": "P0004",
       "name": "GitHub Tool Manager",
@@ -181,7 +138,7 @@
       "repo": "tuanhoangfx/zalo-ai-bot",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.1.0",
+      "localVersion": "1.2.0",
       "category": "Bot",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -213,54 +170,10 @@
       "scriptFiles": [
         "scripts/apply-storage-v2-remote.mjs",
         "scripts/apply-suggestions-remote.mjs",
+        "scripts/assign-test-label-remote.mjs",
         "scripts/backfill-sqlite-remote.mjs",
         "scripts/change-admin-pass-remote.mjs",
-        "scripts/deploy-remote.mjs",
-        "scripts/disable-nginx-basic-auth.mjs"
-      ]
-    },
-    {
-      "id": "infi-database",
-      "code": "P0006",
-      "name": "Infi Database",
-      "repo": "",
-      "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "2.0.0",
-      "category": "CRM",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "CRM quản trị tổng thể — đơn hàng, khách, thanh toán, license (Supabase).",
-      "localPath": "E:\\Dev\\Tool\\P0006-Infi-Database",
-      "tags": [
-        "Node.js",
-        "Supabase",
-        "Admin UI"
-      ],
-      "appUrl": "https://infi-database.vercel.app/p0006",
-      "localUrl": "http://127.0.0.1:3930",
-      "deployTarget": "vercel",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json.",
-        "App: https://infi-database.vercel.app/p0006"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/apply-rpc.mjs",
-        "scripts/apply-schema-pg.mjs",
-        "scripts/apply-schema-via-api.mjs",
-        "scripts/browser-apply-schema.mjs",
-        "scripts/check-tables.mjs",
-        "scripts/clear-import-data.mjs"
+        "scripts/clear-thread-label-remote.mjs"
       ]
     },
     {
