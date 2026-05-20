@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "node scripts/dev-with-launcher.cjs",
     "dev:vite": "vite --host 127.0.0.1 --port 5176",
-    "build": "tsc --noEmit && vitest run && vite build",
+    "build": "tsc --noEmit && vitest run --passWithNoTests && vite build",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
