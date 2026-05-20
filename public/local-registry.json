@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T12:54:20.895Z",
+  "generatedAt": "2026-05-20T12:55:34.863Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -127,10 +127,10 @@
       "scriptFiles": [
         "scripts/dev-with-launcher.cjs",
         "scripts/find-dead-css.cjs",
+        "scripts/git-push.ps1",
         "scripts/local-tool-launcher.cjs",
         "scripts/prune-dead-css.cjs",
-        "scripts/publish-github-repo.cjs",
-        "scripts/push-and-deploy.ps1"
+        "scripts/publish-github-repo.cjs"
       ]
     },
     {
@@ -300,7 +300,8 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/export-supabase-data.ps1"
+        "scripts/export-supabase-data.ps1",
+        "scripts/git-push.ps1"
       ]
     },
     {
@@ -338,8 +339,7 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/sync-changelog.mjs",
-        "scripts/sync-metadata-version.mjs"
+        "scripts/git-push.ps1"
       ]
     }
   ]

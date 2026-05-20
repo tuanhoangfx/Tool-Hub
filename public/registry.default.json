@@ -204,9 +204,9 @@
     "id": "sales-console",
     "code": "P0008",
     "name": "Seller Center",
-    "repo": "",
+    "repo": "tuanhoangfx/Sales-Console",
     "branch": "main",
-    "remoteEnabled": false,
+    "remoteEnabled": true,
     "localVersion": "0.3.1",
     "category": "Web",
     "audience": "CzP Seller operators",
@@ -221,7 +221,7 @@
       "@tanstack/react-table"
     ],
     "localUrl": "http://localhost:3000",
-    "deployTarget": "local",
+    "deployTarget": "vercel",
     "usage": [
       "Schema: schema/01_schema.sql là source of truth — apply qua Supabase SQL Editor",
       "Migrate: cd migration && python migrate.py",
