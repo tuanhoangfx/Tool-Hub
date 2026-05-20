@@ -9,13 +9,17 @@
   "scripts": {
     "dev": "node scripts/dev-with-launcher.cjs",
     "dev:vite": "vite --host 127.0.0.1 --port 5176",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vitest run && vite build",
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "scan:local": "node scripts/scan-local-workspace.cjs",
     "icons:sync": "node scripts/sync-thesvg-icons.cjs",
     "rules:sync": "node scripts/sync-rules-preview.cjs",
     "launcher": "node scripts/local-tool-launcher.cjs",
+    "publish:github:init": "node scripts/publish-github-repo.cjs",
     "publish:github": "node scripts/publish-github-repo.cjs",
+    "push": "powershell -ExecutionPolicy Bypass -File scripts/git-push.ps1",
     "preview": "vite preview --host 127.0.0.1 --port 4176"
   },
   "dependencies": {
@@ -23,17 +27,21 @@
     "lucide-react": "^0.561.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "vite": "^7.2.7"
+    "vite": "^7.2.7",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^25.9.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@vitest/ui": "^4.1.6",
     "eslint": "^10.2.1",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^16.4.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.59.1"
+    "typescript-eslint": "^8.59.1",
+    "vitest": "^4.1.6"
   }
 }

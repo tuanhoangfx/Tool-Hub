@@ -3,6 +3,12 @@ const path = require("node:path");
 
 const workspaceRoot = process.env.TOOL_WORKSPACE || path.resolve(__dirname, "..", "..");
 const outputPath = path.resolve(__dirname, "..", "public", "local-registry.json");
+const defaultRegistryPath = path.resolve(__dirname, "..", "public", "registry.default.json");
+
+// Fields where scanner output should override curated catalog (filesystem facts
+// that drift over time). Everything else (summary, tags, audience, usage…) stays
+// curated so manual edits in registry.default.json are not blown away.
+const SCANNER_AUTHORITATIVE = ["localPath", "localVersion"];
 
 function readJson(filePath) {
   try {
@@ -65,8 +71,8 @@ function detectLocalPort(dir, packageJson) {
 // Heuristic deploy target detection.
 function detectDeployTarget(dir, manifest, packageJson) {
   if (manifest?.deployTarget) return manifest.deployTarget;
-  if (fs.existsSync(path.join(dir, ".github", "workflows", "deploy-pages.yml"))) return "github-pages";
   if (fs.existsSync(path.join(dir, "vercel.json"))) return "vercel";
+  if (fs.existsSync(path.join(dir, ".github", "workflows", "deploy-pages.yml"))) return "github-pages";
   const deps = { ...(packageJson?.dependencies || {}), ...(packageJson?.devDependencies || {}) };
   if (deps["electron"]) return "github-release";
   if (deps["next"]) return "vercel";
@@ -145,3 +151,47 @@ const registry = {
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(registry, null, 2)}\n`);
 console.log(`Wrote ${repositories.length} repositories to ${outputPath}`);
+
+// --- Sync registry.default.json (the curated catalog read by the SPA) ----
+//
+// Strategy: merge scanner output into existing curated registry.
+//   - Existing entry: keep curated fields, overwrite only filesystem facts.
+//   - Brand new entry on disk: append scanner output as a starter row that
+//     the maintainer can refine by editing the JSON.
+//   - Curated entry without matching folder on disk: keep (could be archived
+//     or moved — manual decision, never auto-delete).
+const existingDefault = readJson(defaultRegistryPath) || [];
+const curatedById = new Map(existingDefault.map((entry) => [entry.id, entry]));
+
+const merged = [];
+const seenIds = new Set();
+let addedNew = 0;
+let updatedExisting = 0;
+
+for (const scanned of repositories) {
+  const curated = curatedById.get(scanned.id);
+  if (curated) {
+    const next = { ...curated };
+    for (const key of SCANNER_AUTHORITATIVE) {
+      if (scanned[key] !== undefined && scanned[key] !== "" && scanned[key] !== next[key]) {
+        next[key] = scanned[key];
+        updatedExisting++;
+      }
+    }
+    merged.push(next);
+  } else {
+    merged.push(scanned);
+    addedNew++;
+  }
+  seenIds.add(scanned.id);
+}
+
+// Keep curated entries that the scanner did not see this run.
+for (const entry of existingDefault) {
+  if (!seenIds.has(entry.id)) merged.push(entry);
+}
+
+fs.writeFileSync(defaultRegistryPath, `${JSON.stringify(merged, null, 2)}\n`);
+console.log(
+  `Synced ${defaultRegistryPath} (${merged.length} entries, +${addedNew} new, ~${updatedExisting} path/version updates)`,
+);

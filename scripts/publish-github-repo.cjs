@@ -9,6 +9,7 @@ const repo = process.env.GITHUB_REPO || "GitHub-Tool-Manager";
 const description =
   process.env.GITHUB_DESCRIPTION ||
   "Public catalog and GitHub operations console for published workspace tools.";
+const pushOnce = process.argv.includes("--push-once");
 
 function run(command, args, options = {}) {
   const output = execFileSync(command, args, {
@@ -66,38 +67,45 @@ async function ensureRepo() {
 
 async function main() {
   if (!token) {
-    throw new Error("Set GITHUB_TOKEN before running publish:github.");
+    throw new Error("Set GITHUB_TOKEN before running publish:github:init.");
   }
 
   await ensureRepo();
+
+  const cleanRemoteUrl = `https://github.com/${owner}/${repo}.git`;
 
   if (!fs.existsSync(path.join(cwd, ".git"))) {
     run("git", ["init"], { stdio: "inherit" });
     run("git", ["checkout", "-b", "main"], { stdio: "inherit" });
   }
 
-  const cleanRemoteUrl = `https://github.com/${owner}/${repo}.git`;
-  const pushRemoteUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`;
   const remotes = run("git", ["remote"]);
+  if (!remotes.split(/\s+/).includes("origin")) {
+    run("git", ["remote", "add", "origin", cleanRemoteUrl], { stdio: "inherit" });
+  } else {
+    run("git", ["remote", "set-url", "origin", cleanRemoteUrl], { stdio: "inherit" });
+  }
 
+  console.log(`Repository ready: https://github.com/${owner}/${repo}`);
+  console.log("Day-to-day push: pnpm run push  (uses gh auth, no PAT in remote URL).");
+  console.log("Production web: connect repo on Vercel — see docs/DEPLOY-VERCEL.md");
+
+  if (!pushOnce) {
+    return;
+  }
+
+  const pushRemoteUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`;
   try {
-    if (!remotes.split(/\s+/).includes("origin")) {
-      run("git", ["remote", "add", "origin", pushRemoteUrl], { stdio: "inherit" });
-    } else {
-      run("git", ["remote", "set-url", "origin", pushRemoteUrl], { stdio: "inherit" });
-    }
-
+    run("git", ["remote", "set-url", "origin", pushRemoteUrl], { stdio: "inherit" });
     run("git", ["add", "-A"], { stdio: "inherit" });
     const status = run("git", ["status", "--porcelain"]);
     if (status) {
-      run("git", ["commit", "-m", "Update GitHub Tool Manager"], { stdio: "inherit" });
+      run("git", ["commit", "-m", "Initial publish GitHub Tool Manager"], { stdio: "inherit" });
     }
-
     run("git", ["push", "-u", "origin", "HEAD:main"], { stdio: "inherit" });
   } finally {
     run("git", ["remote", "set-url", "origin", cleanRemoteUrl], { stdio: "inherit" });
   }
-  console.log(`Published https://github.com/${owner}/${repo}`);
 }
 
 main().catch((error) => {

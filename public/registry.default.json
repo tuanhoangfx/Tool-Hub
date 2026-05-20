@@ -1,0 +1,322 @@
+[
+  {
+    "id": "gpm-automation-console",
+    "code": "P0001",
+    "name": "GPM Automation Console",
+    "repo": "tuanhoangfx/GPM-Automation-Console",
+    "branch": "main",
+    "category": "Desktop",
+    "audience": "GPM operators",
+    "status": "Ready",
+    "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
+    "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
+    "tags": [
+      "Electron",
+      "React",
+      "Vite",
+      "Playwright CDP"
+    ],
+    "localUrl": "http://127.0.0.1:5173",
+    "deployTarget": "github-release",
+    "usage": [
+      "Local: corepack pnpm dev (Electron + Vite dev at http://127.0.0.1:5173)",
+      "Build: corepack pnpm dist (NSIS installer)",
+      "Requires GPM Login local API at http://127.0.0.1:19995"
+    ],
+    "downloadHint": "Use the latest GitHub release installer (.exe).",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/sync-changelog.mjs",
+      "scripts/sync-metadata-version.mjs",
+      "scripts/bump-patch-version.mjs"
+    ],
+    "localVersion": "0.2.24"
+  },
+  {
+    "id": "yt-multistream-console",
+    "code": "P0002",
+    "name": "YT Multistream Console",
+    "repo": "tuanhoangfx/YT-Multistream-Console",
+    "branch": "main",
+    "category": "Desktop",
+    "audience": "Livestream operators",
+    "status": "Ready",
+    "summary": "Desktop console for running multi-channel YouTube livestream jobs from local files or Google Drive source links.",
+    "localPath": "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
+    "tags": [
+      "Electron",
+      "React",
+      "Vite",
+      "FFmpeg"
+    ],
+    "localUrl": "http://127.0.0.1:5174",
+    "deployTarget": "github-release",
+    "usage": [
+      "Local: corepack pnpm dev (Electron + Vite dev at http://127.0.0.1:5174)",
+      "Build: corepack pnpm dist",
+      "Stream keys must stay masked in logs"
+    ],
+    "downloadHint": "Use release setup asset or clone the public repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/sync-changelog.mjs",
+      "scripts/sync-metadata-version.mjs",
+      "scripts/smoke-test.cjs"
+    ],
+    "localVersion": "0.1.27"
+  },
+  {
+    "id": "github-tool-manager",
+    "code": "P0004",
+    "name": "GitHub Tool Manager",
+    "repo": "tuanhoangfx/GitHub-Tool-Manager",
+    "branch": "main",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Ready",
+    "summary": "Library catalog for the workspace: accurate GitHub info, usage links, local paths, and versions of every running project.",
+    "localPath": "E:\\Dev\\Tool\\P0004-GitHub-Tool-Manager",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "GitHub Pages"
+    ],
+    "appUrl": "https://infix1.io.vn",
+    "localUrl": "http://127.0.0.1:5176",
+    "deployTarget": "vercel",
+    "usage": [
+      "Local: corepack pnpm dev (http://127.0.0.1:5176)",
+      "Build: corepack pnpm build",
+      "Push: pnpm run push — production deploy on Vercel (see docs/DEPLOY-VERCEL.md)"
+    ],
+    "downloadHint": "Use https://infix1.io.vn or clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/scan-local-workspace.cjs",
+      "scripts/publish-github-repo.cjs"
+    ],
+    "localVersion": "0.1.0"
+  },
+  {
+    "id": "zalo-ai-bot",
+    "code": "P0005",
+    "name": "Zalo AI Bot",
+    "repo": "tuanhoangfx/zalo-ai-bot",
+    "branch": "main",
+    "category": "Bot",
+    "audience": "Zalo group operators",
+    "status": "Ready",
+    "summary": "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
+    "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
+    "tags": [
+      "Node.js",
+      "zca-js",
+      "9Router",
+      "Admin UI"
+    ],
+    "appUrl": "https://zaloai.infix1.io.vn/p0005",
+    "localUrl": "http://127.0.0.1:3920",
+    "deployTarget": "vps",
+    "usage": [
+      "Local: pnpm run admin (admin dashboard at http://127.0.0.1:3920)",
+      "Login: pnpm run login (Zalo QR)",
+      "Bot: pnpm run bot",
+      "Production: https://zaloai.infix1.io.vn/p0005"
+    ],
+    "downloadHint": "Clone the repo — runtime data stays local, not in the repo.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/health-check.ps1",
+      "scripts/install-autostart.ps1",
+      "scripts/patch-admin-botlist.mjs"
+    ],
+    "localVersion": "1.2.0"
+  },
+  {
+    "id": "9router-infra",
+    "code": "P0007",
+    "name": "9Router Infra",
+    "repo": "tuanhoangfx/9router-infra",
+    "branch": "main",
+    "category": "Infrastructure",
+    "audience": "Workspace admins",
+    "status": "Ready",
+    "summary": "VPS deploy, SSL, DNS, and per-tool API keys for shared 9Router on CloudFly.",
+    "localPath": "E:\\Dev\\Tool\\P0007-9router-infra",
+    "tags": [
+      "bash",
+      "nginx",
+      "certbot",
+      "docker",
+      "Node.js"
+    ],
+    "appUrl": "https://9router.infix1.io.vn/dashboard",
+    "deployTarget": "vps",
+    "usage": [
+      "Deploy: deploy.bat",
+      "SSL: deploy-ssl.bat",
+      "Dashboard: https://9router.infix1.io.vn/dashboard"
+    ],
+    "downloadHint": "Clone the repo — secrets and config stay local.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md"
+    ],
+    "scriptFiles": [
+      "scripts/deploy-remote.mjs",
+      "scripts/deploy-subdomain.mjs"
+    ],
+    "localVersion": "1.0.0"
+  },
+  {
+    "id": "sales-console",
+    "code": "P0008",
+    "name": "Seller Center",
+    "repo": "",
+    "branch": "main",
+    "remoteEnabled": false,
+    "localVersion": "0.3.1",
+    "category": "Web",
+    "audience": "CzP Seller operators",
+    "status": "Active",
+    "summary": "Next.js 14 + Supabase CRM thay thế Google Sheet quản trị bán hàng. Buyer, Order, Product, Category, Country, Platform với card+table view + Server Actions.",
+    "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
+    "tags": [
+      "Next.js 14",
+      "Supabase",
+      "Tailwind",
+      "Recharts",
+      "@tanstack/react-table"
+    ],
+    "localUrl": "http://localhost:3000",
+    "deployTarget": "local",
+    "usage": [
+      "Schema: schema/01_schema.sql là source of truth — apply qua Supabase SQL Editor",
+      "Migrate: cd migration && python migrate.py",
+      "App: cd app && pnpm dev (http://localhost:3000)",
+      "Typecheck: cd app && pnpm typecheck",
+      "System tab in-app: /system (Overview + Schema explorer)"
+    ],
+    "downloadHint": "Local only — schema/01_schema.sql, app/, migration/.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "README.md",
+      "CLAUDE.md",
+      "docs/SYSTEM.md",
+      "app/package.json"
+    ],
+    "scriptFiles": [
+      "scripts/introspect-schema.mjs"
+    ]
+  },
+  {
+    "id": "mie-hair-performance",
+    "code": "P0009",
+    "name": "Mie Hair Performance",
+    "repo": "tuanhoangfx/P0009-Mie-Hair-Performance",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "0.0.0",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Ready",
+    "summary": "Stylist performance calendar — chấm công, ghi chú ca, báo cáo doanh thu (React + Vite + Supabase).",
+    "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
+    "tags": [
+      "React",
+      "Vite",
+      "TypeScript",
+      "Supabase"
+    ],
+    "localUrl": "http://127.0.0.1:3000",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: npm run dev",
+      "Build: npm run build"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/export-supabase-data.ps1"
+    ]
+  },
+  {
+    "id": "cursor-telegram",
+    "code": "P0010",
+    "name": "Cursor Telegram",
+    "repo": "tuanhoangfx/P0010-Cursor-Telegram",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "1.0.0",
+    "category": "Bot",
+    "audience": "Tool maintainers",
+    "status": "Ready",
+    "summary": "Bridge Cursor local Agent ↔ Telegram forum topics; admin UI, 2-way sync, stop command.",
+    "localPath": "E:\\Dev\\Tool\\P0010-Cursor-Telegram",
+    "tags": [
+      "Node.js",
+      "PowerShell",
+      "Telegram Bot API",
+      "Cursor Hooks"
+    ],
+    "localUrl": "http://127.0.0.1:3921",
+    "deployTarget": "local",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json."
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/sync-changelog.mjs",
+      "scripts/sync-metadata-version.mjs"
+    ]
+  }
+]

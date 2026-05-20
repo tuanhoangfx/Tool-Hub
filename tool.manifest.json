@@ -14,8 +14,10 @@
     "build": "corepack pnpm build",
     "preview": "corepack pnpm preview",
     "scan": "corepack pnpm scan:local",
-    "publish": "corepack pnpm publish:github"
+    "push": "corepack pnpm push",
+    "publish": "corepack pnpm publish:github:init"
   },
+  "deployTarget": "vercel",
   "docs": {
     "readme": "README.md",
     "changelog": "CHANGELOG.md"
@@ -29,9 +31,18 @@
     "version": "0.1.0",
     "readiness": ["build", "lint", "public-catalog", "repo-admin", "github-actions", "local-registry"]
   },
+  "urls": {
+    "app": "https://infix1.io.vn",
+    "local": "http://127.0.0.1:5176"
+  },
+  "vercel": {
+    "project": "github-tool-manager",
+    "productionBranch": "main",
+    "notes": "Import tuanhoangfx/GitHub-Tool-Manager on vercel.com; map infix1.io.vn in Domains."
+  },
   "health": {
     "status": "Ready",
-    "note": "Reads public GitHub metadata in-browser. Write operations should be handled by a future local agent or GitHub app token flow."
+    "note": "Reads public GitHub metadata in-browser. Production deploy via Vercel (not GitHub Pages)."
   },
   "nextActions": [
     "Add authenticated GitHub App workflow for issue/release creation.",

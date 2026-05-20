@@ -1,38 +1,35 @@
 # GitHub Tool Manager
 
-Two-tab console for public workspace tools:
-
-- **Tool Store:** card view for normal users with search, usage, version, repository, and download links.
-- **Repo Admin:** detail table for repository management, GitHub raw file status, version drift, and recommendations.
-- **GitHub Actions:** session-only token input for creating review issues and draft releases.
-- **Rules:** local rule/standard source map for workspace design and working rules.
-
-The app reads public GitHub files through unauthenticated browser requests:
-
-- `tool.manifest.json`
-- `package.json`
-- `README.md`
-- `CHANGELOG.md`
-- configured script files such as `scripts/sync-changelog.mjs`
+Public catalog for workspace tools (Tool Store, registry scan, version drift).
 
 ## Commands
 
 ```powershell
 corepack pnpm install
 corepack pnpm scan:local
-corepack pnpm dev
+corepack pnpm dev          # http://127.0.0.1:5176
 corepack pnpm build
+pnpm run push              # git push main (gh auth)
 ```
 
-Publish the manager repository without `gh`:
+## Deploy (Vercel)
+
+Production: **Vercel** — push `main` triggers build. Custom domain: `infix1.io.vn`.
+
+Setup: [docs/DEPLOY-VERCEL.md](docs/DEPLOY-VERCEL.md). Workspace overview: [../DEPLOY.md](../DEPLOY.md).
+
+## Bootstrap GitHub repo (one-time)
 
 ```powershell
-$env:GITHUB_TOKEN="your_fine_grained_token"
-corepack pnpm publish:github
+$env:GITHUB_TOKEN = "ghp_..."
+corepack pnpm publish:github:init
+pnpm run push
 ```
+
+Day-to-day push does **not** need `GITHUB_TOKEN`.
 
 ## Configuration
 
-Edit `src/data/repositories.ts` to add or remove public GitHub repositories.
-
-Run `corepack pnpm scan:local` to merge local tool manifests into `public/local-registry.json`. The scanner excludes this manager app until its GitHub repository is published.
+- `public/registry.default.json` — curated catalog
+- `corepack pnpm scan:local` — merge into `public/local-registry.json`
+- `vercel.json` — SPA rewrites for client routing
