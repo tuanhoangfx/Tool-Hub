@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T12:55:34.863Z",
+  "generatedAt": "2026-05-20T13:00:11.042Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -284,11 +284,13 @@
         "TypeScript",
         "Supabase"
       ],
+      "appUrl": "https://p0009-mie-hair-performance.vercel.app",
       "localUrl": "http://127.0.0.1:3000",
       "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://p0009-mie-hair-performance.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

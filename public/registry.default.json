@@ -261,11 +261,13 @@
       "TypeScript",
       "Supabase"
     ],
-    "localUrl": "http://127.0.0.1:3000",
+    "appUrl": "https://p0009-mie-hair-performance.vercel.app",
+    "localUrl": "http://127.0.0.1:5173",
     "deployTarget": "vercel",
     "usage": [
       "Dev: npm run dev",
-      "Build: npm run build"
+      "Build: npm run build",
+      "Production: https://p0009-mie-hair-performance.vercel.app"
     ],
     "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
     "manifestPath": "tool.manifest.json",
