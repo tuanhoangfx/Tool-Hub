@@ -33,8 +33,11 @@
   },
   "urls": {
     "app": "https://infix1.io.vn",
-    "local": "http://127.0.0.1:5176"
+    "appSetupAt": "2026-04-29T17:00:00.000Z",
+    "local": "http://127.0.0.1:5176",
+    "localSetupAt": "2026-04-29T17:00:00.000Z"
   },
+  "manifestUpdatedAt": "2026-05-21T07:00:00.000Z",
   "vercel": {
     "project": "github-tool-manager",
     "productionBranch": "main",

@@ -8,7 +8,22 @@ const defaultRegistryPath = path.resolve(__dirname, "..", "public", "registry.de
 // Fields where scanner output should override curated catalog (filesystem facts
 // that drift over time). Everything else (summary, tags, audience, usage…) stays
 // curated so manual edits in registry.default.json are not blown away.
-const SCANNER_AUTHORITATIVE = ["localPath", "localVersion"];
+/** Historical production URL setup (ISO UTC) — only applied when urls.app exists but appSetupAt is missing. */
+const APP_SETUP_AT_BACKFILL = {
+  "github-tool-manager": "2026-04-29T17:00:00.000Z",
+  "zalo-ai-bot": "2026-05-19T11:55:00.000Z",
+  "9router-infra": "2026-05-16T17:00:00.000Z",
+  "mie-hair-performance": "2026-05-19T17:00:00.000Z",
+};
+
+const SCANNER_AUTHORITATIVE = [
+  "localPath",
+  "localVersion",
+  "localUrl",
+  "appUrl",
+  "deployTarget",
+  "remoteEnabled",
+];
 
 function readJson(filePath) {
   try {
@@ -31,6 +46,25 @@ function readFile(filePath) {
     return fs.readFileSync(filePath, "utf8");
   } catch {
     return "";
+  }
+}
+
+function normalizeLocalHost(url) {
+  if (!url || typeof url !== "string") return url;
+  return url.replace(/^http:\/\/localhost\b/i, "http://127.0.0.1");
+}
+
+function stampUrlSetup(urls, key, url, now, previous, manifestUpdatedAt) {
+  const setupKey = `${key}SetupAt`;
+  if (!url) return;
+  const had = urls[key];
+  urls[key] = url;
+  if (!had) {
+    urls[setupKey] = manifestUpdatedAt || now;
+  } else if (previous && previous !== url) {
+    urls[setupKey] = now;
+  } else if (!urls[setupKey]) {
+    urls[setupKey] = manifestUpdatedAt || now;
   }
 }
 
@@ -80,10 +114,76 @@ function detectDeployTarget(dir, manifest, packageJson) {
   return "local";
 }
 
+function resolveLocalUrl(dir, manifest, packageJson) {
+  const port = detectLocalPort(dir, packageJson);
+  const detected = port ? `http://127.0.0.1:${port}` : undefined;
+  const explicit = manifest?.urls?.local || manifest?.urls?.admin;
+  // Filesystem port (vite/next/config) wins over stale manifest URLs.
+  if (detected) return detected;
+  if (explicit) return normalizeLocalHost(explicit);
+  return undefined;
+}
+
+/** Write urls + release.version back to each tool.manifest.json (source of truth on disk). */
+function syncToolManifest(dir, { localUrl, appUrl, localVersion }) {
+  const manifestPath = path.join(dir, "tool.manifest.json");
+  const manifest = readJson(manifestPath);
+  if (!manifest) return false;
+
+  const now = new Date().toISOString();
+  let changed = false;
+  if (!manifest.urls) manifest.urls = {};
+
+  const pkgVersion = localVersion && localVersion !== "local" ? localVersion : undefined;
+  if (pkgVersion) {
+    if (!manifest.release) manifest.release = {};
+    if (manifest.release.version !== pkgVersion) {
+      manifest.release.version = pkgVersion;
+      changed = true;
+    }
+  }
+
+  const normalizedLocal = localUrl ? normalizeLocalHost(localUrl) : undefined;
+  if (normalizedLocal) {
+    const prev = manifest.urls.local || manifest.urls.admin;
+    if (manifest.urls.admin && !manifest.urls.local) {
+      if (manifest.urls.admin !== normalizedLocal) {
+        stampUrlSetup(manifest.urls, "admin", normalizedLocal, now, prev, manifest.manifestUpdatedAt);
+        changed = true;
+      }
+    } else if (manifest.urls.local !== normalizedLocal) {
+      stampUrlSetup(manifest.urls, "local", normalizedLocal, now, prev, manifest.manifestUpdatedAt);
+      changed = true;
+    }
+  }
+
+  const normalizedApp = appUrl ? normalizeLocalHost(appUrl) : undefined;
+  if (normalizedApp && manifest.urls.app !== normalizedApp) {
+    const prevApp = manifest.urls.app;
+    stampUrlSetup(manifest.urls, "app", normalizedApp, now, prevApp, manifest.manifestUpdatedAt);
+    changed = true;
+  }
+
+  if (manifest.urls.app && !manifest.urls.appSetupAt) {
+    const backfill = APP_SETUP_AT_BACKFILL[manifest.id];
+    if (backfill) {
+      manifest.urls.appSetupAt = backfill;
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    manifest.manifestUpdatedAt = now;
+    fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  }
+
+  return changed;
+}
+
 function toToolRepository(dir, index) {
   const manifestPath = path.join(dir, "tool.manifest.json");
   const packagePath = path.join(dir, "package.json");
-  const manifest = readJson(manifestPath);
+  let manifest = readJson(manifestPath);
   const packageJson = readJson(packagePath);
 
   if (!manifest && !packageJson) {
@@ -96,9 +196,14 @@ function toToolRepository(dir, index) {
     manifest?.id ||
     packageJson?.name ||
     folderName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const port = detectLocalPort(dir, packageJson);
-  const localUrl = port ? `http://127.0.0.1:${port}` : undefined;
+  const localUrl = resolveLocalUrl(dir, manifest, packageJson);
+  const appUrl = manifest?.urls?.app;
+  const localVersion = packageJson?.version || manifest?.release?.version || "local";
   const deployTarget = detectDeployTarget(dir, manifest, packageJson);
+
+  if (syncToolManifest(dir, { localUrl, appUrl, localVersion })) {
+    manifest = readJson(manifestPath);
+  }
 
   return {
     id,
@@ -107,15 +212,15 @@ function toToolRepository(dir, index) {
     repo: repo || "",
     branch: manifest?.github?.branch || "main",
     remoteEnabled: Boolean(repo),
-    localVersion: packageJson?.version || manifest?.release?.version || "local",
+    localVersion,
     category: manifest?.type || "Local",
     audience: "Tool maintainers",
     status: manifest?.status || "Needs review",
     summary: manifest?.summary || packageJson?.description || "Local workspace tool discovered by scanner.",
     localPath: dir,
     tags: manifest?.stack || ["Local", "Workspace"],
-    appUrl: manifest?.urls?.app,
-    localUrl,
+    appUrl: manifest?.urls?.app || appUrl,
+    localUrl: manifest?.urls?.local || manifest?.urls?.admin || localUrl,
     deployTarget,
     usage: [
       manifest?.commands?.dev ? `Dev: ${manifest.commands.dev}` : "Run the configured dev command from package.json.",
@@ -135,10 +240,19 @@ function toToolRepository(dir, index) {
   };
 }
 
+let manifestSyncCount = 0;
+
 const repositories = fs
   .readdirSync(workspaceRoot, { withFileTypes: true })
   .filter((entry) => entry.isDirectory() && !entry.name.startsWith(".") && entry.name !== "node_modules")
-  .map((entry, index) => toToolRepository(path.join(workspaceRoot, entry.name), index))
+  .map((entry, index) => {
+    const dir = path.join(workspaceRoot, entry.name);
+    const before = readJson(path.join(dir, "tool.manifest.json"));
+    const repo = toToolRepository(dir, index);
+    const after = readJson(path.join(dir, "tool.manifest.json"));
+    if (before && after && JSON.stringify(before) !== JSON.stringify(after)) manifestSyncCount++;
+    return repo;
+  })
   .filter(Boolean)
   .filter((repo) => repo.repo || repo.remoteEnabled === false);
 
@@ -151,6 +265,9 @@ const registry = {
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(registry, null, 2)}\n`);
 console.log(`Wrote ${repositories.length} repositories to ${outputPath}`);
+if (manifestSyncCount > 0) {
+  console.log(`Updated ${manifestSyncCount} tool.manifest.json file(s) under ${workspaceRoot}`);
+}
 
 // --- Sync registry.default.json (the curated catalog read by the SPA) ----
 //

@@ -20,26 +20,54 @@ export function normalizeVersion(value?: string) {
 
 export type Freshness = "fresh" | "week" | "month" | "stale" | "unknown";
 
+function timeDelta(updatedAt: string) {
+  const t = new Date(updatedAt).getTime();
+  if (Number.isNaN(t)) return null;
+  const ms = Date.now() - t;
+  return {
+    hours: Math.floor(ms / (1000 * 60 * 60)),
+    days: Math.floor(ms / (1000 * 60 * 60 * 24)),
+  };
+}
+
 export function freshnessLevel(updatedAt?: string): Freshness {
   if (!updatedAt) return "unknown";
-  const t = new Date(updatedAt).getTime();
-  if (Number.isNaN(t)) return "unknown";
-  const days = (Date.now() - t) / (1000 * 60 * 60 * 24);
-  if (days < 1) return "fresh";
-  if (days < 7) return "week";
-  if (days < 30) return "month";
+  const delta = timeDelta(updatedAt);
+  if (!delta) return "unknown";
+  if (delta.days < 1) return "fresh";
+  if (delta.days < 7) return "week";
+  if (delta.days < 30) return "month";
   return "stale";
 }
 
 export function freshnessLabel(level: Freshness, updatedAt?: string): string {
   if (level === "unknown" || !updatedAt) return "—";
-  const t = new Date(updatedAt).getTime();
-  const days = Math.floor((Date.now() - t) / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((Date.now() - t) / (1000 * 60 * 60));
-  if (level === "fresh") return hours <= 1 ? "just now" : `${hours}h`;
-  if (level === "week") return `${days}d`;
-  if (level === "month") return `${days}d`;
-  return `${days}d`;
+  const delta = timeDelta(updatedAt);
+  if (!delta) return "—";
+  if (level === "fresh") return delta.hours <= 1 ? "just now" : `${delta.hours}h`;
+  return `${delta.days}d`;
+}
+
+export function folderName(path: string): string {
+  if (!path) return "—";
+  const parts = path.split(/[\\/]/);
+  return parts[parts.length - 1] || path;
+}
+
+export function dateKey(d: Date | number | string): string {
+  const date = d instanceof Date ? d : new Date(d);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+export function deployLabel(target?: string): string {
+  const map: Record<string, string> = {
+    "github-pages": "GitHub Pages",
+    vercel: "Vercel",
+    vps: "VPS · CloudFly",
+    "github-release": "GitHub Release",
+    local: "Local only",
+  };
+  return target ? (map[target] ?? target) : "—";
 }
 
 function firstReleaseAsset(remote?: ToolRemoteState) {
@@ -143,7 +171,7 @@ function mergeKey(repo: ToolRepository) {
   return slug ? slug : `local:${repo.id}`;
 }
 
-export function mergeRepos(defaultRepos: ToolRepository[], localRepos: ToolRepository[], customRepos: ToolRepository[]) {
+export function mergeRepos(defaultRepos: ToolRepository[], localRepos: ToolRepository[]) {
   const byKey = new Map<string, ToolRepository>();
 
   for (const repo of defaultRepos) {
@@ -160,13 +188,12 @@ export function mergeRepos(defaultRepos: ToolRepository[], localRepos: ToolRepos
             ...current,
             localPath: repo.localPath || current.localPath,
             localVersion: repo.localVersion || current.localVersion,
+            localUrl: repo.localUrl || current.localUrl,
+            appUrl: repo.appUrl || current.appUrl,
+            deployTarget: repo.deployTarget || current.deployTarget,
           }
         : repo,
     );
-  }
-
-  for (const repo of customRepos) {
-    byKey.set(mergeKey(repo), repo);
   }
 
   return Array.from(byKey.values());

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T13:00:11.042Z",
+  "generatedAt": "2026-05-21T07:09:54.091Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -246,11 +246,13 @@
         "Recharts",
         "@tanstack/react-table"
       ],
+      "appUrl": "https://p0008-sales-console-tuanhoangfxs-projects.vercel.app",
       "localUrl": "http://127.0.0.1:3000",
       "deployTarget": "vercel",
       "usage": [
         "Dev: cd app && pnpm dev",
-        "Build: cd app && pnpm build"
+        "Build: cd app && pnpm build",
+        "App: https://p0008-sales-console-tuanhoangfxs-projects.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -262,6 +264,7 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/git-push.ps1",
         "scripts/introspect-schema.mjs"
       ]
     },

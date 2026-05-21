@@ -37,7 +37,8 @@
       "scripts/sync-metadata-version.mjs",
       "scripts/bump-patch-version.mjs"
     ],
-    "localVersion": "0.2.24"
+    "localVersion": "0.2.24",
+    "remoteEnabled": true
   },
   {
     "id": "yt-multistream-console",
@@ -77,7 +78,8 @@
       "scripts/sync-metadata-version.mjs",
       "scripts/smoke-test.cjs"
     ],
-    "localVersion": "0.1.27"
+    "localVersion": "0.1.27",
+    "remoteEnabled": true
   },
   {
     "id": "github-tool-manager",
@@ -117,7 +119,8 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.1.0"
+    "localVersion": "0.1.0",
+    "remoteEnabled": true
   },
   {
     "id": "zalo-ai-bot",
@@ -159,7 +162,8 @@
       "scripts/install-autostart.ps1",
       "scripts/patch-admin-botlist.mjs"
     ],
-    "localVersion": "1.2.0"
+    "localVersion": "1.2.0",
+    "remoteEnabled": true
   },
   {
     "id": "9router-infra",
@@ -198,7 +202,8 @@
       "scripts/deploy-remote.mjs",
       "scripts/deploy-subdomain.mjs"
     ],
-    "localVersion": "1.0.0"
+    "localVersion": "1.0.0",
+    "remoteEnabled": true
   },
   {
     "id": "sales-console",
@@ -220,7 +225,7 @@
       "Recharts",
       "@tanstack/react-table"
     ],
-    "localUrl": "http://localhost:3000",
+    "localUrl": "http://127.0.0.1:3000",
     "deployTarget": "vercel",
     "usage": [
       "Schema: schema/01_schema.sql là source of truth — apply qua Supabase SQL Editor",
@@ -240,7 +245,8 @@
     ],
     "scriptFiles": [
       "scripts/introspect-schema.mjs"
-    ]
+    ],
+    "appUrl": "https://p0008-sales-console-tuanhoangfxs-projects.vercel.app"
   },
   {
     "id": "mie-hair-performance",
@@ -262,7 +268,7 @@
       "Supabase"
     ],
     "appUrl": "https://p0009-mie-hair-performance.vercel.app",
-    "localUrl": "http://127.0.0.1:5173",
+    "localUrl": "http://127.0.0.1:3000",
     "deployTarget": "vercel",
     "usage": [
       "Dev: npm run dev",

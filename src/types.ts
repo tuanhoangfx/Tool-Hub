@@ -1,4 +1,4 @@
-export type RepoStatus = "Ready" | "Needs review" | "Experimental" | "Archived";
+export type RepoStatus = "Ready" | "Needs review" | "Experimental" | "Archived" | "Active";
 
 export type ToolRepository = {
   id: string;
@@ -26,6 +26,7 @@ export type ToolRepository = {
 };
 
 export type ToolManifest = {
+  schemaVersion?: number;
   code?: string;
   id?: string;
   name?: string;
@@ -35,8 +36,20 @@ export type ToolManifest = {
   owner?: string;
   aliases?: string[];
   stack?: string[];
+  features?: string[];
   commands?: Record<string, string>;
   docs?: Record<string, string>;
+  urls?: {
+    app?: string;
+    api?: string;
+    admin?: string;
+    local?: string;
+    downloads?: string;
+    localSetupAt?: string;
+    appSetupAt?: string;
+    adminSetupAt?: string;
+  };
+  manifestUpdatedAt?: string;
   github?: {
     repo?: string;
     branch?: string;

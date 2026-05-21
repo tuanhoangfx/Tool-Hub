@@ -1,13 +1,37 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { InfoItem } from "../../components/InfoItem";
 import { MaterialIcon, TagRow } from "../../components";
 import { StatusBadge } from "../../components/StatusBadge";
 import { ToolAvatar } from "../../components/ToolAvatar";
-import { formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
+import { memoFetch } from "../../lib/cache";
+import { deployLabel, folderName, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import { parseChangelog } from "../../lib/changelog-parser";
+import { githubAuthHeaders } from "../../services/github";
 import { statusIcon, toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
+
+type ModalCommit = {
+  sha: string;
+  html_url: string;
+  commit: { message: string; author?: { name?: string; date: string } };
+  author: { login?: string; avatar_url?: string } | null;
+};
+
+function timeAgo(ts: string) {
+  const t = new Date(ts).getTime();
+  if (Number.isNaN(t)) return "—";
+  const seconds = Math.max(0, Math.floor((Date.now() - t) / 1000));
+  if (seconds < 60) return `${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d`;
+  const months = Math.floor(days / 30);
+  return `${months}mo`;
+}
 
 type DetailModalProps = {
   tool: ResolvedTool | null;
@@ -28,29 +52,6 @@ function statusText(tool: ResolvedTool) {
   return tool.healthLabel;
 }
 
-function folderName(path: string) {
-  if (!path) return "—";
-  const parts = path.split(/[\\/]/);
-  return parts[parts.length - 1] || path;
-}
-
-function deployLabel(target?: string) {
-  switch (target) {
-    case "github-pages":
-      return "GitHub Pages";
-    case "vercel":
-      return "Vercel";
-    case "vps":
-      return "VPS · CloudFly";
-    case "github-release":
-      return "GitHub Release";
-    case "local":
-      return "Local only";
-    default:
-      return "—";
-  }
-}
-
 function formatBytes(bytes?: number) {
   if (!bytes) return "—";
   const kb = bytes / 1024;
@@ -60,6 +61,9 @@ function formatBytes(bytes?: number) {
 }
 
 export function DetailModal({ tool, onClose, onCopyPath, copied }: DetailModalProps) {
+  const [commits, setCommits] = useState<ModalCommit[]>([]);
+  const [commitsLoading, setCommitsLoading] = useState(false);
+
   useEffect(() => {
     if (!tool) return;
     const handler = (e: KeyboardEvent) => {
@@ -72,6 +76,34 @@ export function DetailModal({ tool, onClose, onCopyPath, copied }: DetailModalPr
       document.body.style.overflow = "";
     };
   }, [tool, onClose]);
+
+  useEffect(() => {
+    if (!tool?.repo || tool.remoteEnabled === false) {
+      setCommits([]);
+      return;
+    }
+    const controller = new AbortController();
+    setCommitsLoading(true);
+    void memoFetch<ModalCommit[]>(
+      `api:${tool.repo}/commits?per_page=15`,
+      async () => {
+        const response = await fetch(
+          `https://api.github.com/repos/${tool.repo}/commits?per_page=15`,
+          { headers: { Accept: "application/vnd.github+json", ...githubAuthHeaders() }, signal: controller.signal },
+        );
+        if (!response.ok) return [];
+        const data = (await response.json()) as ModalCommit[];
+        return Array.isArray(data) ? data : [];
+      },
+    ).then((data) => {
+      if (controller.signal.aborted) return;
+      setCommits(data ?? []);
+      setCommitsLoading(false);
+    });
+    return () => {
+      controller.abort();
+    };
+  }, [tool?.repo, tool?.remoteEnabled]);
 
   if (!tool) return null;
 
@@ -267,9 +299,24 @@ export function DetailModal({ tool, onClose, onCopyPath, copied }: DetailModalPr
                 <InfoItem icon="folder" label="Local path" value={folderName(tool.localPath)} />
                 <InfoItem icon="hub" label="Repo" value={tool.repo || "—"} />
                 {tool.localUrl ? <InfoItem icon="dns" label="Local URL" value={tool.localUrl} /> : null}
+                {manifest?.urls?.localSetupAt ? (
+                  <InfoItem icon="schedule" label="Setup link local" value={formatDate(manifest.urls.localSetupAt)} />
+                ) : null}
                 {tool.appUrl ? <InfoItem icon="public" label="App URL" value={tool.appUrl} /> : null}
+                {manifest?.urls?.appSetupAt ? (
+                  <InfoItem icon="event" label="Setup link website" value={formatDate(manifest.urls.appSetupAt)} />
+                ) : null}
+                {manifest?.urls?.admin && !tool.localUrl ? (
+                  <InfoItem icon="dns" label="Admin URL" value={manifest.urls.admin} />
+                ) : null}
+                {manifest?.urls?.adminSetupAt ? (
+                  <InfoItem icon="schedule" label="Setup admin UI" value={formatDate(manifest.urls.adminSetupAt)} />
+                ) : null}
                 <InfoItem icon="category" label="Loại" value={tool.category} />
                 <InfoItem icon="update" label="Last push" value={formatDate(tool.updatedAt)} />
+                {manifest?.manifestUpdatedAt ? (
+                  <InfoItem icon="edit_note" label="Manifest updated" value={formatDate(manifest.manifestUpdatedAt)} />
+                ) : null}
                 {tool.audience ? <InfoItem icon="groups" label="Đối tượng" value={tool.audience} /> : null}
               </div>
             </section>
@@ -292,10 +339,19 @@ export function DetailModal({ tool, onClose, onCopyPath, copied }: DetailModalPr
                 <h3 className="section-label">
                   <MaterialIcon name="warning" size={14} /> Drift alerts ({tool.driftAlerts.length})
                 </h3>
-                <ul className="alert-list">
-                  {tool.driftAlerts.map((alert, idx) => (
-                    <li key={idx}>{alert}</li>
-                  ))}
+                <ul className="modal-drift-list">
+                  {tool.driftAlerts.map((alert, idx) => {
+                    const lower = alert.toLowerCase();
+                    const tone = lower.includes("missing") || lower.includes("drift")
+                      ? "bad"
+                      : "warn";
+                    return (
+                      <li key={idx} className={`modal-drift-item tone-${tone}`}>
+                        <MaterialIcon name={tone === "bad" ? "error" : "warning"} size={13} />
+                        <span>{alert}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </section>
             ) : null}
@@ -424,6 +480,73 @@ export function DetailModal({ tool, onClose, onCopyPath, copied }: DetailModalPr
             ) : null}
           </div>
         </div>
+
+        {tool.repo && tool.remoteEnabled !== false ? (
+          <section className="modal-section modal-commits-section">
+            <h3 className="section-label">
+              <MaterialIcon name="commit" size={14} /> Recent commits
+              {commits.length > 0 ? ` (${commits.length})` : ""}
+            </h3>
+            {commitsLoading ? (
+              <div className="modal-commits-loading">
+                <MaterialIcon name="hourglass_empty" size={14} className="spin" />
+                Loading commits…
+              </div>
+            ) : commits.length === 0 ? (
+              <div className="modal-commits-empty">
+                <MaterialIcon name="inbox" size={14} />
+                No commits found (rate-limit or private repo).
+              </div>
+            ) : (
+              <ol className="modal-commits">
+                {commits.slice(0, 10).map((c) => {
+                  const message = c.commit.message.split("\n")[0];
+                  const author = c.author?.login ?? c.commit.author?.name ?? "unknown";
+                  const date = c.commit.author?.date ?? "";
+                  return (
+                    <li key={c.sha} className="modal-commit">
+                      {c.author?.avatar_url ? (
+                        <img
+                          className="modal-commit-avatar"
+                          src={c.author.avatar_url}
+                          alt=""
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="modal-commit-avatar placeholder">
+                          {author.slice(0, 1).toUpperCase()}
+                        </span>
+                      )}
+                      <div className="modal-commit-body">
+                        <a
+                          className="modal-commit-message"
+                          href={c.html_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          title={message}
+                        >
+                          {message}
+                        </a>
+                        <span className="modal-commit-meta">
+                          <span className="modal-commit-author">{author}</span>
+                          <span className="modal-commit-time">{date ? timeAgo(date) : "—"}</span>
+                        </span>
+                      </div>
+                      <a
+                        className="modal-commit-sha"
+                        href={c.html_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {c.sha.slice(0, 7)}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+          </section>
+        ) : null}
 
         {changelogEntries.length > 0 ? (
           <section className="modal-section changelog-section">
