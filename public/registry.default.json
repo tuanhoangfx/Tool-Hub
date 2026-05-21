@@ -37,7 +37,7 @@
       "scripts/sync-metadata-version.mjs",
       "scripts/bump-patch-version.mjs"
     ],
-    "localVersion": "0.2.24",
+    "localVersion": "0.2.25",
     "remoteEnabled": true
   },
   {
