@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-21T08:11:57.063Z",
+  "generatedAt": "2026-05-21T08:54:06.307Z",
   "dryRun": false,
   "githubUser": "tuanhoangfx",
   "roots": [
@@ -33,8 +33,8 @@
     "githubOnly": 0,
     "pushed": 0,
     "pulled": 0,
-    "inSync": 17,
-    "errors": 0,
+    "inSync": 16,
+    "errors": 1,
     "cloned": 0,
     "cloneErrors": 0,
     "versionDrift": 0
@@ -107,8 +107,8 @@
     },
     {
       "id": "student-id-generator",
-      "status": "in-sync",
-      "detail": "manifests-match"
+      "status": "error",
+      "detail": "github-push: Repository was archived so is read-only."
     },
     {
       "id": "workspace-template",
@@ -174,7 +174,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:41.940Z"
+        "at": "2026-05-21T08:53:52.504Z"
       },
       "githubVersion": "0.2.25",
       "githubVersionSource": "manifest",
@@ -227,7 +227,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:43.440Z"
+        "at": "2026-05-21T08:53:53.289Z"
       },
       "githubVersion": "0.1.27",
       "githubVersionSource": "manifest",
@@ -254,7 +254,7 @@
       ],
       "appUrl": "https://infix1.io.vn",
       "localUrl": "http://127.0.0.1:5176",
-      "deployTarget": "vercel",
+      "deployTarget": "github-pages",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
@@ -282,7 +282,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:44.299Z"
+        "at": "2026-05-21T08:53:54.085Z"
       },
       "githubVersion": "0.1.0",
       "githubVersionSource": "manifest",
@@ -337,7 +337,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:45.103Z"
+        "at": "2026-05-21T08:53:54.867Z"
       },
       "githubVersion": "1.2.0",
       "githubVersionSource": "manifest",
@@ -393,7 +393,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:45.889Z"
+        "at": "2026-05-21T08:53:55.639Z"
       },
       "githubVersion": "1.0.0",
       "githubVersionSource": "manifest",
@@ -447,7 +447,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:46.729Z"
+        "at": "2026-05-21T08:53:56.429Z"
       },
       "githubVersion": "0.3.1",
       "githubVersionSource": "manifest",
@@ -498,7 +498,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:47.537Z"
+        "at": "2026-05-21T08:53:57.229Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -546,7 +546,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:48.338Z"
+        "at": "2026-05-21T08:53:58.075Z"
       },
       "githubVersion": "1.0.0",
       "githubVersionSource": "manifest",
@@ -594,7 +594,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:49.182Z"
+        "at": "2026-05-21T08:53:58.860Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -638,7 +638,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:50.060Z"
+        "at": "2026-05-21T08:53:59.676Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -663,11 +663,13 @@
         "Supabase",
         "Gemini"
       ],
+      "appUrl": "https://p0001-youtube-tda-team.vercel.app",
       "localUrl": "http://127.0.0.1:3000",
-      "deployTarget": "local",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://p0001-youtube-tda-team.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -684,7 +686,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:50.921Z"
+        "at": "2026-05-21T08:54:00.483Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -709,11 +711,13 @@
         "Express",
         "Google APIs"
       ],
+      "appUrl": "https://p0002-google-one-family-manager.vercel.app",
       "localUrl": "http://127.0.0.1:5174",
-      "deployTarget": "local",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev:full",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://p0002-google-one-family-manager.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -730,7 +734,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:52.187Z"
+        "at": "2026-05-21T08:54:01.306Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -754,10 +758,12 @@
         "Canvas",
         "JavaScript"
       ],
-      "deployTarget": "local",
+      "appUrl": "https://p0005-student-id-generator-v2.vercel.app",
+      "deployTarget": "vercel",
       "usage": [
         "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Run the configured build command from package.json.",
+        "App: https://p0005-student-id-generator-v2.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -774,7 +780,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:52.954Z"
+        "at": "2026-05-21T08:54:02.213Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -814,9 +820,9 @@
       "workspaceRoot": "tool",
       "assetKind": "project",
       "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:11:53.745Z"
+        "manifest": "error",
+        "detail": "github-push: Repository was archived so is read-only.",
+        "at": "2026-05-21T08:54:03.465Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -860,7 +866,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:54.541Z"
+        "at": "2026-05-21T08:54:04.230Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -884,11 +890,13 @@
         "Vite",
         "Node"
       ],
+      "appUrl": "https://webapps-platform.vercel.app",
       "localUrl": "http://127.0.0.1:5173",
       "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://webapps-platform.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -905,7 +913,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:55.334Z"
+        "at": "2026-05-21T08:54:05.100Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -929,10 +937,13 @@
         "Vite",
         "Supabase"
       ],
-      "deployTarget": "local",
+      "appUrl": "https://inptracker.vercel.app",
+      "localUrl": "http://127.0.0.1:5173",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://inptracker.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -949,7 +960,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T08:11:56.643Z"
+        "at": "2026-05-21T08:54:05.907Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",

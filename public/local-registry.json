@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T08:11:57.062Z",
+  "generatedAt": "2026-05-21T08:54:06.307Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -115,7 +115,7 @@
       ],
       "appUrl": "https://infix1.io.vn",
       "localUrl": "http://127.0.0.1:5176",
-      "deployTarget": "vercel",
+      "deployTarget": "github-pages",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
@@ -468,11 +468,13 @@
         "Supabase",
         "Gemini"
       ],
+      "appUrl": "https://p0001-youtube-tda-team.vercel.app",
       "localUrl": "http://127.0.0.1:3000",
-      "deployTarget": "local",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://p0001-youtube-tda-team.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -507,11 +509,13 @@
         "Express",
         "Google APIs"
       ],
+      "appUrl": "https://p0002-google-one-family-manager.vercel.app",
       "localUrl": "http://127.0.0.1:5174",
-      "deployTarget": "local",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev:full",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://p0002-google-one-family-manager.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -545,10 +549,12 @@
         "Canvas",
         "JavaScript"
       ],
-      "deployTarget": "local",
+      "appUrl": "https://p0005-student-id-generator-v2.vercel.app",
+      "deployTarget": "vercel",
       "usage": [
         "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Run the configured build command from package.json.",
+        "App: https://p0005-student-id-generator-v2.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -654,11 +660,13 @@
         "Vite",
         "Node"
       ],
+      "appUrl": "https://webapps-platform.vercel.app",
       "localUrl": "http://127.0.0.1:5173",
       "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://webapps-platform.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -692,10 +700,13 @@
         "Vite",
         "Supabase"
       ],
-      "deployTarget": "local",
+      "appUrl": "https://inptracker.vercel.app",
+      "localUrl": "http://127.0.0.1:5173",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: npm run dev",
-        "Build: npm run build"
+        "Build: npm run build",
+        "App: https://inptracker.vercel.app"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

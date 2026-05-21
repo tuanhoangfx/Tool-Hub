@@ -342,7 +342,12 @@ function mergeRegistryDefault(existingDefault, scannedEntries) {
   }
 
   for (const entry of existingDefault || []) {
-    if (!seenIds.has(entry.id)) merged.push(entry);
+    if (seenIds.has(entry.id)) continue;
+    const orphanLocal =
+      typeof entry.code === "string" && entry.code.startsWith("LOCAL-");
+    const missingPath = entry.localPath && !isProjectDir(entry.localPath);
+    if (orphanLocal || missingPath) continue;
+    merged.push(entry);
   }
 
   return { merged, addedNew, updatedExisting };
