@@ -1,32 +1,28 @@
-# P0004 — Deploy trên Vercel
+# P0004 — Production deploy (GitHub Pages)
 
-## Tại sao Vercel thay GitHub Pages
+## Production URL
 
-- Push `main` → build + deploy tự động (giống chuẩn cho web tool sau này).
-- Preview URL cho mỗi PR (tùy bật trên project).
-- Custom domain (`infix1.io.vn`) cấu hình trong Vercel, không cần workflow `deploy-pages.yml`.
+- **https://infix1.io.vn** — custom domain trên GitHub Pages (repo `tuanhoangfx/GitHub-Tool-Manager`).
+- Workflow: `.github/workflows/deploy-pages.yml` (Vite build → `dist` → Pages).
 
-## Lần đầu (dashboard)
+## Không dùng Vercel cho P0004
 
-1. [vercel.com/new](https://vercel.com/new) → Import `tuanhoangfx/GitHub-Tool-Manager`.
-2. Framework: **Vite** (auto).
-3. Build: `pnpm run build` — Output: `dist`.
-4. Install: `corepack enable && pnpm install` (hoặc để Vercel dùng default pnpm).
-5. Deploy.
+- Project Vercel `webapps-platform` dành cho **P0018** (`https://webapps-platform.vercel.app`).
+- Không gắn repo GitHub-Tool-Manager vào `webapps-platform` (tránh deploy nhầm).
 
-## Custom domain `infix1.io.vn`
+## DNS
 
-1. Vercel project → **Settings → Domains** → Add `infix1.io.vn` (và `www` nếu cần).
-2. DNS tại registrar: bản ghi Vercel hiển thị (thường `A` / `CNAME`).
-3. GitHub repo → **Settings → Pages**: tắt site Pages cũ nếu trùng domain.
-4. Cập nhật `tool.manifest.json` / registry `appUrl` nếu đổi URL production.
+- `infix1.io.vn` trỏ GitHub Pages (A/CNAME theo GitHub Settings → Pages).
+- Sau push `main`, Actions tab → **Deploy GitHub Pages** phải success.
 
 ## Local
 
 ```powershell
 corepack pnpm install
+corepack pnpm dev          # http://127.0.0.1:5176
 corepack pnpm build
-corepack pnpm preview   # http://127.0.0.1:4176
+corepack pnpm preview      # http://127.0.0.1:4176
+corepack pnpm scan:local   # refresh public/*.json
 ```
 
 ## Push code
@@ -35,11 +31,8 @@ corepack pnpm preview   # http://127.0.0.1:4176
 pnpm run push
 ```
 
-Không cần `GITHUB_TOKEN` cho push thường ngày (`gh` đã auth).
+Nếu push workflow file bị reject (OAuth scope), commit `.github/workflows/deploy-pages.yml` qua GitHub web UI.
 
-## Bootstrap repo mới (một lần, không push)
+## Workspace catalog trên production
 
-```powershell
-$env:GITHUB_TOKEN = "ghp_..."   # fine-grained, repo create
-corepack pnpm publish:github:init
-```
+File `public/workspace-catalog.json` được copy vào `dist/` khi build — Sync Hub trên https://infix1.io.vn/?tab=system đọc file này.
