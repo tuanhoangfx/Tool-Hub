@@ -59,6 +59,16 @@ function resolveCloneDirName(ghRepo, manifestJson) {
   return ghRepo.name;
 }
 
+function isCloneExcluded(ghRepo, config) {
+  const exclude = config.clone?.exclude;
+  if (!exclude?.length) return false;
+  const names = new Set(exclude.map((x) => String(x).toLowerCase()));
+  const repoName = ghRepo.name?.toLowerCase();
+  if (names.has(repoName)) return true;
+  const slug = `${config.githubUser || "tuanhoangfx"}/${ghRepo.name}`.toLowerCase();
+  return names.has(slug);
+}
+
 function versionDrift(localVersion, githubVersion) {
   if (!githubVersion) return undefined;
   const local = localVersion && localVersion !== "local" && localVersion !== "remote" ? localVersion : "";
@@ -242,6 +252,7 @@ async function main() {
     }
     for (const gh of remoteRepos) {
       if (gh.archived || gh.disabled) continue;
+      if (isCloneExcluded(gh, config)) continue;
       const slug = `${githubUser}/${gh.name}`;
       if (byRepo.has(slug)) continue;
       missingOnDisk.push(gh);
@@ -252,8 +263,9 @@ async function main() {
 
   if (cloneMissing && missingOnDisk.length) {
     const cloneRoot = config.clone?.targetRoot || config.roots.find((r) => r.id === "tool")?.path;
-    console.log(`[clone] target: ${cloneRoot} (${missingOnDisk.length} github-only repo)`);
-    for (const gh of missingOnDisk) {
+    const toClone = missingOnDisk.filter((gh) => !isCloneExcluded(gh, config));
+    console.log(`[clone] target: ${cloneRoot} (${toClone.length} to clone, ${missingOnDisk.length - toClone.length} excluded)`);
+    for (const gh of toClone) {
       const result = await cloneGithubRepoAsync(gh, config, token, dryRun);
       cloneResults.push({ repo: `${githubUser}/${gh.name}`, ...result });
       if (result.status === "cloned" || result.status === "would-clone") {

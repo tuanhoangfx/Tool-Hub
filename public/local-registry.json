@@ -1,74 +1,7 @@
 {
-  "generatedAt": "2026-05-21T07:53:38.834Z",
+  "generatedAt": "2026-05-21T08:11:57.062Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
-    {
-      "id": "infi-project-performance-tracker",
-      "code": "LOCAL-001",
-      "name": "-Work-Performance",
-      "repo": "",
-      "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "0.0.0",
-      "category": "Local",
-      "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Local workspace asset discovered by scanner.",
-      "localPath": "E:\\Dev\\Tool\\-Work-Performance",
-      "tags": [
-        "Local",
-        "Workspace"
-      ],
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": []
-    },
-    {
-      "id": "youtube-channel-dashboard",
-      "code": "LOCAL-002",
-      "name": "P0001-czp-youtube-tda-team",
-      "repo": "",
-      "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "0.0.0",
-      "category": "Local",
-      "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Local workspace asset discovered by scanner.",
-      "localPath": "E:\\Dev\\Tool\\P0001-czp-youtube-tda-team",
-      "tags": [
-        "Local",
-        "Workspace"
-      ],
-      "localUrl": "http://127.0.0.1:3000",
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": []
-    },
     {
       "id": "gpm-automation-console",
       "code": "P0001",
@@ -114,40 +47,6 @@
       "githubVersion": "0.2.25",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
-    },
-    {
-      "id": "p0002-google-one-family-manager",
-      "code": "LOCAL-004",
-      "name": "P0002-google-one-family-manager",
-      "repo": "",
-      "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "0.0.0",
-      "category": "Local",
-      "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Local workspace asset discovered by scanner.",
-      "localPath": "E:\\Dev\\Tool\\P0002-google-one-family-manager",
-      "tags": [
-        "Local",
-        "Workspace"
-      ],
-      "localUrl": "http://127.0.0.1:5174",
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": []
     },
     {
       "id": "yt-multistream-console",
@@ -240,84 +139,6 @@
         "scripts/publish-github-repo.cjs"
       ],
       "githubVersion": "0.1.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
-    },
-    {
-      "id": "tool-control-center",
-      "code": "P0004",
-      "name": "Tool Control Center",
-      "repo": "tuanhoangfx/Tool-Control-Center",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Desktop",
-      "audience": "Tool maintainers",
-      "status": "Schedule",
-      "summary": "Early web control plane scaffold for managing in-progress tools, webapps, and extensions.",
-      "localPath": "E:\\Dev\\Tool\\P0004-Tool-Control-Center",
-      "tags": [
-        "React",
-        "TypeScript",
-        "Vite"
-      ],
-      "deployTarget": "local",
-      "usage": [
-        "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/control-api.mjs",
-        "scripts/project-registry.mjs",
-        "scripts/sync-projects.mjs"
-      ],
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
-    },
-    {
-      "id": "apps-script-sync",
-      "code": "P0005",
-      "name": "Apps Script Sync",
-      "repo": "tuanhoangfx/Apps-Script-Sync",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "docs",
-      "category": "App Script",
-      "audience": "Tool maintainers",
-      "status": "Schedule",
-      "summary": "Local Apps Script workspace synchronized with clasp and organized by script folders.",
-      "localPath": "E:\\Dev\\Tool\\P0005-Apps-Script-Sync",
-      "tags": [
-        "Google Apps Script",
-        "clasp",
-        "Node"
-      ],
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "githubVersion": "docs",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
     },
@@ -551,23 +372,65 @@
       "versionDrift": "match"
     },
     {
-      "id": "webapps",
-      "code": "LOCAL-018",
-      "name": "webapps-platform",
-      "repo": "",
+      "id": "tool-control-center",
+      "code": "P0011",
+      "name": "Tool Control Center",
+      "repo": "tuanhoangfx/Tool-Control-Center",
       "branch": "main",
-      "remoteEnabled": false,
+      "remoteEnabled": true,
       "localVersion": "0.0.0",
-      "category": "Local",
+      "category": "Web",
       "audience": "Tool maintainers",
       "status": "Needs review",
-      "summary": "Local workspace asset discovered by scanner.",
-      "localPath": "E:\\Dev\\Tool\\webapps-platform",
+      "summary": "Early web control plane scaffold for managing in-progress tools, webapps, and extensions.",
+      "localPath": "E:\\Dev\\Tool\\P0011-Tool-Control-Center",
       "tags": [
-        "Local",
-        "Workspace"
+        "React",
+        "TypeScript",
+        "Vite"
       ],
-      "deployTarget": "vercel",
+      "deployTarget": "local",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/control-api.mjs",
+        "scripts/project-registry.mjs",
+        "scripts/sync-projects.mjs"
+      ],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "apps-script-sync",
+      "code": "P0012",
+      "name": "Apps Script Sync",
+      "repo": "tuanhoangfx/Apps-Script-Sync",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "CLI",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "Local Apps Script workspace synchronized with clasp and organized by script folders.",
+      "localPath": "E:\\Dev\\Tool\\P0012-Apps-Script-Sync",
+      "tags": [
+        "Google Apps Script",
+        "clasp",
+        "Node"
+      ],
+      "deployTarget": "local",
       "usage": [
         "Run the configured dev command from package.json.",
         "Run the configured build command from package.json."
@@ -581,7 +444,272 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "czp-youtube-tda-team",
+      "code": "P0013",
+      "name": "CzP YouTube TDA Team",
+      "repo": "tuanhoangfx/P0001-czp-youtube-tda-team",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "YouTube channel performance dashboard with team metrics (AI Studio / Gemini app).",
+      "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
+      "tags": [
+        "React",
+        "Vite",
+        "Supabase",
+        "Gemini"
+      ],
+      "localUrl": "http://127.0.0.1:3000",
+      "deployTarget": "local",
+      "usage": [
+        "Dev: npm run dev",
+        "Build: npm run build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "google-one-family-manager",
+      "code": "P0014",
+      "name": "Google One Family Manager",
+      "repo": "tuanhoangfx/P0002-google-one-family-manager",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "Dashboard for Gmail account, family membership, and Google One plan status.",
+      "localPath": "E:\\Dev\\Tool\\P0014-google-one-family-manager",
+      "tags": [
+        "React",
+        "Vite",
+        "Express",
+        "Google APIs"
+      ],
+      "localUrl": "http://127.0.0.1:5174",
+      "deployTarget": "local",
+      "usage": [
+        "Dev: npm run dev:full",
+        "Build: npm run build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "student-id-generator-v2",
+      "code": "P0015",
+      "name": "Student ID Generator V2",
+      "repo": "tuanhoangfx/P0005-student-id-generator-v2",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "Static student ID card generator with canvas rendering and barcode (refactored from P0016).",
+      "localPath": "E:\\Dev\\Tool\\P0015-student-id-generator-v2",
+      "tags": [
+        "HTML",
+        "Canvas",
+        "JavaScript"
+      ],
+      "deployTarget": "local",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "student-id-generator",
+      "code": "P0016",
+      "name": "Student ID Generator",
+      "repo": "tuanhoangfx/P0004-student-id-generator",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Library",
+      "audience": "Tool maintainers",
+      "status": "Archived",
+      "summary": "Placeholder repository for legacy student ID generator (superseded by P0015).",
+      "localPath": "E:\\Dev\\Tool\\P0016-student-id-generator",
+      "tags": [
+        "Archived"
+      ],
+      "deployTarget": "local",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "workspace-template",
+      "code": "P0017",
+      "name": "Workspace Project Template",
+      "repo": "tuanhoangfx/P0003-template",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Library",
+      "audience": "Tool maintainers",
+      "status": "Experimental",
+      "summary": "Copy-paste template for new P00xx projects under E:\\Dev\\Tool.",
+      "localPath": "E:\\Dev\\Tool\\P0017-template",
+      "tags": [
+        "Template",
+        "Vite",
+        "React"
+      ],
+      "deployTarget": "local",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "webapps-platform",
+      "code": "P0018",
+      "name": "WebApps Platform",
+      "repo": "tuanhoangfx/webapps-platform",
+      "branch": "master",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "Home hub that launches sibling tools (P0013, P0014, P0015) from E:\\Dev\\Tool.",
+      "localPath": "E:\\Dev\\Tool\\P0018-webapps-platform",
+      "tags": [
+        "React",
+        "Vite",
+        "Node"
+      ],
+      "localUrl": "http://127.0.0.1:5173",
+      "deployTarget": "vercel",
+      "usage": [
+        "Dev: npm run dev",
+        "Build: npm run build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "infi-work-performance",
+      "code": "P0019",
+      "name": "Infi Work Performance",
+      "repo": "tuanhoangfx/-Work-Performance",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "Internal Kanban task manager with Supabase auth, comments, and manager dashboard.",
+      "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
+      "tags": [
+        "React",
+        "Vite",
+        "Supabase"
+      ],
+      "deployTarget": "local",
+      "usage": [
+        "Dev: npm run dev",
+        "Build: npm run build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     }
   ]
 }

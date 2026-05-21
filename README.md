@@ -9,7 +9,7 @@ corepack pnpm install
 corepack pnpm scan:local       # quét 3 root → registry + workspace-catalog
 corepack pnpm sync:workspace   # đồng bộ manifest 2 chiều + githubVersion (gh auth / GITHUB_TOKEN)
 corepack pnpm sync:workspace:dry
-corepack pnpm sync:workspace --clone-missing   # clone repo github-only → E:\Dev\Tool
+corepack pnpm sync:workspace --clone-missing   # clone github-only (tôn trọng clone.exclude trong workspace.roots.json)
 corepack pnpm dev              # http://127.0.0.1:5176 — System tab = Sync Hub
 corepack pnpm build
 pnpm run push                  # git push main (gh auth)
