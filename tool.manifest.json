@@ -26,7 +26,7 @@
     "push": "corepack pnpm push",
     "publish": "corepack pnpm publish:github:init"
   },
-  "deployTarget": "vercel",
+  "deployTarget": "github-pages",
   "docs": {
     "readme": "README.md",
     "changelog": "CHANGELOG.md"
@@ -53,15 +53,19 @@
     "local": "http://127.0.0.1:5176",
     "localSetupAt": "2026-04-29T17:00:00.000Z"
   },
-  "manifestUpdatedAt": "2026-05-21T07:00:00.000Z",
-  "vercel": {
-    "project": "github-tool-manager",
-    "productionBranch": "main",
-    "notes": "Import tuanhoangfx/GitHub-Tool-Manager on vercel.com; map infix1.io.vn in Domains."
+  "githubPages": {
+    "workflow": ".github/workflows/deploy-pages.yml",
+    "customDomain": "infix1.io.vn",
+    "sourceBranch": "main"
   },
+  "vercel": {
+    "project": null,
+    "notes": "Production is GitHub Pages (infix1.io.vn). Do not attach repo to webapps-platform Vercel project."
+  },
+  "manifestUpdatedAt": "2026-05-21T09:00:00.000Z",
   "health": {
     "status": "Ready",
-    "note": "Reads public GitHub metadata in-browser. Production deploy via Vercel (not GitHub Pages)."
+    "note": "Reads public GitHub metadata in-browser. Deploy via GitHub Actions → Pages."
   },
   "nextActions": [
     "Run sync:workspace after changing ports, URLs, or manifest on any root (Tool/Extension/n8n).",
