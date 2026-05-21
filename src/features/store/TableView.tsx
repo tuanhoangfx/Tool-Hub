@@ -1,6 +1,7 @@
-import { MaterialIcon } from "../../components";
+import { MaterialIcon, RunningBadge } from "../../components";
 import { StatusBadge } from "../../components/StatusBadge";
-import { formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
+import type { HealthState } from "../../hooks/useLocalHealth";
+import { folderName, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import { statusIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
 
@@ -9,6 +10,7 @@ type TableViewProps = {
   selectedId: string;
   onSelect: (id: string) => void;
   onCopyPath: (path: string) => void;
+  healthState?: Record<string, HealthState>;
 };
 
 function statusTone(tool: ResolvedTool): "ok" | "warn" | "bad" | "neutral" {
@@ -23,13 +25,7 @@ function statusText(tool: ResolvedTool) {
   return tool.healthLabel;
 }
 
-function folderName(path: string) {
-  if (!path) return "—";
-  const parts = path.split(/[\\/]/);
-  return parts[parts.length - 1] || path;
-}
-
-export function TableView({ tools, selectedId, onSelect, onCopyPath }: TableViewProps) {
+export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState }: TableViewProps) {
   return (
     <div className="table-view">
       <table className="lib-table">
@@ -58,7 +54,14 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath }: TableView
               </td>
               <td className="col-name">
                 <div className="name-cell">
-                  <strong>{tool.name}</strong>
+                  <div className="name-cell-title">
+                    <strong>{tool.name}</strong>
+                    <RunningBadge
+                      state={tool.localUrl ? healthState?.[tool.localUrl] : undefined}
+                      localUrl={tool.localUrl}
+                      compact
+                    />
+                  </div>
                   <small>{tool.category} · {tool.audience}</small>
                 </div>
               </td>
@@ -113,7 +116,7 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath }: TableView
                       className="icon-link"
                       type="button"
                       onClick={() => onCopyPath(tool.localPath)}
-                      title={`Copy folder: ${tool.localPath}`}
+                      title={`${folderName(tool.localPath)} — copy path`}
                     >
                       <MaterialIcon name="folder" size={16} />
                     </button>
@@ -129,4 +132,3 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath }: TableView
   );
 }
 
-export { folderName };

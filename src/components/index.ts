@@ -14,3 +14,4 @@ export { Metric } from "./Metric";
 export { SideNavButton } from "./SideNavButton";
 export { ToolFilterBar } from "./ToolFilterBar";
 export { ActivityDots } from "./ActivityDots";
+export { RunningBadge } from "./RunningBadge";

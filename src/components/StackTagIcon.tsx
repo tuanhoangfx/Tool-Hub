@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { tagToTheSvgSlug, theSvgIconSources } from "../lib/thesvg";
-import { MaterialIcon } from "./MaterialIcon";
 
 type StackTagIconProps = {
   tag: string;
   size?: number;
 };
+
+const PALETTE = ["#e56a4a","#3b82f6","#10b981","#f59e0b","#8b5cf6","#ec4899","#14b8a6","#f97316"];
+
+function tagColor(tag: string): string {
+  let h = 0;
+  for (let i = 0; i < tag.length; i++) h = (Math.imul(31, h) + tag.charCodeAt(i)) | 0;
+  return PALETTE[Math.abs(h) % PALETTE.length];
+}
 
 export function StackTagIcon({ tag, size = 12 }: StackTagIconProps) {
   const slug = tagToTheSvgSlug(tag);
@@ -17,7 +24,15 @@ export function StackTagIcon({ tag, size = 12 }: StackTagIconProps) {
   }, [tag, slug]);
 
   if (!slug || sourceIndex >= sources.length) {
-    return <MaterialIcon name="label" size={size} />;
+    return (
+      <span
+        className="tag-icon-initial"
+        style={{ width: size, height: size, background: tagColor(tag), fontSize: Math.max(6, Math.floor(size * 0.65)) }}
+        aria-hidden="true"
+      >
+        {tag.trim().charAt(0).toUpperCase()}
+      </span>
+    );
   }
 
   return (

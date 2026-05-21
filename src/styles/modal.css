@@ -1,0 +1,446 @@
+/* ===== Library layout (modal-only, no side panel) ===== */
+
+.library-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ===== Detail Modal — 3D backdrop blur ===== */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 1rem;
+  background: rgba(50, 40, 35, 0.18);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  animation: modalBackdropIn 0.2s ease;
+  perspective: 1400px;
+}
+
+@keyframes modalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-shell {
+  position: relative;
+  width: min(1400px, 96vw);
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 1.4rem 1.6rem 1.8rem;
+  background: linear-gradient(180deg, var(--color-surface), var(--color-bg));
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-brand-lg);
+  box-shadow:
+    var(--shadow-elev),
+    0 30px 70px rgba(60, 50, 45, 0.18),
+    0 0 0 1px rgba(229, 106, 74, 0.08);
+  color: var(--color-text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  transform-style: preserve-3d;
+  animation: modalShellIn 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes modalShellIn {
+  from {
+    opacity: 0;
+    transform: rotateX(6deg) scale(0.94) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) scale(1) translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.85rem;
+  right: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  z-index: 2;
+}
+
+.modal-close:hover {
+  background: rgba(229, 106, 74, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(229, 106, 74, 0.35);
+}
+
+.modal-hero p {
+  color: var(--color-text-muted);
+}
+
+.modal-actions {
+  border-bottom-color: var(--color-border-subtle) !important;
+}
+
+.modal-section .section-label {
+  color: var(--color-text-subtle);
+}
+
+.modal-shell .versions-block {
+  background: var(--color-surface-2);
+  border-color: var(--color-border-subtle);
+}
+
+.modal-shell .version-cell {
+  background: var(--color-surface);
+}
+
+.modal-shell .version-label {
+  color: var(--color-text-subtle);
+}
+
+.modal-shell .version-value {
+  color: var(--color-text-main);
+}
+
+.modal-shell .cmd-row {
+  background: var(--color-surface-2);
+  border-color: var(--color-border-subtle);
+}
+
+.modal-shell .cmd-row code {
+  color: var(--color-text-main);
+}
+
+.modal-shell .info-grid > * {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+}
+
+/* Hero grid layout for modal — 2 columns */
+.modal-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+@media (max-width: 900px) {
+  .modal-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modal-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  border-left: 3px solid #3b82f6;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--color-text-main);
+  line-height: 1.5;
+}
+
+.modal-note .material-symbols-rounded,
+.modal-note [class*="material"] {
+  color: #3b82f6;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.alias-row {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.alias-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.45rem;
+  font-size: 0.65rem;
+  color: var(--color-text-subtle);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.file-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.5rem;
+  background: var(--color-surface-2);
+  border-radius: 6px;
+  font-size: 0.72rem;
+}
+
+.file-list li.file-ok {
+  color: var(--color-success, #10b981);
+}
+
+.file-list li.file-missing {
+  color: var(--color-danger, #cf222e);
+}
+
+.file-list code {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.72rem;
+  color: var(--color-text-main);
+  background: transparent;
+}
+
+.release-asset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.release-asset-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--color-text-main);
+  font-size: 0.78rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.release-asset-row:hover {
+  background: rgba(168, 85, 247, 0.08);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: #a855f7;
+}
+
+.release-asset-name {
+  flex: 1;
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.74rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.release-asset-size {
+  font-size: 0.68rem;
+  color: var(--color-text-subtle);
+  flex-shrink: 0;
+}
+
+.no-assets-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  padding: 0.5rem 0.7rem;
+  background: rgba(251, 191, 36, 0.06);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.no-assets-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  margin-left: auto;
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  color: #a855f7;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.no-assets-link:hover {
+  text-decoration: underline;
+}
+
+.asset-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.55rem 0.7rem;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 8px;
+}
+
+.asset-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.74rem;
+}
+
+.asset-key {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: var(--color-text-subtle);
+  min-width: 60px;
+}
+
+.asset-row code {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.74rem;
+  color: var(--color-text-main);
+  background: transparent;
+  word-break: break-all;
+}
+
+.asset-row code.sha {
+  color: var(--color-text-muted);
+}
+
+/* ===== Health check — status dot on local URL icon ===== */
+
+.icon-link.tone-local {
+  position: relative;
+}
+
+.icon-link.tone-local .health-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-surface, #fff);
+  background: var(--color-text-muted, #aaa);
+}
+
+.icon-link.health-online .health-dot {
+  background: var(--color-success, #10b981);
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+  animation: healthPulseOnline 2s infinite;
+}
+
+.icon-link.health-offline .health-dot {
+  background: var(--color-danger, #cf222e);
+}
+
+.icon-link.health-checking .health-dot {
+  background: var(--color-warning, #f59e0b);
+  animation: healthBlink 0.8s infinite;
+}
+
+.icon-link.health-unknown .health-dot {
+  background: var(--color-text-muted, #aaa);
+  opacity: 0.6;
+}
+
+@keyframes healthPulseOnline {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes healthBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.library-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: -0.3rem;
+}
+
+.ghost-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 7px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.ghost-btn:hover {
+  border-color: rgba(229, 106, 74, 0.4);
+  color: var(--color-primary);
+  background: rgba(229, 106, 74, 0.06);
+}
+
+.health-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+}
+
+.health-legend .health-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-left: 0.35rem;
+  margin-right: 0.05rem;
+  display: inline-block;
+}
+
+.health-legend .health-dot.online {
+  background: var(--color-success, #10b981);
+}
+
+.health-legend .health-dot.offline {
+  background: var(--color-danger, #cf222e);
+}
+
+.health-legend .health-dot.checking {
+  background: var(--color-warning, #f59e0b);
+}
+

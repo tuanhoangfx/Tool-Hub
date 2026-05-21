@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "../../components";
-import { formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
+import { memoFetch } from "../../lib/cache";
+import { dateKey, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import { githubAuthHeaders } from "../../services/github";
 import type { ResolvedTool } from "../../types";
 
@@ -62,10 +63,6 @@ function formatRelative(ts: number | string) {
   return `${days}d ago`;
 }
 
-function dateKey(d: Date) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
 function buildDailyBuckets(commits: Commit[]) {
   const buckets: Record<string, number> = {};
   const today = new Date();
@@ -94,18 +91,26 @@ export function SystemTab({ tools, loadingAll, lastRefreshedAt, onCopyPath }: Sy
     if (!self?.repo) return;
     let cancelled = false;
     const headers = { Accept: "application/vnd.github+json", ...githubAuthHeaders() };
+    const fetchJson = async <T,>(url: string): Promise<T[]> => {
+      const response = await fetch(url, { headers });
+      if (!response.ok) return [];
+      const data = (await response.json()) as T[];
+      return Array.isArray(data) ? data : [];
+    };
     Promise.all([
-      fetch(`https://api.github.com/repos/${self.repo}/commits?per_page=${COMMITS_TO_FETCH}`, { headers }).then(
-        (r) => (r.ok ? (r.json() as Promise<Commit[]>) : []),
+      memoFetch<Commit[]>(
+        `api:${self.repo}/commits?per_page=${COMMITS_TO_FETCH}`,
+        () => fetchJson<Commit>(`https://api.github.com/repos/${self.repo}/commits?per_page=${COMMITS_TO_FETCH}`),
       ),
-      fetch(`https://api.github.com/repos/${self.repo}/releases?per_page=10`, { headers }).then((r) =>
-        r.ok ? (r.json() as Promise<Release[]>) : [],
+      memoFetch<Release[]>(
+        `api:${self.repo}/releases?per_page=10`,
+        () => fetchJson<Release>(`https://api.github.com/repos/${self.repo}/releases?per_page=10`),
       ),
     ])
       .then(([c, rel]) => {
         if (cancelled) return;
-        setCommits(Array.isArray(c) ? c : []);
-        setReleases(Array.isArray(rel) ? rel : []);
+        setCommits(c ?? []);
+        setReleases(rel ?? []);
         setFetchedAt(Date.now());
         setFetchError(null);
       })
@@ -128,13 +133,77 @@ export function SystemTab({ tools, loadingAll, lastRefreshedAt, onCopyPath }: Sy
   const totalCommits = commits.length;
   const uniqueAuthors = new Set(commits.map((c) => c.author?.login ?? c.commit.author?.name ?? "unknown")).size;
   const fresh = self ? freshnessLevel(self.updatedAt) : "unknown";
+  const isFetching = self?.repo && !fetchedAt && !fetchError;
 
   if (!self) {
     return <div className="inline-banner bad">Workspace tool P0004 not found in registry.</div>;
   }
 
+  const workspaceOverview = tools
+    .filter((t) => t.code !== SELF_CODE)
+    .map((t) => {
+      const pushedAt = t.remote?.repoInfo?.pushed_at;
+      const lastCommitMsg = t.remote?.manifest?.summary ?? t.summary;
+      const ts = pushedAt ? new Date(pushedAt).getTime() : 0;
+      return { tool: t, ts, pushedAt, lastCommitMsg };
+    })
+    .sort((a, b) => b.ts - a.ts);
+
   return (
     <section className="system-layout">
+      <section className="system-section">
+        <h3 className="system-section-title">
+          <MaterialIcon name="dashboard" size={16} />
+          Workspace overview ({workspaceOverview.length} tools)
+        </h3>
+        <div className="table-view">
+          <table className="lib-table">
+            <thead>
+              <tr>
+                <th className="col-code">Code</th>
+                <th>Name</th>
+                <th className="col-version">Version</th>
+                <th className="col-when">Last change</th>
+                <th>Status</th>
+                <th>Drift</th>
+              </tr>
+            </thead>
+            <tbody>
+              {workspaceOverview.map(({ tool, ts, pushedAt }) => (
+                <tr key={tool.id}>
+                  <td className="col-code"><span className="code-pill">{tool.code}</span></td>
+                  <td>
+                    {tool.repoUrl ? (
+                      <a className="mini-link" href={tool.repoUrl} target="_blank" rel="noreferrer">{tool.name}</a>
+                    ) : (
+                      tool.name
+                    )}
+                  </td>
+                  <td className="col-version">v{tool.version}</td>
+                  <td className="col-when" title={pushedAt ?? ""}>{ts > 0 ? formatRelative(ts) : "—"}</td>
+                  <td>
+                    <span className={`freshness-pill freshness-pill-${freshnessLevel(tool.updatedAt)}`}>
+                      <span className="freshness-dot" />
+                      {tool.healthLabel}
+                    </span>
+                  </td>
+                  <td>
+                    {tool.driftAlerts.length > 0 ? (
+                      <span className="inline-banner bad" title={tool.driftAlerts.join(" · ")}>
+                        <MaterialIcon name="warning" size={12} /> {tool.driftAlerts.length}
+                      </span>
+                    ) : (
+                      <span className="muted-inline">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {workspaceOverview.length === 0 ? <div className="table-empty">No other tools loaded.</div> : null}
+        </div>
+      </section>
+
       <header className="self-hero">
         <div className="self-hero-top">
           <div className="self-hero-id">
@@ -215,21 +284,30 @@ export function SystemTab({ tools, loadingAll, lastRefreshedAt, onCopyPath }: Sy
               </tr>
             </thead>
             <tbody>
-              {commits.slice(0, 15).map((c) => (
-                <tr key={c.sha}>
-                  <td className="col-when">{formatRelative(c.commit.author.date)}</td>
-                  <td className="col-author">{c.author?.login ?? c.commit.author?.name ?? "—"}</td>
-                  <td className="col-msg">{c.commit.message.split("\n")[0]}</td>
-                  <td className="col-sha">
-                    <a className="mini-link" href={c.html_url} target="_blank" rel="noreferrer">
-                      {c.sha.slice(0, 7)}
-                    </a>
-                  </td>
-                </tr>
-              ))}
+              {isFetching && commits.length === 0
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <tr key={`skel-${i}`}>
+                      <td className="col-when"><span className="skel skel-text" style={{ width: 40 }} aria-hidden="true" /></td>
+                      <td className="col-author"><span className="skel skel-text" style={{ width: 60 }} aria-hidden="true" /></td>
+                      <td className="col-msg"><span className="skel skel-text" style={{ width: "70%" }} aria-hidden="true" /></td>
+                      <td className="col-sha"><span className="skel skel-text" style={{ width: 50 }} aria-hidden="true" /></td>
+                    </tr>
+                  ))
+                : commits.slice(0, 15).map((c) => (
+                    <tr key={c.sha}>
+                      <td className="col-when">{formatRelative(c.commit.author.date)}</td>
+                      <td className="col-author">{c.author?.login ?? c.commit.author?.name ?? "—"}</td>
+                      <td className="col-msg">{c.commit.message.split("\n")[0]}</td>
+                      <td className="col-sha">
+                        <a className="mini-link" href={c.html_url} target="_blank" rel="noreferrer">
+                          {c.sha.slice(0, 7)}
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
-          {commits.length === 0 ? <div className="table-empty">No commits yet.</div> : null}
+          {!isFetching && commits.length === 0 ? <div className="table-empty">No commits yet.</div> : null}
         </div>
       </section>
 
@@ -249,21 +327,30 @@ export function SystemTab({ tools, loadingAll, lastRefreshedAt, onCopyPath }: Sy
               </tr>
             </thead>
             <tbody>
-              {releases.map((r) => (
-                <tr key={r.tag_name}>
-                  <td><span className="code-pill">{r.tag_name}</span></td>
-                  <td>{r.name || r.tag_name}</td>
-                  <td>{r.published_at ? formatDate(r.published_at) : "—"}</td>
-                  <td>
-                    <a className="mini-link" href={r.html_url} target="_blank" rel="noreferrer">
-                      View
-                    </a>
-                  </td>
-                </tr>
-              ))}
+              {isFetching && releases.length === 0
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <tr key={`skel-rel-${i}`}>
+                      <td><span className="skel skel-text" style={{ width: 50 }} aria-hidden="true" /></td>
+                      <td><span className="skel skel-text" style={{ width: 80 }} aria-hidden="true" /></td>
+                      <td><span className="skel skel-text" style={{ width: 100 }} aria-hidden="true" /></td>
+                      <td><span className="skel skel-text" style={{ width: 30 }} aria-hidden="true" /></td>
+                    </tr>
+                  ))
+                : releases.map((r) => (
+                    <tr key={r.tag_name}>
+                      <td><span className="code-pill">{r.tag_name}</span></td>
+                      <td>{r.name || r.tag_name}</td>
+                      <td>{r.published_at ? formatDate(r.published_at) : "—"}</td>
+                      <td>
+                        <a className="mini-link" href={r.html_url} target="_blank" rel="noreferrer">
+                          View
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
             </tbody>
           </table>
-          {releases.length === 0 ? <div className="table-empty">No releases yet.</div> : null}
+          {!isFetching && releases.length === 0 ? <div className="table-empty">No releases yet.</div> : null}
         </div>
       </section>
 

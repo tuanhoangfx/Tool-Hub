@@ -1,4 +1,5 @@
 import { StackTagIcon } from "./StackTagIcon";
+import { Tooltip } from "./Tooltip";
 
 type TagRowProps = {
   tags: string[];
@@ -8,6 +9,7 @@ type TagRowProps = {
 
 export function TagRow({ tags, limit, iconSize = 12 }: TagRowProps) {
   const shown = limit ? tags.slice(0, limit) : tags;
+  const remaining = tags.length - shown.length;
   if (!shown.length) return null;
 
   return (
@@ -18,6 +20,11 @@ export function TagRow({ tags, limit, iconSize = 12 }: TagRowProps) {
           {tag}
         </span>
       ))}
+      {remaining > 0 && (
+        <Tooltip title={`${remaining} more`} lines={tags.slice(shown.length)} align="end">
+          <span className="tag-more">+{remaining}</span>
+        </Tooltip>
+      )}
     </div>
   );
 }

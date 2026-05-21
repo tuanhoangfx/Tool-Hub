@@ -1,0 +1,81 @@
+/* ===== Running badge — prominent live indicator for local servers ===== */
+
+.running-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 6px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  animation: running-pulse 2.4s ease-in-out infinite;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.running-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  animation-play-state: paused;
+}
+
+.running-badge .material-symbols-outlined {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.running-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  animation: running-dot 1.2s ease-in-out infinite;
+}
+
+.running-badge-label {
+  line-height: 1;
+}
+
+.running-badge-compact {
+  padding: 2px 6px;
+  font-size: 9px;
+  gap: 3px;
+}
+
+.running-badge-compact .material-symbols-outlined {
+  display: none;
+}
+
+@keyframes running-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+@keyframes running-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Place compact badge inline with project name in table view */
+.name-cell-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}

@@ -1,0 +1,160 @@
+/* ===== DetailModal additions: commit history + drift alerts ===== */
+
+.modal-commits-section {
+  margin-top: 0.5rem;
+}
+
+.modal-commits {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modal-commit {
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.45rem;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.modal-commit:hover {
+  border-color: rgba(229, 106, 74, 0.4);
+  transform: translateX(2px);
+}
+
+.modal-commit-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-soft);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.modal-commit-avatar.placeholder {
+  text-transform: uppercase;
+}
+
+.modal-commit-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.05rem;
+  min-width: 0;
+}
+
+.modal-commit-message {
+  color: var(--color-text);
+  font-size: 0.78rem;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  font-weight: 500;
+}
+
+.modal-commit-message:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.modal-commit-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+}
+
+.modal-commit-author {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.modal-commit-sha {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.66rem;
+  color: var(--color-text-muted);
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-surface-soft);
+  text-decoration: none;
+}
+
+.modal-commit-sha:hover {
+  color: var(--color-primary);
+  border-color: rgba(229, 106, 74, 0.4);
+}
+
+.modal-commits-loading,
+.modal-commits-empty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  border: 1px dashed var(--color-border-subtle);
+  border-radius: 0.45rem;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+/* Drift alerts redesign */
+.modal-drift-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.modal-drift-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  border: 1px solid transparent;
+}
+
+.modal-drift-item.tone-warn {
+  background: rgba(234, 179, 8, 0.08);
+  border-color: rgba(234, 179, 8, 0.25);
+  color: rgb(132, 96, 8);
+}
+
+.modal-drift-item.tone-bad {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: rgb(150, 30, 30);
+}
+
+.dark .modal-drift-item.tone-warn {
+  color: rgb(253, 224, 71);
+}
+
+.dark .modal-drift-item.tone-bad {
+  color: rgb(252, 165, 165);
+}
+
+.modal-drift-item .material-symbols-outlined {
+  flex-shrink: 0;
+  margin-top: 1px;
+}

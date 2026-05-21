@@ -1,54 +1,10 @@
 import type { ToolRepository } from "../types";
+import { parseRegistry } from "./registry-schema";
 
-export const defaultRepositories: ToolRepository[] = [
-  {
-    id: "gpm-automation-console",
-    code: "P0001",
-    name: "GPM Automation Console",
-    repo: "tuanhoangfx/GPM-Automation-Console",
-    branch: "main",
-    category: "Desktop",
-    audience: "GPM operators",
-    status: "Ready",
-    summary: "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
-    localPath: "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
-    tags: ["Electron", "React", "Vite", "Playwright CDP"],
-    localUrl: "http://127.0.0.1:5173",
-    deployTarget: "github-release",
-    usage: [
-      "Local: corepack pnpm dev (Electron + Vite dev at http://127.0.0.1:5173)",
-      "Build: corepack pnpm dist (NSIS installer)",
-      "Requires GPM Login local API at http://127.0.0.1:19995",
-    ],
-    downloadHint: "Use the latest GitHub release installer (.exe).",
-    manifestPath: "tool.manifest.json",
-    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
-    scriptFiles: ["scripts/sync-changelog.mjs", "scripts/sync-metadata-version.mjs", "scripts/bump-patch-version.mjs"],
-  },
-  {
-    id: "yt-multistream-console",
-    code: "P0002",
-    name: "YT Multistream Console",
-    repo: "tuanhoangfx/YT-Multistream-Console",
-    branch: "main",
-    category: "Desktop",
-    audience: "Livestream operators",
-    status: "Ready",
-    summary: "Desktop console for running multi-channel YouTube livestream jobs from local files or Google Drive source links.",
-    localPath: "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
-    tags: ["Electron", "React", "Vite", "FFmpeg"],
-    localUrl: "http://127.0.0.1:5174",
-    deployTarget: "github-release",
-    usage: [
-      "Local: corepack pnpm dev (Electron + Vite dev at http://127.0.0.1:5174)",
-      "Build: corepack pnpm dist",
-      "Stream keys must stay masked in logs",
-    ],
-    downloadHint: "Use release setup asset or clone the public repository.",
-    manifestPath: "tool.manifest.json",
-    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
-    scriptFiles: ["scripts/sync-changelog.mjs", "scripts/sync-metadata-version.mjs", "scripts/smoke-test.cjs"],
-  },
+// Minimal fallback so the app stays usable if /registry.default.json
+// cannot be fetched (offline, 404, JSON parse error). Acts as the seed
+// before the runtime catalog finishes loading.
+export const FALLBACK_REPOSITORIES: ToolRepository[] = [
   {
     id: "github-tool-manager",
     code: "P0004",
@@ -74,91 +30,20 @@ export const defaultRepositories: ToolRepository[] = [
     trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
     scriptFiles: ["scripts/scan-local-workspace.cjs", "scripts/publish-github-repo.cjs"],
   },
-  {
-    id: "zalo-ai-bot",
-    code: "P0005",
-    name: "Zalo AI Bot",
-    repo: "tuanhoangfx/zalo-ai-bot",
-    branch: "main",
-    category: "Bot",
-    audience: "Zalo group operators",
-    status: "Ready",
-    summary: "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
-    localPath: "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
-    tags: ["Node.js", "zca-js", "9Router", "Admin UI"],
-    appUrl: "https://zaloai.infix1.io.vn/p0005",
-    localUrl: "http://127.0.0.1:3920",
-    deployTarget: "vps",
-    usage: [
-      "Local: pnpm run admin (admin dashboard at http://127.0.0.1:3920)",
-      "Login: pnpm run login (Zalo QR)",
-      "Bot: pnpm run bot",
-      "Production: https://zaloai.infix1.io.vn/p0005",
-    ],
-    downloadHint: "Clone the repo — runtime data stays local, not in the repo.",
-    manifestPath: "tool.manifest.json",
-    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
-    scriptFiles: ["scripts/health-check.ps1", "scripts/install-autostart.ps1", "scripts/patch-admin-botlist.mjs"],
-  },
-  {
-    id: "9router-infra",
-    code: "P0007",
-    name: "9Router Infra",
-    repo: "tuanhoangfx/9router-infra",
-    branch: "main",
-    category: "Infrastructure",
-    audience: "Workspace admins",
-    status: "Ready",
-    summary: "VPS deploy, SSL, DNS, and per-tool API keys for shared 9Router on CloudFly.",
-    localPath: "E:\\Dev\\Tool\\P0007-9router-infra",
-    tags: ["bash", "nginx", "certbot", "docker", "Node.js"],
-    appUrl: "https://9router.infix1.io.vn/dashboard",
-    deployTarget: "vps",
-    usage: [
-      "Deploy: deploy.bat",
-      "SSL: deploy-ssl.bat",
-      "Dashboard: https://9router.infix1.io.vn/dashboard",
-    ],
-    downloadHint: "Clone the repo — secrets and config stay local.",
-    manifestPath: "tool.manifest.json",
-    trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md"],
-    scriptFiles: ["scripts/deploy-remote.mjs", "scripts/deploy-subdomain.mjs"],
-  },
-  {
-    id: "sales-console",
-    code: "P0008",
-    name: "Sales Console",
-    repo: "",
-    branch: "main",
-    remoteEnabled: false,
-    localVersion: "0.1.0",
-    category: "Web",
-    audience: "CzP Seller operators",
-    status: "Experimental",
-    summary: "Next.js + Supabase admin console replacing the Sales Google Sheet — schema, migration, dashboard.",
-    localPath: "E:\\Dev\\Tool\\P0008-Sales-Console",
-    tags: ["Next.js", "Supabase", "Tailwind", "Recharts"],
-    localUrl: "http://127.0.0.1:3000",
-    deployTarget: "local",
-    usage: [
-      "Schema: psql -f schema/01_schema.sql then 02_rls.sql + 03_seed.sql",
-      "Migrate: cd migration && python migrate.py",
-      "App: cd app && pnpm dev (http://127.0.0.1:3000)",
-    ],
-    downloadHint: "Local only — schema lives in schema/, app in app/, migrator in migration/.",
-    manifestPath: "tool.manifest.json",
-    trackedFiles: ["README.md", "docs/SYSTEM.md", "app/package.json"],
-    scriptFiles: ["scripts/introspect-schema.mjs"],
-  },
 ];
 
-export type RuleSource = {
-  label: string;
-  path: string;
-  summary: string;
-  previewPath?: string;
-};
+const REGISTRY_URL = "/registry.default.json";
 
-// Kept for RulesTab compile compatibility while the tab is hidden.
-export const ruleSources: RuleSource[] = [];
-
+export async function loadDefaultRepositories(): Promise<ToolRepository[]> {
+  try {
+    const response = await fetch(`${REGISTRY_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const raw = (await response.json()) as unknown;
+    const parsed = parseRegistry(raw);
+    if (!parsed.ok) throw new Error(`schema invalid: ${parsed.error}`);
+    return parsed.data;
+  } catch (error) {
+    console.warn("[registry] falling back to bundled defaults:", error);
+    return FALLBACK_REPOSITORIES;
+  }
+}

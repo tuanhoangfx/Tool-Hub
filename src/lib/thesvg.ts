@@ -30,6 +30,38 @@ const TAG_SLUG_MAP: Record<string, string> = {
   local: "github",
   workspace: "github",
   custom: "github",
+  // playwright variants
+  playwright: "playwright",
+  "playwright cdp": "playwright",
+  // frontend frameworks & tools
+  "next.js": "nextjs",
+  nextjs: "nextjs",
+  next: "nextjs",
+  "tailwind": "tailwindcss",
+  tailwindcss: "tailwindcss",
+  supabase: "supabase",
+  // infra
+  nginx: "nginx",
+  bash: "bash",
+  shell: "bash",
+  linux: "linux",
+  ubuntu: "ubuntu",
+  // other common
+  python: "python",
+  rust: "rust",
+  go: "go",
+  vue: "vue",
+  svelte: "svelte",
+  astro: "astro",
+  prisma: "prisma",
+  redis: "redis",
+  postgresql: "postgresql",
+  postgres: "postgresql",
+  mongodb: "mongodb",
+  mysql: "mysql",
+  graphql: "graphql",
+  trpc: "trpc",
+  "drizzle": "drizzle",
 };
 
 const LOCAL_ICON_SLUGS = new Set([

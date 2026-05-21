@@ -56,10 +56,14 @@ async function main() {
   const shutdown = () => {
     try {
       vite.kill();
-    } catch {}
+    } catch {
+      // ignore: process may already be dead
+    }
     try {
       launcher.kill();
-    } catch {}
+    } catch {
+      // ignore: process may already be dead
+    }
     process.exit(0);
   };
 
@@ -69,7 +73,9 @@ async function main() {
   vite.on("exit", (code) => {
     try {
       launcher.kill();
-    } catch {}
+    } catch {
+      // ignore: process may already be dead
+    }
     process.exit(code ?? 0);
   });
 }

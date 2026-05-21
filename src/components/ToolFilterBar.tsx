@@ -44,7 +44,6 @@ export function ToolFilterBar({
 }: ToolFilterBarProps) {
   const isRules = variant === "rules";
   const chips = ["All", ...STATUS_ORDER];
-  const hasPicker = Boolean(pickerTools?.length || (pickerTools && onSelectTool));
 
   return (
     <div
@@ -90,7 +89,8 @@ export function ToolFilterBar({
               type="button"
               className={viewMode === "grid" ? "toggle-btn active" : "toggle-btn"}
               onClick={() => onViewModeChange("grid")}
-              title="Card view"
+              aria-pressed={viewMode === "grid"}
+              aria-label="Card view"
             >
               <MaterialIcon name="grid_view" size={14} />
               <span>Cards</span>
@@ -99,7 +99,8 @@ export function ToolFilterBar({
               type="button"
               className={viewMode === "table" ? "toggle-btn active" : "toggle-btn"}
               onClick={() => onViewModeChange("table")}
-              title="Table view"
+              aria-pressed={viewMode === "table"}
+              aria-label="Table view"
             >
               <MaterialIcon name="table_rows" size={14} />
               <span>Table</span>

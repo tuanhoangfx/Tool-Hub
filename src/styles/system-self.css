@@ -1,0 +1,164 @@
+/* ===== System tab — Self-changelog & chart ===== */
+
+.self-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(135deg, rgba(229, 106, 74, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(229, 106, 74, 0.2);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.self-hero-top {
+  flex: 1 1 60%;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.self-hero-id {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.self-hero-id h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.self-hero p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-text-muted, #aaa);
+  line-height: 1.5;
+}
+
+.self-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(80px, 1fr));
+  gap: 0.6rem;
+  flex: 1 1 35%;
+}
+
+.self-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.self-stat-label {
+  font-size: 0.62rem;
+  color: var(--color-text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.self-stat strong {
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+}
+
+.chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.bar-chart {
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  gap: 0.3rem;
+  align-items: end;
+  height: 130px;
+}
+
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  height: 100%;
+  position: relative;
+  cursor: default;
+}
+
+.bar-fill {
+  width: 100%;
+  min-height: 2px;
+  background: linear-gradient(180deg, rgba(229, 106, 74, 0.85), rgba(229, 106, 74, 0.45));
+  border-radius: 4px 4px 0 0;
+  transition: height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding-top: 2px;
+  margin-top: auto;
+}
+
+.bar-col:hover .bar-fill {
+  background: linear-gradient(180deg, rgba(229, 106, 74, 1), rgba(229, 106, 74, 0.7));
+}
+
+.bar-label {
+  font-size: 0.6rem;
+}
+
+.bar-axis {
+  font-size: 0.6rem;
+  color: var(--color-text-muted, #888);
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+}
+
+.chart-meta {
+  font-size: 0.7rem;
+  color: var(--color-text-muted, #888);
+  text-align: right;
+}
+
+.changelog-table .col-when {
+  width: 110px;
+  color: var(--color-text-muted, #888);
+  font-size: 0.74rem;
+}
+
+.changelog-table .col-author {
+  width: 140px;
+  font-size: 0.78rem;
+}
+
+.changelog-table .col-msg {
+  font-size: 0.8rem;
+}
+
+.changelog-table .col-sha {
+  width: 80px;
+}
+
+@media (max-width: 880px) {
+  .bar-chart {
+    grid-template-columns: repeat(7, 1fr);
+    height: 100px;
+  }
+  .self-hero-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

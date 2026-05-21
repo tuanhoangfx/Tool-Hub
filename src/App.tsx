@@ -1,13 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon, Metric, SideNavButton, ThemeToggle, ToolFilterBar } from "./components";
-import { StoreTab, SystemTab, appendSessionLog } from "./features";
-import { useRepositories, useTheme } from "./hooks";
+import { ActivityTab, StoreTab, SystemTab, appendSessionLog } from "./features";
+import { useRepositories, useSessionState, useTheme, useUrlState } from "./hooks";
 import { formatDate } from "./lib/tooling";
 
-type ActiveTab = "library" | "system";
+type ActiveTab = "library" | "activity" | "system";
+
+const VALID_TABS: ActiveTab[] = ["library", "activity", "system"];
+const isValidTab = (value: string | null): value is ActiveTab =>
+  value !== null && (VALID_TABS as string[]).includes(value);
 
 const TAB_META: Record<ActiveTab, { title: string; desc: string; icon: string }> = {
   library: { title: "Tool Library", desc: "Catalog of every running project — GitHub, usage, local path, version", icon: "library_books" },
+  activity: { title: "Activity", desc: "Cross-repo commit timeline merged from every connected tool", icon: "timeline" },
   system: { title: "System", desc: "Workspace health, deployment matrix, drift & session log", icon: "monitoring" },
 };
 
@@ -15,10 +20,11 @@ const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000; // 12 hours
 
 function App() {
   const { isDark, toggleTheme } = useTheme();
-  const [activeTab, setActiveTab] = useState<ActiveTab>("library");
-  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
-  const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const { state: urlState, update: updateUrl } = useUrlState();
+  const activeTab: ActiveTab = isValidTab(urlState.tab) ? urlState.tab : "library";
+  const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
+  const [query, setQuery] = useSessionState<string>("lib:query", "");
+  const [statusFilter, setStatusFilter] = useSessionState<string>("lib:statusFilter", "All");
   const {
     selectedId,
     setSelectedId,
@@ -29,6 +35,27 @@ function App() {
     refreshAll,
     loadLocalRegistry,
   } = useRepositories();
+
+  // Sync URL ?tool=… into selection state when it points to a known tool.
+  useEffect(() => {
+    if (!urlState.tool || resolvedTools.length === 0) return;
+    if (resolvedTools.some((t) => t.id === urlState.tool) && urlState.tool !== selectedId) {
+      setSelectedId(urlState.tool);
+    }
+  }, [urlState.tool, resolvedTools, selectedId, setSelectedId]);
+
+  const setActiveTab = (tab: ActiveTab) => {
+    updateUrl({ tab: tab === "library" ? null : tab });
+  };
+
+  const handleSelectTool = (id: string) => {
+    setSelectedId(id);
+    updateUrl({ tool: id, detail: true });
+  };
+
+  const handleCloseDetail = () => {
+    updateUrl({ detail: false });
+  };
 
   const copyPath = async (path: string) => {
     if (!path) return;
@@ -135,6 +162,15 @@ function App() {
             }}
           />
           <SideNavButton
+            active={activeTab === "activity"}
+            icon="timeline"
+            label="Activity"
+            onClick={() => {
+              appendSessionLog("Switched tab", "activity");
+              setActiveTab("activity");
+            }}
+          />
+          <SideNavButton
             active={activeTab === "system"}
             icon="monitoring"
             label="System"
@@ -181,7 +217,7 @@ function App() {
             </div>
           </div>
           <div className="header-actions">
-            <span className={loadingAll ? "auto-status active" : "auto-status"} title="Auto-refresh every 5 minutes">
+            <span className={loadingAll ? "auto-status active" : "auto-status"} title="Auto-refresh every 12 hours">
               <span className="auto-dot" />
               {refreshStatus}
             </span>
@@ -232,9 +268,13 @@ function App() {
                 <StoreTab
                   tools={filteredTools}
                   selectedId={selectedId}
-                  onSelect={setSelectedId}
+                  onSelect={handleSelectTool}
                   viewMode={viewMode}
+                  modalOpen={urlState.detail}
+                  onCloseModal={handleCloseDetail}
                 />
+              ) : activeTab === "activity" ? (
+                <ActivityTab tools={resolvedTools} />
               ) : (
                 <SystemTab
                   tools={resolvedTools}

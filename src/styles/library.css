@@ -1,0 +1,539 @@
+/* Compact tool card for 5-per-row layout */
+.tool-card h2 {
+  font-size: 0.88rem;
+  margin: 0.2rem 0 0.1rem;
+  line-height: 1.25;
+}
+
+.tool-card .tag-row {
+  gap: 0.2rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  height: 22px;
+  align-items: center;
+  align-self: stretch;
+}
+
+.tool-card .tag-row span,
+.tool-card .tag-more {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tool-card .health-bar-wrap {
+  margin: 0.3rem 0 0.15rem;
+}
+
+.tool-card .health-bar-label,
+.tool-card .health-pct {
+  font-size: 0.65rem;
+}
+
+.tool-card .card-local {
+  font-size: 0.66rem;
+  margin: 0.15rem 0;
+}
+
+.tool-card .card-footer {
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.tool-card .mini-stat {
+  font-size: 0.65rem;
+  padding: 0.1rem 0.35rem;
+}
+
+.tool-card .freshness-pill {
+  font-size: 0.6rem;
+  padding: 0.12rem 0.4rem;
+}
+
+.tool-card .icon-link {
+  width: 24px;
+  height: 24px;
+}
+
+.tool-card-meta {
+  gap: 0.25rem;
+}
+
+/* Filter bar — embed view toggle */
+.filter-toolbar-row .view-toggle {
+  margin-left: 0.4rem;
+  flex-shrink: 0;
+}
+
+.filter-toolbar-row .toggle-btn {
+  padding: 0.3rem 0.55rem;
+  font-size: 0.7rem;
+}
+
+/* ===== Library — view toggle ===== */
+
+.view-toggle {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  align-self: flex-start;
+}
+
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 7px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-muted, #aaa);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.toggle-btn:hover {
+  color: var(--color-text-main);
+}
+
+.toggle-btn.active {
+  background: rgba(229, 106, 74, 0.18);
+  color: var(--color-primary);
+}
+
+.view-fade {
+  animation: viewFadeIn 0.25s ease;
+}
+
+@keyframes viewFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tool-card {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.tool-card:hover {
+  transform: translateY(-2px);
+}
+
+.card-local {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.35rem 0 0.25rem;
+  font-size: 0.7rem;
+  color: var(--color-text-muted, #888);
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-quick-actions {
+  display: inline-flex;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-text-muted, #aaa);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.icon-link:hover {
+  background: rgba(229, 106, 74, 0.15);
+  border-color: rgba(229, 106, 74, 0.4);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+/* Table view */
+.table-view {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  overflow: auto;
+}
+
+.lib-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.lib-table thead th {
+  text-align: left;
+  padding: 0.65rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted, #888);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  position: sticky;
+  top: 0;
+}
+
+.lib-table tbody tr {
+  cursor: pointer;
+  transition: background 0.15s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.lib-table tbody tr:hover {
+  background: rgba(229, 106, 74, 0.06);
+}
+
+.lib-table tbody tr.selected {
+  background: rgba(229, 106, 74, 0.12);
+}
+
+.lib-table tbody td {
+  padding: 0.65rem 0.9rem;
+  vertical-align: middle;
+}
+
+.lib-table .col-code {
+  width: 90px;
+}
+
+.lib-table .col-version {
+  width: 110px;
+}
+
+.lib-table .col-status {
+  width: 120px;
+}
+
+.lib-table .col-drift {
+  width: 90px;
+}
+
+.lib-table .col-updated {
+  width: 150px;
+  color: var(--color-text-muted, #888);
+  font-size: 0.72rem;
+}
+
+.lib-table .col-links {
+  width: 130px;
+}
+
+.name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.name-cell strong {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.name-cell small {
+  color: var(--color-text-muted, #888);
+  font-size: 0.7rem;
+}
+
+.link-row {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.table-empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--color-text-muted, #888);
+}
+
+.usage-list {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  font-size: 0.78rem;
+  color: var(--color-text-main);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.usage-list li {
+  line-height: 1.45;
+}
+
+/* ===== Versions block, auto-refresh indicator, card animations ===== */
+
+.versions-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+}
+
+.version-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+}
+
+.version-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.35rem 0.5rem;
+  background: rgba(255, 255, 255, 0.025);
+  border-radius: 7px;
+}
+
+.version-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.65rem;
+  color: var(--color-text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.version-value {
+  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.icon-link.tone-app:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: rgba(59, 130, 246, 0.45);
+  color: #60a5fa;
+}
+
+.icon-link.tone-download:hover {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.45);
+  color: #c084fc;
+}
+
+.icon-link.tone-local:hover {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.45);
+  color: #4ade80;
+}
+
+.auto-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  font-size: 0.7rem;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.auto-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6);
+  animation: pulseDot 2s infinite;
+}
+
+.auto-status.active {
+  background: rgba(229, 106, 74, 0.12);
+  color: var(--color-primary);
+  border-color: rgba(229, 106, 74, 0.35);
+}
+
+.auto-status.active .auto-dot {
+  box-shadow: 0 0 0 0 rgba(229, 106, 74, 0.6);
+  animation: pulseDotActive 1.2s infinite;
+}
+
+@keyframes pulseDot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+@keyframes pulseDotActive {
+  0% {
+    box-shadow: 0 0 0 0 rgba(229, 106, 74, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(229, 106, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 106, 74, 0);
+  }
+}
+
+/* Staggered card entry animation */
+.card-grid .tool-card {
+  animation: cardEnter 0.4s ease backwards;
+}
+
+.card-grid .tool-card:nth-child(1) {
+  animation-delay: 0.02s;
+}
+.card-grid .tool-card:nth-child(2) {
+  animation-delay: 0.06s;
+}
+.card-grid .tool-card:nth-child(3) {
+  animation-delay: 0.10s;
+}
+.card-grid .tool-card:nth-child(4) {
+  animation-delay: 0.14s;
+}
+.card-grid .tool-card:nth-child(5) {
+  animation-delay: 0.18s;
+}
+.card-grid .tool-card:nth-child(6) {
+  animation-delay: 0.22s;
+}
+.card-grid .tool-card:nth-child(7) {
+  animation-delay: 0.26s;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== Freshness — age-based color coding ===== */
+
+.freshness-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border: 1px solid currentColor;
+  background: transparent;
+  letter-spacing: 0.02em;
+}
+
+.freshness-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Fresh — pushed within 24h: bright primary + pulsing dot */
+.freshness-pill-fresh {
+  color: var(--color-primary, #e56a4a);
+  background: rgba(229, 106, 74, 0.08);
+}
+
+.freshness-pill-fresh .freshness-dot {
+  animation: freshPulse 1.6s infinite;
+}
+
+@keyframes freshPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(229, 106, 74, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 5px rgba(229, 106, 74, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 106, 74, 0);
+  }
+}
+
+/* Week — pushed within 7 days: warm yellow */
+.freshness-pill-week {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.08);
+}
+
+/* Month — pushed within 30 days: cool blue */
+.freshness-pill-month {
+  color: #60a5fa;
+  background: rgba(59, 130, 246, 0.08);
+}
+
+/* Stale — older than 30 days: muted gray */
+.freshness-pill-stale {
+  color: #888;
+  background: rgba(255, 255, 255, 0.04);
+  opacity: 0.85;
+}
+
+/* Card left-edge accent based on freshness */
+.tool-card.freshness-fresh {
+  box-shadow: inset 3px 0 0 0 rgba(229, 106, 74, 0.6);
+}
+
+.tool-card.freshness-week {
+  box-shadow: inset 3px 0 0 0 rgba(251, 191, 36, 0.45);
+}
+
+.tool-card.freshness-month {
+  box-shadow: inset 3px 0 0 0 rgba(59, 130, 246, 0.4);
+}
+
+.tool-card.freshness-stale {
+  box-shadow: inset 3px 0 0 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Table row left-edge accent */
+.lib-table tr.freshness-fresh td:first-child {
+  border-left: 3px solid rgba(229, 106, 74, 0.6);
+}
+
+.lib-table tr.freshness-week td:first-child {
+  border-left: 3px solid rgba(251, 191, 36, 0.45);
+}
+
+.lib-table tr.freshness-month td:first-child {
+  border-left: 3px solid rgba(59, 130, 246, 0.4);
+}
+
+.lib-table tr.freshness-stale td:first-child {
+  border-left: 3px solid rgba(255, 255, 255, 0.08);
+}
+
