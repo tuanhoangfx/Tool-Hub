@@ -453,43 +453,6 @@
     "appUrl": "https://p0001-youtube-tda-team.vercel.app"
   },
   {
-    "id": "google-one-family-manager",
-    "code": "P0014",
-    "name": "Google One Family Manager",
-    "repo": "tuanhoangfx/P0002-google-one-family-manager",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "0.0.0",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Needs review",
-    "summary": "Dashboard for Gmail account, family membership, and Google One plan status.",
-    "localPath": "E:\\Dev\\Tool\\P0014-google-one-family-manager",
-    "tags": [
-      "React",
-      "Vite",
-      "Express",
-      "Google APIs"
-    ],
-    "localUrl": "http://127.0.0.1:5174",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: npm run dev:full",
-      "Build: npm run build"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [],
-    "appUrl": "https://p0002-google-one-family-manager.vercel.app"
-  },
-  {
     "id": "student-id-generator-v2",
     "code": "P0015",
     "name": "Student ID Generator V2",
@@ -500,7 +463,7 @@
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Needs review",
-    "summary": "Static student ID card generator with canvas rendering and barcode (refactored from P0016).",
+    "summary": "Static student ID card generator with canvas rendering and barcode.",
     "localPath": "E:\\Dev\\Tool\\P0015-student-id-generator-v2",
     "tags": [
       "HTML",
@@ -523,108 +486,6 @@
     ],
     "scriptFiles": [],
     "appUrl": "https://p0005-student-id-generator-v2.vercel.app"
-  },
-  {
-    "id": "student-id-generator",
-    "code": "P0016",
-    "name": "Student ID Generator",
-    "repo": "tuanhoangfx/P0004-student-id-generator",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "0.0.0",
-    "category": "Library",
-    "audience": "Tool maintainers",
-    "status": "Archived",
-    "summary": "Placeholder repository for legacy student ID generator (superseded by P0015).",
-    "localPath": "E:\\Dev\\Tool\\P0016-student-id-generator",
-    "tags": [
-      "Archived"
-    ],
-    "deployTarget": "local",
-    "usage": [
-      "Run the configured dev command from package.json.",
-      "Run the configured build command from package.json."
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": []
-  },
-  {
-    "id": "workspace-template",
-    "code": "P0017",
-    "name": "Workspace Project Template",
-    "repo": "tuanhoangfx/P0003-template",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "0.0.0",
-    "category": "Library",
-    "audience": "Tool maintainers",
-    "status": "Experimental",
-    "summary": "Copy-paste template for new P00xx projects under E:\\Dev\\Tool.",
-    "localPath": "E:\\Dev\\Tool\\P0017-template",
-    "tags": [
-      "Template",
-      "Vite",
-      "React"
-    ],
-    "deployTarget": "local",
-    "usage": [
-      "Run the configured dev command from package.json.",
-      "Run the configured build command from package.json."
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": []
-  },
-  {
-    "id": "webapps-platform",
-    "code": "P0018",
-    "name": "WebApps Platform",
-    "repo": "tuanhoangfx/webapps-platform",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "0.0.0",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Needs review",
-    "summary": "Home hub that launches sibling tools (P0013, P0014, P0015) from E:\\Dev\\Tool.",
-    "localPath": "E:\\Dev\\Tool\\P0018-webapps-platform",
-    "tags": [
-      "React",
-      "Vite",
-      "Node"
-    ],
-    "localUrl": "http://127.0.0.1:5173",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: npm run dev",
-      "Build: npm run build"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [],
-    "appUrl": "https://webapps-platform.vercel.app"
   },
   {
     "id": "infi-work-performance",

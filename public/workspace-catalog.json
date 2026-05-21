@@ -1,8 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-21T08:54:06.307Z",
-  "dryRun": false,
-  "githubUser": "tuanhoangfx",
+  "generatedAt": "2026-05-21T09:51:24.362Z",
   "roots": [
     {
       "id": "tool",
@@ -27,105 +25,10 @@
     }
   ],
   "summary": {
-    "total": 19,
-    "projects": 17,
-    "n8n": 2,
-    "githubOnly": 0,
-    "pushed": 0,
-    "pulled": 0,
-    "inSync": 16,
-    "errors": 1,
-    "cloned": 0,
-    "cloneErrors": 0,
-    "versionDrift": 0
+    "total": 15,
+    "projects": 13,
+    "n8n": 2
   },
-  "syncResults": [
-    {
-      "id": "gpm-automation-console",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "yt-multistream-console",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "github-tool-manager",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "zalo-ai-bot",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "9router-infra",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "sales-console",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "mie-hair-performance",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "cursor-telegram",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "tool-control-center",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "apps-script-sync",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "czp-youtube-tda-team",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "google-one-family-manager",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "student-id-generator-v2",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "student-id-generator",
-      "status": "error",
-      "detail": "github-push: Repository was archived so is read-only."
-    },
-    {
-      "id": "workspace-template",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "webapps-platform",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "infi-work-performance",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    }
-  ],
   "entries": [
     {
       "id": "gpm-automation-console",
@@ -170,15 +73,7 @@
         "scripts/extract-workflow-defaults.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:52.504Z"
-      },
-      "githubVersion": "0.2.25",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "yt-multistream-console",
@@ -223,15 +118,7 @@
         "scripts/release-stamp-if-code-change.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:53.289Z"
-      },
-      "githubVersion": "0.1.27",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "github-tool-manager",
@@ -278,15 +165,7 @@
         "scripts/publish-github-repo.cjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:54.085Z"
-      },
-      "githubVersion": "0.1.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "zalo-ai-bot",
@@ -333,15 +212,7 @@
         "scripts/clear-thread-label-remote.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:54.867Z"
-      },
-      "githubVersion": "1.2.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "9router-infra",
@@ -389,15 +260,7 @@
         "scripts/complete-claude-oauth.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:55.639Z"
-      },
-      "githubVersion": "1.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "sales-console",
@@ -443,15 +306,7 @@
         "scripts/introspect-schema.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:56.429Z"
-      },
-      "githubVersion": "0.3.1",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "mie-hair-performance",
@@ -494,15 +349,7 @@
         "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:57.229Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "cursor-telegram",
@@ -542,15 +389,7 @@
         "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:58.075Z"
-      },
-      "githubVersion": "1.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "tool-control-center",
@@ -590,15 +429,7 @@
         "scripts/sync-projects.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:58.860Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "apps-script-sync",
@@ -634,15 +465,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:53:59.676Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "czp-youtube-tda-team",
@@ -682,63 +505,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:54:00.483Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
-    },
-    {
-      "id": "google-one-family-manager",
-      "code": "P0014",
-      "name": "Google One Family Manager",
-      "repo": "tuanhoangfx/P0002-google-one-family-manager",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Dashboard for Gmail account, family membership, and Google One plan status.",
-      "localPath": "E:\\Dev\\Tool\\P0014-google-one-family-manager",
-      "tags": [
-        "React",
-        "Vite",
-        "Express",
-        "Google APIs"
-      ],
-      "appUrl": "https://p0002-google-one-family-manager.vercel.app",
-      "localUrl": "http://127.0.0.1:5174",
-      "deployTarget": "vercel",
-      "usage": [
-        "Dev: npm run dev:full",
-        "Build: npm run build",
-        "App: https://p0002-google-one-family-manager.vercel.app"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:54:01.306Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "student-id-generator-v2",
@@ -751,7 +518,7 @@
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Needs review",
-      "summary": "Static student ID card generator with canvas rendering and barcode (refactored from P0016).",
+      "summary": "Static student ID card generator with canvas rendering and barcode.",
       "localPath": "E:\\Dev\\Tool\\P0015-student-id-generator-v2",
       "tags": [
         "HTML",
@@ -776,148 +543,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:54:02.213Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
-    },
-    {
-      "id": "student-id-generator",
-      "code": "P0016",
-      "name": "Student ID Generator",
-      "repo": "tuanhoangfx/P0004-student-id-generator",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Library",
-      "audience": "Tool maintainers",
-      "status": "Archived",
-      "summary": "Placeholder repository for legacy student ID generator (superseded by P0015).",
-      "localPath": "E:\\Dev\\Tool\\P0016-student-id-generator",
-      "tags": [
-        "Archived"
-      ],
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "error",
-        "detail": "github-push: Repository was archived so is read-only.",
-        "at": "2026-05-21T08:54:03.465Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
-    },
-    {
-      "id": "workspace-template",
-      "code": "P0017",
-      "name": "Workspace Project Template",
-      "repo": "tuanhoangfx/P0003-template",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Library",
-      "audience": "Tool maintainers",
-      "status": "Experimental",
-      "summary": "Copy-paste template for new P00xx projects under E:\\Dev\\Tool.",
-      "localPath": "E:\\Dev\\Tool\\P0017-template",
-      "tags": [
-        "Template",
-        "Vite",
-        "React"
-      ],
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:54:04.230Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
-    },
-    {
-      "id": "webapps-platform",
-      "code": "P0018",
-      "name": "WebApps Platform",
-      "repo": "tuanhoangfx/webapps-platform",
-      "branch": "master",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Home hub that launches sibling tools (P0013, P0014, P0015) from E:\\Dev\\Tool.",
-      "localPath": "E:\\Dev\\Tool\\P0018-webapps-platform",
-      "tags": [
-        "React",
-        "Vite",
-        "Node"
-      ],
-      "appUrl": "https://webapps-platform.vercel.app",
-      "localUrl": "http://127.0.0.1:5173",
-      "deployTarget": "vercel",
-      "usage": [
-        "Dev: npm run dev",
-        "Build: npm run build",
-        "App: https://webapps-platform.vercel.app"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:54:05.100Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "infi-work-performance",
@@ -956,15 +582,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T08:54:05.907Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "n8n-reup-video-free",

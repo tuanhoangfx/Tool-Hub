@@ -7,8 +7,7 @@
 
 ## Không dùng Vercel cho P0004
 
-- Project Vercel `webapps-platform` dành cho **P0018** (`https://webapps-platform.vercel.app`).
-- Không gắn repo GitHub-Tool-Manager vào `webapps-platform` (tránh deploy nhầm).
+- Production chỉ qua **GitHub Pages** — không tạo Vercel project cho repo `GitHub-Tool-Manager`.
 
 ## DNS
 
