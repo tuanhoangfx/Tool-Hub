@@ -100,10 +100,10 @@ function detectLocalPort(dir, packageJson) {
 function detectDeployTarget(dir, manifest, packageJson) {
   if (manifest?.deployTarget) return manifest.deployTarget;
   if (fs.existsSync(path.join(dir, "vercel.json"))) return "vercel";
-  if (fs.existsSync(path.join(dir, ".github", "workflows", "deploy-pages.yml"))) return "github-pages";
   const deps = { ...(packageJson?.dependencies || {}), ...(packageJson?.devDependencies || {}) };
-  if (deps.electron) return "github-release";
   if (deps.next) return "vercel";
+  if (fs.existsSync(path.join(dir, ".github", "workflows", "deploy-pages.yml"))) return "github-pages";
+  if (deps.electron) return "github-release";
   if (fs.existsSync(path.join(dir, "deploy.bat")) || fs.existsSync(path.join(dir, "scripts", "deploy-remote.mjs"))) {
     return "vps";
   }

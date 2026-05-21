@@ -96,15 +96,15 @@
       "React",
       "TypeScript",
       "Vite",
-      "GitHub Pages"
+      "Vercel"
     ],
     "appUrl": "https://infix1.io.vn",
     "localUrl": "http://127.0.0.1:5176",
-    "deployTarget": "github-pages",
+    "deployTarget": "vercel",
     "usage": [
-      "Local: corepack pnpm dev (http://127.0.0.1:5176)",
+      "Dev: corepack pnpm dev",
       "Build: corepack pnpm build",
-      "Production: GitHub Pages at https://infix1.io.vn (workflow deploy-pages.yml)"
+      "App: https://infix1.io.vn (Vercel — git push main)"
     ],
     "downloadHint": "Use https://infix1.io.vn or clone the repository.",
     "manifestPath": "tool.manifest.json",

@@ -4,7 +4,7 @@
 
 - Version: `0.1.0`
 - Status: Ready
-- Channel: GitHub public repository
+- Channel: GitHub public repository + Vercel production
 
 ## Publish
 
@@ -12,14 +12,14 @@
 corepack pnpm lint
 corepack pnpm build
 corepack pnpm publish:github
+git push origin main   # triggers Vercel deploy
 ```
 
 ## Custom domain
 
-- Production: https://infix1.io.vn
-- GitHub Pages deploys from `.github/workflows/deploy-pages.yml` on push to `main`.
-- DNS (Tino): apex `A` → GitHub Pages IPs; `www` CNAME → `tuanhoangfx.github.io`
-- In repo **Settings → Pages**, confirm custom domain `infix1.io.vn` and HTTPS.
+- Production: https://infix1.io.vn (Vercel project `github-tool-manager`)
+- DNS (Tino): apex **`A` → `76.76.21.21`** (Vercel). Không dùng GitHub Pages IPs.
+- Tắt GitHub Pages trên repo `tuanhoangfx/GitHub-Tool-Manager` sau khi DNS live.
 
 ## Notes
 

@@ -1,8 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-21T09:58:46.934Z",
-  "dryRun": false,
-  "githubUser": "tuanhoangfx",
+  "generatedAt": "2026-05-21T10:28:03.301Z",
   "roots": [
     {
       "id": "tool",
@@ -29,83 +27,8 @@
   "summary": {
     "total": 15,
     "projects": 13,
-    "n8n": 2,
-    "githubOnly": 0,
-    "pushed": 0,
-    "pulled": 0,
-    "inSync": 13,
-    "errors": 0,
-    "cloned": 0,
-    "cloneErrors": 0,
-    "versionDrift": 0
+    "n8n": 2
   },
-  "syncResults": [
-    {
-      "id": "gpm-automation-console",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "yt-multistream-console",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "github-tool-manager",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "zalo-ai-bot",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "9router-infra",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "sales-console",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "mie-hair-performance",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "cursor-telegram",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "tool-control-center",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "apps-script-sync",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "czp-youtube-tda-team",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "student-id-generator-v2",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    },
-    {
-      "id": "infi-work-performance",
-      "status": "in-sync",
-      "detail": "manifests-match"
-    }
-  ],
   "entries": [
     {
       "id": "gpm-automation-console",
@@ -150,15 +73,7 @@
         "scripts/extract-workflow-defaults.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:36.049Z"
-      },
-      "githubVersion": "0.2.25",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "yt-multistream-console",
@@ -203,15 +118,7 @@
         "scripts/release-stamp-if-code-change.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:36.876Z"
-      },
-      "githubVersion": "0.1.27",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "github-tool-manager",
@@ -234,7 +141,7 @@
       ],
       "appUrl": "https://infix1.io.vn",
       "localUrl": "http://127.0.0.1:5176",
-      "deployTarget": "github-pages",
+      "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
@@ -258,15 +165,7 @@
         "scripts/publish-github-repo.cjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:37.723Z"
-      },
-      "githubVersion": "0.1.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "zalo-ai-bot",
@@ -313,15 +212,7 @@
         "scripts/clear-thread-label-remote.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:38.559Z"
-      },
-      "githubVersion": "1.2.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "9router-infra",
@@ -369,15 +260,7 @@
         "scripts/complete-claude-oauth.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:39.361Z"
-      },
-      "githubVersion": "1.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "sales-console",
@@ -423,15 +306,7 @@
         "scripts/introspect-schema.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:40.205Z"
-      },
-      "githubVersion": "0.3.1",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "mie-hair-performance",
@@ -474,15 +349,7 @@
         "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:41.045Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "cursor-telegram",
@@ -522,15 +389,7 @@
         "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:41.897Z"
-      },
-      "githubVersion": "1.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "tool-control-center",
@@ -570,15 +429,7 @@
         "scripts/sync-projects.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:42.707Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "apps-script-sync",
@@ -614,15 +465,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:43.460Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "czp-youtube-tda-team",
@@ -662,15 +505,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:44.730Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "student-id-generator-v2",
@@ -708,15 +543,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:45.657Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "infi-work-performance",
@@ -755,15 +582,7 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project",
-      "sync": {
-        "manifest": "in-sync",
-        "detail": "manifests-match",
-        "at": "2026-05-21T09:58:46.558Z"
-      },
-      "githubVersion": "0.0.0",
-      "githubVersionSource": "manifest",
-      "versionDrift": "match"
+      "assetKind": "project"
     },
     {
       "id": "n8n-reup-video-free",

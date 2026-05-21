@@ -1,18 +1,43 @@
-# P0004 — Production deploy (GitHub Pages)
+# P0004 — Production deploy (Vercel)
+
+## Chính sách workspace
+
+- **Web / SPA / Next.js** trong `E:\Dev\Tool\P*` → deploy **Vercel** (GitHub `main` → auto build).
+- **Electron / desktop** → `github-release`.
+- **Bot / infra systemd** → VPS (`deploy.bat`, `pnpm deploy`).
+- **Local-only bridge** → chạy trên máy, không Vercel.
+
+P0004 là catalog hub — production **Vercel-only** (không GitHub Pages).
 
 ## Production URL
 
-- **https://infix1.io.vn** — custom domain trên GitHub Pages (repo `tuanhoangfx/GitHub-Tool-Manager`).
-- Workflow: `.github/workflows/deploy-pages.yml` (Vite build → `dist` → Pages).
+| URL | Vai trò |
+|-----|---------|
+| **https://infix1.io.vn** | Custom domain (sau khi DNS trỏ Vercel) |
+| **https://github-tool-manager.vercel.app** | Alias Vercel mặc định |
 
-## Không dùng Vercel cho P0004
+## Vercel project
 
-- Production chỉ qua **GitHub Pages** — không tạo Vercel project cho repo `GitHub-Tool-Manager`.
+| Field | Value |
+|-------|--------|
+| Project | `github-tool-manager` |
+| Project ID | `prj_tuOhhInjLzjWDrVYfeQanSqSqWMi` |
+| Team | `tuanhoangfxs-projects` |
+| Repo | `tuanhoangfx/GitHub-Tool-Manager` |
+| Framework | Vite — build `pnpm build`, output `dist` |
+| Config | `vercel.json` (SPA rewrites) |
 
-## DNS
+Mỗi `git push` lên `main` → Vercel production deploy (Git integration đã bật).
 
-- `infix1.io.vn` trỏ GitHub Pages (A/CNAME theo GitHub Settings → Pages).
-- Sau push `main`, Actions tab → **Deploy GitHub Pages** phải success.
+## DNS (bắt buộc để infix1.io.vn live)
+
+Trên **Tino** (hoặc DNS hiện tại):
+
+1. Xóa / thay bản ghi **A** apex trỏ GitHub Pages (`185.199.x.x`).
+2. Thêm: **`A` `infix1.io.vn` → `76.76.21.21`** (theo Vercel Domains).
+3. Trên GitHub repo → **Settings → Pages** → tắt site / gỡ custom domain `infix1.io.vn` (tránh trùng).
+
+Sau propagate (~ vài phút–48h): `https://infix1.io.vn` serve bản Vercel.
 
 ## Local
 
@@ -24,14 +49,19 @@ corepack pnpm preview      # http://127.0.0.1:4176
 corepack pnpm scan:local   # refresh public/*.json
 ```
 
+## CLI deploy (tùy chọn)
+
+```powershell
+cd E:\Dev\Tool\P0004-GitHub-Tool-Manager
+corepack pnpm dlx vercel@latest deploy --prod --yes --scope tuanhoangfxs-projects
+```
+
 ## Push code
 
 ```powershell
 pnpm run push
 ```
 
-Nếu push workflow file bị reject (OAuth scope), commit `.github/workflows/deploy-pages.yml` qua GitHub web UI.
+## Catalog trên production
 
-## Workspace catalog trên production
-
-File `public/workspace-catalog.json` được copy vào `dist/` khi build — Sync Hub trên https://infix1.io.vn/?tab=system đọc file này.
+`public/workspace-catalog.json` được copy vào `dist/` khi build — Sync Hub tại `https://infix1.io.vn/?tab=system` đọc file này.

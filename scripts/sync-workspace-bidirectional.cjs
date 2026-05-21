@@ -210,7 +210,7 @@ function githubOnlyEntry(ghRepo, githubUser) {
     summary: ghRepo.description || "GitHub repository without local folder in workspace roots.",
     localPath: "",
     tags: ["GitHub", ghRepo.language || "repo"].filter(Boolean),
-    deployTarget: "github-pages",
+    deployTarget: "vercel",
     usage: [`Clone: ${ghRepo.clone_url}`, `Web: ${ghRepo.html_url}`],
     downloadHint: ghRepo.html_url,
     manifestPath: "tool.manifest.json",

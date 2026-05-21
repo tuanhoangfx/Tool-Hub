@@ -26,10 +26,11 @@
     "push": "corepack pnpm push",
     "publish": "corepack pnpm publish:github:init"
   },
-  "deployTarget": "github-pages",
+  "deployTarget": "vercel",
   "docs": {
     "readme": "README.md",
-    "changelog": "CHANGELOG.md"
+    "changelog": "CHANGELOG.md",
+    "deploy": "docs/DEPLOY-VERCEL.md"
   },
   "github": {
     "repo": "tuanhoangfx/GitHub-Tool-Manager",
@@ -43,33 +44,33 @@
       "lint",
       "public-catalog",
       "repo-admin",
-      "github-actions",
+      "vercel-production",
       "local-registry"
     ]
   },
   "urls": {
     "app": "https://infix1.io.vn",
-    "appSetupAt": "2026-04-29T17:00:00.000Z",
+    "appSetupAt": "2026-05-21T10:30:00.000Z",
     "local": "http://127.0.0.1:5176",
     "localSetupAt": "2026-04-29T17:00:00.000Z"
   },
-  "githubPages": {
-    "workflow": ".github/workflows/deploy-pages.yml",
-    "customDomain": "infix1.io.vn",
-    "sourceBranch": "main"
-  },
   "vercel": {
-    "project": null,
-    "notes": "Production is GitHub Pages (infix1.io.vn). No Vercel project for P0004."
+    "project": "github-tool-manager",
+    "projectId": "prj_tuOhhInjLzjWDrVYfeQanSqSqWMi",
+    "productionUrl": "https://infix1.io.vn",
+    "previewUrl": "https://github-tool-manager.vercel.app",
+    "productionBranch": "main",
+    "team": "tuanhoangfxs-projects",
+    "notes": "Vite SPA; vercel.json rewrites. Custom domain infix1.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
   },
-  "manifestUpdatedAt": "2026-05-21T09:00:00.000Z",
+  "manifestUpdatedAt": "2026-05-21T10:30:00.000Z",
   "health": {
     "status": "Ready",
-    "note": "Reads public GitHub metadata in-browser. Deploy via GitHub Actions → Pages."
+    "note": "Production on Vercel. Chuyển DNS từ GitHub Pages sang Vercel để infix1.io.vn live."
   },
   "nextActions": [
+    "Cập nhật DNS Tino: A infix1.io.vn → 76.76.21.21; tắt GitHub Pages trên repo.",
     "Run sync:workspace after changing ports, URLs, or manifest on any root (Tool/Extension/n8n).",
-    "Add pull clone for github-only repos into Extension or Tool folders.",
     "Add browser push manifest via VITE_GITHUB_TOKEN without CLI."
   ]
 }
