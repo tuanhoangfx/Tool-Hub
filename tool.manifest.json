@@ -2,13 +2,22 @@
   "schemaVersion": 1,
   "code": "P0004",
   "id": "github-tool-manager",
-  "aliases": ["P0004", "GitHub Tool Manager", "Tool Store"],
+  "aliases": [
+    "P0004",
+    "GitHub Tool Manager",
+    "Tool Store"
+  ],
   "name": "GitHub Tool Manager",
   "type": "Web",
   "owner": "Tool",
   "status": "Ready",
   "summary": "Public card catalog and GitHub repository management console for published tools.",
-  "stack": ["React", "TypeScript", "Vite", "GitHub public raw API"],
+  "stack": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "GitHub public raw API"
+  ],
   "commands": {
     "dev": "corepack pnpm dev",
     "build": "corepack pnpm build",
@@ -29,7 +38,14 @@
   },
   "release": {
     "version": "0.1.0",
-    "readiness": ["build", "lint", "public-catalog", "repo-admin", "github-actions", "local-registry"]
+    "readiness": [
+      "build",
+      "lint",
+      "public-catalog",
+      "repo-admin",
+      "github-actions",
+      "local-registry"
+    ]
   },
   "urls": {
     "app": "https://infix1.io.vn",
@@ -48,8 +64,8 @@
     "note": "Reads public GitHub metadata in-browser. Production deploy via Vercel (not GitHub Pages)."
   },
   "nextActions": [
-    "Add authenticated GitHub App workflow for issue/release creation.",
-    "Add local workspace scanner merge with remote manifests.",
-    "Add version drift alerts across package, manifest, changelog, and latest release."
+    "Run sync:workspace after changing ports, URLs, or manifest on any root (Tool/Extension/n8n).",
+    "Add pull clone for github-only repos into Extension or Tool folders.",
+    "Add browser push manifest via VITE_GITHUB_TOKEN without CLI."
   ]
 }
