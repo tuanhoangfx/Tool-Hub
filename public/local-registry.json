@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T10:28:03.289Z",
+  "generatedAt": "2026-05-21T13:09:09.961Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -43,7 +43,10 @@
         "scripts/bump-patch-version.mjs",
         "scripts/check-version-sync.mjs",
         "scripts/extract-workflow-defaults.mjs"
-      ]
+      ],
+      "githubVersion": "0.2.25",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "yt-multistream-console",
@@ -86,7 +89,10 @@
         "scripts/install-git-hooks.mjs",
         "scripts/live-test.cjs",
         "scripts/release-stamp-if-code-change.mjs"
-      ]
+      ],
+      "githubVersion": "0.1.27",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "github-tool-manager",
@@ -131,7 +137,10 @@
         "scripts/local-tool-launcher.cjs",
         "scripts/prune-dead-css.cjs",
         "scripts/publish-github-repo.cjs"
-      ]
+      ],
+      "githubVersion": "0.1.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "zalo-ai-bot",
@@ -176,7 +185,10 @@
         "scripts/backfill-sqlite-remote.mjs",
         "scripts/change-admin-pass-remote.mjs",
         "scripts/clear-thread-label-remote.mjs"
-      ]
+      ],
+      "githubVersion": "1.2.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "9router-infra",
@@ -222,7 +234,10 @@
         "scripts/check-vps-health.mjs",
         "scripts/claude-oauth-windows.ps1",
         "scripts/complete-claude-oauth.mjs"
-      ]
+      ],
+      "githubVersion": "1.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "sales-console",
@@ -266,7 +281,10 @@
       "scriptFiles": [
         "scripts/git-push.ps1",
         "scripts/introspect-schema.mjs"
-      ]
+      ],
+      "githubVersion": "0.3.1",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "mie-hair-performance",
@@ -307,7 +325,10 @@
       "scriptFiles": [
         "scripts/export-supabase-data.ps1",
         "scripts/git-push.ps1"
-      ]
+      ],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "cursor-telegram",
@@ -345,7 +366,10 @@
       ],
       "scriptFiles": [
         "scripts/git-push.ps1"
-      ]
+      ],
+      "githubVersion": "1.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "tool-control-center",
@@ -383,7 +407,10 @@
         "scripts/control-api.mjs",
         "scripts/project-registry.mjs",
         "scripts/sync-projects.mjs"
-      ]
+      ],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "apps-script-sync",
@@ -417,7 +444,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "czp-youtube-tda-team",
@@ -455,7 +485,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "student-id-generator-v2",
@@ -491,7 +524,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "infi-work-performance",
@@ -528,7 +564,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     }
   ]
 }
