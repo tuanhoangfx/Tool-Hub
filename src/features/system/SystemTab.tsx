@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon } from "../../components";
+import { SyncHubPanel } from "../sync/SyncHubPanel";
 import { memoFetch } from "../../lib/cache";
 import { dateKey, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import { githubAuthHeaders } from "../../services/github";
@@ -151,6 +152,8 @@ export function SystemTab({ tools, loadingAll, lastRefreshedAt, onCopyPath }: Sy
 
   return (
     <section className="system-layout">
+      <SyncHubPanel />
+
       <section className="system-section">
         <h3 className="system-section-title">
           <MaterialIcon name="dashboard" size={16} />

@@ -1,7 +1,153 @@
 {
-  "generatedAt": "2026-05-21T07:53:38.834Z",
-  "root": "E:\\Dev\\Tool",
-  "repositories": [
+  "schemaVersion": 1,
+  "generatedAt": "2026-05-21T07:53:38.835Z",
+  "dryRun": false,
+  "githubUser": "tuanhoangfx",
+  "roots": [
+    {
+      "id": "tool",
+      "label": "Tool",
+      "path": "E:\\Dev\\Tool",
+      "kind": "projects",
+      "scan": "tool-manifest"
+    },
+    {
+      "id": "extension",
+      "label": "Extension",
+      "path": "E:\\Dev\\Extension",
+      "kind": "projects",
+      "scan": "tool-manifest"
+    },
+    {
+      "id": "n8n",
+      "label": "n8n",
+      "path": "E:\\Dev\\n8n",
+      "kind": "workflows",
+      "scan": "n8n-json"
+    }
+  ],
+  "summary": {
+    "total": 23,
+    "projects": 14,
+    "n8n": 2,
+    "githubOnly": 7,
+    "pushed": 0,
+    "pulled": 0,
+    "inSync": 10,
+    "errors": 0,
+    "cloned": 9,
+    "cloneErrors": 0,
+    "versionDrift": 0
+  },
+  "syncResults": [
+    {
+      "id": "gpm-automation-console",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "yt-multistream-console",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "github-tool-manager",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "tool-control-center",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "apps-script-sync",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "zalo-ai-bot",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "9router-infra",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "sales-console",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "mie-hair-performance",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "cursor-telegram",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    }
+  ],
+  "cloneResults": [
+    {
+      "repo": "tuanhoangfx/Apps-Script-Sync",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0005-Apps-Script-Sync",
+      "targetDir": "E:\\Dev\\Tool\\P0005-Apps-Script-Sync"
+    },
+    {
+      "repo": "tuanhoangfx/Tool-Control-Center",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0004-Tool-Control-Center",
+      "targetDir": "E:\\Dev\\Tool\\P0004-Tool-Control-Center"
+    },
+    {
+      "repo": "tuanhoangfx/webapps-platform",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\webapps-platform",
+      "targetDir": "E:\\Dev\\Tool\\webapps-platform"
+    },
+    {
+      "repo": "tuanhoangfx/P0002-google-one-family-manager",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0002-google-one-family-manager",
+      "targetDir": "E:\\Dev\\Tool\\P0002-google-one-family-manager"
+    },
+    {
+      "repo": "tuanhoangfx/P0003-template",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0003-template",
+      "targetDir": "E:\\Dev\\Tool\\P0003-template"
+    },
+    {
+      "repo": "tuanhoangfx/P0001-czp-youtube-tda-team",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0001-czp-youtube-tda-team",
+      "targetDir": "E:\\Dev\\Tool\\P0001-czp-youtube-tda-team"
+    },
+    {
+      "repo": "tuanhoangfx/P0005-student-id-generator-v2",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0005-student-id-generator-v2",
+      "targetDir": "E:\\Dev\\Tool\\P0005-student-id-generator-v2"
+    },
+    {
+      "repo": "tuanhoangfx/P0004-student-id-generator",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\P0004-student-id-generator",
+      "targetDir": "E:\\Dev\\Tool\\P0004-student-id-generator"
+    },
+    {
+      "repo": "tuanhoangfx/-Work-Performance",
+      "status": "cloned",
+      "detail": "E:\\Dev\\Tool\\-Work-Performance",
+      "targetDir": "E:\\Dev\\Tool\\-Work-Performance"
+    }
+  ],
+  "entries": [
     {
       "id": "infi-project-performance-tracker",
       "code": "LOCAL-001",
@@ -33,7 +179,9 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "workspaceRoot": "tool",
+      "assetKind": "project"
     },
     {
       "id": "youtube-channel-dashboard",
@@ -67,7 +215,9 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "workspaceRoot": "tool",
+      "assetKind": "project"
     },
     {
       "id": "gpm-automation-console",
@@ -111,6 +261,13 @@
         "scripts/check-version-sync.mjs",
         "scripts/extract-workflow-defaults.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:22.702Z"
+      },
       "githubVersion": "0.2.25",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -147,7 +304,9 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "workspaceRoot": "tool",
+      "assetKind": "project"
     },
     {
       "id": "yt-multistream-console",
@@ -191,6 +350,13 @@
         "scripts/live-test.cjs",
         "scripts/release-stamp-if-code-change.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:23.509Z"
+      },
       "githubVersion": "0.1.27",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -239,6 +405,13 @@
         "scripts/prune-dead-css.cjs",
         "scripts/publish-github-repo.cjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:24.279Z"
+      },
       "githubVersion": "0.1.0",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -280,6 +453,13 @@
         "scripts/project-registry.mjs",
         "scripts/sync-projects.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:25.131Z"
+      },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -317,6 +497,13 @@
         "RELEASE.md"
       ],
       "scriptFiles": [],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:26.381Z"
+      },
       "githubVersion": "docs",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -365,6 +552,13 @@
         "scripts/change-admin-pass-remote.mjs",
         "scripts/clear-thread-label-remote.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:27.161Z"
+      },
       "githubVersion": "1.2.0",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -414,6 +608,13 @@
         "scripts/claude-oauth-windows.ps1",
         "scripts/complete-claude-oauth.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:27.981Z"
+      },
       "githubVersion": "1.0.0",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -461,6 +662,13 @@
         "scripts/git-push.ps1",
         "scripts/introspect-schema.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:28.780Z"
+      },
       "githubVersion": "0.3.1",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -505,6 +713,13 @@
         "scripts/export-supabase-data.ps1",
         "scripts/git-push.ps1"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:29.801Z"
+      },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -546,6 +761,13 @@
       "scriptFiles": [
         "scripts/git-push.ps1"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-21T07:53:30.566Z"
+      },
       "githubVersion": "1.0.0",
       "githubVersionSource": "manifest",
       "versionDrift": "match"
@@ -581,7 +803,385 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "workspaceRoot": "tool",
+      "assetKind": "project"
+    },
+    {
+      "id": "n8n-reup-video-free",
+      "code": "N8N-001",
+      "name": "ReUp Video Free",
+      "repo": "",
+      "branch": "main",
+      "remoteEnabled": false,
+      "localVersion": "local",
+      "category": "Workflow",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "n8n workflow export (ReUp Video Free.json).",
+      "localPath": "E:\\Dev\\n8n\\ReUp Video Free.json",
+      "tags": [
+        "n8n",
+        "workflow"
+      ],
+      "deployTarget": "local",
+      "usage": [
+        "Import ReUp Video Free.json into n8n instance."
+      ],
+      "downloadHint": "Local JSON workflow file.",
+      "manifestPath": "ReUp Video Free.json",
+      "trackedFiles": [
+        "ReUp Video Free.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "n8n",
+      "assetKind": "n8n-workflow"
+    },
+    {
+      "id": "n8n-tiktok-reup",
+      "code": "N8N-002",
+      "name": "Tiktok Reup",
+      "repo": "",
+      "branch": "main",
+      "remoteEnabled": false,
+      "localVersion": "local",
+      "category": "Workflow",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "n8n workflow export (Tiktok Reup.json).",
+      "localPath": "E:\\Dev\\n8n\\Tiktok Reup.json",
+      "tags": [
+        "n8n",
+        "workflow"
+      ],
+      "deployTarget": "local",
+      "usage": [
+        "Import Tiktok Reup.json into n8n instance."
+      ],
+      "downloadHint": "Local JSON workflow file.",
+      "manifestPath": "Tiktok Reup.json",
+      "trackedFiles": [
+        "Tiktok Reup.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "n8n",
+      "assetKind": "n8n-workflow"
+    },
+    {
+      "id": "webapps-platform",
+      "code": "GH-9361",
+      "name": "webapps-platform",
+      "repo": "tuanhoangfx/webapps-platform",
+      "branch": "master",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "GitHub repository without local folder in workspace roots.",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "HTML"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/webapps-platform.git",
+        "Web: https://github.com/tuanhoangfx/webapps-platform"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/webapps-platform",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/webapps-platform",
+        "pushed_at": "2026-04-21T19:39:38Z",
+        "updated_at": "2026-04-21T19:39:41Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:30.947Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\webapps-platform"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "package.json"
+    },
+    {
+      "id": "p0002-google-one-family-manager",
+      "code": "GH-8933",
+      "name": "P0002-google-one-family-manager",
+      "repo": "tuanhoangfx/P0002-google-one-family-manager",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "P0002 - Google One Family Manager",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "HTML"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/P0002-google-one-family-manager.git",
+        "Web: https://github.com/tuanhoangfx/P0002-google-one-family-manager"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/P0002-google-one-family-manager",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/P0002-google-one-family-manager",
+        "pushed_at": "2026-04-21T19:23:21Z",
+        "updated_at": "2026-04-21T19:23:25Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:31.691Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\P0002-google-one-family-manager"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "package.json"
+    },
+    {
+      "id": "p0003-template",
+      "code": "GH-2374",
+      "name": "P0003-template",
+      "repo": "tuanhoangfx/P0003-template",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "P0003 - Next Project template",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "repo"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/P0003-template.git",
+        "Web: https://github.com/tuanhoangfx/P0003-template"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/P0003-template",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/P0003-template",
+        "pushed_at": "2026-04-21T19:23:04Z",
+        "updated_at": "2026-04-21T19:23:10Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:32.468Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\P0003-template"
+      }
+    },
+    {
+      "id": "p0001-czp-youtube-tda-team",
+      "code": "GH-6985",
+      "name": "P0001-czp-youtube-tda-team",
+      "repo": "tuanhoangfx/P0001-czp-youtube-tda-team",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "P0001 - YouTube TDA Team",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "TypeScript"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/P0001-czp-youtube-tda-team.git",
+        "Web: https://github.com/tuanhoangfx/P0001-czp-youtube-tda-team"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/P0001-czp-youtube-tda-team",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/P0001-czp-youtube-tda-team",
+        "pushed_at": "2026-04-21T19:09:02Z",
+        "updated_at": "2026-04-21T19:09:06Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:33.189Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\P0001-czp-youtube-tda-team"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "package.json"
+    },
+    {
+      "id": "p0005-student-id-generator-v2",
+      "code": "GH-2013",
+      "name": "P0005-student-id-generator-v2",
+      "repo": "tuanhoangfx/P0005-student-id-generator-v2",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "P0005 - Student ID Generator V2",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "HTML"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/P0005-student-id-generator-v2.git",
+        "Web: https://github.com/tuanhoangfx/P0005-student-id-generator-v2"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/P0005-student-id-generator-v2",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/P0005-student-id-generator-v2",
+        "pushed_at": "2026-04-21T19:07:26Z",
+        "updated_at": "2026-04-21T19:07:29Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:33.934Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\P0005-student-id-generator-v2"
+      }
+    },
+    {
+      "id": "p0004-student-id-generator",
+      "code": "GH-6897",
+      "name": "P0004-student-id-generator",
+      "repo": "tuanhoangfx/P0004-student-id-generator",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "P0004 - Student ID Generator",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "repo"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/P0004-student-id-generator.git",
+        "Web: https://github.com/tuanhoangfx/P0004-student-id-generator"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/P0004-student-id-generator",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/P0004-student-id-generator",
+        "pushed_at": "2026-04-20T18:28:52Z",
+        "updated_at": "2026-04-20T18:28:52Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:34.677Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\P0004-student-id-generator"
+      }
+    },
+    {
+      "id": "-work-performance",
+      "code": "GH-3204",
+      "name": "-Work-Performance",
+      "repo": "tuanhoangfx/-Work-Performance",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "remote",
+      "category": "GitHub",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "🎯 Work Performance",
+      "localPath": "",
+      "tags": [
+        "GitHub",
+        "TypeScript"
+      ],
+      "deployTarget": "github-pages",
+      "usage": [
+        "Clone: https://github.com/tuanhoangfx/-Work-Performance.git",
+        "Web: https://github.com/tuanhoangfx/-Work-Performance"
+      ],
+      "downloadHint": "https://github.com/tuanhoangfx/-Work-Performance",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json"
+      ],
+      "scriptFiles": [],
+      "workspaceRoot": "github",
+      "assetKind": "github-only",
+      "githubMeta": {
+        "html_url": "https://github.com/tuanhoangfx/-Work-Performance",
+        "pushed_at": "2026-01-08T13:20:45Z",
+        "updated_at": "2026-01-08T13:20:49Z",
+        "private": false
+      },
+      "sync": {
+        "manifest": "github-only",
+        "detail": "no-local-folder",
+        "at": "2026-05-21T07:53:35.479Z",
+        "clone": "cloned",
+        "cloneDetail": "E:\\Dev\\Tool\\-Work-Performance"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "package.json"
     }
   ]
 }

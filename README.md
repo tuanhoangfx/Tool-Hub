@@ -1,15 +1,18 @@
 # GitHub Tool Manager
 
-Public catalog for workspace tools (Tool Store, registry scan, version drift).
+Public catalog and **Sync Hub** for the workspace: Tool, Extension, n8n (local) ↔ GitHub `tuanhoangfx` (2 chiều `tool.manifest.json`).
 
 ## Commands
 
 ```powershell
 corepack pnpm install
-corepack pnpm scan:local
-corepack pnpm dev          # http://127.0.0.1:5176
+corepack pnpm scan:local       # quét 3 root → registry + workspace-catalog
+corepack pnpm sync:workspace   # đồng bộ manifest 2 chiều + githubVersion (gh auth / GITHUB_TOKEN)
+corepack pnpm sync:workspace:dry
+corepack pnpm sync:workspace --clone-missing   # clone repo github-only → E:\Dev\Tool
+corepack pnpm dev              # http://127.0.0.1:5176 — System tab = Sync Hub
 corepack pnpm build
-pnpm run push              # git push main (gh auth)
+pnpm run push                  # git push main (gh auth)
 ```
 
 ## Deploy (Vercel)
@@ -30,6 +33,8 @@ Day-to-day push does **not** need `GITHUB_TOKEN`.
 
 ## Configuration
 
-- `public/registry.default.json` — curated catalog
-- `corepack pnpm scan:local` — merge into `public/local-registry.json`
+- `E:\Dev\Tool\workspace.roots.json` — roots Tool / Extension / n8n
+- `public/registry.default.json` — curated catalog (Library)
+- `public/workspace-catalog.json` — hub đồng bộ (System → Sync Hub)
+- `public/local-registry.json` — snapshot quét Tool
 - `vercel.json` — SPA rewrites for client routing
