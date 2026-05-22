@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-21T13:09:09.961Z",
+  "generatedAt": "2026-05-22T07:23:46.935Z",
   "dryRun": false,
   "githubUser": "tuanhoangfx",
   "roots": [
@@ -154,7 +154,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:08:58.109Z"
+        "at": "2026-05-22T07:23:36.298Z"
       },
       "githubVersion": "0.2.25",
       "githubVersionSource": "manifest",
@@ -207,7 +207,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:08:59.091Z"
+        "at": "2026-05-22T07:23:37.129Z"
       },
       "githubVersion": "0.1.27",
       "githubVersionSource": "manifest",
@@ -262,7 +262,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:08:59.975Z"
+        "at": "2026-05-22T07:23:37.908Z"
       },
       "githubVersion": "0.1.0",
       "githubVersionSource": "manifest",
@@ -317,7 +317,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:00.749Z"
+        "at": "2026-05-22T07:23:38.784Z"
       },
       "githubVersion": "1.2.0",
       "githubVersionSource": "manifest",
@@ -373,7 +373,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:01.580Z"
+        "at": "2026-05-22T07:23:39.588Z"
       },
       "githubVersion": "1.0.0",
       "githubVersionSource": "manifest",
@@ -427,7 +427,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:02.986Z"
+        "at": "2026-05-22T07:23:40.387Z"
       },
       "githubVersion": "0.3.1",
       "githubVersionSource": "manifest",
@@ -478,7 +478,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:03.888Z"
+        "at": "2026-05-22T07:23:41.209Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -526,7 +526,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:04.779Z"
+        "at": "2026-05-22T07:23:42.037Z"
       },
       "githubVersion": "1.0.0",
       "githubVersionSource": "manifest",
@@ -574,7 +574,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:05.656Z"
+        "at": "2026-05-22T07:23:43.274Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -618,7 +618,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:06.516Z"
+        "at": "2026-05-22T07:23:44.092Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -666,7 +666,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:07.761Z"
+        "at": "2026-05-22T07:23:44.894Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -712,7 +712,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:08.632Z"
+        "at": "2026-05-22T07:23:45.710Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
@@ -759,7 +759,7 @@
       "sync": {
         "manifest": "in-sync",
         "detail": "manifests-match",
-        "at": "2026-05-21T13:09:09.499Z"
+        "at": "2026-05-22T07:23:46.554Z"
       },
       "githubVersion": "0.0.0",
       "githubVersionSource": "manifest",
