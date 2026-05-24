@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="cb-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+    <radialGradient id="cb-cookie" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#FDE68A"/>
+      <stop offset="1" stop-color="#D97706"/>
+    </radialGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#cb-bg)"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="13.5" stroke="white" stroke-opacity="0.06"/>
+
+  <!-- Cookie body -->
+  <circle cx="32" cy="28" r="16" fill="url(#cb-cookie)" stroke="#92400E" stroke-width="0.8"/>
+  <!-- Bite mark (notch top-right) -->
+  <path d="M48 22 A8 8 0 0 0 42 16 A8 8 0 0 1 48 22 Z" fill="#0F172A"/>
+  <circle cx="46" cy="20" r="3.2" fill="#0F172A"/>
+
+  <!-- Chocolate chips -->
+  <circle cx="26" cy="22" r="2" fill="#451A03"/>
+  <circle cx="36" cy="33" r="2.2" fill="#451A03"/>
+  <circle cx="28" cy="34" r="1.5" fill="#451A03"/>
+  <circle cx="22" cy="30" r="1.6" fill="#451A03"/>
+  <circle cx="33" cy="22" r="1.4" fill="#451A03"/>
+
+  <!-- Sync/bridge arrows below -->
+  <path d="M16 52 H44" stroke="#22D3EE" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M20 48 L16 52 L20 56" stroke="#22D3EE" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M44 48 L48 52 L44 56" stroke="#22D3EE" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

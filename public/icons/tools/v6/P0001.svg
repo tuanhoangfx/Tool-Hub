@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4 -4 72 72" fill="none">
+  <defs>
+    <linearGradient id="v6-1-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#312E81"/>
+    </linearGradient>
+    <linearGradient id="v6-1-el" x1="14" y1="12" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C7D2FE"/>
+    </linearGradient>
+    <filter id="v6-1-shadow" x="-20%" y="-10%" width="140%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#1E1B4B" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#v6-1-bg)" stroke="#FFFFFF" stroke-width="3" filter="url(#v6-1-shadow)"/>
+  <path d="M14 22 L32 12 L50 22 L50 42 L32 52 L14 42 Z" fill="url(#v6-1-el)" stroke="#1E1B4B" stroke-width="2" stroke-linejoin="round"/>
+  <ellipse cx="26" cy="20" rx="6" ry="2.5" fill="#FFFFFF" opacity="0.6"/>
+  <circle cx="32" cy="32" r="6" fill="#FBBF24" stroke="#1E1B4B" stroke-width="2"/>
+  <ellipse cx="30.5" cy="30" rx="1.5" ry="1" fill="#FFFFFF" opacity="0.7"/>
+</svg>

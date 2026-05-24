@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="v3-8-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F4ECFF"/>
+      <stop offset="1" stop-color="#D8C8EE"/>
+    </linearGradient>
+    <linearGradient id="v3-8-el" x1="18" y1="20" x2="46" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C3B4DE"/>
+    </linearGradient>
+    <linearGradient id="v3-8-accent" x1="0" y1="0" x2="0" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D946EF"/>
+      <stop offset="1" stop-color="#7E22CE"/>
+    </linearGradient>
+    <filter id="v3-8-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="3" stdDeviation="1.6" flood-color="#A98FBD" flood-opacity="0.5"/>
+      <feDropShadow dx="-1.5" dy="-1.5" stdDeviation="1" flood-color="#FFFFFF" flood-opacity="0.9"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#v3-8-bg)"/>
+  <path d="M18 22 H46 L43 50 H21 Z" fill="url(#v3-8-el)" filter="url(#v3-8-soft)"/>
+  <path d="M25 22 V18 Q25 12 32 12 Q39 12 39 18 V22" stroke="url(#v3-8-accent)" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <circle cx="32" cy="36" r="2.5" fill="url(#v3-8-accent)"/>
+</svg>

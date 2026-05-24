@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="p0007-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#022C22"/>
+      <stop offset="1" stop-color="#011611"/>
+    </linearGradient>
+    <linearGradient id="p0007-fg" x1="12" y1="20" x2="52" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6EE7B7"/>
+      <stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#p0007-bg)"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="13.5" stroke="white" stroke-opacity="0.06"/>
+  <rect x="12" y="32" width="40" height="16" rx="4" fill="url(#p0007-fg)"/>
+  <circle cx="19" cy="40" r="2" fill="#022C22"/>
+  <circle cx="27" cy="40" r="2" fill="#022C22"/>
+  <rect x="36" y="38.5" width="10" height="3" rx="1.5" fill="#022C22"/>
+  <path d="M22 32 L22 24 M32 32 L32 18 M42 32 L42 24" stroke="url(#p0007-fg)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M18 24 Q22 20 26 24 M28 18 Q32 14 36 18 M38 24 Q42 20 46 24" stroke="#34D399" stroke-width="1.6" stroke-linecap="round" fill="none" opacity="0.7"/>
+  <text x="32" y="14" text-anchor="middle" font-family="ui-sans-serif,system-ui" font-weight="700" font-size="11" fill="#6EE7B7">9</text>
+</svg>

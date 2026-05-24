@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="p0009-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9F1239"/>
+      <stop offset="1" stop-color="#500724"/>
+    </linearGradient>
+    <linearGradient id="p0009-blade" x1="14" y1="10" x2="50" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FECDD3"/>
+      <stop offset="1" stop-color="#F472B6"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#p0009-bg)"/>
+  <rect x="0.5" y="0.5" width="63" height="63" rx="13.5" stroke="white" stroke-opacity="0.06"/>
+  <!-- Right blade (pointing up-right) -->
+  <path d="M28 36 L46 10 L52 12 L34 40 Z" fill="url(#p0009-blade)" stroke="#FECDD3" stroke-width="0.8" stroke-linejoin="round"/>
+  <!-- Left blade (pointing up-left) -->
+  <path d="M36 36 L18 10 L12 12 L30 40 Z" fill="url(#p0009-blade)" stroke="#FECDD3" stroke-width="0.8" stroke-linejoin="round"/>
+  <!-- Finger rings (hollow) -->
+  <circle cx="20" cy="48" r="8" stroke="#F472B6" stroke-width="3.2" fill="#9F1239"/>
+  <circle cx="44" cy="48" r="8" stroke="#F472B6" stroke-width="3.2" fill="#9F1239"/>
+  <!-- Pivot rivet -->
+  <circle cx="32" cy="36" r="3" fill="#FDE68A" stroke="#9F1239" stroke-width="1.4"/>
+  <!-- Sparkle accent -->
+  <path d="M52 22 L53.5 25 L56.5 26.5 L53.5 28 L52 31 L50.5 28 L47.5 26.5 L50.5 25 Z" fill="#FDE68A"/>
+</svg>

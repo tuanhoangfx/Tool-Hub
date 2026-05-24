@@ -21,12 +21,19 @@ const CODE_ICONS: Record<string, string> = {
 };
 
 const CODE_SVG_ICONS: Record<string, string> = {
-  P0001: "/icons/electron.svg",
-  P0002: "/icons/youtube.svg",
-  P0004: "/icons/github.svg",
-  P0005: "/icons/zalo.svg",
-  P0007: "/icons/openrouter.svg",
-  P0008: "/icons/nextjs.svg",
+  P0001: "/icons/tools/P0001.svg",
+  P0002: "/icons/tools/P0002.svg",
+  P0004: "/icons/tools/P0004.svg",
+  P0005: "/icons/tools/P0005.svg",
+  P0007: "/icons/tools/P0007.svg",
+  P0008: "/icons/tools/P0008.svg",
+  P0009: "/icons/tools/P0009.svg",
+  P0010: "/icons/tools/P0010.svg",
+  P0012: "/icons/tools/P0012.svg",
+  P0013: "/icons/tools/P0013.svg",
+  P0015: "/icons/tools/P0015.svg",
+  P0019: "/icons/tools/P0019.svg",
+  P0020: "/icons/tools/P0020.svg",
 };
 
 export function toolSvgIcon(tool: { code: string }): string | null {

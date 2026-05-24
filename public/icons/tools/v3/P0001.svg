@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="v3-1-bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EEF2F7"/>
+      <stop offset="1" stop-color="#D6DCE6"/>
+    </linearGradient>
+    <linearGradient id="v3-1-el" x1="14" y1="12" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#C6CCD7"/>
+    </linearGradient>
+    <linearGradient id="v3-1-core" x1="26" y1="26" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#818CF8"/>
+      <stop offset="1" stop-color="#4338CA"/>
+    </linearGradient>
+    <filter id="v3-1-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="2" dy="3" stdDeviation="1.5" flood-color="#9AA3B2" flood-opacity="0.55"/>
+      <feDropShadow dx="-1.5" dy="-1.5" stdDeviation="1" flood-color="#FFFFFF" flood-opacity="0.9"/>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#v3-1-bg)"/>
+  <path d="M14 22 L32 12 L50 22 L50 42 L32 52 L14 42 Z" fill="url(#v3-1-el)" filter="url(#v3-1-soft)"/>
+  <circle cx="32" cy="32" r="7" fill="url(#v3-1-core)"/>
+  <ellipse cx="30" cy="29" rx="2" ry="1" fill="white" fill-opacity="0.55"/>
+</svg>

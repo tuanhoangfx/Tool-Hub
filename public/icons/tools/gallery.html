@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>Tool Icons — Gallery</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --border: rgba(255,255,255,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(1200px 600px at 20% -10%, #1e1b4b 0%, var(--bg) 60%) fixed;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 24px 80px;
+    }
+    h1 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
+    h2 { font-size: 14px; margin: 32px 0 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+    p.lead { color: var(--muted); margin: 0 0 8px; font-size: 13px; max-width: 800px; line-height: 1.55; }
+
+    /* Comparison table */
+    .compare {
+      max-width: 1280px;
+      margin: 24px auto 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+    .compare-row {
+      display: grid;
+      grid-template-columns: 200px repeat(6, 1fr);
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-row:last-child { border-bottom: none; }
+    .compare-row.head {
+      background: rgba(255,255,255,0.02);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      backdrop-filter: blur(6px);
+    }
+    .compare-cell {
+      padding: 18px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border-right: 1px solid var(--border);
+    }
+    .compare-cell:last-child { border-right: none; }
+    .compare-cell.label {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      text-align: left;
+      gap: 4px;
+    }
+    .compare-cell.head {
+      flex-direction: column;
+      gap: 4px;
+    }
+    .vname { font-size: 13px; font-weight: 600; color: var(--text); }
+    .vdesc { font-size: 10.5px; color: var(--muted); text-align: center; line-height: 1.4; }
+    .toolname { font-size: 13px; font-weight: 600; }
+    .toolcode { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); }
+    .tooldesc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+    .icon-stack {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .icon-stack img { display: block; border-radius: 4px; }
+    .lg { width: 56px; height: 56px; }
+    .sm { width: 22px; height: 22px; }
+
+    /* Full V1 set */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card img { width: 48px; height: 48px; display: block; }
+    .meta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .code { font-family: ui-monospace, monospace; font-size: 10.5px; color: var(--muted); }
+    .name { font-size: 13px; font-weight: 600; }
+
+    .pick-bar {
+      max-width: 1280px;
+      margin: 16px auto 0;
+      padding: 14px 18px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 12px;
+      color: #c7d2fe;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+  </style>
+</head>
+<body>
+  <div style="max-width:1280px;margin:0 auto;">
+    <h1>Tool Icons — 6 phong cách so sánh</h1>
+    <p class="lead">
+      Mỗi hàng là 1 tool (3 tool đại diện: Desktop / Web / Notes). Mỗi cột là 1 phong cách thiết kế khác direction.
+      Xem ở 2 size 56px và 22px (để kiểm tra readability nhỏ). Chọn phong cách yêu thích → mình sẽ làm full 13 tool theo đúng phong cách đó.
+    </p>
+  </div>
+
+  <div class="pick-bar">
+    💡 <strong>Cách chọn:</strong> Phong cách tốt là nhìn ở 22px vẫn rõ ý nghĩa. V1 nhiều chi tiết → đẹp ở size lớn nhưng size 22 dễ rối. V4/V5 ít chi tiết → giữ nhận diện tốt ở size nhỏ.
+  </div>
+
+  <h2 style="max-width:1280px;margin-left:auto;margin-right:auto;">So sánh 6 phong cách</h2>
+  <div class="compare">
+    <div class="compare-row head">
+      <div class="compare-cell label">
+        <div class="vname">Phong cách →</div>
+        <div class="vdesc">Tool ↓</div>
+      </div>
+      <div class="compare-cell head">
+        <div class="vname">V1 · Duotone</div>
+        <div class="vdesc">Gradient + glyph + accent dot. App icon hiện đại, đa dạng màu.</div>
+      </div>
+      <div class="compare-cell head">
+        <div class="vname">V2 · Glass</div>
+        <div class="vdesc">Frosted dark + neon outline + glow. Tech, futuristic.</div>
+      </div>
+      <div class="compare-cell head">
+        <div class="vname">V3 · Neumorph</div>
+        <div class="vdesc">Pastel embossed soft 3D. Sang trọng, tinh tế.</div>
+      </div>
+      <div class="compare-cell head">
+        <div class="vname">V4 · Bauhaus</div>
+        <div class="vdesc">Hình học khối solid. Bold, playful, retro.</div>
+      </div>
+      <div class="compare-cell head">
+        <div class="vname">V5 · Outline</div>
+        <div class="vdesc">Stroke-only, line art. Minimal, professional.</div>
+      </div>
+      <div class="compare-cell head">
+        <div class="vname">V6 · Sticker</div>
+        <div class="vdesc">Chubby 3D + white outline. Friendly, app-store vibe.</div>
+      </div>
+    </div>
+
+    <div class="compare-row">
+      <div class="compare-cell label">
+        <div class="toolcode">P0001</div>
+        <div class="toolname">GPM Automation</div>
+        <div class="tooldesc">Desktop · automation</div>
+      </div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./P0001.svg"><img class="sm" src="./P0001.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v2/P0001.svg"><img class="sm" src="./v2/P0001.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v3/P0001.svg"><img class="sm" src="./v3/P0001.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v4/P0001.svg"><img class="sm" src="./v4/P0001.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v5/P0001.svg"><img class="sm" src="./v5/P0001.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v6/P0001.svg"><img class="sm" src="./v6/P0001.svg"></div></div>
+    </div>
+
+    <div class="compare-row">
+      <div class="compare-cell label">
+        <div class="toolcode">P0008</div>
+        <div class="toolname">Sales Console</div>
+        <div class="tooldesc">Web · commerce</div>
+      </div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./P0008.svg"><img class="sm" src="./P0008.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v2/P0008.svg"><img class="sm" src="./v2/P0008.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v3/P0008.svg"><img class="sm" src="./v3/P0008.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v4/P0008.svg"><img class="sm" src="./v4/P0008.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v5/P0008.svg"><img class="sm" src="./v5/P0008.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v6/P0008.svg"><img class="sm" src="./v6/P0008.svg"></div></div>
+    </div>
+
+    <div class="compare-row">
+      <div class="compare-cell label">
+        <div class="toolcode">P0020</div>
+        <div class="toolname">Workspace Notes</div>
+        <div class="tooldesc">Web · notes + 2FA</div>
+      </div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./P0020.svg"><img class="sm" src="./P0020.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v2/P0020.svg"><img class="sm" src="./v2/P0020.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v3/P0020.svg"><img class="sm" src="./v3/P0020.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v4/P0020.svg"><img class="sm" src="./v4/P0020.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v5/P0020.svg"><img class="sm" src="./v5/P0020.svg"></div></div>
+      <div class="compare-cell"><div class="icon-stack"><img class="lg" src="./v6/P0020.svg"><img class="sm" src="./v6/P0020.svg"></div></div>
+    </div>
+  </div>
+
+  <h2 style="max-width:1280px;margin-left:auto;margin-right:auto;margin-top:48px;">V1 đầy đủ 13 tool (bộ hiện tại)</h2>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    const tools = [
+      { code: "P0001", name: "GPM Automation Console" },
+      { code: "P0002", name: "YT Multistream Console" },
+      { code: "P0004", name: "Tool Hub" },
+      { code: "P0005", name: "Zalo AI Bot" },
+      { code: "P0007", name: "9Router Infra" },
+      { code: "P0008", name: "Sales Console" },
+      { code: "P0009", name: "Mie Hair Performance" },
+      { code: "P0010", name: "Cursor Telegram" },
+      { code: "P0012", name: "Apps Script Sync" },
+      { code: "P0013", name: "YouTube TDA Team" },
+      { code: "P0015", name: "Student ID Generator V2" },
+      { code: "P0019", name: "Infi Work Performance" },
+      { code: "P0020", name: "Workspace Notes" },
+    ];
+    document.getElementById("grid").innerHTML = tools.map(t => `
+      <div class="card">
+        <img src="./${t.code}.svg" alt="${t.code}" />
+        <div class="meta">
+          <div class="code">${t.code}</div>
+          <div class="name">${t.name}</div>
+        </div>
+      </div>
+    `).join("");
+  </script>
+</body>
+</html>
