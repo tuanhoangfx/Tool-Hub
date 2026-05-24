@@ -1,4 +1,4 @@
-export type RepoStatus = "Ready" | "Needs review" | "Experimental" | "Archived" | "Active";
+export type RepoStatus = "Ready" | "Needs review" | "Experimental" | "Archived" | "Active" | "Beta";
 
 export type ToolRepository = {
   id: string;

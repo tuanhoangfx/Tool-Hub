@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T09:57:54.087Z",
+  "generatedAt": "2026-05-24T08:08:17.784Z",
   "root": "E:\\Dev\\Tool",
   "repositories": [
     {
@@ -9,7 +9,7 @@
       "repo": "tuanhoangfx/GPM-Automation-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.2.33",
+      "localVersion": "0.2.34",
       "category": "Desktop",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -43,7 +43,10 @@
         "scripts/bump-patch-version.mjs",
         "scripts/check-version-sync.mjs",
         "scripts/extract-workflow-defaults.mjs"
-      ]
+      ],
+      "githubVersion": "0.2.34",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "yt-multistream-console",
@@ -86,7 +89,10 @@
         "scripts/install-git-hooks.mjs",
         "scripts/live-test.cjs",
         "scripts/release-stamp-if-code-change.mjs"
-      ]
+      ],
+      "githubVersion": "0.1.27",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "tool-hub",
@@ -126,12 +132,15 @@
       ],
       "scriptFiles": [
         "scripts/dev-with-launcher.cjs",
-        "scripts/find-dead-css.cjs",
         "scripts/git-push.ps1",
         "scripts/local-tool-launcher.cjs",
-        "scripts/prune-dead-css.cjs",
-        "scripts/publish-github-repo.cjs"
-      ]
+        "scripts/publish-github-repo.cjs",
+        "scripts/push-and-deploy.ps1",
+        "scripts/scan-local-workspace.cjs"
+      ],
+      "githubVersion": "0.1.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "zalo-ai-bot",
@@ -176,7 +185,10 @@
         "scripts/backfill-sqlite-remote.mjs",
         "scripts/change-admin-pass-remote.mjs",
         "scripts/clear-thread-label-remote.mjs"
-      ]
+      ],
+      "githubVersion": "1.2.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "9router-infra",
@@ -222,7 +234,10 @@
         "scripts/check-vps-health.mjs",
         "scripts/claude-oauth-windows.ps1",
         "scripts/complete-claude-oauth.mjs"
-      ]
+      ],
+      "githubVersion": "1.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "sales-console",
@@ -266,7 +281,10 @@
       "scriptFiles": [
         "scripts/git-push.ps1",
         "scripts/introspect-schema.mjs"
-      ]
+      ],
+      "githubVersion": "0.3.1",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "mie-hair-performance",
@@ -307,7 +325,10 @@
       "scriptFiles": [
         "scripts/export-supabase-data.ps1",
         "scripts/git-push.ps1"
-      ]
+      ],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "cursor-telegram",
@@ -345,7 +366,10 @@
       ],
       "scriptFiles": [
         "scripts/git-push.ps1"
-      ]
+      ],
+      "githubVersion": "1.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "apps-script-sync",
@@ -379,7 +403,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "czp-youtube-tda-team",
@@ -417,7 +444,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "student-id-generator-v2",
@@ -453,7 +483,10 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "infi-work-performance",
@@ -490,7 +523,60 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [],
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "tool-manager",
+      "code": "P0020",
+      "name": "Tool Manager",
+      "repo": "tuanhoangfx/Tool-Manager",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.1.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Beta",
+      "summary": "Unified Tool Manager (H1 sidebar): P0004 catalog + Notes V1 (sync ID/pass) + Todo + 2FA + Cookie bridge. Skin P0008.",
+      "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "Supabase",
+        "Inter",
+        "Chrome extension P0020-cookie-bridge"
+      ],
+      "appUrl": "https://tool-manager-zeta.vercel.app",
+      "localUrl": "http://127.0.0.1:5177",
+      "deployTarget": "vercel",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build",
+        "App: https://tool-manager-zeta.vercel.app"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/dev-with-launcher.cjs",
+        "scripts/find-dead-css.cjs",
+        "scripts/git-push.ps1",
+        "scripts/local-tool-launcher.cjs",
+        "scripts/prune-dead-css.cjs",
+        "scripts/publish-github-repo.cjs"
+      ],
+      "githubVersion": "0.1.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     }
   ]
 }

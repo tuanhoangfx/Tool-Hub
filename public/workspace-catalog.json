@@ -1,6 +1,8 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-22T09:57:54.099Z",
+  "generatedAt": "2026-05-24T08:08:17.784Z",
+  "dryRun": false,
+  "githubUser": "tuanhoangfx",
   "roots": [
     {
       "id": "tool",
@@ -25,10 +27,85 @@
     }
   ],
   "summary": {
-    "total": 14,
-    "projects": 12,
-    "n8n": 2
+    "total": 15,
+    "projects": 13,
+    "n8n": 2,
+    "githubOnly": 0,
+    "pushed": 2,
+    "pulled": 0,
+    "inSync": 11,
+    "errors": 0,
+    "cloned": 0,
+    "cloneErrors": 0,
+    "versionDrift": 0
   },
+  "syncResults": [
+    {
+      "id": "gpm-automation-console",
+      "status": "pushed",
+      "detail": "local-newer"
+    },
+    {
+      "id": "yt-multistream-console",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "tool-hub",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "zalo-ai-bot",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "9router-infra",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "sales-console",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "mie-hair-performance",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "cursor-telegram",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "apps-script-sync",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "czp-youtube-tda-team",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "student-id-generator-v2",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "infi-work-performance",
+      "status": "in-sync",
+      "detail": "manifests-match"
+    },
+    {
+      "id": "tool-manager",
+      "status": "pushed",
+      "detail": "local-newer"
+    }
+  ],
   "entries": [
     {
       "id": "gpm-automation-console",
@@ -37,7 +114,7 @@
       "repo": "tuanhoangfx/GPM-Automation-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.2.33",
+      "localVersion": "0.2.34",
       "category": "Desktop",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -73,7 +150,15 @@
         "scripts/extract-workflow-defaults.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "pushed",
+        "detail": "local-newer",
+        "at": "2026-05-24T08:08:06.141Z"
+      },
+      "githubVersion": "0.2.34",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "yt-multistream-console",
@@ -118,7 +203,15 @@
         "scripts/release-stamp-if-code-change.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:06.961Z"
+      },
+      "githubVersion": "0.1.27",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "tool-hub",
@@ -158,14 +251,22 @@
       ],
       "scriptFiles": [
         "scripts/dev-with-launcher.cjs",
-        "scripts/find-dead-css.cjs",
         "scripts/git-push.ps1",
         "scripts/local-tool-launcher.cjs",
-        "scripts/prune-dead-css.cjs",
-        "scripts/publish-github-repo.cjs"
+        "scripts/publish-github-repo.cjs",
+        "scripts/push-and-deploy.ps1",
+        "scripts/scan-local-workspace.cjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:07.707Z"
+      },
+      "githubVersion": "0.1.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "zalo-ai-bot",
@@ -212,7 +313,15 @@
         "scripts/clear-thread-label-remote.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:08.536Z"
+      },
+      "githubVersion": "1.2.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "9router-infra",
@@ -260,7 +369,15 @@
         "scripts/complete-claude-oauth.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:09.325Z"
+      },
+      "githubVersion": "1.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "sales-console",
@@ -306,7 +423,15 @@
         "scripts/introspect-schema.mjs"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:10.574Z"
+      },
+      "githubVersion": "0.3.1",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "mie-hair-performance",
@@ -349,7 +474,15 @@
         "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:11.367Z"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "cursor-telegram",
@@ -389,7 +522,15 @@
         "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:12.211Z"
+      },
+      "githubVersion": "1.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "apps-script-sync",
@@ -425,7 +566,15 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:12.994Z"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "czp-youtube-tda-team",
@@ -465,7 +614,15 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:13.751Z"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "student-id-generator-v2",
@@ -503,7 +660,15 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:14.966Z"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "infi-work-performance",
@@ -542,7 +707,72 @@
       ],
       "scriptFiles": [],
       "workspaceRoot": "tool",
-      "assetKind": "project"
+      "assetKind": "project",
+      "sync": {
+        "manifest": "in-sync",
+        "detail": "manifests-match",
+        "at": "2026-05-24T08:08:15.709Z"
+      },
+      "githubVersion": "0.0.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
+    },
+    {
+      "id": "tool-manager",
+      "code": "P0020",
+      "name": "Tool Manager",
+      "repo": "tuanhoangfx/Tool-Manager",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.1.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Beta",
+      "summary": "Unified Tool Manager (H1 sidebar): P0004 catalog + Notes V1 (sync ID/pass) + Todo + 2FA + Cookie bridge. Skin P0008.",
+      "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "Supabase",
+        "Inter",
+        "Chrome extension P0020-cookie-bridge"
+      ],
+      "appUrl": "https://tool-manager-zeta.vercel.app",
+      "localUrl": "http://127.0.0.1:5177",
+      "deployTarget": "vercel",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build",
+        "App: https://tool-manager-zeta.vercel.app"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/dev-with-launcher.cjs",
+        "scripts/find-dead-css.cjs",
+        "scripts/git-push.ps1",
+        "scripts/local-tool-launcher.cjs",
+        "scripts/prune-dead-css.cjs",
+        "scripts/publish-github-repo.cjs"
+      ],
+      "workspaceRoot": "tool",
+      "assetKind": "project",
+      "sync": {
+        "manifest": "pushed",
+        "detail": "local-newer",
+        "at": "2026-05-24T08:08:17.406Z"
+      },
+      "githubVersion": "0.1.0",
+      "githubVersionSource": "manifest",
+      "versionDrift": "match"
     },
     {
       "id": "n8n-reup-video-free",

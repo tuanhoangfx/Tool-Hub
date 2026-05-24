@@ -1,11 +1,11 @@
 @echo off
-title GTM Dev (Launcher + UI)
+title Tool Hub Dev (Launcher + UI)
 cd /d "%~dp0"
 
 echo.
 echo  Tool Hub - dev.bat
 echo  - Launcher : http://127.0.0.1:5190
-echo  - GTM UI   : http://127.0.0.1:5176
+echo  - Tool Hub : http://127.0.0.1:5176
 echo.
 
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5190 ^| findstr LISTENING') do (
@@ -14,17 +14,17 @@ for /f "tokens=5" %%a in ('netstat -ano ^| findstr :5190 ^| findstr LISTENING') 
 )
 
 echo Khoi dong launcher...
-start "GTM Launcher" cmd /k "cd /d %~dp0 && node scripts\local-tool-launcher.cjs"
+start "Tool Hub Launcher" cmd /k "cd /d %~dp0 && node scripts\local-tool-launcher.cjs"
 
 echo Cho launcher khoi dong...
 timeout /t 2 /nobreak >nul
 
 start "" "http://127.0.0.1:5190/"
 timeout /t 1 /nobreak >nul
-start "" "http://127.0.0.1:5176"
+start "" "http://127.0.0.1:5176/?screen=system&stab=template&dtpl=hub-shell&hsdesign=V1"
 
 echo.
-echo  Giu cua so "GTM Launcher" mo. Ctrl+C de dung Vite.
+echo  Giu cua so "Tool Hub Launcher" mo. Ctrl+C de dung Vite.
 echo.
 
 corepack pnpm dev

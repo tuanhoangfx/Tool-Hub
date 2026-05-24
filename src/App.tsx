@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { MaterialIcon, Metric, ThemeToggle, ToolFilterBar } from "./components";
 import { StoreTab } from "./features";
+import { SystemHubScreen } from "./features/system-hub/SystemHubScreen";
 import { useRepositories, useSessionState, useTheme, useUrlState } from "./hooks";
+import { readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
 import { formatDate } from "./lib/tooling";
 
 const PAGE = {
@@ -15,6 +17,7 @@ const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
 function App() {
   const { isDark, toggleTheme } = useTheme();
   const { state: urlState, update: updateUrl } = useUrlState();
+  const [screen, setScreen] = useState<AppScreen>(() => readAppScreen());
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
   const [query, setQuery] = useSessionState<string>("lib:query", "");
   const [statusFilter, setStatusFilter] = useSessionState<string>("lib:statusFilter", "All");
@@ -28,6 +31,12 @@ function App() {
     refreshAll,
     loadLocalRegistry,
   } = useRepositories();
+
+  useEffect(() => {
+    const onPop = () => setScreen(readAppScreen());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
 
   useEffect(() => {
     if (!urlState.tool || resolvedTools.length === 0) return;
@@ -119,6 +128,31 @@ function App() {
           </div>
         </div>
 
+        <nav className="sidebar-nav" aria-label="Screens">
+          <button
+            type="button"
+            className={screen === "library" ? "sidebar-nav-btn active" : "sidebar-nav-btn"}
+            onClick={() => {
+              setAppScreen("library");
+              setScreen("library");
+            }}
+          >
+            <MaterialIcon name="inventory_2" size={18} />
+            Library
+          </button>
+          <button
+            type="button"
+            className={screen === "system" ? "sidebar-nav-btn active" : "sidebar-nav-btn"}
+            onClick={() => {
+              setAppScreen("system");
+              setScreen("system");
+            }}
+          >
+            <MaterialIcon name="settings" size={18} />
+            System
+          </button>
+        </nav>
+
         <div className="sidebar-actions">
           <button className="btn icon-only" type="button" onClick={() => void loadLocalRegistry()} title="Load local registry">
             <MaterialIcon name="upload" size={18} />
@@ -147,24 +181,35 @@ function App() {
         <header className="page-header">
           <div className="page-title-wrap">
             <span className="page-header-icon">
-              <MaterialIcon name={PAGE.icon} size={28} />
+              <MaterialIcon name={screen === "system" ? "settings" : PAGE.icon} size={28} />
             </span>
             <div>
-              <h1>{PAGE.title}</h1>
-              <p className="page-desc">{PAGE.desc}</p>
+              <h1>{screen === "system" ? "System" : PAGE.title}</h1>
+              <p className="page-desc">
+                {screen === "system" ? "Overview · Design Template · registry tools" : PAGE.desc}
+              </p>
             </div>
           </div>
           <div className="header-actions">
-            <span className={loadingAll ? "auto-status active" : "auto-status"} title="Auto-refresh every 12 hours">
-              <span className="auto-dot" />
-              {refreshStatus}
-            </span>
-            <span className="filter-meta">{filteredTools.length} tools</span>
+            {screen === "library" ? (
+              <>
+                <span className={loadingAll ? "auto-status active" : "auto-status"} title="Auto-refresh every 12 hours">
+                  <span className="auto-dot" />
+                  {refreshStatus}
+                </span>
+                <span className="filter-meta">{filteredTools.length} tools</span>
+              </>
+            ) : null}
             <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
           </div>
         </header>
 
         <div className="page-content custom-scrollbar">
+          {screen === "system" ? (
+            <div className="content-inner system-content">
+              <SystemHubScreen />
+            </div>
+          ) : (
           <div className="content-inner">
             <section className="compact-cards" aria-label="Metrics">
               <Metric icon="inventory_2" label="Tools" value={stats.total} badge="ALL" badgeClass="run" accent="brand" />
@@ -209,6 +254,7 @@ function App() {
               />
             </section>
           </div>
+          )}
         </div>
       </div>
     </div>

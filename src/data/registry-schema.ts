@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { ToolRepository } from "../types";
 
-const RepoStatusSchema = z.enum(["Ready", "Needs review", "Experimental", "Archived", "Active"]);
+const RepoStatusSchema = z.enum(["Ready", "Needs review", "Experimental", "Archived", "Active", "Beta"]);
 
 const DeployTargetSchema = z.enum(["github-pages", "vercel", "vps", "github-release", "local"]);
 
