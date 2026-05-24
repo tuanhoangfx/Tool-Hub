@@ -242,20 +242,6 @@
   border: 1px solid var(--color-border);
 }
 
-.dot.bad {
-  background: var(--color-danger, #ef4444);
-}
-
-.launcher-chip.link {
-  text-decoration: none;
-  transition: background 0.15s ease, transform 0.15s ease;
-}
-
-.launcher-chip.link:hover {
-  background: rgba(34, 197, 94, 0.28);
-  transform: translateY(-1px);
-}
-
 .mini-stat {
   display: inline-flex;
   align-items: center;
@@ -322,27 +308,6 @@
   .compact-cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  .provider-grid {
-    grid-template-columns: 1fr;
-  }
-  .store-layout,
-  .admin-layout,
-  .publish-layout,
-  .github-layout,
-  .release-layout,
-  .rules-layout {
-    grid-template-columns: 1fr;
-  }
-  .detail-panel,
-  .admin-side {
-    position: static;
-  }
-  .card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 1100px) {
   .card-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -354,10 +319,6 @@
   }
   .card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .rules-layout,
-  .action-cards {
-    grid-template-columns: 1fr;
   }
 }
 

@@ -6,16 +6,16 @@ import { parseRegistry } from "./registry-schema";
 // before the runtime catalog finishes loading.
 export const FALLBACK_REPOSITORIES: ToolRepository[] = [
   {
-    id: "github-tool-manager",
+    id: "tool-hub",
     code: "P0004",
-    name: "GitHub Tool Manager",
-    repo: "tuanhoangfx/GitHub-Tool-Manager",
+    name: "Tool Hub",
+    repo: "tuanhoangfx/Tool-Hub",
     branch: "main",
     category: "Web",
     audience: "Tool maintainers",
     status: "Ready",
     summary: "Library catalog for the workspace: accurate GitHub info, usage links, local paths, and versions of every running project.",
-    localPath: "E:\\Dev\\Tool\\P0004-GitHub-Tool-Manager",
+    localPath: "E:\\Dev\\Tool\\P0004-Tool-Hub",
     tags: ["React", "TypeScript", "Vite", "GitHub Pages"],
     appUrl: "https://infix1.io.vn",
     localUrl: "http://127.0.0.1:5176",

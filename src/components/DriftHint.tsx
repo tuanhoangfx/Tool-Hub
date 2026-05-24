@@ -4,7 +4,6 @@ import { Tooltip } from "./Tooltip";
 
 type DriftHintProps = {
   alerts: string[];
-  compact?: boolean;
 };
 
 // Render only when there ARE drift alerts. Clean cards otherwise.

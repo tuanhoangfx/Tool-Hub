@@ -32,12 +32,12 @@ function main() {
   }
 
   const designNote = [
-    "# Design baseline (GTM)",
+    "# Design baseline (Tool Hub)",
     "",
-    "GitHub Tool Manager inlines design tokens in `src/styles.css` (no runtime import from Rules CSS).",
+    "Tool Hub inlines design tokens in `src/styles.css` (no runtime import from Rules CSS).",
     "",
     "Local source path:",
-    "`E:\\\\Dev\\\\Tool\\\\GitHub-Tool-Manager\\\\src\\\\styles.css`",
+    "`E:\\\\Dev\\\\Tool\\\\P0004-Tool-Hub\\\\src\\\\styles.css`",
     "",
   ].join("\n");
   fs.writeFileSync(path.join(outDir, "design-base.md"), designNote, "utf8");

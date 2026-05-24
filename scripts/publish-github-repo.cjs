@@ -5,7 +5,7 @@ const { execFileSync } = require("node:child_process");
 const cwd = path.resolve(__dirname, "..");
 const token = process.env.GITHUB_TOKEN;
 const owner = process.env.GITHUB_OWNER || "tuanhoangfx";
-const repo = process.env.GITHUB_REPO || "GitHub-Tool-Manager";
+const repo = process.env.GITHUB_REPO || "Tool-Hub";
 const description =
   process.env.GITHUB_DESCRIPTION ||
   "Public catalog and GitHub operations console for published workspace tools.";
@@ -100,7 +100,7 @@ async function main() {
     run("git", ["add", "-A"], { stdio: "inherit" });
     const status = run("git", ["status", "--porcelain"]);
     if (status) {
-      run("git", ["commit", "-m", "Initial publish GitHub Tool Manager"], { stdio: "inherit" });
+      run("git", ["commit", "-m", "Initial publish Tool Hub"], { stdio: "inherit" });
     }
     run("git", ["push", "-u", "origin", "HEAD:main"], { stdio: "inherit" });
   } finally {

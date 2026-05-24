@@ -1,6 +1,6 @@
 {
-  "github-tool-manager": {
-    "cwd": "E:\\Dev\\Tool\\GitHub-Tool-Manager",
+  "tool-hub": {
+    "cwd": "E:\\Dev\\Tool\\P0004-Tool-Hub",
     "command": "corepack pnpm dev",
     "devUrl": "http://127.0.0.1:5176"
   },

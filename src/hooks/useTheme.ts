@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "gtm-theme";
+const STORAGE_KEY = "tool-hub-theme";
 
 export type Theme = "light" | "dark";
 

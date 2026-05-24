@@ -26,4 +26,4 @@ Resolve-DnsName infix1.io.vn -Type A
 # Phải là Vercel
 ```
 
-Vercel Domains: https://vercel.com/tuanhoangfxs-projects/github-tool-manager/settings/domains
+Vercel Domains: https://vercel.com/tuanhoangfxs-projects/tool-hub/settings/domains

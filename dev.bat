@@ -3,7 +3,7 @@ title GTM Dev (Launcher + UI)
 cd /d "%~dp0"
 
 echo.
-echo  GitHub Tool Manager - dev.bat
+echo  Tool Hub - dev.bat
 echo  - Launcher : http://127.0.0.1:5190
 echo  - GTM UI   : http://127.0.0.1:5176
 echo.

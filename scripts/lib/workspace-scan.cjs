@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const APP_SETUP_AT_BACKFILL = {
-  "github-tool-manager": "2026-04-29T17:00:00.000Z",
+  "tool-hub": "2026-04-29T17:00:00.000Z",
   "zalo-ai-bot": "2026-05-19T11:55:00.000Z",
   "9router-infra": "2026-05-16T17:00:00.000Z",
   "mie-hair-performance": "2026-05-19T17:00:00.000Z",

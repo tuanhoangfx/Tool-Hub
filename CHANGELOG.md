@@ -1,6 +1,16 @@
 # Changelog
 
-## 2026-04-30 - Initial Tool Manager
+## 2026-05-24 - Full infra rename Tool Hub
+
+- Folder `P0004-Tool-Hub`, GitHub `tuanhoangfx/Tool-Hub`, Vercel `tool-hub`.
+- Removed legacy alias `GitHub Tool Manager`.
+
+## 2026-05-23 - Rebrand Tool Hub
+
+- Display name **Tool Hub** (was GitHub Tool Manager / Tool Library).
+- Catalog id `tool-hub` (alias `tool-hub` in manifest).
+- Library-only UI; theme key `tool-hub-theme`.
+
 
 - Version: `0.1.0`
 - Timestamp: 2026-04-30 00:00 (UTC+7)
@@ -28,6 +38,6 @@
 ### Rollback
 
 ```powershell
-cd E:\Dev\Tool\GitHub-Tool-Manager
+cd E:\Dev\Tool\P0004-Tool-Hub
 git revert <commit_hash>
 ```

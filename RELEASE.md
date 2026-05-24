@@ -1,4 +1,4 @@
-# Release
+# Tool Hub — Release notes
 
 ## Current
 
@@ -17,9 +17,9 @@ git push origin main   # triggers Vercel deploy
 
 ## Custom domain
 
-- Production: https://infix1.io.vn (Vercel project `github-tool-manager`)
+- Production: https://infix1.io.vn (Vercel project `tool-hub`)
 - DNS (Tino): apex **`A` → `76.76.21.21`** (Vercel). Không dùng GitHub Pages IPs.
-- Tắt GitHub Pages trên repo `tuanhoangfx/GitHub-Tool-Manager` sau khi DNS live.
+- Tắt GitHub Pages trên repo `tuanhoangfx/Tool-Hub` sau khi DNS live.
 
 ## Notes
 

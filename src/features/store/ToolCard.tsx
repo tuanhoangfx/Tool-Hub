@@ -121,7 +121,7 @@ export function ToolCard({ tool, healthState, copied, onOpen, onCopyPath }: Tool
       <div className="tool-card-status">
         <RunningBadge state={healthState} localUrl={tool.localUrl} compact />
         <StatusBadge icon={statusIcon(tool)} label={statusText(tool)} tone={statusTone(tool)} />
-        <DriftHint alerts={tool.driftAlerts} compact />
+        <DriftHint alerts={tool.driftAlerts} />
         {tool.updatedAt ? (
           <span
             className={`freshness-pill freshness-pill-${fresh}`}

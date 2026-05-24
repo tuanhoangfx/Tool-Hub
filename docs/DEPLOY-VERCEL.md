@@ -1,4 +1,4 @@
-# P0004 — Production deploy (Vercel)
+# P0004 Tool Hub — Production deploy (Vercel)
 
 ## Chính sách workspace
 
@@ -7,23 +7,23 @@
 - **Bot / infra systemd** → VPS (`deploy.bat`, `pnpm deploy`).
 - **Local-only bridge** → chạy trên máy, không Vercel.
 
-P0004 là catalog hub — production **Vercel-only** (không GitHub Pages).
+P0004 **Tool Hub** — production **Vercel-only** (không GitHub Pages).
 
 ## Production URL
 
 | URL | Vai trò |
 |-----|---------|
 | **https://infix1.io.vn** | Custom domain (sau khi DNS trỏ Vercel) |
-| **https://github-tool-manager.vercel.app** | Alias Vercel mặc định |
+| **https://tool-hub.vercel.app** | Alias Vercel mặc định |
 
 ## Vercel project
 
 | Field | Value |
 |-------|--------|
-| Project | `github-tool-manager` |
+| Project | `tool-hub` |
 | Project ID | `prj_tuOhhInjLzjWDrVYfeQanSqSqWMi` |
 | Team | `tuanhoangfxs-projects` |
-| Repo | `tuanhoangfx/GitHub-Tool-Manager` |
+| Repo | `tuanhoangfx/Tool-Hub` |
 | Framework | Vite — build `pnpm build`, output `dist` |
 | Config | `vercel.json` (SPA rewrites) |
 
@@ -52,7 +52,7 @@ corepack pnpm scan:local   # refresh public/*.json
 ## CLI deploy (tùy chọn)
 
 ```powershell
-cd E:\Dev\Tool\P0004-GitHub-Tool-Manager
+cd E:\Dev\Tool\P0004-Tool-Hub
 corepack pnpm dlx vercel@latest deploy --prod --yes --scope tuanhoangfxs-projects
 ```
 

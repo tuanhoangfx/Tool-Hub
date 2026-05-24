@@ -1,27 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
-import { MaterialIcon, Metric, SideNavButton, ThemeToggle, ToolFilterBar } from "./components";
-import { ActivityTab, StoreTab, SystemTab, appendSessionLog } from "./features";
+import { MaterialIcon, Metric, ThemeToggle, ToolFilterBar } from "./components";
+import { StoreTab } from "./features";
 import { useRepositories, useSessionState, useTheme, useUrlState } from "./hooks";
 import { formatDate } from "./lib/tooling";
 
-type ActiveTab = "library" | "activity" | "system";
+const PAGE = {
+  title: "Tool Hub",
+  desc: "Catalog of every running project — GitHub, usage, local path, version",
+  icon: "hub",
+} as const;
 
-const VALID_TABS: ActiveTab[] = ["library", "activity", "system"];
-const isValidTab = (value: string | null): value is ActiveTab =>
-  value !== null && (VALID_TABS as string[]).includes(value);
-
-const TAB_META: Record<ActiveTab, { title: string; desc: string; icon: string }> = {
-  library: { title: "Tool Library", desc: "Catalog of every running project — GitHub, usage, local path, version", icon: "library_books" },
-  activity: { title: "Activity", desc: "Cross-repo commit timeline merged from every connected tool", icon: "timeline" },
-  system: { title: "System", desc: "Workspace health, deployment matrix, drift & session log", icon: "monitoring" },
-};
-
-const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000; // 12 hours
+const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
 
 function App() {
   const { isDark, toggleTheme } = useTheme();
   const { state: urlState, update: updateUrl } = useUrlState();
-  const activeTab: ActiveTab = isValidTab(urlState.tab) ? urlState.tab : "library";
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
   const [query, setQuery] = useSessionState<string>("lib:query", "");
   const [statusFilter, setStatusFilter] = useSessionState<string>("lib:statusFilter", "All");
@@ -36,17 +29,12 @@ function App() {
     loadLocalRegistry,
   } = useRepositories();
 
-  // Sync URL ?tool=… into selection state when it points to a known tool.
   useEffect(() => {
     if (!urlState.tool || resolvedTools.length === 0) return;
     if (resolvedTools.some((t) => t.id === urlState.tool) && urlState.tool !== selectedId) {
       setSelectedId(urlState.tool);
     }
   }, [urlState.tool, resolvedTools, selectedId, setSelectedId]);
-
-  const setActiveTab = (tab: ActiveTab) => {
-    updateUrl({ tab: tab === "library" ? null : tab });
-  };
 
   const handleSelectTool = (id: string) => {
     setSelectedId(id);
@@ -55,26 +43,6 @@ function App() {
 
   const handleCloseDetail = () => {
     updateUrl({ detail: false });
-  };
-
-  const copyPath = async (path: string) => {
-    if (!path) return;
-    try {
-      await navigator.clipboard.writeText(path);
-      appendSessionLog("Copied folder path", path);
-    } catch {
-      // ignore
-    }
-  };
-
-  const handleRefresh = () => {
-    appendSessionLog("Manual refresh", `${resolvedTools.length} tools`);
-    void refreshAll();
-  };
-
-  const handleLoadRegistry = () => {
-    appendSessionLog("Loaded local registry");
-    void loadLocalRegistry();
   };
 
   const filteredTools = useMemo(() => {
@@ -146,49 +114,19 @@ function App() {
             <MaterialIcon name="hub" size={20} />
           </div>
           <div>
-            <strong>Workspace</strong>
+            <strong>Tool Hub</strong>
             <small>{resolvedTools.length} tools</small>
           </div>
         </div>
 
-        <nav className="nav" aria-label="Navigation">
-          <SideNavButton
-            active={activeTab === "library"}
-            icon="library_books"
-            label="Library"
-            onClick={() => {
-              appendSessionLog("Switched tab", "library");
-              setActiveTab("library");
-            }}
-          />
-          <SideNavButton
-            active={activeTab === "activity"}
-            icon="timeline"
-            label="Activity"
-            onClick={() => {
-              appendSessionLog("Switched tab", "activity");
-              setActiveTab("activity");
-            }}
-          />
-          <SideNavButton
-            active={activeTab === "system"}
-            icon="monitoring"
-            label="System"
-            onClick={() => {
-              appendSessionLog("Switched tab", "system");
-              setActiveTab("system");
-            }}
-          />
-        </nav>
-
         <div className="sidebar-actions">
-          <button className="btn icon-only" type="button" onClick={handleLoadRegistry} title="Load local registry">
+          <button className="btn icon-only" type="button" onClick={() => void loadLocalRegistry()} title="Load local registry">
             <MaterialIcon name="upload" size={18} />
           </button>
           <button
             className="btn primary icon-only"
             type="button"
-            onClick={handleRefresh}
+            onClick={() => void refreshAll()}
             disabled={loadingAll}
             title="Refresh from GitHub"
           >
@@ -209,11 +147,11 @@ function App() {
         <header className="page-header">
           <div className="page-title-wrap">
             <span className="page-header-icon">
-              <MaterialIcon name={TAB_META[activeTab].icon} size={28} />
+              <MaterialIcon name={PAGE.icon} size={28} />
             </span>
             <div>
-              <h1>{TAB_META[activeTab].title}</h1>
-              <p className="page-desc">{TAB_META[activeTab].desc}</p>
+              <h1>{PAGE.title}</h1>
+              <p className="page-desc">{PAGE.desc}</p>
             </div>
           </div>
           <div className="header-actions">
@@ -249,40 +187,26 @@ function App() {
               </div>
             ) : null}
 
-            {activeTab === "library" ? (
-              <ToolFilterBar
-                variant="tools"
-                query={query}
-                shown={filteredTools.length}
-                total={resolvedTools.length}
-                onQueryChange={setQuery}
-                statusFilter={statusFilter}
-                onStatusFilterChange={setStatusFilter}
-                viewMode={viewMode}
-                onViewModeChange={setViewMode}
-              />
-            ) : null}
+            <ToolFilterBar
+              query={query}
+              shown={filteredTools.length}
+              total={resolvedTools.length}
+              onQueryChange={setQuery}
+              statusFilter={statusFilter}
+              onStatusFilterChange={setStatusFilter}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+            />
 
             <section className="panel">
-              {activeTab === "library" ? (
-                <StoreTab
-                  tools={filteredTools}
-                  selectedId={selectedId}
-                  onSelect={handleSelectTool}
-                  viewMode={viewMode}
-                  modalOpen={urlState.detail}
-                  onCloseModal={handleCloseDetail}
-                />
-              ) : activeTab === "activity" ? (
-                <ActivityTab tools={resolvedTools} />
-              ) : (
-                <SystemTab
-                  tools={resolvedTools}
-                  loadingAll={loadingAll}
-                  lastRefreshedAt={lastRefreshedAt}
-                  onCopyPath={copyPath}
-                />
-              )}
+              <StoreTab
+                tools={filteredTools}
+                selectedId={selectedId}
+                onSelect={handleSelectTool}
+                viewMode={viewMode}
+                modalOpen={urlState.detail}
+                onCloseModal={handleCloseDetail}
+              />
             </section>
           </div>
         </div>

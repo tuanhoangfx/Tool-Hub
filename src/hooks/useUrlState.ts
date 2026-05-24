@@ -1,16 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
 
 type UrlState = {
-  tab: string | null;
   tool: string | null;
   detail: boolean;
 };
 
 function readUrl(): UrlState {
-  if (typeof window === "undefined") return { tab: null, tool: null, detail: false };
+  if (typeof window === "undefined") return { tool: null, detail: false };
   const params = new URLSearchParams(window.location.search);
   return {
-    tab: params.get("tab"),
     tool: params.get("tool"),
     detail: params.get("detail") === "1",
   };
@@ -19,8 +17,7 @@ function readUrl(): UrlState {
 function writeUrl(next: UrlState, options: { replace?: boolean } = {}) {
   if (typeof window === "undefined") return;
   const params = new URLSearchParams(window.location.search);
-  if (next.tab) params.set("tab", next.tab);
-  else params.delete("tab");
+  params.delete("tab");
   if (next.tool) params.set("tool", next.tool);
   else params.delete("tool");
   if (next.detail) params.set("detail", "1");

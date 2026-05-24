@@ -1,10 +1,10 @@
 {
-  "name": "github-tool-manager",
+  "name": "tool-hub",
   "private": true,
   "version": "0.1.0",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
-  "description": "Two-mode public catalog and GitHub operations console for published workspace tools.",
+  "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
   "author": "Tool Workspace",
   "scripts": {
     "dev": "node scripts/dev-with-launcher.cjs",
@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.1",
-    "lucide-react": "^0.561.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "vite": "^7.2.7",
