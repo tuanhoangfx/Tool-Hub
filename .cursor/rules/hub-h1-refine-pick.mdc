@@ -1,0 +1,36 @@
+---
+description: Hub UI production paths — HubToolCard, badge-registry, no legacy ToolCard
+globs:
+  - src/features/hub/**
+  - src/features/system-hub/**
+  - src/lib/badge-registry.ts
+  - src/components/sales-shell/**
+  - docs/DESIGN-*.md
+---
+
+# Hub UI — production source of truth
+
+## Do not
+
+- Re-add legacy `ToolCard` / `StoreTab` / `hub-spectrum.css` (removed).
+- Duplicate badge icons outside `src/lib/badge-registry.ts`.
+- Re-add multi-variant hub-ui pickers without explicit user request.
+
+## Production
+
+| Area | Path |
+|------|------|
+| Hub grid card | `src/features/hub/HubToolCard.tsx` |
+| Hub table | `src/features/store/TableView.tsx` |
+| Badges / filter icons | `src/lib/badge-registry.ts` |
+| Tool Links (System) | `src/features/overview/ToolLinksTable.tsx` |
+| Shell header | `src/components/sales-shell/AppTabHeader.tsx` |
+| Filters | `src/components/sales-shell/FilterBar.tsx` |
+
+## Design Template tab
+
+- System → **Design Template** — locked decision log only (`locked-decisions.ts`). No V1–V5 pickers or mock previews.
+
+## Checks before push
+
+- `pnpm run lint` · `pnpm run deadcode` · `pnpm run build`

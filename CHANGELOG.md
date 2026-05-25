@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-05-25 - Hub version pipeline auto-bump on commit
+
+- Version: `0.1.1`
+- Timestamp: 2026-05-25 07:42 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Đồng bộ version trên package, manifest và CHANGELOG.
+
+### Verification
+
+- pending
+
+---
 ## 2026-05-24 - Full infra rename Tool Hub
 
 - Folder `P0004-Tool-Hub`, GitHub `tuanhoangfx/Tool-Hub`, Vercel `tool-hub`.

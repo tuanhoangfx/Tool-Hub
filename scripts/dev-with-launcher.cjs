@@ -4,15 +4,17 @@ const http = require("node:http");
 
 const root = path.resolve(__dirname, "..");
 const launcherScript = path.join(__dirname, "local-tool-launcher.cjs");
-const PORT = 5190;
+const LAUNCHER_PORT = 5190;
+const VITE_PORT = 5176;
+const DEV_URL = "http://127.0.0.1:5176/?screen=library";
 
-function waitForHealth(maxMs = 12000) {
+function waitForHttp(port, path = "/", maxMs = 30000) {
   const started = Date.now();
   return new Promise((resolve) => {
     const tick = () => {
-      const req = http.get(`http://127.0.0.1:${PORT}/health`, (res) => {
+      const req = http.get(`http://127.0.0.1:${port}${path}`, (res) => {
         res.resume();
-        if (res.statusCode === 200) resolve(true);
+        if (res.statusCode && res.statusCode < 500) resolve(true);
         else if (Date.now() - started > maxMs) resolve(false);
         else setTimeout(tick, 400);
       });
@@ -25,8 +27,27 @@ function waitForHealth(maxMs = 12000) {
   });
 }
 
+function openBrowser(url) {
+  if (process.env.OPEN_BROWSER === "0") return;
+  if (process.platform === "win32") {
+    spawn("cmd", ["/c", "start", "", url], { detached: true, stdio: "ignore" }).unref();
+    return;
+  }
+  const cmd = process.platform === "darwin" ? "open" : "xdg-open";
+  spawn(cmd, [url], { detached: true, stdio: "ignore" }).unref();
+}
+
 async function main() {
-  console.log("\n  GTM dev — starting launcher + Vite\n");
+  try {
+    require("node:child_process").execSync("node scripts/kill-port.cjs 5176", {
+      cwd: root,
+      stdio: "inherit",
+    });
+  } catch {
+    /* ignore */
+  }
+
+  console.log("\n  Tool Hub dev — starting launcher + Vite\n");
 
   const launcher = spawn(process.execPath, [launcherScript], {
     cwd: root,
@@ -39,30 +60,39 @@ async function main() {
     launcher.unref();
   }
 
-  const ready = await waitForHealth();
-  if (ready) {
-    console.log(`  Launcher ready → http://127.0.0.1:${PORT}/\n`);
+  const launcherReady = await waitForHttp(LAUNCHER_PORT, "/health", 12000);
+  if (launcherReady) {
+    console.log(`  Launcher ready → http://127.0.0.1:${LAUNCHER_PORT}/\n`);
   } else {
-    console.warn("  Launcher chưa phản hồi — vẫn chạy Vite. Thử launch.bat nếu cần Chạy tool.\n");
+    console.warn("  Launcher chưa phản hồi — vẫn chạy Vite.\n");
   }
 
-  const vite = spawn("corepack", ["pnpm", "exec", "vite", "--host", "127.0.0.1", "--port", "5176"], {
+  const vite = spawn("corepack", ["pnpm", "exec", "vite", "--host", "127.0.0.1", "--port", String(VITE_PORT)], {
     cwd: root,
     stdio: "inherit",
     shell: process.platform === "win32",
     env: process.env,
   });
 
+  void waitForHttp(VITE_PORT, "/", 30000).then((viteReady) => {
+    if (viteReady) {
+      console.log(`\n  Vite ready → ${DEV_URL}\n`);
+      openBrowser(DEV_URL);
+    } else {
+      console.warn("\n  Vite chưa phản hồi trong 30s — mở tay URL trên khi sẵn sàng.\n");
+    }
+  });
+
   const shutdown = () => {
     try {
       vite.kill();
     } catch {
-      // ignore: process may already be dead
+      // ignore
     }
     try {
       launcher.kill();
     } catch {
-      // ignore: process may already be dead
+      // ignore
     }
     process.exit(0);
   };
@@ -74,7 +104,7 @@ async function main() {
     try {
       launcher.kill();
     } catch {
-      // ignore: process may already be dead
+      // ignore
     }
     process.exit(code ?? 0);
   });

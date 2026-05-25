@@ -23,16 +23,35 @@ export function useRepositories() {
     [remoteStates, repositories],
   );
 
+  function remoteHasChangelog(state?: ToolRemoteState) {
+    return Boolean(state?.files?.some((f) => f.path.toLowerCase() === "changelog.md" && f.ok && f.text));
+  }
+
   async function refreshOne(repo: ToolRepository) {
     if (!repo.repo) return;
 
-    setRemoteStates((current) => ({
-      ...current,
-      [repo.id]: { id: repo.id, loading: true, files: current[repo.id]?.files ?? [] },
-    }));
+    setRemoteStates((current) => {
+      const prev = current[repo.id];
+      return {
+        ...current,
+        [repo.id]: prev
+          ? { ...prev, loading: true }
+          : { id: repo.id, loading: true, files: [] },
+      };
+    });
 
     const remote = await hydrateRepository(repo);
     setRemoteStates((current) => ({ ...current, [repo.id]: remote }));
+  }
+
+  /** Load GitHub remote (incl. CHANGELOG) for one tool — skips if already hydrated. */
+  async function prefetchRemote(toolId: string) {
+    const repo = repositories.find((r) => r.id === toolId);
+    if (!repo?.repo) return;
+    const existing = remoteStates[repo.id];
+    if (existing?.loading) return;
+    if (remoteHasChangelog(existing)) return;
+    await refreshOne(repo);
   }
 
   async function refreshAll() {
@@ -74,6 +93,11 @@ export function useRepositories() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [repositories.length]);
 
+  async function refreshTool(toolId: string) {
+    const repo = repositories.find((r) => r.id === toolId);
+    if (repo) await refreshOne(repo);
+  }
+
   return {
     selectedId,
     setSelectedId,
@@ -82,6 +106,8 @@ export function useRepositories() {
     localRegistry,
     registryError,
     refreshAll,
+    refreshTool,
+    prefetchRemote,
     loadLocalRegistry,
   };
 }

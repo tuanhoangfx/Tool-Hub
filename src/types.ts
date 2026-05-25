@@ -75,7 +75,22 @@ export type ToolManifest = {
     status?: string;
     note?: string;
   };
+  deployTarget?: string;
   nextActions?: string[];
+  vercel?: {
+    project?: string;
+    projectId?: string;
+    productionUrl?: string;
+    previewUrl?: string;
+    productionBranch?: string;
+    team?: string;
+    notes?: string;
+  };
+  supabase?: {
+    projectRef?: string;
+    url?: string;
+    dashboard?: string;
+  };
 };
 
 export type PackageJson = {
@@ -130,6 +145,10 @@ export type ToolRemoteState = {
   manifest?: ToolManifest;
   packageJson?: PackageJson;
   latestRelease?: GitHubRelease;
+  /** Recent GitHub releases (newest first), up to ~20. */
+  releases?: GitHubRelease[];
+  /** Git tag names from GitHub (`/tags`), normalized elsewhere. */
+  gitTags?: string[];
   files: RemoteFileState[];
   error?: string;
 };

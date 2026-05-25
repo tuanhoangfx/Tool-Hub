@@ -1,89 +1,104 @@
-import { useEffect, useMemo, useState } from "react";
-import { MaterialIcon } from "../../../components";
-import { HubShellPreviewHub } from "./hub-shell/HubShellPreviewHub";
-import {
-  DESIGN_TEMPLATE_RULE,
-  DESIGN_TEMPLATES,
-  readDesignTemplateId,
-  setDesignTemplateId,
-  type DesignTemplateId,
-} from "./templates";
+import { useEffect, useState } from "react";
+import { CheckCircle2, Lock, Palette } from "lucide-react";
+import { LOCKED_UI_DECISIONS } from "./locked-decisions";
+import { DESIGN_TEMPLATES, readDesignTemplateId, setDesignTemplateId } from "./templates";
+import { ToolVersionsPreviewHub } from "./tool-versions/ToolVersionsPreviewHub";
 import "./design-template.css";
 
-function TemplatePicker({
-  active,
-  onPick,
-}: {
-  active: DesignTemplateId;
-  onPick: (id: DesignTemplateId) => void;
-}) {
+function LockedTemplateNotice({ label, choice }: { label: string; choice?: string }) {
   return (
-    <div className="dt-template-grid">
-      {DESIGN_TEMPLATES.map((t) => {
-        const isActive = t.id === active;
-        return (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => onPick(t.id)}
-            className={isActive ? "dt-template-card active" : "dt-template-card"}
-          >
-            <div className="dt-template-card-head">
-              <span className="dt-template-label">{t.label}</span>
-              <span className={`dt-status dt-status--${t.status}`}>{t.status}</span>
-            </div>
-            <p className="dt-template-feature">{t.feature}</p>
-            <p className="dt-template-meta">
-              {t.variants} variants · <code>{t.variantParam}</code>
-            </p>
-          </button>
-        );
-      })}
-      <div className="dt-template-card dt-template-card--soon">
-        <div className="dt-soon-title">
-          <MaterialIcon name="layers" size={14} /> Activity / Sync …
-        </div>
-        <p>Thêm template khi bắt đầu tính năng mới</p>
+    <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/8 px-4 py-3 text-[12px] text-emerald-200/90">
+      <div className="flex items-center gap-2">
+        <Lock size={14} aria-hidden />
+        <strong>{label}</strong> is locked in production.
       </div>
+      {choice ? <p className="mt-1 text-[11px]">Choice: {choice}</p> : null}
+      <p className="mt-1 text-[10px] text-[var(--muted)]">Edit the production path listed under Locked decisions below.</p>
     </div>
   );
 }
 
 export function DesignTemplateHub() {
-  const [tick, setTick] = useState(0);
-  const templateId = useMemo(() => readDesignTemplateId(), [tick]);
+  const [templateId, setTemplateId] = useState(() => readDesignTemplateId());
 
   useEffect(() => {
-    const bump = () => setTick((t) => t + 1);
-    window.addEventListener("popstate", bump);
-    return () => window.removeEventListener("popstate", bump);
+    const onPop = () => setTemplateId(readDesignTemplateId());
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  const pickTemplate = (id: DesignTemplateId) => {
-    setDesignTemplateId(id);
-    setTick((t) => t + 1);
-  };
+  const activeTemplate = DESIGN_TEMPLATES.find((t) => t.id === templateId) ?? DESIGN_TEMPLATES[0];
 
   return (
-    <div className="design-template-hub anim-fade">
-      <div className="dt-rule-banner">
-        <MaterialIcon name="verified_user" size={18} />
-        <div>
-          <strong>Quy tắc Design Template</strong> — {DESIGN_TEMPLATE_RULE}
-          <p>
-            Chọn tính năng → so sánh ≥5 hướng → trả lời <code>Design: Vn</code> → mới code production.
-          </p>
+    <div className="design-template-hub anim-fade space-y-4">
+      <header className="rounded-xl border border-white/5 bg-white/[.02] px-4 py-3">
+        <div className="flex items-start gap-3">
+          <Palette size={20} className="mt-0.5 shrink-0 text-indigo-300" aria-hidden />
+          <div>
+            <h2 className="text-base font-semibold text-[var(--text)]">Design Template</h2>
+            <p className="mt-1 max-w-2xl text-[12px] leading-relaxed text-[var(--muted)]">
+              Review <strong>5 mockups</strong> for features in preview before production. Locked areas show shipped
+              decisions only.
+            </p>
+          </div>
         </div>
-      </div>
-
-      <header className="dt-header">
-        <h2>Design Template</h2>
-        <p>Mẫu UI tĩnh — chỉ trong System, không ảnh hưởng Library production cho đến khi chốt.</p>
       </header>
 
-      <TemplatePicker active={templateId} onPick={pickTemplate} />
+      <div className="dt-template-grid">
+        {DESIGN_TEMPLATES.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className={`dt-template-card ${templateId === t.id ? "active" : ""}`}
+            onClick={() => {
+              setDesignTemplateId(t.id);
+              setTemplateId(t.id);
+            }}
+          >
+            <div className="dt-template-card-head">
+              <span className="dt-template-label">{t.label}</span>
+              <span className={`dt-status ${t.status === "locked" ? "dt-status--locked" : "dt-status--preview"}`}>
+                {t.status}
+              </span>
+            </div>
+            <p className="dt-template-feature">{t.blurb}</p>
+            {t.lockedChoice ? (
+              <p className="dt-template-meta">
+                <CheckCircle2 size={10} className="inline" /> {t.lockedChoice}
+              </p>
+            ) : null}
+          </button>
+        ))}
+      </div>
 
-      {templateId === "hub-shell" ? <HubShellPreviewHub /> : null}
+      {activeTemplate.status === "locked" ? (
+        <LockedTemplateNotice label={activeTemplate.label} choice={activeTemplate.lockedChoice} />
+      ) : activeTemplate.id === "tool-versions" ? (
+        <ToolVersionsPreviewHub />
+      ) : null}
+
+      <section className="space-y-2">
+        <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[var(--muted)]">Locked in production</h3>
+        <ul className="space-y-2">
+          {LOCKED_UI_DECISIONS.map((row) => (
+            <li
+              key={row.id}
+              className="rounded-xl border border-white/5 bg-[var(--panel)] px-4 py-3 transition-colors hover:border-white/10"
+            >
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-medium text-[var(--text)]">{row.label}</span>
+                <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-200">
+                  <Lock size={10} aria-hidden />
+                  locked
+                </span>
+                <span className="text-[11px] text-indigo-200/90">{row.choice}</span>
+              </div>
+              <p className="mt-1.5 font-mono text-[11px] text-cyan-300/90">{row.production}</p>
+              {row.doc ? <p className="mt-0.5 text-[10px] text-[var(--muted)]">{row.doc}</p> : null}
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

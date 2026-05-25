@@ -1,32 +1,90 @@
-import { useEffect, useState } from "react";
-import { MaterialIcon } from "../../components";
-import { DesignTemplateHub } from "./design-template/DesignTemplateHub";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { readHubListPrefs } from "../../lib/url-prefs";
+import type { ResolvedTool } from "../../types";
+import { SystemTabHeader } from "./SystemTabHeader";
 import { SystemTabs, readSystemTab, type SystemTab } from "./components/SystemTabs";
-import { SystemOverviewPanel } from "./SystemOverviewPanel";
-import "./system-hub.css";
+import { computeSystemHeaderMetrics } from "./system-header-metrics";
+import { DEFAULT_SYSTEM_HEADER_STAT_KEYS } from "./system-prefs";
 
-export function SystemHubScreen() {
+const SystemOverviewPanel = lazy(() =>
+  import("./SystemOverviewPanel").then((m) => ({ default: m.SystemOverviewPanel })),
+);
+const SystemSchemaPanel = lazy(() =>
+  import("./SystemSchemaPanel").then((m) => ({ default: m.SystemSchemaPanel })),
+);
+import { DesignTemplateHub } from "./design-template/DesignTemplateHub";
+
+function SystemTabFallback({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-[12rem] items-center justify-center rounded-xl border border-white/5 bg-white/[.02] py-12 text-sm text-[var(--muted)]">
+      Loading {label}…
+    </div>
+  );
+}
+
+function visibleSet(set: Set<string> | null, defaults: Set<string>) {
+  return set ?? defaults;
+}
+
+type SystemHubScreenProps = {
+  tools: ResolvedTool[];
+  registryLive: boolean;
+  registryLabel: string;
+  versionReleaseDate: string;
+  versionReleaseLive: boolean;
+};
+
+export function SystemHubScreen({
+  tools,
+  registryLive,
+  registryLabel,
+  versionReleaseDate,
+  versionReleaseLive,
+}: SystemHubScreenProps) {
   const [tab, setTab] = useState<SystemTab>(() => readSystemTab());
+  const [prefs, setPrefs] = useState(readHubListPrefs);
 
   useEffect(() => {
-    const onPop = () => setTab(readSystemTab());
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
+    const sync = () => {
+      setTab(readSystemTab());
+      setPrefs(readHubListPrefs());
+    };
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
   }, []);
 
+  const metrics = useMemo(() => computeSystemHeaderMetrics(tools.length), [tools.length]);
+  const visHeaderStats = visibleSet(prefs.systemHeaderStats, DEFAULT_SYSTEM_HEADER_STAT_KEYS);
+
   return (
-    <div className="system-hub anim-fade">
-      <div className="system-hub-head">
-        <div className="system-hub-title">
-          <MaterialIcon name="settings" size={20} />
-          <h1>System</h1>
-          <span>Overview · Design Template</span>
-        </div>
+    <div className="anim-fade relative">
+      <SystemTabHeader
+        tab={tab}
+        registryLive={registryLive}
+        registryLabel={registryLabel}
+        versionReleaseDate={versionReleaseDate}
+        versionReleaseLive={versionReleaseLive}
+        visibleHeaderStats={visHeaderStats}
+        metrics={metrics}
+        pinSticky={prefs.headerPin}
+      />
+
+      <div className="relative z-0 space-y-4">
         <SystemTabs tab={tab} onTab={setTab} />
-      </div>
-      <div className="system-hub-body custom-scrollbar">
-        {tab === "overview" && <SystemOverviewPanel />}
-        {tab === "template" && <DesignTemplateHub />}
+
+        <div>
+          {tab === "overview" ? (
+            <Suspense fallback={<SystemTabFallback label="overview" />}>
+              <SystemOverviewPanel tools={tools} />
+            </Suspense>
+          ) : null}
+          {tab === "schema" ? (
+            <Suspense fallback={<SystemTabFallback label="schema" />}>
+              <SystemSchemaPanel />
+            </Suspense>
+          ) : null}
+          {tab === "template" ? <DesignTemplateHub /> : null}
+        </div>
       </div>
     </div>
   );

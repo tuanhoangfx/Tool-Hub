@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "entry": ["src/main.tsx"],
+  "project": ["src/**/*.{ts,tsx}"],
+  "ignore": ["src/**/*.test.ts"],
+  "ignoreBinaries": ["powershell"],
+  "ignoreDependencies": ["autoprefixer", "postcss", "tailwindcss", "@vitest/ui"],
+  "ignoreExportsUsedInFile": true,
+  "exclude": ["exports", "types", "enumMembers", "duplicates"]
+}

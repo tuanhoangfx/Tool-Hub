@@ -154,12 +154,14 @@ export async function hydrateRepository(repo: ToolRepository): Promise<ToolRemot
   const uniqueFiles = Array.from(new Set([repo.manifestPath, ...repo.trackedFiles, ...repo.scriptFiles]));
 
   try {
-    const [manifest, packageJson, files, repoInfo, latestRelease] = await Promise.all([
+    const [manifest, packageJson, files, repoInfo, latestRelease, releases, tags] = await Promise.all([
       readJson<ToolManifest>(repo, repo.manifestPath),
       readJson<PackageJson>(repo, "package.json"),
       Promise.all(uniqueFiles.map((path) => readRemoteFile(repo, path))),
       readPublicGitHub<GitHubRepoInfo>(repo, ""),
       readPublicGitHub<GitHubRelease>(repo, "/releases/latest"),
+      readPublicGitHub<GitHubRelease[]>(repo, "/releases?per_page=20"),
+      readPublicGitHub<Array<{ name: string }>>(repo, "/tags?per_page=100"),
     ]);
 
     return {
@@ -179,6 +181,8 @@ export async function hydrateRepository(repo: ToolRepository): Promise<ToolRemot
       manifest,
       packageJson,
       latestRelease,
+      releases: releases ?? (latestRelease ? [latestRelease] : []),
+      gitTags: tags?.map((t) => t.name).filter(Boolean) ?? [],
       files,
     };
   } catch (error) {

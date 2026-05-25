@@ -1,4 +1,5 @@
 @import "./styles/base.css";
+@import "./theme/hub-appearance.css";
 @import "./styles/layout.css";
 @import "./styles/controls.css";
 @import "./styles/cards.css";
@@ -6,5 +7,3 @@
 @import "./styles/library.css";
 @import "./styles/modal.css";
 @import "./styles/running-badge.css";
-@import "./styles/tool-card.css";
-@import "./styles/modal-extras.css";

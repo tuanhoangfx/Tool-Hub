@@ -222,9 +222,23 @@
   white-space: nowrap;
 }
 .status-badge-ok {
-  background: rgba(34, 197, 94, 0.14);
-  color: #15803d;
-  border: 1px solid rgba(34, 197, 94, 0.35);
+  background: rgba(34, 197, 94, 0.12);
+  color: #86efac;
+  border: 1px solid rgba(34, 197, 94, 0.28);
+}
+
+.theme-hub .status-badge-ok .material-symbols-outlined {
+  animation: ready-icon-glow 2.2s ease-in-out infinite;
+}
+
+@keyframes ready-icon-glow {
+  0%,
+  100% {
+    filter: none;
+  }
+  50% {
+    filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.55));
+  }
 }
 .status-badge-warn {
   background: rgba(234, 179, 8, 0.14);

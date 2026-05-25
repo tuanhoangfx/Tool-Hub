@@ -135,6 +135,31 @@ const server = http.createServer(async (req, res) => {
     );
   }
 
+  if (req.method === "POST" && url.pathname === "/version-pipeline") {
+    try {
+      const body = await readBody(req);
+      const { runPipeline } = require("./version-pipeline-run.cjs");
+      const cwd = String(body.cwd ?? "");
+      const version = String(body.version ?? "");
+      const branch = String(body.branch ?? "main");
+      const bumpOnCommit = body.bumpOnCommit !== false;
+      const commitTitle = String(body.commitTitle ?? body.commitMessage ?? "");
+      let actions = body.actions;
+      if (!Array.isArray(actions)) {
+        const single = String(body.action ?? "all");
+        actions =
+          single === "all" ? ["sync", "commit", "push"] : single === "sync" || single === "commit" || single === "push" ? [single] : [];
+      }
+      if (!cwd) {
+        return sendJson(res, 400, { ok: false, message: "Thiếu cwd (localPath)" });
+      }
+      const result = runPipeline({ cwd, version, branch, actions, bumpOnCommit, commitTitle });
+      return sendJson(res, result.ok ? 200 : 500, result);
+    } catch (error) {
+      return sendJson(res, 500, { ok: false, message: error.message, steps: [] });
+    }
+  }
+
   if ((req.method === "GET" || req.method === "POST") && url.pathname === "/launch") {
     try {
       const config = loadConfig();

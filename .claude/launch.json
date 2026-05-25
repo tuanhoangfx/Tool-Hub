@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tool-hub-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["dev:vite"],
+      "port": 5176
+    }
+  ]
+}
