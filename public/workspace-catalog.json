@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-25T00:46:27.786Z",
+  "generatedAt": "2026-05-25T00:47:59.271Z",
   "roots": [
     {
       "id": "tool",
@@ -586,11 +586,11 @@
       ],
       "scriptFiles": [
         "scripts/apply-all-p0020.mjs",
-        "scripts/apply-fix-vnote.mjs",
+        "scripts/apply-fix-v-note.mjs",
         "scripts/apply-vault-v4.mjs",
         "scripts/dev-with-launcher.cjs",
         "scripts/find-dead-css.cjs",
-        "scripts/generate-apply-all.mjs"
+        "scripts/git-push.ps1"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"
