@@ -6,9 +6,11 @@ import type { ToolVersionHistoryRow } from "./tool-versions";
 import {
   PipelineColumnHeader,
   TableColumnHeader,
+} from "./version-pipeline-cols";
+import {
   VERSION_PIPELINE_COLS,
   VERSION_TABLE_HEADERS,
-} from "./version-pipeline-cols";
+} from "./version-pipeline-defs";
 import { VERSION_FILTER_DEFS, matchesVersionFilters } from "./version-filters";
 import { useVersionFilterPrefs } from "./use-version-filter-prefs";
 import { VersionPipelineToolbar } from "./VersionPipelineToolbar";
@@ -18,12 +20,12 @@ function PipelineCell({ on, title }: { on: boolean; title: string }) {
   return (
     <span
       className="inline-flex justify-center"
-      title={on ? `${title} — đã xong` : `${title} — chưa`}
+      title={on ? `${title} - done` : `${title} - missing`}
     >
       {on ? (
-        <CheckCircle2 size={15} className="text-emerald-400" aria-label="Đã xong" />
+        <CheckCircle2 size={15} className="text-emerald-400" aria-label="Done" />
       ) : (
-        <Circle size={13} className="text-[var(--muted)]/35" aria-label="Chưa" />
+        <Circle size={13} className="text-[var(--muted)]/35" aria-label="Missing" />
       )}
     </span>
   );
@@ -55,7 +57,7 @@ function RowActions({
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center justify-center rounded-md border border-white/10 p-1.5 text-[var(--muted)] hover:bg-white/[.05] hover:text-violet-300"
-          title="Compare với bản trước trên GitHub"
+          title="Compare with previous version on GitHub"
         >
           <GitCompare size={12} />
         </a>
@@ -83,7 +85,7 @@ export type ToolVersionsPanelProps = {
   onRefresh?: () => void;
 };
 
-/** Lịch sử version — pipeline có icon: Package → Changelog → Manifest → Git → Push → Release */
+/** Version history with pipeline icons: Package -> Changelog -> Manifest -> Git -> Push -> Release */
 export function ToolVersionsPanel({
   rows,
   tool,
@@ -114,7 +116,7 @@ export function ToolVersionsPanel({
   if (rows.length === 0) {
     return (
       <p className="text-[12px] text-[var(--muted)]">
-        Chưa có lịch sử version — thêm mục vào CHANGELOG.md hoặc tạo GitHub Release.
+        No version history yet. Add a CHANGELOG.md entry or create a GitHub Release.
       </p>
     );
   }
@@ -124,12 +126,12 @@ export function ToolVersionsPanel({
   return (
     <div className="space-y-2">
       <p className="text-[11px] leading-relaxed text-[var(--muted)]">
-        Mỗi dòng = <strong className="text-[var(--text)]">một phiên bản</strong> (số trong package/CHANGELOG).{" "}
-        <strong className="text-[var(--text)]">Commit</strong> trên Hub tự tăng patch (vd. 0.1.0→0.1.1) và đồng bộ
-        docs. <CheckCircle2 size={11} className="inline text-emerald-400" /> = đã qua bước. Đang dùng:{" "}
+        Each row is <strong className="text-[var(--text)]">one version</strong> from package/CHANGELOG.{" "}
+        <strong className="text-[var(--text)]">Commit</strong> auto-bumps the patch version (for example 0.1.0 to 0.1.1)
+        and syncs docs. <CheckCircle2 size={11} className="inline text-emerald-400" /> = completed step. Current:{" "}
         <span className="font-mono text-indigo-200">v{canonicalVersion}</span>
         {needsActionCount > 0 ? (
-          <span className="ml-2 text-amber-200/90">· {needsActionCount} cần đồng bộ / push</span>
+          <span className="ml-2 text-amber-200/90">· {needsActionCount} need sync / push</span>
         ) : null}
       </p>
 
@@ -143,7 +145,7 @@ export function ToolVersionsPanel({
       />
 
       <FilterBar
-        placeholder="Tìm version, tiêu đề, ghi chú..."
+        placeholder="Search version, title, notes..."
         filters={VERSION_FILTER_DEFS}
         query={query}
         onQueryChange={setQuery}
@@ -158,7 +160,7 @@ export function ToolVersionsPanel({
 
       {filtered.length === 0 ? (
         <p className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-6 text-center text-[12px] text-[var(--muted)]">
-          Không có version khớp bộ lọc.
+          No versions match the current filters.
         </p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-white/5">
@@ -195,11 +197,11 @@ export function ToolVersionsPanel({
                   <td className="whitespace-nowrap px-2 py-2 align-top font-mono font-semibold text-indigo-100">
                     {row.display}
                     {row.isCurrent ? (
-                      <span className="ml-1 text-[9px] font-normal text-indigo-300/80">· hiện tại</span>
+                      <span className="ml-1 text-[9px] font-normal text-indigo-300/80">· current</span>
                     ) : null}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-2 align-top text-[10px] text-[var(--muted)]">
-                    <div>{row.publishedLabel ?? row.date ?? "—"}</div>
+                  <td className="whitespace-nowrap px-2 py-2 align-top">
+                    <div className="version-row-date">{row.publishedLabel ?? row.date ?? "—"}</div>
                     {row.assetSize ? (
                       <div className="font-mono text-[9px] text-cyan-300/70">{row.assetSize}</div>
                     ) : null}

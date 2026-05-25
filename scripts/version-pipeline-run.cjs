@@ -1,10 +1,10 @@
 /**
- * Version pipeline — sync manifest, bump+commit, git push (cwd = tool repo).
+ * Version pipeline: sync manifest, bump+commit, git push (cwd = tool repo).
  */
 const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync, execSync } = require("node:child_process");
-const { bumpAndSyncDocs, updateChangelogCommitHash } = require("./lib/version-bump.cjs");
+const { bumpAndSyncDocs, readLatestChangelogVersion, updateChangelogCommitHash } = require("./lib/version-bump.cjs");
 
 const WORKSPACE_ROOT = process.env.TOOL_WORKSPACE_ROOT || "E:\\Dev\\Tool";
 
@@ -33,10 +33,10 @@ function assertAllowedCwd(cwd) {
   const resolved = path.resolve(cwd);
   const root = path.resolve(WORKSPACE_ROOT);
   if (!resolved.startsWith(root)) {
-    throw new Error(`cwd ngoài workspace: ${resolved}`);
+    throw new Error(`cwd is outside the workspace: ${resolved}`);
   }
   if (!fs.existsSync(resolved)) {
-    throw new Error(`Không tìm thấy thư mục: ${resolved}`);
+    throw new Error(`Directory not found: ${resolved}`);
   }
   return resolved;
 }
@@ -51,17 +51,22 @@ function writeJson(filePath, data) {
 }
 
 function runGit(cwd, args, opts = {}) {
+  const env = opts.skipVersionHook
+    ? { ...process.env, TOOL_HUB_SKIP_VERSION_HOOK: "1" }
+    : process.env;
   if (opts.shell) {
     return execSync(["git", ...args].join(" "), {
       cwd,
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
+      env,
     }).trim();
   }
   return execFileSync("git", args, {
     cwd,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],
+    env,
   }).trim();
 }
 
@@ -80,11 +85,12 @@ function syncManifest(cwd, version) {
   const pkg = readJson(pkgPath);
   const manifest = readJson(manifestPath);
   if (!manifest) {
-    return { step: "sync", ok: false, detail: "Thiếu tool.manifest.json" };
+    return { step: "sync", ok: false, detail: "Missing tool.manifest.json" };
   }
-  const v = (version || pkg?.version || "").trim();
+  const changelogVersion = readLatestChangelogVersion(cwd);
+  const v = (changelogVersion || version || pkg?.version || "").trim();
   if (!v) {
-    return { step: "sync", ok: false, detail: "Không có version (package.json)" };
+    return { step: "sync", ok: false, detail: "Missing version (package.json)" };
   }
   if (pkg && pkg.version !== v) {
     pkg.version = v;
@@ -94,12 +100,12 @@ function syncManifest(cwd, version) {
   manifest.release.version = v;
   manifest.manifestUpdatedAt = new Date().toISOString();
   writeJson(manifestPath, manifest);
-  return { step: "sync", ok: true, detail: `Đã đồng bộ manifest + package → v${v}` };
+  return { step: "sync", ok: true, detail: `Synced manifest + package to v${v}`, version: v };
 }
 
 function commitWithAutoBump(cwd, { bumpOnCommit, commitTitle, fallbackVersion }) {
   if (!isGitRepo(cwd)) {
-    return { step: "commit", ok: false, detail: "Không phải git repo", version: fallbackVersion };
+    return { step: "commit", ok: false, detail: "Not a git repository", version: fallbackVersion };
   }
 
   let version = fallbackVersion;
@@ -109,13 +115,13 @@ function commitWithAutoBump(cwd, { bumpOnCommit, commitTitle, fallbackVersion })
     if (bumpOnCommit) {
       const bumped = bumpAndSyncDocs(cwd, {
         title: commitTitle || "Auto bump on commit",
-        changeLine: "Đồng bộ version trên package, manifest và CHANGELOG.",
+        changeLine: "Synchronized version across package, manifest, and CHANGELOG.",
       });
       version = bumped.version;
       steps.push({
         step: "bump",
         ok: true,
-        detail: `v${bumped.previousVersion} → v${version} (package, manifest, CHANGELOG)`,
+        detail: `v${bumped.previousVersion} -> v${version} (package, manifest, CHANGELOG)`,
       });
     } else {
       const sync = syncManifest(cwd, version);
@@ -132,14 +138,14 @@ function commitWithAutoBump(cwd, { bumpOnCommit, commitTitle, fallbackVersion })
         step: "commit",
         ok: true,
         skipped: true,
-        detail: "Không có thay đổi để commit",
+        detail: "No changes to commit",
         version,
         subSteps: steps,
       };
     }
 
     const msg = `chore(release): v${version}`;
-    runGit(cwd, ["commit", "-m", msg]);
+    runGit(cwd, ["commit", "-m", msg], { skipVersionHook: true });
     steps.push({ step: "commit", ok: true, detail: msg });
 
     if (bumpOnCommit) {
@@ -148,7 +154,7 @@ function commitWithAutoBump(cwd, { bumpOnCommit, commitTitle, fallbackVersion })
       runGit(cwd, ["add", "CHANGELOG.md"]);
       const amendStatus = runGit(cwd, ["status", "--porcelain"]);
       if (amendStatus) {
-        runGit(cwd, ["commit", "--amend", "--no-edit"]);
+        runGit(cwd, ["commit", "--amend", "--no-edit"], { skipVersionHook: true });
         steps.push({ step: "changelog", ok: true, detail: `CHANGELOG Commit: ${hash}` });
       }
     }
@@ -156,7 +162,7 @@ function commitWithAutoBump(cwd, { bumpOnCommit, commitTitle, fallbackVersion })
     return {
       step: "commit",
       ok: true,
-      detail: bumpOnCommit ? `Đã bump và commit v${version}` : `Đã commit v${version}`,
+      detail: bumpOnCommit ? `Bumped and committed v${version}` : `Committed v${version}`,
       version,
       subSteps: steps,
     };
@@ -168,11 +174,11 @@ function commitWithAutoBump(cwd, { bumpOnCommit, commitTitle, fallbackVersion })
 
 function pushRemote(cwd, branch, version) {
   if (!isGitRepo(cwd)) {
-    return { step: "push", ok: false, detail: "Không phải git repo" };
+    return { step: "push", ok: false, detail: "Not a git repository" };
   }
   try {
     const out = runGit(cwd, ["push", "origin", branch], { shell: true });
-    let detail = out || `Đã push origin/${branch}`;
+    let detail = out || `Pushed origin/${branch}`;
     try {
       const tag = version.startsWith("v") ? version : `v${version}`;
       try {
@@ -204,16 +210,19 @@ function flattenSteps(steps) {
 function runPipeline({ cwd, version, branch, actions, bumpOnCommit = true, commitTitle = "" }) {
   const root = assertAllowedCwd(cwd);
   const pkg = readJson(path.join(root, "package.json"));
-  let resolvedVersion = (version || pkg?.version || "").trim();
+  const changelogVersion = readLatestChangelogVersion(root);
+  let resolvedVersion = (version || changelogVersion || pkg?.version || "").trim();
   if (!resolvedVersion) {
-    return { ok: false, version: "", steps: [{ step: "sync", ok: false, detail: "Thiếu version" }] };
+    return { ok: false, version: "", steps: [{ step: "sync", ok: false, detail: "Missing version" }] };
   }
 
   const steps = [];
 
   for (const action of actions) {
     if (action === "sync") {
-      steps.push(syncManifest(root, resolvedVersion));
+      const result = syncManifest(root, resolvedVersion);
+      if (result.version) resolvedVersion = result.version;
+      steps.push(result);
     } else if (action === "commit") {
       const result = commitWithAutoBump(root, {
         bumpOnCommit,

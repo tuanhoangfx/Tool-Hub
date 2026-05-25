@@ -25,6 +25,15 @@ export type ToolRepository = {
   scriptFiles: string[];
 };
 
+/** Roadmap milestone in tool.manifest.json */
+export type ManifestRoadmapItem = {
+  id?: string;
+  period: string;
+  title: string;
+  bullets: string[];
+  status: "done" | "current" | "planned";
+};
+
 export type ToolManifest = {
   schemaVersion?: number;
   code?: string;
@@ -77,6 +86,7 @@ export type ToolManifest = {
   };
   deployTarget?: string;
   nextActions?: string[];
+  roadmap?: ManifestRoadmapItem[];
   vercel?: {
     project?: string;
     projectId?: string;

@@ -21,11 +21,11 @@ import {
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
 import {
-  healthDotColor,
   LinkManifestFooter,
   QuietChip,
   ToolCodeBadge,
 } from "./hub-tool-ui";
+import { healthDotColor } from "./hub-tool-ui-utils";
 
 const META: Record<string, { Icon: LucideIcon; tint: string }> = {
   summary: { Icon: User2, tint: "#38bdf8" },

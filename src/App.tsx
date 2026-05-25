@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { DisplayPrefs, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
+import { readSystemTab } from "./features/system-hub/components/SystemTabs";
+import { systemDisplayDefs } from "./features/system-hub/system-display-prefs";
 import {
   DEFAULT_HUB_CHART_KEYS,
   DEFAULT_HUB_FILTER_KEYS,
@@ -21,19 +23,39 @@ import { formatDate } from "./lib/tooling";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
 
-const sidebarDisplayPrefs = (
-  <DisplayPrefs
-    kpis={HUB_KPI_DEFS}
-    charts={HUB_CHART_DEFS}
-    filters={HUB_FILTER_DEFS}
-    defaultKpiKeys={DEFAULT_HUB_KPI_KEYS}
-    defaultChartKeys={DEFAULT_HUB_CHART_KEYS}
-    defaultFilterKeys={DEFAULT_HUB_FILTER_KEYS}
-    showRange={false}
-    showHeaderPin
-    sidebarRow
-  />
-);
+function AppSidebarDisplayPrefs() {
+  const [screen, setScreen] = useState(() => readAppScreen());
+  const [systemTab, setSystemTab] = useState(() => readSystemTab());
+
+  useEffect(() => {
+    const sync = () => {
+      setScreen(readAppScreen());
+      setSystemTab(readSystemTab());
+    };
+    window.addEventListener("popstate", sync);
+    window.addEventListener("system-display-change", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("system-display-change", sync);
+    };
+  }, []);
+
+  const defs = screen === "system" ? systemDisplayDefs(systemTab) : null;
+
+  return (
+    <DisplayPrefs
+      kpis={defs?.kpis ?? HUB_KPI_DEFS}
+      charts={defs?.charts ?? HUB_CHART_DEFS}
+      filters={screen === "system" ? undefined : HUB_FILTER_DEFS}
+      defaultKpiKeys={defs?.defaultKpiKeys ?? DEFAULT_HUB_KPI_KEYS}
+      defaultChartKeys={defs?.defaultChartKeys ?? DEFAULT_HUB_CHART_KEYS}
+      defaultFilterKeys={DEFAULT_HUB_FILTER_KEYS}
+      showRange={false}
+      showHeaderPin
+      sidebarRow
+    />
+  );
+}
 
 function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
@@ -103,7 +125,7 @@ function App() {
         loadingAll={loadingAll}
         onLoadRegistry={() => void loadLocalRegistry()}
         onRefreshAll={() => void refreshAll()}
-        displayPrefs={sidebarDisplayPrefs}
+        displayPrefs={<AppSidebarDisplayPrefs />}
       />
 
       <main className="hub-main flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden">

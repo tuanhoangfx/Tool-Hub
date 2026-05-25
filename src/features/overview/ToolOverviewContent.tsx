@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeftRight, Network, Search } from "lucide-react";
 import type { ResolvedTool } from "../../types";
 import { toolsToWorkspace, workspaceStats } from "../system-hub/workspace-data";
@@ -40,6 +40,8 @@ export type ToolOverviewContentProps = {
   idPrefix?: string;
   /** Click workspace card / jump list → switch focused tool */
   onSelectTool?: (toolId: string) => void;
+  /** Hide workspace grid + compare strip (System overview uses Hub shell instead). */
+  hideWorkspaceChrome?: boolean;
 };
 
 export function ToolOverviewContent({
@@ -48,6 +50,7 @@ export function ToolOverviewContent({
   hubChangelogRaw,
   idPrefix = "",
   onSelectTool,
+  hideWorkspaceChrome = false,
 }: ToolOverviewContentProps) {
   const [workspaceFilter, setWorkspaceFilter] = useState<WorkspaceFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -67,8 +70,6 @@ export function ToolOverviewContent({
   const stackYou = stack.slice(0, 2).join(" + ") || tool.category;
   const isHub = tool.code === "P0004";
 
-  const sid = (id: string) => `${idPrefix}${id}`;
-
   const visibleWorkspace = useMemo(
     () => workspace.filter((w) => matchesWorkspaceFilter(w.status, workspaceFilter)),
     [workspace, workspaceFilter],
@@ -81,7 +82,9 @@ export function ToolOverviewContent({
 
   return (
     <div className="space-y-3">
-      <section className="rounded-2xl border border-slate-400/20 bg-gradient-to-r from-slate-500/10 via-slate-500/5 to-transparent">
+      {hideWorkspaceChrome ? null : (
+        <>
+          <section className="rounded-2xl border border-slate-400/20 bg-gradient-to-r from-slate-500/10 via-slate-500/5 to-transparent">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-4 py-2.5">
           <div className="flex items-center gap-2">
             <Network size={14} className="text-fuchsia-300" />
@@ -209,9 +212,9 @@ export function ToolOverviewContent({
             </div>
           </div>
         ) : null}
-      </section>
+          </section>
 
-      <section className="rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
+          <section className="rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
         <div className="mb-2 text-[10px] uppercase tracking-wider text-[var(--muted)]">{currentCode} vs workspace average</div>
         <div className="grid gap-2 sm:grid-cols-4">
           <CompareCard label="Version" you={version} avg={stats.avgVersion} good />
@@ -228,11 +231,19 @@ export function ToolOverviewContent({
             good
           />
         </div>
-      </section>
+          </section>
+        </>
+      )}
 
-      <div className="grid gap-3 lg:grid-cols-[220px_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-3 lg:self-start">
-          <OverviewTocNav code={currentCode} idPrefix={idPrefix} />
+      <div className="grid gap-3 lg:grid-cols-[150px_minmax(0,1fr)]">
+        <aside
+          className={`w-[150px] shrink-0 lg:sticky lg:self-start ${
+            hideWorkspaceChrome
+              ? "lg:top-[calc(var(--hub-chrome-sticky-est-h)+1.5rem)]"
+              : "lg:top-[calc(var(--app-tab-header-sticky-h)+1.5rem)]"
+          }`}
+        >
+          <OverviewTocNav idPrefix={idPrefix} />
         </aside>
 
         <main className="space-y-6 rounded-2xl border border-white/5 bg-[var(--panel)] p-6">
@@ -240,7 +251,7 @@ export function ToolOverviewContent({
             tool={tool}
             hubChangelogRaw={hubChangelogRaw}
             idPrefix={idPrefix}
-            statsMode="workspace"
+            statsMode={hideWorkspaceChrome ? "workspace" : "tool"}
             catalogToolCount={totalRows}
           />
         </main>

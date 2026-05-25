@@ -1,29 +1,22 @@
 import { OVERVIEW_TOC } from "./overview-toc";
 
-export function OverviewTocNav({ code, idPrefix = "" }: { code: string; idPrefix?: string }) {
+export function OverviewTocNav({ idPrefix = "" }: { code?: string; idPrefix?: string }) {
   return (
-    <div className="rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
-      <div className="mb-2 flex items-center gap-1.5 px-2 text-[10px] uppercase tracking-wider text-[var(--muted)]">
-        <span className="grid h-5 w-5 place-items-center rounded-md border border-indigo-400/30 bg-indigo-500/15 text-[11px] leading-none">
-          📖
-        </span>
-        {code} docs
-      </div>
+    <div className="overview-toc-nav h-[292px] w-[150px] shrink-0 overflow-hidden rounded-2xl border border-indigo-300/10 bg-[var(--panel)] p-2 shadow-[0_14px_36px_rgba(0,0,0,0.16)] ring-1 ring-white/[.025]">
       <nav className="space-y-0.5">
         {OVERVIEW_TOC.map(({ id, label, emoji, chipClass }) => (
           <a
             key={id}
             href={`#${idPrefix}${id}`}
-            className="group flex items-center gap-2 rounded-md px-2 py-1.5 text-[12px] text-[var(--muted)] transition-colors hover:bg-white/[.04] hover:text-[var(--text)]"
+            className="group flex h-[33px] w-full items-center gap-2 rounded-lg border border-transparent px-2 text-[11px] text-[var(--muted)] transition-colors hover:border-indigo-300/10 hover:bg-indigo-500/[.08] hover:text-[var(--text)]"
           >
             <span
-              className={`grid h-6 w-6 shrink-0 place-items-center rounded-md border text-[13px] leading-none ${chipClass}`}
+              className={`grid h-6 w-6 shrink-0 place-items-center rounded-md border text-[11px] leading-none opacity-90 transition-opacity group-hover:opacity-100 ${chipClass}`}
               aria-hidden
             >
               {emoji}
             </span>
-            <span className="flex-1">{label}</span>
-            <span className="text-[10px] opacity-0 transition-opacity group-hover:opacity-40">{emoji}</span>
+            <span className="min-w-0 flex-1 truncate font-medium">{label}</span>
           </a>
         ))}
       </nav>

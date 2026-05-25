@@ -25,6 +25,8 @@ type Props = {
   entity: string;
   overrides: number;
   customs: number;
+  /** Shorter graph for System schema tab (Hub shell above). */
+  compact?: boolean;
 };
 
 const W = 760;
@@ -68,7 +70,7 @@ function detectFk(col: string): string | null {
   return null;
 }
 
-export function SchemaGraph({ spec, groups, entity, overrides, customs }: Props) {
+export function SchemaGraph({ spec, groups, entity, overrides, customs, compact = false }: Props) {
   const [hoverKey, setHoverKey] = useState<string | null>(null);
 
   const layout = useMemo(() => computeLayout(spec, groups), [spec, groups]);
@@ -80,8 +82,8 @@ export function SchemaGraph({ spec, groups, entity, overrides, customs }: Props)
   const hoveredField = hoverKey ? spec.find((f) => f.key === hoverKey) : null;
 
   return (
-    <section className="rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
-      <header className="mb-2 flex items-baseline justify-between gap-3">
+    <section className={`rounded-2xl border border-white/5 bg-[var(--panel)] ${compact ? "p-2.5" : "p-3"}`}>
+      <header className={`flex items-baseline justify-between gap-3 ${compact ? "mb-1.5" : "mb-2"}`}>
         <h1 className="text-base font-semibold">
           Database Schema · <code className="font-mono text-indigo-300">{entity}</code>
         </h1>
@@ -100,7 +102,7 @@ export function SchemaGraph({ spec, groups, entity, overrides, customs }: Props)
 
       <div className="grid gap-3 md:grid-cols-[1fr_220px]">
         <div className="overflow-hidden rounded-xl border border-white/5 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.06),transparent_70%)]">
-          <svg viewBox={`0 0 ${W} ${H}`} className="h-[460px] w-full">
+          <svg viewBox={`0 0 ${W} ${H}`} className={compact ? "h-[min(280px,42vh)] w-full" : "h-[460px] w-full"}>
             {/* Grid backdrop */}
             <defs>
               <pattern id="g-dots" width="24" height="24" patternUnits="userSpaceOnUse">

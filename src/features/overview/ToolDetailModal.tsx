@@ -11,7 +11,7 @@ export type ToolDetailModalProps = {
   onRefreshTool?: (toolId: string) => void;
 };
 
-/** Hub: modal gọn — một tool, rộng bằng vùng main System (trừ sidebar gốc). */
+/** Hub modal for one tool, sized to the main System content area. */
 export function ToolDetailModal({ tool, onClose, onRefreshTool }: ToolDetailModalProps) {
   useEffect(() => {
     if (!tool) return;

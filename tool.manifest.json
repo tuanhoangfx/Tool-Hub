@@ -37,7 +37,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "0.1.1",
+    "version": "0.1.3",
     "readiness": [
       "build",
       "lint",
@@ -61,7 +61,7 @@
     "team": "tuanhoangfxs-projects",
     "notes": "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infix1.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
   },
-  "manifestUpdatedAt": "2026-05-25T00:52:02.323Z",
+  "manifestUpdatedAt": "2026-05-25T17:10:12.907Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infix1.io.vn). Library-only catalog."
@@ -70,5 +70,61 @@
     "Run scan:local after manifest or port changes.",
     "Run sync:workspace when updating cross-root manifests.",
     "Add browser push manifest via VITE_GITHUB_TOKEN without CLI."
+  ],
+  "roadmap": [
+    {
+      "id": "foundation",
+      "period": "Q4 2025",
+      "title": "Catalog foundation",
+      "status": "done",
+      "bullets": [
+        "Workspace registry + local scan",
+        "GitHub health + drift signals",
+        "Hub card / table views"
+      ]
+    },
+    {
+      "id": "versions-panel",
+      "period": "Q1 2026",
+      "title": "Version pipeline",
+      "status": "done",
+      "bullets": [
+        "Versions panel + auto-bump on commit",
+        "CHANGELOG sync in version history",
+        "Push + tag from Hub launcher"
+      ]
+    },
+    {
+      "id": "current-release",
+      "period": "Now",
+      "title": "Current System Hub release",
+      "status": "current",
+      "bullets": [
+        "System shell: Overview / Schema / Design Template",
+        "Roadmap timeline from manifest.roadmap[]",
+        "Production on Vercel (infix1.io.vn)"
+      ]
+    },
+    {
+      "id": "table-skin",
+      "period": "Next",
+      "title": "OrdersTable skin",
+      "status": "planned",
+      "bullets": [
+        "Table view skin aligned with P0008 Sales Console",
+        "Unified filter bar patterns across tools"
+      ]
+    },
+    {
+      "id": "workspace-sync",
+      "period": "Next",
+      "title": "Workspace automation",
+      "status": "planned",
+      "bullets": [
+        "scan:local after manifest or port changes",
+        "sync:workspace for cross-root manifests",
+        "Browser push without CLI (VITE_GITHUB_TOKEN)"
+      ]
+    }
   ]
 }

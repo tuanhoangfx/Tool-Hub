@@ -1,5 +1,5 @@
 /**
- * Bump patch semver + đồng bộ package.json, tool.manifest.json, CHANGELOG.md
+ * Bump patch semver and sync package.json, tool.manifest.json, CHANGELOG.md.
  */
 const fs = require("node:fs");
 const path = require("node:path");
@@ -66,10 +66,22 @@ function buildChangelogBlock(version, { title, changeLine, commitHash }) {
   return lines.join("\n");
 }
 
+function extractLatestChangelogVersion(text) {
+  const match = String(text || "").match(/^-\s*Version:\s*`?v?(\d+\.\d+\.\d+(?:-[^\s`]+)?)`?/im);
+  if (!match) return "";
+  return parseSemver(match[1]) ? match[1] : "";
+}
+
+function readLatestChangelogVersion(cwd) {
+  const changelogPath = path.join(cwd, "CHANGELOG.md");
+  if (!fs.existsSync(changelogPath)) return "";
+  return extractLatestChangelogVersion(fs.readFileSync(changelogPath, "utf8"));
+}
+
 function prependChangelog(cwd, version, opts = {}) {
   const changelogPath = path.join(cwd, "CHANGELOG.md");
   const title = opts.title || "Tool Hub pipeline bump";
-  const changeLine = opts.changeLine || `Release v${version} — auto bump on commit.`;
+  const changeLine = opts.changeLine || `Release v${version} - auto bump on commit.`;
   const block = buildChangelogBlock(version, { title, changeLine, commitHash: opts.commitHash });
 
   let existing = "";
@@ -102,14 +114,15 @@ function updateChangelogCommitHash(cwd, version, commitHash) {
 }
 
 /**
- * Tăng patch + ghi đồng bộ mọi file tài liệu.
+ * Bump patch and keep package.json, tool.manifest.json, and CHANGELOG.md in sync.
  * @returns {{ version: string, previousVersion: string }}
  */
 function bumpAndSyncDocs(cwd, opts = {}) {
   const pkgPath = path.join(cwd, "package.json");
   const manifestPath = path.join(cwd, "tool.manifest.json");
   const pkg = readJson(pkgPath) || { version: "0.1.0" };
-  const previousVersion = (pkg.version || "0.1.0").trim();
+  const changelogVersion = readLatestChangelogVersion(cwd);
+  const previousVersion = (changelogVersion || pkg.version || "0.1.0").trim();
   const version = bumpPatch(previousVersion);
 
   pkg.version = version;
@@ -125,7 +138,7 @@ function bumpAndSyncDocs(cwd, opts = {}) {
 
   prependChangelog(cwd, version, {
     title: opts.title,
-    changeLine: opts.changeLine || `Bump ${previousVersion} → ${version} (${opts.title || "commit"}).`,
+    changeLine: opts.changeLine || `Bump ${previousVersion} to ${version} (${opts.title || "commit"}).`,
     commitHash: opts.commitHash,
   });
 
@@ -138,4 +151,6 @@ module.exports = {
   prependChangelog,
   updateChangelogCommitHash,
   parseSemver,
+  extractLatestChangelogVersion,
+  readLatestChangelogVersion,
 };

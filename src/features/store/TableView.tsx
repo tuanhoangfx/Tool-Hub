@@ -2,11 +2,11 @@ import { MaterialIcon } from "../../components";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { auditManifestLinks } from "../overview/manifest-link-audit";
 import {
-  healthDotColor,
   LinkManifestFooter,
   QuietChip,
   ToolCodeBadge,
 } from "../hub/hub-tool-ui";
+import { healthDotColor } from "../hub/hub-tool-ui-utils";
 import { deployLabel, folderName, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import {
   resolveDeployTargetIcon,

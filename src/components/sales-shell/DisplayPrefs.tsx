@@ -5,6 +5,12 @@ import {
   DEFAULT_HUB_HEADER_STAT_KEYS,
   HUB_HEADER_STAT_DEFS,
 } from "../../features/hub/hub-prefs";
+import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
+import {
+  patchSystemTabDisplay,
+  resetSystemTabDisplay,
+  readSystemTabDisplay,
+} from "../../features/system-hub/system-display-prefs";
 import {
   DEFAULT_SYSTEM_HEADER_STAT_KEYS,
   SYSTEM_HEADER_STAT_DEFS,
@@ -55,14 +61,22 @@ export function DisplayPrefs({
   const [tab, setTab] = useState<Tab>("general");
   const [prefs, setPrefs] = useState(readHubListPrefs);
   const [screen, setScreen] = useState<AppScreen>(() => readAppScreen());
+  const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
   const [sidebarPanelStyle, setSidebarPanelStyle] = useState<CSSProperties>({});
   const ref = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const syncScreen = () => setScreen(readAppScreen());
+    const syncScreen = () => {
+      setScreen(readAppScreen());
+      setSystemTab(readSystemTab());
+    };
     window.addEventListener("popstate", syncScreen);
-    return () => window.removeEventListener("popstate", syncScreen);
+    window.addEventListener("system-display-change", syncScreen);
+    return () => {
+      window.removeEventListener("popstate", syncScreen);
+      window.removeEventListener("system-display-change", syncScreen);
+    };
   }, []);
 
   useLayoutEffect(() => {
@@ -121,6 +135,9 @@ export function DisplayPrefs({
   const rawSpin = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("spin") : null;
   const visKpi = prefs.kpi;
   const visCharts = prefs.charts;
+  const systemDisplay = isSystem ? readSystemTabDisplay(systemTab) : null;
+  const visKpiEffective = isSystem ? systemDisplay?.kpi ?? null : visKpi;
+  const visChartsEffective = isSystem ? systemDisplay?.charts ?? null : visCharts;
   const visHubFilters = prefs.hubFilters;
   const headerStats =
     headerStatsProp ?? (isSystem ? SYSTEM_HEADER_STAT_DEFS : HUB_HEADER_STAT_DEFS);
@@ -146,9 +163,9 @@ export function DisplayPrefs({
   ) {
     const cur =
       param === "kpi"
-        ? visKpi
+        ? visKpiEffective
         : param === "charts"
-          ? visCharts
+          ? visChartsEffective
           : param === "hstat" || param === "sstat"
             ? visHeaderStats
             : visHubFilters;
@@ -162,7 +179,14 @@ export function DisplayPrefs({
       if (next.has(key)) next.delete(key);
       else next.add(key);
     }
-    if (next.size === defaults.size && [...next].every((k) => defaults.has(k))) {
+    const allDefault = next.size === defaults.size && [...next].every((k) => defaults.has(k));
+    if (isSystem && (param === "kpi" || param === "charts")) {
+      patchSystemTabDisplay(systemTab, {
+        [param]: allDefault ? null : [...next],
+      });
+      return;
+    }
+    if (allDefault) {
       update({ [param]: null });
     } else {
       update({ [param]: [...next].join(",") });
@@ -176,8 +200,8 @@ export function DisplayPrefs({
   const kpiDefaults = defaultsFor(kpis ?? [], defaultKpiKeys);
   const chartsDefaults = defaultsFor(charts ?? [], defaultChartKeys);
   const filterDefaults = defaultsFor(filters ?? [], defaultFilterKeys);
-  const visKpiCount = visKpi === null ? kpiDefaults.size : visKpi.size;
-  const visChartsCount = visCharts === null ? chartsDefaults.size : visCharts.size;
+  const visKpiCount = visKpiEffective === null ? kpiDefaults.size : visKpiEffective.size;
+  const visChartsCount = visChartsEffective === null ? chartsDefaults.size : visChartsEffective.size;
   const visFilterCount = visHubFilters === null ? filterDefaults.size : visHubFilters.size;
   const visHeaderStatCount = visHeaderStats === null ? headerStatDefaults.size : visHeaderStats.size;
   const headerStatLabel = isSystem ? "System header" : "Hub header";
@@ -271,13 +295,11 @@ export function DisplayPrefs({
                     on={prefs.headerPin}
                     onChange={() => update({ hpin: prefs.headerPin ? "0" : null })}
                   />
-                  {!isSystem ? (
-                    <ToggleRow
-                      label="Pin search bar (sticky)"
-                      on={prefs.searchPin}
-                      onChange={() => update({ spin: prefs.searchPin ? "0" : null })}
-                    />
-                  ) : null}
+                  <ToggleRow
+                    label="Pin search bar (sticky)"
+                    on={prefs.searchPin}
+                    onChange={() => update({ spin: prefs.searchPin ? "0" : null })}
+                  />
                 </Section>
               ) : null}
             </>
@@ -292,7 +314,7 @@ export function DisplayPrefs({
                       <ToggleRow
                         key={k.key}
                         label={k.label}
-                        on={isVisible(visKpi, kpiDefaults, k.key)}
+                        on={isVisible(visKpiEffective, kpiDefaults, k.key)}
                         onChange={() => toggle("kpi", kpis, kpiDefaults, k.key)}
                       />
                     ))}
@@ -307,7 +329,7 @@ export function DisplayPrefs({
                       <ToggleRow
                         key={c.key}
                         label={c.label}
-                        on={isVisible(visCharts, chartsDefaults, c.key)}
+                        on={isVisible(visChartsEffective, chartsDefaults, c.key)}
                         onChange={() => toggle("charts", charts, chartsDefaults, c.key)}
                       />
                     ))}
@@ -356,7 +378,8 @@ export function DisplayPrefs({
 
           <button
             type="button"
-            onClick={() =>
+            onClick={() => {
+              if (isSystem) resetSystemTabDisplay();
               update({
                 range: null,
                 limit: null,
@@ -367,8 +390,8 @@ export function DisplayPrefs({
                 sstat: null,
                 hpin: null,
                 spin: null,
-              })
-            }
+              });
+            }}
             className="mt-2 w-full rounded-md border border-white/10 px-2 py-1.5 text-[10px] text-[var(--muted)] hover:bg-white/[.05] hover:text-[var(--text)]"
           >
             Reset to defaults

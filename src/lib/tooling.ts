@@ -142,7 +142,7 @@ function createSuggestions(tool: ToolRepository, remote?: ToolRemoteState) {
   if (missingScripts.length > 0) suggestions.push("Dong bo scripts quan trong len GitHub de tool doc duoc ban moi.");
   if (!remote?.latestRelease) suggestions.push("Tao GitHub Release de nguoi dung co link download ro rang.");
   if (remote?.manifest && !remote.manifest.nextActions?.length) {
-    suggestions.push("Them nextActions vao manifest de tab quan tri dua ra roadmap.");
+    suggestions.push('Them mang "roadmap" (period, title, bullets, status) vao tool.manifest.json.');
   }
 
   suggestions.push(...createVersionAlerts(remote));

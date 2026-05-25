@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-05-25T00:47:59.271Z",
+  "generatedAt": "2026-05-25T14:26:25.710Z",
   "roots": [
     {
       "id": "tool",
@@ -127,7 +127,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.1",
+      "localVersion": "0.1.2",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -553,7 +553,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.0",
+      "localVersion": "0.1.1",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
@@ -565,7 +565,7 @@
         "Vite",
         "Supabase",
         "Inter",
-        "Chrome extension P0020-cookie-bridge"
+        "Chrome extension E0001-cookie-bridge"
       ],
       "appUrl": "https://tool-manager-zeta.vercel.app",
       "localUrl": "http://127.0.0.1:5177",
@@ -589,8 +589,8 @@
         "scripts/apply-fix-v-note.mjs",
         "scripts/apply-vault-v4.mjs",
         "scripts/dev-with-launcher.cjs",
-        "scripts/find-dead-css.cjs",
-        "scripts/git-push.ps1"
+        "scripts/ensure-dev.cjs",
+        "scripts/find-dead-css.cjs"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"

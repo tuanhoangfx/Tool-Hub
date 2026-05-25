@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, RefreshCcw } from "lucide-react";
-import { FilterBar, RegistryMetricBadge, type FilterValues } from "../../components/sales-shell";
+import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
 import {
   resolveLinkGroupBadge,
   resolveLinkKindBadge,

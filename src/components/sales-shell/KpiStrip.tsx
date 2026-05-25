@@ -17,6 +17,8 @@ export type KpiTileData = {
   hint?: string;
   icon?: ElementType<{ size?: number; className?: string }>;
   tone?: Tone;
+  /** Matches DisplayPrefs KPI keys (total, ready, …). */
+  prefKey?: string;
 };
 
 export function KpiStrip({ items, className = "" }: { items: KpiTileData[]; className?: string }) {

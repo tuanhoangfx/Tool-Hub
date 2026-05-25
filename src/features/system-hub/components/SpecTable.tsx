@@ -27,9 +27,19 @@ function SchemaOptionBadge({ value }: { value: string }) {
   return <span className="rounded bg-white/5 px-1 text-[9px] font-mono">{value}</span>;
 }
 
-export function SpecTable({ spec, groups, tableName }: { spec: FieldSpec[]; groups: readonly string[]; tableName: string }) {
+export function SpecTable({
+  spec,
+  groups,
+  tableName,
+  compact = false,
+}: {
+  spec: FieldSpec[];
+  groups: readonly string[];
+  tableName: string;
+  compact?: boolean;
+}) {
   return (
-    <div className="space-y-3">
+    <div className={compact ? "space-y-2" : "space-y-3"}>
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="text-base font-semibold text-[var(--text)]">
           <code className="font-mono text-indigo-300">{tableName}</code>
@@ -40,7 +50,7 @@ export function SpecTable({ spec, groups, tableName }: { spec: FieldSpec[]; grou
         </span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-1.5 rounded-lg border border-white/5 bg-white/[.02] p-2">
+      <div className={`flex flex-wrap items-center gap-1.5 rounded-lg border border-white/5 bg-white/[.02] ${compact ? "p-1.5" : "p-2"}`}>
         <span className="text-[10px] uppercase tracking-wider text-[var(--muted)]">Jump:</span>
         {groups.map((g) => {
           const count = spec.filter((f) => f.group === g).length;
@@ -65,7 +75,7 @@ export function SpecTable({ spec, groups, tableName }: { spec: FieldSpec[]; grou
             id={`${tableName}-${slug(g)}`}
             className={`overflow-hidden rounded-xl ${borderLeft} border-y border-r border-white/10 ${bgSection}`}
           >
-            <div className="flex items-center justify-between gap-2 border-b border-white/10 px-3 py-2">
+            <div className={`flex items-center justify-between gap-2 border-b border-white/10 ${compact ? "px-2 py-1" : "px-3 py-2"}`}>
               <div className="flex items-center gap-2">
                 {t ? <span className={`inline-block h-2 w-2 rounded-full ${t.bar}`} /> : null}
                 <SchemaGroupBadge group={g} />
@@ -80,27 +90,28 @@ export function SpecTable({ spec, groups, tableName }: { spec: FieldSpec[]; grou
               </div>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-[11px]">
-                <thead className="bg-white/[.02] text-[9px] uppercase tracking-wider text-[var(--muted)]/70">
+            <div className={`overflow-x-auto ${compact ? "max-h-[min(42vh,22rem)] overflow-y-auto" : ""}`}>
+              <table className={`w-full ${compact ? "text-[10px]" : "text-[11px]"}`}>
+                <thead className="sticky top-0 z-[1] bg-[var(--panel)] text-[9px] uppercase tracking-wider text-[var(--muted)]/70">
                   <tr>
-                    <th className="w-8 px-2 py-1.5 text-left">#</th>
-                    <th className="w-52 px-2 py-1.5 text-left">Field</th>
-                    <th className="w-40 px-2 py-1.5 text-left">DB col</th>
-                    <th className="w-16 px-2 py-1.5 text-left">Type</th>
-                    <th className="w-24 px-2 py-1.5 text-left">Mode</th>
-                    <th className="w-20 px-2 py-1.5 text-left">Default</th>
-                    <th className="px-2 py-1.5 text-left">Source / Logic</th>
-                    <th className="w-44 px-2 py-1.5 text-left">Options</th>
+                    <th className={`w-8 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>#</th>
+                    <th className={`w-52 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>Field</th>
+                    <th className={`w-40 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>DB col</th>
+                    <th className={`w-16 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>Type</th>
+                    <th className={`w-24 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>Mode</th>
+                    <th className={`w-20 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>Default</th>
+                    <th className={`px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>Source / Logic</th>
+                    <th className={`w-44 px-2 text-left ${compact ? "py-1" : "py-1.5"}`}>Options</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {fields.map((f) => {
                     const globalIdx = spec.findIndex((s) => s.key === f.key) + 1;
+                    const cellPy = compact ? "py-1" : "py-1.5";
                     return (
                       <tr key={f.key} className="hover:bg-white/[.03]">
-                        <td className="px-2 py-1.5 align-top tabular-nums text-[var(--muted)]/60">{globalIdx}</td>
-                        <td className="px-2 py-1.5 align-top">
+                        <td className={`px-2 align-top tabular-nums text-[var(--muted)]/60 ${cellPy}`}>{globalIdx}</td>
+                        <td className={`px-2 align-top ${cellPy}`}>
                           <div className="flex items-center gap-1.5">
                             {(() => {
                               const fieldIcon = resolveFieldSpecIcon(f);
@@ -113,14 +124,14 @@ export function SpecTable({ spec, groups, tableName }: { spec: FieldSpec[]; grou
                             ) : null}
                           </div>
                         </td>
-                        <td className="px-2 py-1.5 align-top font-mono text-[10px] text-indigo-300">{f.col}</td>
-                        <td className={`px-2 py-1.5 align-top font-mono text-[10px] ${TYPE_TONE[f.type] ?? ""}`}>{f.type}</td>
-                        <td className="px-2 py-1.5 align-top">
+                        <td className={`px-2 align-top font-mono text-[10px] text-indigo-300 ${cellPy}`}>{f.col}</td>
+                        <td className={`px-2 align-top font-mono text-[10px] ${TYPE_TONE[f.type] ?? ""} ${cellPy}`}>{f.type}</td>
+                        <td className={`px-2 align-top ${cellPy}`}>
                           <SchemaModeBadge mode={f.mode} />
                         </td>
-                        <td className="px-2 py-1.5 align-top font-mono text-[10px] text-[var(--muted)]">{f.default ?? "—"}</td>
-                        <td className="px-2 py-1.5 align-top text-[10px] leading-snug text-[var(--muted)]/90">{f.source ?? "—"}</td>
-                        <td className="px-2 py-1.5 align-top">
+                        <td className={`px-2 align-top font-mono text-[10px] text-[var(--muted)] ${cellPy}`}>{f.default ?? "—"}</td>
+                        <td className={`px-2 align-top text-[10px] leading-snug text-[var(--muted)]/90 ${cellPy}`}>{f.source ?? "—"}</td>
+                        <td className={`px-2 align-top ${cellPy}`}>
                           {f.options ? (
                             <div className="flex flex-wrap gap-0.5">
                               {f.options.slice(0, 3).map((o) => (

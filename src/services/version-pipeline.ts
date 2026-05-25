@@ -33,7 +33,7 @@ export async function runVersionPipeline(opts: {
   version: string;
   branch?: string;
   action: VersionPipelineAction;
-  /** Commit / Tất cả: tăng patch và đồng bộ docs (mặc định true). */
+  /** Commit / All: bump patch and sync docs by default. */
   bumpOnCommit?: boolean;
   commitTitle?: string;
 }): Promise<VersionPipelineResult> {
@@ -66,8 +66,8 @@ export async function runVersionPipeline(opts: {
       steps: [],
       message:
         err instanceof Error
-          ? `${err.message} — chạy Hub dev (launcher cổng 5190) hoặc pnpm launcher`
-          : "Launcher không phản hồi",
+          ? `${err.message}. Run Hub dev (launcher port 5190) or pnpm launcher`
+          : "Launcher did not respond",
     };
   }
 }

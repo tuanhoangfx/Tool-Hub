@@ -12,7 +12,7 @@ export type ToolDetailContentProps = {
   onRefreshTool?: () => void;
 };
 
-/** Chỉ docs của một tool — TOC + sections (không workspace / compare / jump). */
+/** Single-tool docs only: TOC + sections, without workspace compare/jump UI. */
 export function ToolDetailContent({
   tool,
   hubChangelogRaw,

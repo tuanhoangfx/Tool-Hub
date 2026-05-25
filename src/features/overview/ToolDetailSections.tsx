@@ -1,5 +1,5 @@
 import { useMemo, type ReactNode } from "react";
-import { CheckCircle2, Layers, Target } from "lucide-react";
+import { CheckCircle2, Layers } from "lucide-react";
 import { MetricBadge } from "../../components/sales-shell";
 import {
   resolveDeployTargetIcon,
@@ -8,19 +8,13 @@ import {
 import type { ResolvedTool } from "../../types";
 import { QuietChip, ToolCodeBadge } from "../hub/hub-tool-ui";
 import { overviewSectionTitle } from "./overview-toc";
-import {
-  changelogEntriesForTool,
-  changelogFullTextForTool,
-  featuresForTool,
-  manifestForTool,
-  stackForTool,
-} from "./tool-overview-data";
+import { RoadmapTimeline } from "./RoadmapTimeline";
+import { buildRoadmapNodes } from "./roadmap-nodes";
+import { featuresForTool, manifestForTool, stackForTool } from "./tool-overview-data";
 import { collectImportantLinks } from "./tool-links";
 import { collectVersionHistory } from "./tool-versions";
 import { ToolLinksPanel } from "./ToolLinksTable";
 import { ToolVersionsPanel } from "./ToolVersionsPanel";
-
-const HUB_EXTRA_ROADMAP = "Table view skin → OrdersTable style";
 
 export type ToolDetailSectionsProps = {
   tool: ResolvedTool;
@@ -34,7 +28,7 @@ export type ToolDetailSectionsProps = {
 
 export function ToolDetailSections({
   tool,
-  hubChangelogRaw,
+  hubChangelogRaw: _hubChangelogRaw,
   idPrefix = "",
   statsMode = "tool",
   catalogToolCount,
@@ -43,14 +37,6 @@ export function ToolDetailSections({
   const manifest = useMemo(() => manifestForTool(tool), [tool]);
   const stack = useMemo(() => stackForTool(tool, manifest), [tool, manifest]);
   const features = useMemo(() => featuresForTool(tool, manifest), [tool, manifest]);
-  const changelogEntries = useMemo(
-    () => changelogEntriesForTool(tool, hubChangelogRaw),
-    [tool, hubChangelogRaw],
-  );
-  const changelogFull = useMemo(
-    () => changelogFullTextForTool(tool, hubChangelogRaw),
-    [tool, hubChangelogRaw],
-  );
 
   const currentCode = manifest.code ?? tool.code;
   const currentName = manifest.name ?? tool.name;
@@ -61,14 +47,19 @@ export function ToolDetailSections({
   const sid = (id: string) => `${idPrefix}${id}`;
   const importantLinks = useMemo(() => collectImportantLinks(tool, manifest), [tool, manifest]);
   const versionRows = useMemo(() => collectVersionHistory(tool, manifest), [tool, manifest]);
+  const roadmapNodes = useMemo(() => buildRoadmapNodes(manifest, versionRows), [manifest, versionRows]);
   const versionNeedsAction = useMemo(
     () => versionRows.filter((r) => r.syncStatus === "needs-push" || r.syncStatus === "needs-sync").length,
     [versionRows],
   );
 
+  const aboutIntro = isHub
+    ? "Tool Hub is the central dashboard for the E:\\Dev\\Tool workspace: it lists tools, checks GitHub/Vercel state, tracks versions, links deployments, shows release roadmap, and surfaces health signals. Its goal is to show which tools are ready, which ones need sync, and provide a clear overview for sharing the tool ecosystem."
+    : `${currentName} is ${summary || "a workspace tool"}; this page collects important details such as version, operational links, stack, features, release roadmap, and health signals for quick review or sharing.`;
+
   return (
     <>
-      <section id={sid("about")} className="scroll-mt-3 space-y-2">
+      <section id={sid("about")} className="scroll-mt-3 space-y-4">
         <SectionHeading title={overviewSectionTitle("about")} />
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-2xl font-semibold">{currentName}</span>
@@ -80,21 +71,15 @@ export function ToolDetailSections({
             iconMeta={resolveHealthStatusIcon(status)}
           />
         </div>
-        {summary ? <p className="text-[13px] leading-relaxed text-[var(--muted)]">{summary}</p> : null}
-        {manifest.aliases?.length ? (
-          <div className="flex flex-wrap gap-1 pt-1">
-            {manifest.aliases.map((a) => (
-              <MetricBadge key={a} label={a} tone="neutral" />
-            ))}
-          </div>
-        ) : null}
+        <p className="max-w-5xl rounded-xl border border-indigo-300/10 bg-indigo-500/[.045] px-4 py-3 text-[14px] leading-relaxed text-[var(--text)]/90">
+          {aboutIntro}
+        </p>
       </section>
 
-      <DetailSection id={sid("links")} title={overviewSectionTitle("links")}>
-        <ToolLinksPanel links={importantLinks} toolCode={currentCode} />
-      </DetailSection>
-
       <DetailSection id={sid("versions")} title={overviewSectionTitle("versions")}>
+        <p className="text-[12px] text-[var(--muted)]">
+          Version history and CHANGELOG are merged into the table below.
+        </p>
         <ToolVersionsPanel
           rows={versionRows}
           tool={tool}
@@ -102,6 +87,10 @@ export function ToolDetailSections({
           needsActionCount={versionNeedsAction}
           onRefresh={onRefresh}
         />
+      </DetailSection>
+
+      <DetailSection id={sid("links")} title={overviewSectionTitle("links")}>
+        <ToolLinksPanel links={importantLinks} toolCode={currentCode} />
       </DetailSection>
 
       <DetailSection id={sid("stack")} title={overviewSectionTitle("stack")}>
@@ -140,58 +129,8 @@ export function ToolDetailSections({
         </ul>
       </DetailSection>
 
-      <DetailSection id={sid("changelog")} title={overviewSectionTitle("changelog")}>
-        {changelogEntries.length > 0 ? (
-          <ul className="space-y-1.5">
-            {changelogEntries.map((c) => (
-              <li key={`${c.version}-${c.date}-${c.title}`} className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-2">
-                <div className="flex flex-wrap items-baseline gap-2">
-                  <MetricBadge
-                    label={`v${c.version}`}
-                    iconMeta={resolveHealthStatusIcon("Ready")}
-                    variantClass="border-indigo-400/30 bg-indigo-500/10 text-indigo-200"
-                    mono
-                  />
-                  {c.date ? <span className="text-[10px] text-[var(--muted)]">{c.date}</span> : null}
-                  {c.type ? <span className="text-[10px] text-fuchsia-300">· {c.type}</span> : null}
-                </div>
-                <div className="mt-0.5 text-[12px]">{c.title}</div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-[12px] text-[var(--muted)]">No changelog in remote files yet.</p>
-        )}
-        {changelogFull ? (
-          <details className="mt-2 rounded-lg border border-white/5 bg-black/20">
-            <summary className="cursor-pointer px-3 py-2 text-[11px] text-fuchsia-300">View full CHANGELOG.md →</summary>
-            <div className="max-h-[400px] overflow-auto px-3 pb-3">
-              <pre className="whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-[var(--muted)]">{changelogFull}</pre>
-            </div>
-          </details>
-        ) : null}
-      </DetailSection>
-
       <DetailSection id={sid("roadmap")} title={overviewSectionTitle("roadmap")}>
-        <div className="grid gap-1.5 md:grid-cols-2">
-          {(manifest.release?.readiness ?? []).map((r) => (
-            <div key={r} className="flex items-center gap-2 rounded-md border border-emerald-400/20 bg-emerald-500/5 px-2.5 py-1.5 text-[12px]">
-              <CheckCircle2 size={11} className="text-emerald-300" />
-              <code className="font-mono text-emerald-200">{r}</code>
-              <span className="ml-auto text-[10px] text-[var(--muted)]">done</span>
-            </div>
-          ))}
-          {isHub ? (
-            <div className="flex items-center gap-2 rounded-md border border-amber-400/20 bg-amber-500/5 px-2.5 py-1.5 text-[12px]">
-              <Target size={11} className="text-amber-300" />
-              <span>{HUB_EXTRA_ROADMAP}</span>
-              <span className="ml-auto text-[10px] text-amber-300">med</span>
-            </div>
-          ) : null}
-          {!manifest.release?.readiness?.length && !isHub ? (
-            <p className="text-[12px] text-[var(--muted)]">No roadmap items in manifest.</p>
-          ) : null}
-        </div>
+        <RoadmapTimeline nodes={roadmapNodes} />
       </DetailSection>
 
       <DetailSection id={sid("runbook")} title={overviewSectionTitle("runbook")}>

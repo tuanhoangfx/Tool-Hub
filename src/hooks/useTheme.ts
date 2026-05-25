@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 const STORAGE_KEY = "tool-hub-theme";
 const LEGACY_VARIANT_KEY = "tool-hub-hub-variant";
 
-/** light | dark = classic coral · hub = T1 Indigo Deep (mặc định) */
+/** light | dark = classic coral · hub = T1 Indigo Deep by default. */
 export type Appearance = "light" | "dark" | "hub";
 
 const CYCLE: Appearance[] = ["hub", "light", "dark"];

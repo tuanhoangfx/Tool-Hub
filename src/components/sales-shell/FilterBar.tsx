@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ElementType } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Search,
   X,
@@ -32,6 +32,8 @@ const FILTER_ICONS: Record<string, React.ElementType> = {
   drift: AlertTriangle,
   kind: Link2,
   links: Link2,
+  tool: Layers,
+  entity: Layers,
 };
 
 export type FilterValues = Record<string, string[]>;

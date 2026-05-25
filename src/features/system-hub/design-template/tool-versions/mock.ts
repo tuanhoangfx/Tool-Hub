@@ -17,7 +17,7 @@ export const MOCK_VERSION_HISTORY: ToolVersionHistoryRow[] = [
     publishedLabel: "12:40 20/05/2026",
     releaseUrl: "https://github.com/example/releases/tag/v0.2.34",
     syncStatus: "synced",
-    syncNote: "Đủ bước: package → changelog → manifest → tag → push → release.",
+    syncNote: "Complete pipeline: package -> changelog -> manifest -> tag -> push -> release.",
   },
   {
     id: "0.2.33",
@@ -34,7 +34,7 @@ export const MOCK_VERSION_HISTORY: ToolVersionHistoryRow[] = [
     onRelease: true,
     publishedLabel: "10/05/2026",
     syncStatus: "synced",
-    syncNote: "Đã release + changelog.",
+    syncNote: "Released and documented in CHANGELOG.",
   },
 ];
 

@@ -26,9 +26,6 @@ import {
   DEFAULT_HUB_FILTER_KEYS,
   DEFAULT_HUB_HEADER_STAT_KEYS,
   DEFAULT_HUB_KPI_KEYS,
-  HUB_CHART_DEFS,
-  HUB_FILTER_DEFS,
-  HUB_KPI_DEFS,
 } from "./hub-prefs";
 import { HubStickyHeader } from "./HubStickyHeader";
 import { HubToolCard } from "./HubToolCard";
@@ -80,9 +77,9 @@ export function HubListPage({
   onSelect,
   modalOpen,
   onCloseModal,
-  loadingAll,
+  loadingAll: _loadingAll,
   registryError,
-  onRefresh,
+  onRefresh: _onRefresh,
   onRefreshTool,
   viewMode,
   onViewModeChange,
@@ -114,28 +111,27 @@ export function HubListPage({
   const visCharts = visibleSet(prefs.charts, DEFAULT_HUB_CHART_KEYS);
   const visFilterKeys = visibleSet(prefs.hubFilters, DEFAULT_HUB_FILTER_KEYS);
   const visHeaderStats = visibleSet(prefs.headerStats, DEFAULT_HUB_HEADER_STAT_KEYS);
-  const kpiVisible = (k: string) => visKpi.has(k);
 
   const kpiItems = useMemo(() => {
     const items: KpiTileData[] = [];
-    if (kpiVisible("total")) {
+    if (visKpi.has("total")) {
       const m = resolveHubKpiIcon("total")!;
       items.push({ label: "Tools (shown)", value: kpis.total, icon: m.icon, tone: "indigo" });
     }
-    if (kpiVisible("ready")) {
+    if (visKpi.has("ready")) {
       const m = resolveHubKpiIcon("ready")!;
       items.push({ label: "Ready", value: kpis.ready, icon: m.icon, tone: "emerald" });
     }
-    if (kpiVisible("releases")) {
+    if (visKpi.has("releases")) {
       const m = resolveHubKpiIcon("releases")!;
       items.push({ label: "With release", value: kpis.releases, icon: m.icon, tone: "amber" });
     }
-    if (kpiVisible("drift")) {
+    if (visKpi.has("drift")) {
       const m = resolveHubKpiIcon("drift")!;
       items.push({ label: "Drift alerts", value: kpis.drift, icon: m.icon, tone: "rose" });
     }
     return items;
-  }, [kpis, prefs.kpi]);
+  }, [kpis, visKpi]);
 
   const hubFilters = useMemo(() => {
     const defs: FilterDef[] = [];

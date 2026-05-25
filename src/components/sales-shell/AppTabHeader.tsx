@@ -1,7 +1,13 @@
-import type { ElementType } from "react";
-import { Clock } from "lucide-react";
+import { useEffect, useRef, useState, type ElementType } from "react";
+import { ChevronDown, Clock } from "lucide-react";
 import { usePageSessionSeconds } from "../../hooks/usePageSessionSeconds";
 import "./app-tab-header.css";
+
+export type TabTitleMenuItem = {
+  id: string;
+  label: string;
+  icon?: ElementType<{ size?: number; className?: string }>;
+};
 
 export type TabHeaderMetaItem = {
   icon: ElementType<{ size?: number; className?: string }>;
@@ -24,6 +30,10 @@ type AppTabHeaderProps = {
   titleIcon: ElementType<{ size?: number; className?: string }>;
   titleIconClass?: string;
   title: string;
+  /** Sub-pages under the title (e.g. System → Overview / Schema). */
+  titleMenu?: TabTitleMenuItem[];
+  activeTitleMenuId?: string;
+  onTitleMenuSelect?: (id: string) => void;
   metaItems: TabHeaderMetaItem[];
   centerStats: TabHeaderStatItem[];
   pinSticky?: boolean;
@@ -32,6 +42,89 @@ type AppTabHeaderProps = {
   /** Inside shared sticky chrome (header + search); no own sticky/margins. */
   embedded?: boolean;
 };
+
+function TitleWithMenu({
+  title,
+  titleIcon: TitleIcon,
+  titleIconClass,
+  titleMenu,
+  activeTitleMenuId,
+  onTitleMenuSelect,
+}: {
+  title: string;
+  titleIcon: ElementType<{ size?: number; className?: string }>;
+  titleIconClass: string;
+  titleMenu: TabTitleMenuItem[];
+  activeTitleMenuId?: string;
+  onTitleMenuSelect?: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const active = titleMenu.find((m) => m.id === activeTitleMenuId);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  return (
+    <div ref={rootRef} className="relative shrink-0">
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex max-w-full items-center gap-1 rounded-lg py-0.5 pr-1 text-left transition-colors hover:bg-white/[.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400/50"
+      >
+        <TitleIcon size={16} className={`shrink-0 ${titleIconClass}`} aria-hidden />
+        <span className="flex min-w-0 flex-col leading-tight">
+          <span className="text-base font-semibold tracking-tight text-[var(--text)]">{title}</span>
+          {active ? (
+            <span className="truncate text-[10px] font-medium text-indigo-300/90">{active.label}</span>
+          ) : null}
+        </span>
+        <ChevronDown
+          size={14}
+          className={`shrink-0 text-[var(--muted)] transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden
+        />
+      </button>
+      {open ? (
+        <div
+          role="menu"
+          className="absolute left-0 top-full z-50 mt-1 min-w-[11rem] overflow-hidden rounded-xl border border-white/10 bg-[var(--panel)] py-1 shadow-xl shadow-black/40"
+        >
+          {titleMenu.map(({ id, label, icon: Icon }) => {
+            const isActive = id === activeTitleMenuId;
+            return (
+              <button
+                key={id}
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  onTitleMenuSelect?.(id);
+                  setOpen(false);
+                }}
+                className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors ${
+                  isActive
+                    ? "bg-indigo-500/15 text-indigo-100"
+                    : "text-[var(--muted)] hover:bg-white/[.05] hover:text-[var(--text)]"
+                }`}
+              >
+                {Icon ? <Icon size={14} className={isActive ? "text-indigo-300" : ""} /> : null}
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </div>
+  );
+}
 
 function Rule({ visibleFrom = "sm" }: { visibleFrom?: "sm" | "md" | "lg" }) {
   const vis =
@@ -87,6 +180,9 @@ export function AppTabHeader({
   titleIcon: TitleIcon,
   titleIconClass = "text-indigo-400",
   title,
+  titleMenu,
+  activeTitleMenuId,
+  onTitleMenuSelect,
   metaItems,
   centerStats,
   pinSticky = true,
@@ -105,8 +201,21 @@ export function AppTabHeader({
       aria-label={ariaLabel}
     >
       <div className="flex min-w-0 flex-wrap items-center justify-self-start gap-x-2.5 gap-y-0">
-        <TitleIcon size={16} className={`shrink-0 ${titleIconClass}`} aria-hidden />
-        <h1 className="shrink-0 text-base font-semibold leading-none tracking-tight text-[var(--text)]">{title}</h1>
+        {titleMenu?.length ? (
+          <TitleWithMenu
+            title={title}
+            titleIcon={TitleIcon}
+            titleIconClass={titleIconClass}
+            titleMenu={titleMenu}
+            activeTitleMenuId={activeTitleMenuId}
+            onTitleMenuSelect={onTitleMenuSelect}
+          />
+        ) : (
+          <>
+            <TitleIcon size={16} className={`shrink-0 ${titleIconClass}`} aria-hidden />
+            <h1 className="shrink-0 text-base font-semibold leading-none tracking-tight text-[var(--text)]">{title}</h1>
+          </>
+        )}
         {metaItems.map((item, index) => (
           <span key={`${item.title}-${index}`} className="inline-flex items-center gap-x-2.5">
             <Rule visibleFrom={index === 0 ? "sm" : index === 1 ? "md" : "lg"} />
@@ -116,7 +225,7 @@ export function AppTabHeader({
       </div>
 
       <div
-        className="flex min-w-0 items-center justify-center justify-self-center gap-x-2.5 overflow-x-auto"
+        className="hidden min-w-0 items-center justify-center justify-self-center gap-x-2.5 overflow-x-auto xl:flex"
         role="status"
         aria-label={`${title} summary`}
       >

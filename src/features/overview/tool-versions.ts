@@ -17,9 +17,9 @@ export type ToolVersionHistoryRow = {
   onPackage: boolean;
   /** CHANGELOG.md entry */
   inChangelog: boolean;
-  /** Git tag hoặc Commit ghi trong changelog */
+  /** Git tag or commit recorded in the changelog */
   onGit: boolean;
-  /** Code/metadata đã lên remote (push) */
+  /** Code/metadata is available on the remote */
   onPush: boolean;
   /** GitHub Release */
   onRelease: boolean;
@@ -30,6 +30,8 @@ export type ToolVersionHistoryRow = {
   compareUrl?: string;
   syncStatus: VersionSyncStatus;
   syncNote: string;
+  /** Bullet points from the CHANGELOG entry's "### Changes" section */
+  changes?: string[];
 };
 
 type RowDraft = Omit<
@@ -57,6 +59,31 @@ function formatAssetSize(bytes?: number): string | undefined {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+const CHANGE_TEXT_OVERRIDES: Record<string, string> = {
+  "dong bo version tren package, manifest va changelog.":
+    "Synchronized version across package, manifest, and CHANGELOG.",
+  "dong bo version: package + manifest + changelog.":
+    "Synchronized version across package, manifest, and CHANGELOG.",
+  "versions panel: lich su theo phien ban, pipeline commit auto-bump patch.":
+    "Versions panel now tracks per-version history and the Commit pipeline auto-bumps patches.",
+  "versions panel: lich su + pipeline auto-bump patch.":
+    "Versions panel now includes history and pipeline patch auto-bump.",
+};
+
+function legacyChangeKey(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\u0111/g, "d")
+    .replace(/\u0110/g, "D")
+    .trim()
+    .toLowerCase();
+}
+
+function normalizeChangelogChange(text: string): string {
+  return CHANGE_TEXT_OVERRIDES[legacyChangeKey(text)] ?? text;
 }
 
 function ensure(map: Map<string, RowDraft>, raw: string): RowDraft | null {
@@ -111,7 +138,6 @@ function finalize(row: RowDraft, canonical: string): ToolVersionHistoryRow {
   let syncNote = "";
 
   if (row.isCurrent) {
-    syncStatus = "current";
     const missing: string[] = [];
     if (!row.onPackage) missing.push("package.json");
     if (!row.inChangelog) missing.push("CHANGELOG");
@@ -122,29 +148,29 @@ function finalize(row: RowDraft, canonical: string): ToolVersionHistoryRow {
 
     if (missing.length === 0) {
       syncStatus = "synced";
-      syncNote = "Đủ bước: package → changelog → manifest → tag → push → release.";
+      syncNote = "Complete pipeline: package -> changelog -> manifest -> tag -> push -> release.";
     } else if (!row.onRelease && (!row.onPush || !row.onGit)) {
       syncStatus = "needs-push";
-      syncNote = `Thiếu: ${missing.join(", ")}.`;
+      syncNote = `Missing: ${missing.join(", ")}.`;
     } else {
       syncStatus = "needs-sync";
-      syncNote = `Thiếu: ${missing.join(", ")}.`;
+      syncNote = `Missing: ${missing.join(", ")}.`;
     }
   } else if (row.onRelease && row.inChangelog) {
     syncStatus = "synced";
-    syncNote = "Đã release + changelog.";
+    syncNote = "Released and documented in CHANGELOG.";
   } else if (row.onRelease) {
-    syncNote = "Có release — bổ sung CHANGELOG nếu cần.";
+    syncNote = "Release exists. Add CHANGELOG notes if needed.";
   } else if (row.inChangelog) {
     syncStatus = "needs-push";
-    syncNote = "Chỉ trong changelog — chưa release / tag.";
+    syncNote = "Only in CHANGELOG. No release or tag yet.";
   } else if (pipeline.some(Boolean)) {
-    syncNote = "Bản cũ — một phần pipeline.";
+    syncNote = "Historical version with partial pipeline data.";
   }
 
   if (row.isCurrent && normalizeVersion(canonical) !== row.version) {
     syncStatus = "needs-sync";
-    syncNote = `Hub canonical v${canonical} khác dòng này.`;
+    syncNote = `Hub canonical v${canonical} differs from this row.`;
   }
 
   return {
@@ -156,7 +182,7 @@ function finalize(row: RowDraft, canonical: string): ToolVersionHistoryRow {
   };
 }
 
-/** Mỗi dòng = một phiên bản — pipeline publish (manifest, package, changelog, git, push, release). */
+/** One row per version across the publish pipeline (manifest, package, changelog, git, push, release). */
 export function collectVersionHistory(
   tool: ResolvedTool,
   manifest: ToolManifest,
@@ -173,6 +199,7 @@ export function collectVersionHistory(
     row.inChangelog = true;
     row.date ??= entry.date;
     row.title ??= entry.title;
+    if (entry.changes.length) row.changes = entry.changes.map(normalizeChangelogChange);
     if (entry.commit?.trim()) row.onGit = true;
   }
 

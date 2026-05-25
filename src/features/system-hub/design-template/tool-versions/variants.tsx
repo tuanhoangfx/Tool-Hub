@@ -13,6 +13,6 @@ export const TOOL_VERSION_VARIANT_MAP = {
       );
     },
     title: "Version history",
-    lang: "Mỗi dòng một phiên bản · cột Loc/Pkg/Mnf/GH/CL",
+    lang: "One row per version · Loc/Pkg/Mnf/GH/CL columns",
   },
 } as const;

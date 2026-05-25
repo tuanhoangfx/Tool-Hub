@@ -16,7 +16,7 @@ export const DESIGN_TEMPLATES: DesignTemplateEntry[] = [
     id: "tool-versions",
     label: "Tool Versions",
     status: "locked",
-    blurb: "Bảng version + FilterBar (V4)",
+    blurb: "Version table + FilterBar (V4)",
     lockedChoice: "V4 Filtered table",
   },
   {

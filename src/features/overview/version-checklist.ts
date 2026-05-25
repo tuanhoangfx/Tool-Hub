@@ -1,4 +1,4 @@
-import { VERSION_PIPELINE_COLS } from "./version-pipeline-cols";
+import { VERSION_PIPELINE_COLS } from "./version-pipeline-defs";
 import type { ToolVersionHistoryRow } from "./tool-versions";
 
 export type ChecklistItem = {

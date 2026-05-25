@@ -2,7 +2,7 @@ import type { RemoteFileState } from "../types";
 
 export function buildHealthTooltip(files?: RemoteFileState[]) {
   if (!files?.length) {
-    return { title: "Files", lines: ["Chưa có dữ liệu file từ GitHub."] };
+    return { title: "Files", lines: ["No GitHub file data yet."] };
   }
 
   const ok = files.filter((f) => f.ok);
@@ -19,7 +19,7 @@ export function buildHealthTooltip(files?: RemoteFileState[]) {
 
 export function buildDriftTooltip(alerts: string[]) {
   if (!alerts.length) {
-    return { title: "Version drift", lines: ["Package, manifest, changelog và release đang đồng bộ."] };
+    return { title: "Version drift", lines: ["Package, manifest, changelog, and release are in sync."] };
   }
 
   return {

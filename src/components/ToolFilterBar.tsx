@@ -2,7 +2,7 @@ import { STATUS_ORDER } from "../lib/tooling";
 import { MaterialIcon } from "./MaterialIcon";
 
 const CHIP_META: Record<string, { label: string; icon: string }> = {
-  All: { label: "Tất cả", icon: "apps" },
+  All: { label: "All", icon: "apps" },
   Ready: { label: "Ready", icon: "check_circle" },
   "Needs review": { label: "Review", icon: "rate_review" },
   Experimental: { label: "Beta", icon: "science" },
@@ -42,13 +42,13 @@ export function ToolFilterBar({
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
-            placeholder="Tìm tool, repo, tag..."
+            placeholder="Search tool, repo, tag..."
             type="search"
-            aria-label="Tìm tool"
+            aria-label="Search tools"
           />
         </label>
         {onStatusFilterChange ? (
-          <div className="filter-chips" role="group" aria-label="Lọc trạng thái">
+          <div className="filter-chips" role="group" aria-label="Status filters">
             {chips.map((status) => {
               const meta = CHIP_META[status] ?? { label: status, icon: "label" };
               return (

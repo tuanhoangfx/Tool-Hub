@@ -17,15 +17,15 @@ const BTNS: {
 }[] = [
   {
     action: "sync",
-    label: "Đồng bộ",
+    label: "Sync",
     icon: FileJson,
-    title: "Giữ version hiện tại — chỉ khớp package.json + tool.manifest.json",
+    title: "Keep the current version and align package.json with tool.manifest.json",
   },
   {
     action: "commit",
     label: "Commit",
     icon: GitCommit,
-    title: "Tăng patch (0.1.0→0.1.1) + CHANGELOG + manifest + package, rồi git commit",
+    title: "Bump patch (0.1.0 -> 0.1.1), update CHANGELOG/manifest/package, then git commit",
   },
   {
     action: "push",
@@ -102,11 +102,11 @@ export function VersionPipelineToolbar({
           <span className="text-[var(--muted)]"> ({toolCode})</span>
         </span>
         <span className="text-[10px] text-cyan-200/80">
-          Commit/Tất cả → <span className="font-mono">v{nextPatch}</span> + đồng bộ docs
+          Commit/All to <span className="font-mono">v{nextPatch}</span> + docs sync
         </span>
         {launcherOk === false ? (
           <span className="text-[10px] text-amber-200/90">
-            Launcher offline — <code className="rounded bg-black/30 px-1">pnpm dev</code> hoặc{" "}
+            Launcher offline. Run <code className="rounded bg-black/30 px-1">pnpm dev</code> or{" "}
             <code className="rounded bg-black/30 px-1">pnpm launcher</code>
           </span>
         ) : null}
@@ -115,7 +115,7 @@ export function VersionPipelineToolbar({
             type="text"
             value={commitTitle}
             onChange={(e) => setCommitTitle(e.target.value)}
-            placeholder="Tiêu đề CHANGELOG (tuỳ chọn)"
+            placeholder="CHANGELOG title (optional)"
             className="w-40 rounded-lg border border-white/10 bg-black/20 px-2 py-1.5 text-[10px] text-[var(--text)] placeholder:text-[var(--muted)] sm:w-52"
             disabled={!canRun}
           />
@@ -126,9 +126,9 @@ export function VersionPipelineToolbar({
               disabled={!canRun || remoteEnabled === false}
               title={
                 remoteEnabled === false
-                  ? "Tool local-only — bật remote/GitHub trước"
+                  ? "Local-only tool. Enable remote/GitHub first"
                   : !localPath
-                    ? "Thiếu localPath"
+                    ? "Missing localPath"
                     : title
               }
               onClick={() => void run(action)}
@@ -145,18 +145,18 @@ export function VersionPipelineToolbar({
           <button
             type="button"
             disabled={!canRun}
-            title="Bump patch → commit → push (+ tag)"
+            title="Bump patch -> commit -> push (+ tag)"
             onClick={() => void run("all")}
             className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-400/35 bg-indigo-500/15 px-2.5 py-1.5 text-[11px] font-semibold text-indigo-100 hover:bg-indigo-500/25 disabled:opacity-40"
           >
             {busy === "all" ? <Loader2 size={12} className="anim-spin" /> : <RefreshCw size={12} />}
-            Tất cả
+            All
           </button>
         </div>
       </div>
       {missing.length > 0 ? (
         <div className="flex flex-wrap gap-1.5 text-[10px]">
-          <span className="text-[var(--muted)]">Còn thiếu:</span>
+          <span className="text-[var(--muted)]">Missing:</span>
           {missing.map((m) => (
             <span
               key={m.key}
@@ -167,13 +167,13 @@ export function VersionPipelineToolbar({
           ))}
         </div>
       ) : (
-        <p className="text-[10px] text-emerald-300/90">Checklist pipeline đủ cho bản hiện tại.</p>
+        <p className="text-[10px] text-emerald-300/90">Pipeline checklist is complete for the current version.</p>
       )}
       {lastResult ? (
         <ul className="space-y-0.5 text-[10px] leading-snug">
           {lastResult.version ? (
             <li className="text-indigo-200/90">
-              Version sau pipeline: <span className="font-mono">v{lastResult.version}</span>
+              Version after pipeline: <span className="font-mono">v{lastResult.version}</span>
             </li>
           ) : null}
           {lastResult.steps.map((s) => (

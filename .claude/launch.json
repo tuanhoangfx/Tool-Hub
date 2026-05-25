@@ -3,8 +3,9 @@
   "configurations": [
     {
       "name": "tool-hub-dev",
-      "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev:vite"],
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["E:/Dev/Tool/P0004-Tool-Hub/node_modules/vite/bin/vite.js", "--port", "5176"],
+      "cwd": "E:/Dev/Tool/P0004-Tool-Hub",
       "port": 5176
     }
   ]

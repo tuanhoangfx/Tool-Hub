@@ -28,7 +28,7 @@ function idRow(id: string, label: string, value?: string, href?: string): ToolLi
   return { id, label, value: v, href: href?.trim() || undefined };
 }
 
-/** Gom mọi URL/ID quan trọng từ manifest + registry để kiểm soát nhanh. */
+/** Collect important URLs/IDs from manifest and registry for quick checks. */
 export function collectImportantLinks(tool: ResolvedTool, manifest: ToolManifest): ToolLinkRow[] {
   const rows: ToolLinkRow[] = [];
   const seen = new Set<string>();

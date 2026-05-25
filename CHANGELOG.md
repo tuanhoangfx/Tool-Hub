@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-05-26 - System Hub version workflow and roadmap polish
+
+- Version: `0.1.3`
+- Timestamp: 2026-05-26 00:10 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-05-25 - Roadmap UI crypto-style timeline
+
+- Version: `0.1.2`
+- Timestamp: 2026-05-25 21:30 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Roadmap: crypto-style timeline with separated axis dots and orbit markers.
+- Sync/History badges now match the Versions panel.
+- Version chip, status, and date share the same side and align to the marker center.
+- Centered bullets with larger typography, sourced from CHANGELOG.
+- Orbit marker links to the GitHub release with hover glow.
+
+### Verification
+
+- Preview at http://127.0.0.1:5176/ → tool P0004 → section 🎯 Roadmap.
+
+---
 ## 2026-05-25 - Hub version pipeline auto-bump on commit
 
 - Version: `0.1.1`
@@ -10,8 +47,8 @@
 
 ### Changes
 
-- Đồng bộ version trên package, manifest và CHANGELOG.
-- Versions panel: lịch sử theo phiên bản, pipeline Commit auto-bump patch.
+- Synchronized version across package, manifest, and CHANGELOG.
+- Versions panel now includes history and pipeline patch auto-bump.
 
 ### Verification
 
@@ -38,13 +75,12 @@
 
 ### Changes
 
-- Added public Tool Store card view.
-- Added Repo Admin table for GitHub repository health and update suggestions.
-- Added public GitHub raw file readers for manifest, README, changelog, package, and configured scripts.
-- Reworked navigation into a left sidebar console layout.
-- Added local workspace scanner merge through `corepack pnpm scan:local`.
-- Added GitHub token actions for creating review issues and draft releases.
-- Added version drift alerts across package, manifest, changelog, and release metadata.
+- Tool Store card view + Repo Admin table.
+- GitHub raw readers (manifest, README, CHANGELOG, package).
+- New sidebar console layout.
+- Local scanner via `pnpm scan:local`.
+- GitHub token flow for review issues and draft releases.
+- Version drift alerts across the pipeline.
 
 ### Verification
 

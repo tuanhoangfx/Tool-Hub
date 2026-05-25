@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { normalizeToolCategory, toolCodeBadgeClass } from "./hub-tool-ui";
+import { normalizeToolCategory, toolCodeBadgeClass } from "./hub-tool-ui-utils";
 
 describe("normalizeToolCategory", () => {
   it("maps Web / Bot / Desktop", () => {

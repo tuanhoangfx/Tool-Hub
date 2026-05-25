@@ -1,9 +1,11 @@
-import type { ReactNode } from "react";
-import { LayoutGrid, RefreshCcw, Settings2, Upload, User } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { ChevronDown, LayoutGrid, RefreshCcw, Settings2, Upload, User } from "lucide-react";
 import { APP_USER_LABEL } from "../../lib/app-meta";
+import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { ToolAvatar } from "../ToolAvatar";
 import type { AppScreen } from "../../lib/app-screen";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
+import { SystemTabSubNav } from "./SystemTabSubNav";
 
 type SidebarProps = {
   screen: AppScreen;
@@ -22,6 +24,12 @@ const items: { screen: AppScreen; label: string; icon: typeof LayoutGrid }[] = [
 
 const footerBtn =
   "flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-60";
+const SYSTEM_SUBNAV_OPEN_KEY = "tool-hub:system-subnav-open";
+
+function readSystemSubnavOpen() {
+  if (typeof window === "undefined") return true;
+  return window.sessionStorage.getItem(SYSTEM_SUBNAV_OPEN_KEY) !== "0";
+}
 
 function SidebarFooterButton({
   icon: Icon,
@@ -66,6 +74,19 @@ export function SalesSidebar({
   onRefreshAll,
   displayPrefs,
 }: SidebarProps) {
+  const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
+  const [systemSubnavOpen, setSystemSubnavOpen] = useState(readSystemSubnavOpen);
+
+  useEffect(() => {
+    const sync = () => setSystemTab(readSystemTab());
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+
+  useEffect(() => {
+    window.sessionStorage.setItem(SYSTEM_SUBNAV_OPEN_KEY, systemSubnavOpen ? "1" : "0");
+  }, [systemSubnavOpen]);
+
   return (
     <aside className="flex h-full min-h-0 w-60 shrink-0 flex-col overflow-visible border-r border-white/5 bg-[var(--panel)] p-4">
       <div className="mb-4 shrink-0 flex items-center gap-3">
@@ -85,22 +106,38 @@ export function SalesSidebar({
         {items.map(({ screen: id, label, icon: Icon }) => {
           const active = screen === id;
           return (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onNavigate(id)}
-              className={`group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all ${
-                active
-                  ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/5 text-indigo-100"
-                  : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
-              }`}
-            >
-              {active ? (
-                <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-indigo-400" />
-              ) : null}
-              <Icon size={16} className={active ? "text-indigo-300" : ""} />
-              <span className="flex-1 text-left">{label}</span>
-            </button>
+            <div key={id}>
+              <button
+                type="button"
+                aria-expanded={id === "system" && screen === "system" ? systemSubnavOpen : undefined}
+                onClick={() => {
+                  if (id === "system" && screen === "system") {
+                    setSystemSubnavOpen((v) => !v);
+                    return;
+                  }
+                  onNavigate(id);
+                  if (id === "system") setSystemSubnavOpen(true);
+                }}
+                className={`group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all ${
+                  active
+                    ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/5 text-indigo-100"
+                    : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
+                }`}
+              >
+                {active ? (
+                  <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-indigo-400" />
+                ) : null}
+                <Icon size={16} className={active ? "text-indigo-300" : ""} />
+                <span className="flex-1 text-left">{label}</span>
+                {id === "system" ? (
+                  <ChevronDown
+                    size={13}
+                    className={`text-[var(--muted)] transition-transform ${active && systemSubnavOpen ? "rotate-180" : ""}`}
+                  />
+                ) : null}
+              </button>
+              {id === "system" && screen === "system" && systemSubnavOpen ? <SystemTabSubNav activeTab={systemTab} /> : null}
+            </div>
           );
         })}
       </nav>

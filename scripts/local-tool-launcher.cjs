@@ -79,13 +79,13 @@ function readBody(req) {
 
 function launchTool(id, entry) {
   if (running.has(id)) {
-    return { ok: true, message: `${id} đang chạy (PID ${running.get(id)})` };
+    return { ok: true, message: `${id} is already running (PID ${running.get(id)})` };
   }
   if (!entry?.cwd || !entry?.command) {
-    return { ok: false, message: "Thiếu cấu hình launch" };
+    return { ok: false, message: "Missing launch configuration" };
   }
   if (!fs.existsSync(entry.cwd)) {
-    return { ok: false, message: `Không tìm thấy thư mục: ${entry.cwd}` };
+    return { ok: false, message: `Directory not found: ${entry.cwd}` };
   }
 
   const child = spawn(entry.command, {
@@ -99,7 +99,10 @@ function launchTool(id, entry) {
   running.set(id, child.pid);
   child.on("exit", () => running.delete(id));
 
-  return { ok: true, message: `Đã khởi chạy <strong>${id}</strong> (PID ${child.pid})<br/>Lệnh: <code>${entry.command}</code><br/>Thư mục: <code>${entry.cwd}</code>` };
+  return {
+    ok: true,
+    message: `Started <strong>${id}</strong> (PID ${child.pid})<br/>Command: <code>${entry.command}</code><br/>Folder: <code>${entry.cwd}</code>`,
+  };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -119,19 +122,19 @@ const server = http.createServer(async (req, res) => {
     const runningIds = new Set(health.running.map((item) => item.id));
     const items = Object.keys(config)
       .map((id) => {
-        const live = runningIds.has(id) ? ' <span class="ok">(đang chạy)</span>' : "";
+        const live = runningIds.has(id) ? ' <span class="ok">(running)</span>' : "";
         return `<li><a href="/launch?id=${encodeURIComponent(id)}">${id}</a>${live}</li>`;
       })
       .join("");
     const runningLine =
       health.running.length > 0
-        ? `<p>Đang chạy: ${health.running.map((item) => `<code>${item.id}</code> (PID ${item.pid})`).join(", ")}</p>`
-        : "<p>Chưa có tool nào đang chạy từ launcher.</p>";
+        ? `<p>Running: ${health.running.map((item) => `<code>${item.id}</code> (PID ${item.pid})`).join(", ")}</p>`
+        : "<p>No tools are running from the launcher.</p>";
     return sendHtml(
       res,
       200,
       "GTM Launcher",
-      `<p class="ok">Launcher đang chạy trên cổng ${PORT}.</p>${runningLine}<p>Chạy tool:</p><ul>${items}</ul>`,
+      `<p class="ok">Launcher is running on port ${PORT}.</p>${runningLine}<p>Launch tool:</p><ul>${items}</ul>`,
     );
   }
 
@@ -151,7 +154,7 @@ const server = http.createServer(async (req, res) => {
           single === "all" ? ["sync", "commit", "push"] : single === "sync" || single === "commit" || single === "push" ? [single] : [];
       }
       if (!cwd) {
-        return sendJson(res, 400, { ok: false, message: "Thiếu cwd (localPath)" });
+        return sendJson(res, 400, { ok: false, message: "Missing cwd (localPath)" });
       }
       const result = runPipeline({ cwd, version, branch, actions, bumpOnCommit, commitTitle });
       return sendJson(res, result.ok ? 200 : 500, result);
@@ -171,9 +174,9 @@ const server = http.createServer(async (req, res) => {
       const entry = config[id];
       if (!entry) {
         if (req.method === "POST") {
-          return sendJson(res, 404, { ok: false, message: `Chưa cấu hình launch cho: ${id}` });
+          return sendJson(res, 404, { ok: false, message: `No launch configuration for: ${id}` });
         }
-        return sendHtml(res, 404, "Không tìm thấy", `<p class="bad">Chưa cấu hình: ${id}</p>`);
+        return sendHtml(res, 404, "Not found", `<p class="bad">Not configured: ${id}</p>`);
       }
       const result = launchTool(id, entry);
       if (req.method === "POST") {
@@ -183,14 +186,14 @@ const server = http.createServer(async (req, res) => {
       return sendHtml(
         res,
         200,
-        result.ok ? "Đã chạy" : "Lỗi",
-        `<p class="${klass}">${result.message}</p><p>Có thể đóng tab này.</p><script>setTimeout(()=>window.close(),4000)</script>`,
+        result.ok ? "Started" : "Error",
+        `<p class="${klass}">${result.message}</p><p>You can close this tab.</p><script>setTimeout(()=>window.close(),4000)</script>`,
       );
     } catch (error) {
       if (req.method === "POST") {
         return sendJson(res, 500, { ok: false, message: error.message });
       }
-      return sendHtml(res, 500, "Lỗi", `<p class="bad">${error.message}</p>`);
+      return sendHtml(res, 500, "Error", `<p class="bad">${error.message}</p>`);
     }
   }
 
@@ -198,5 +201,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`\n  GTM Local Tool Launcher\n  → http://${HOST}:${PORT}\n  → Mở từ https://infix1.io.vn: dùng nút Chạy tool (mở tab này)\n`);
+  console.log(`\n  GTM Local Tool Launcher\n  -> http://${HOST}:${PORT}\n  -> Opened from https://infix1.io.vn via the Launch tool button\n`);
 });

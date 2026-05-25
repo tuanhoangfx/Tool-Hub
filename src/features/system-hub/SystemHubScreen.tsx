@@ -1,10 +1,9 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
+import { readSystemTab, type SystemTab } from "./components/SystemTabs";
+import { SystemChromeContext } from "./system-chrome-context";
 import { SystemTabHeader } from "./SystemTabHeader";
-import { SystemTabs, readSystemTab, type SystemTab } from "./components/SystemTabs";
-import { computeSystemHeaderMetrics } from "./system-header-metrics";
-import { DEFAULT_SYSTEM_HEADER_STAT_KEYS } from "./system-prefs";
 
 const SystemOverviewPanel = lazy(() =>
   import("./SystemOverviewPanel").then((m) => ({ default: m.SystemOverviewPanel })),
@@ -22,10 +21,6 @@ function SystemTabFallback({ label }: { label: string }) {
   );
 }
 
-function visibleSet(set: Set<string> | null, defaults: Set<string>) {
-  return set ?? defaults;
-}
-
 type SystemHubScreenProps = {
   tools: ResolvedTool[];
   registryLive: boolean;
@@ -36,13 +31,10 @@ type SystemHubScreenProps = {
 
 export function SystemHubScreen({
   tools,
-  registryLive,
-  registryLabel,
-  versionReleaseDate,
-  versionReleaseLive,
 }: SystemHubScreenProps) {
   const [tab, setTab] = useState<SystemTab>(() => readSystemTab());
   const [prefs, setPrefs] = useState(readHubListPrefs);
+  const [filterSlot, setFilterSlot] = useState<ReactNode>(null);
 
   useEffect(() => {
     const sync = () => {
@@ -53,26 +45,37 @@ export function SystemHubScreen({
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  const metrics = useMemo(() => computeSystemHeaderMetrics(tools.length), [tools.length]);
-  const visHeaderStats = visibleSet(prefs.systemHeaderStats, DEFAULT_SYSTEM_HEADER_STAT_KEYS);
+  const stackChrome = prefs.searchPin && prefs.headerPin;
+  const registerFilter = useCallback((node: ReactNode | null) => {
+    setFilterSlot(node);
+  }, []);
+  const chromeValue = useMemo(() => ({ stackChrome, registerFilter }), [stackChrome, registerFilter]);
+
+  const header = (
+    <SystemTabHeader
+      pinSticky={stackChrome ? false : prefs.headerPin}
+      dividerBelow={stackChrome ? false : !prefs.searchPin}
+      embedded={stackChrome}
+    />
+  );
 
   return (
-    <div className="anim-fade relative">
-      <SystemTabHeader
-        tab={tab}
-        registryLive={registryLive}
-        registryLabel={registryLabel}
-        versionReleaseDate={versionReleaseDate}
-        versionReleaseLive={versionReleaseLive}
-        visibleHeaderStats={visHeaderStats}
-        metrics={metrics}
-        pinSticky={prefs.headerPin}
-      />
+    <SystemChromeContext.Provider value={chromeValue}>
+      <div
+        className="anim-fade relative"
+        {...(prefs.searchPin ? { "data-search-pin": true } : {})}
+        {...(prefs.headerPin ? { "data-header-pin": true } : {})}
+      >
+        {stackChrome ? (
+          <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
+            {header}
+            {filterSlot}
+          </div>
+        ) : (
+          header
+        )}
 
-      <div className="relative z-0 space-y-4">
-        <SystemTabs tab={tab} onTab={setTab} />
-
-        <div>
+        <div className="relative z-0">
           {tab === "overview" ? (
             <Suspense fallback={<SystemTabFallback label="overview" />}>
               <SystemOverviewPanel tools={tools} />
@@ -86,6 +89,6 @@ export function SystemHubScreen({
           {tab === "template" ? <DesignTemplateHub /> : null}
         </div>
       </div>
-    </div>
+    </SystemChromeContext.Provider>
   );
 }
