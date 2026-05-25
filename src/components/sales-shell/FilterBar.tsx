@@ -160,7 +160,7 @@ export function FilterBar({
       <div className="space-y-2 rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
         <div className="flex flex-wrap items-center gap-2">
           {searchField}
-          {toolbar ? <div className="ml-auto flex shrink-0 items-center gap-2">{toolbar}</div> : null}
+          {toolbar ? <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">{toolbar}</div> : null}
         </div>
         <div className="flex min-h-[34px] flex-wrap items-center gap-2">
           {filterDropdowns}

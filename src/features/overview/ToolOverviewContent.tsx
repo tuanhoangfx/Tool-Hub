@@ -42,6 +42,8 @@ export type ToolOverviewContentProps = {
   onSelectTool?: (toolId: string) => void;
   /** Hide workspace grid + compare strip (System overview uses Hub shell instead). */
   hideWorkspaceChrome?: boolean;
+  /** System overview cards/table toggle: cards keep TOC, table gives dense full-width content. */
+  layoutMode?: "card" | "table";
 };
 
 export function ToolOverviewContent({
@@ -51,6 +53,7 @@ export function ToolOverviewContent({
   idPrefix = "",
   onSelectTool,
   hideWorkspaceChrome = false,
+  layoutMode = "card",
 }: ToolOverviewContentProps) {
   const [workspaceFilter, setWorkspaceFilter] = useState<WorkspaceFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -69,6 +72,7 @@ export function ToolOverviewContent({
 
   const stackYou = stack.slice(0, 2).join(" + ") || tool.category;
   const isHub = tool.code === "P0004";
+  const showToc = layoutMode === "card";
 
   const visibleWorkspace = useMemo(
     () => workspace.filter((w) => matchesWorkspaceFilter(w.status, workspaceFilter)),
@@ -235,16 +239,18 @@ export function ToolOverviewContent({
         </>
       )}
 
-      <div className="grid gap-3 lg:grid-cols-[150px_minmax(0,1fr)]">
-        <aside
-          className={`w-[150px] shrink-0 lg:sticky lg:self-start ${
-            hideWorkspaceChrome
-              ? "lg:top-[calc(var(--hub-chrome-sticky-est-h)+1.5rem)]"
-              : "lg:top-[calc(var(--app-tab-header-sticky-h)+1.5rem)]"
-          }`}
-        >
-          <OverviewTocNav idPrefix={idPrefix} />
-        </aside>
+      <div className={showToc ? "grid gap-3 lg:grid-cols-[150px_minmax(0,1fr)]" : "grid gap-3"}>
+        {showToc ? (
+          <aside
+            className={`w-[150px] shrink-0 lg:sticky lg:self-start ${
+              hideWorkspaceChrome
+                ? "lg:top-[calc(var(--hub-chrome-sticky-est-h)+1.5rem)]"
+                : "lg:top-[calc(var(--app-tab-header-sticky-h)+1.5rem)]"
+            }`}
+          >
+            <OverviewTocNav idPrefix={idPrefix} />
+          </aside>
+        ) : null}
 
         <main className="space-y-6 rounded-2xl border border-white/5 bg-[var(--panel)] p-6">
           <ToolDetailSections

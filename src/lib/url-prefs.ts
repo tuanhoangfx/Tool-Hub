@@ -27,6 +27,8 @@ export type HubListPrefs = {
   headerPin: boolean;
   /** Sticky pin for Hub search/filter bar (default on). */
   searchPin: boolean;
+  /** Show the sidebar submenu expand/collapse icon (default on). */
+  navToggleIcon: boolean;
 };
 
 function parseSet(raw: string | null): Set<string> | null {
@@ -46,6 +48,7 @@ export function readHubListPrefs(): HubListPrefs {
       systemHeaderStats: null,
       headerPin: true,
       searchPin: true,
+      navToggleIcon: true,
     };
   }
   const sp = new URLSearchParams(window.location.search);
@@ -54,6 +57,7 @@ export function readHubListPrefs(): HubListPrefs {
   const limit = (LIMIT_OPTIONS as readonly number[]).includes(limitNum) ? limitNum : 100;
   const hpin = sp.get("hpin");
   const spin = sp.get("spin");
+  const navicon = sp.get("navicon");
   return {
     range: TIME_RANGES.some((r) => r.value === range) ? range : "30d",
     limit,
@@ -64,6 +68,7 @@ export function readHubListPrefs(): HubListPrefs {
     systemHeaderStats: parseSet(sp.get("sstat")),
     headerPin: hpin !== "0",
     searchPin: spin !== "0",
+    navToggleIcon: navicon !== "0",
   };
 }
 

@@ -131,7 +131,7 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
   return (
     <div className="space-y-2">
       <FilterBar
-        placeholder="Search label, URL, ID..."
+        placeholder="Search Links by label, URL, ID..."
         filters={LINK_FILTER_DEFS}
         query={query}
         onQueryChange={setQuery}
@@ -162,7 +162,8 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
           No links match search or filters.
         </p>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-white/5">
+        <div className="rounded-lg border border-white/5 p-2">
+          <div className="overflow-x-auto rounded-md bg-black/10">
           <table className="w-full border-collapse text-left text-[12px]">
             <thead>
               <tr className="border-b border-white/5 bg-white/[.02] text-[10px] uppercase tracking-wider text-[var(--muted)]">
@@ -197,6 +198,7 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

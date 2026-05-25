@@ -6,7 +6,16 @@ import {
   type HubEntity,
 } from "../../lib/hub-schema-spec";
 import { readHubListPrefs } from "../../lib/url-prefs";
-import { MiniBarChart, type FilterDef, type FilterValues } from "../../components/sales-shell";
+import {
+  HubResultCount,
+  HubTimeRangeSelect,
+  MiniBarChart,
+  ViewToggle,
+  type FilterDef,
+  type FilterValues,
+  type HubViewMode,
+} from "../../components/sales-shell";
+import { useSessionState } from "../../hooks";
 import { DEFAULT_HUB_CHART_KEYS } from "../hub/hub-prefs";
 import { SchemaGraph } from "./components/SchemaGraph";
 import { SpecTable } from "./components/SpecTable";
@@ -32,6 +41,7 @@ export function SystemSchemaPanel() {
     entity: [readSchemaTable()],
   }));
   const [prefs, setPrefs] = useState(readHubListPrefs);
+  const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:schema:viewMode", "table");
 
   useEffect(() => {
     const sync = () => setPrefs(readHubListPrefs());
@@ -91,12 +101,19 @@ export function SystemSchemaPanel() {
 
   return (
     <SystemHubShell
-      placeholder="Search field, column, type, mode, source…"
+      placeholder="Search Schema by field, column, type, mode, source..."
       filters={entityFilters}
       query={query}
       onQueryChange={setQuery}
       values={filterValues}
       onValuesChange={handleFilterValuesChange}
+      toolbar={
+        <>
+          <HubTimeRangeSelect value={prefs.range} />
+          <ViewToggle value={viewMode} onChange={setViewMode} />
+          <HubResultCount icon={Database} shown={spec.length} total={fullSpec.length} label="fields" />
+        </>
+      }
       kpiItems={kpiItems}
       charts={
         <>
@@ -106,10 +123,12 @@ export function SystemSchemaPanel() {
       }
     >
       <div className="space-y-3 pb-8">
-        <SchemaGraph spec={fullSpec} groups={groups} entity={current} overrides={0} customs={0} compact />
+        {viewMode === "card" ? (
+          <SchemaGraph spec={fullSpec} groups={groups} entity={current} overrides={0} customs={0} />
+        ) : null}
 
-        <section className="rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
-          <SpecTable spec={spec} groups={groups} tableName={current} compact />
+        <section className={`rounded-2xl border border-white/5 bg-[var(--panel)] ${viewMode === "table" ? "p-3" : "p-4"}`}>
+          <SpecTable spec={spec} groups={groups} tableName={current} compact={viewMode === "table"} />
         </section>
       </div>
     </SystemHubShell>

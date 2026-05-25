@@ -1,9 +1,9 @@
 # Changelog
 
-## 2026-05-26 - System Hub version workflow and roadmap polish
+## 2026-05-26 - Git commit version stamp
 
-- Version: `0.1.3`
-- Timestamp: 2026-05-26 00:10 (UTC+7)
+- Version: `0.1.4`
+- Timestamp: 2026-05-26 02:37 (UTC+7)
 - Commit: pending
 - Type: Patch
 - Status: Draft
@@ -15,6 +15,27 @@
 ### Verification
 
 - pending
+
+---
+## 2026-05-26 - System Hub version workflow and roadmap polish
+
+- Version: `0.1.3`
+- Timestamp: 2026-05-26 00:10 (UTC+7)
+- Commit: `cac106a`
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- `pnpm lint`
+- `pnpm test`
+- `pnpm build`
+- Vercel production deployment READY.
+- GitHub Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v0.1.3
 
 ---
 ## 2026-05-25 - Roadmap UI crypto-style timeline

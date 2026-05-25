@@ -95,6 +95,7 @@ export function ToolVersionsPanel({
 }: ToolVersionsPanelProps) {
   const toolCode = tool.code;
   const currentRow = rows.find((r) => r.isCurrent);
+  const currentSynced = currentRow?.syncStatus === "synced";
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { query, setQuery, filterValues, setFilterValues } = useVersionFilterPrefs(toolCode);
 
@@ -132,6 +133,11 @@ export function ToolVersionsPanel({
         <span className="font-mono text-indigo-200">v{canonicalVersion}</span>
         {needsActionCount > 0 ? (
           <span className="ml-2 text-amber-200/90">· {needsActionCount} need sync / push</span>
+        ) : currentSynced ? (
+          <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-200">
+            <CheckCircle2 size={10} className="text-emerald-400" aria-hidden />
+            Release synced
+          </span>
         ) : null}
       </p>
 
@@ -145,7 +151,7 @@ export function ToolVersionsPanel({
       />
 
       <FilterBar
-        placeholder="Search version, title, notes..."
+        placeholder="Search Versions by version, title, notes..."
         filters={VERSION_FILTER_DEFS}
         query={query}
         onQueryChange={setQuery}
@@ -163,7 +169,8 @@ export function ToolVersionsPanel({
           No versions match the current filters.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-white/5">
+        <div className="rounded-lg border border-white/5 p-2">
+          <div className="overflow-x-auto rounded-md bg-black/10">
           <table className="w-full min-w-[820px] border-collapse text-left text-[12px]">
             <thead>
               <tr className="border-b border-white/5 bg-white/[.02]">
@@ -224,6 +231,7 @@ export function ToolVersionsPanel({
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

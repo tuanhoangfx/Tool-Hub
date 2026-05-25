@@ -90,7 +90,8 @@ export function SpecTable({
               </div>
             </div>
 
-            <div className={`overflow-x-auto ${compact ? "max-h-[min(42vh,22rem)] overflow-y-auto" : ""}`}>
+            <div className="rounded-lg border border-white/5 p-2">
+            <div className={`overflow-x-auto rounded-md bg-black/10 ${compact ? "max-h-[min(42vh,22rem)] overflow-y-auto" : ""}`}>
               <table className={`w-full ${compact ? "text-[10px]" : "text-[11px]"}`}>
                 <thead className="sticky top-0 z-[1] bg-[var(--panel)] text-[9px] uppercase tracking-wider text-[var(--muted)]/70">
                   <tr>
@@ -152,6 +153,7 @@ export function SpecTable({
                   })}
                 </tbody>
               </table>
+            </div>
             </div>
           </section>
         );

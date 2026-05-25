@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ChevronDown, LayoutGrid, RefreshCcw, Settings2, Upload, User } from "lucide-react";
+import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User } from "lucide-react";
 import { APP_USER_LABEL } from "../../lib/app-meta";
 import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
+import { readHubListPrefs } from "../../lib/url-prefs";
 import { ToolAvatar } from "../ToolAvatar";
 import type { AppScreen } from "../../lib/app-screen";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
@@ -76,9 +77,13 @@ export function SalesSidebar({
 }: SidebarProps) {
   const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
   const [systemSubnavOpen, setSystemSubnavOpen] = useState(readSystemSubnavOpen);
+  const [showSubnavToggleIcon, setShowSubnavToggleIcon] = useState(() => readHubListPrefs().navToggleIcon);
 
   useEffect(() => {
-    const sync = () => setSystemTab(readSystemTab());
+    const sync = () => {
+      setSystemTab(readSystemTab());
+      setShowSubnavToggleIcon(readHubListPrefs().navToggleIcon);
+    };
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
   }, []);
@@ -105,6 +110,9 @@ export function SalesSidebar({
       <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
         {items.map(({ screen: id, label, icon: Icon }) => {
           const active = screen === id;
+          const systemSubnavActive = id === "system" && active && systemSubnavOpen;
+          const menuActive = active && !systemSubnavActive;
+          const ToggleIcon = systemSubnavOpen ? Minus : Plus;
           return (
             <div key={id}>
               <button
@@ -119,20 +127,25 @@ export function SalesSidebar({
                   if (id === "system") setSystemSubnavOpen(true);
                 }}
                 className={`group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all ${
-                  active
+                  menuActive
                     ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/5 text-indigo-100"
                     : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
                 }`}
               >
-                {active ? (
+                {menuActive ? (
                   <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-indigo-400" />
                 ) : null}
-                <Icon size={16} className={active ? "text-indigo-300" : ""} />
+                <Icon size={16} className={menuActive ? "text-indigo-300" : ""} />
                 <span className="flex-1 text-left">{label}</span>
-                {id === "system" ? (
-                  <ChevronDown
+                {id === "system" && showSubnavToggleIcon ? (
+                  <ToggleIcon
                     size={13}
-                    className={`text-[var(--muted)] transition-transform ${active && systemSubnavOpen ? "rotate-180" : ""}`}
+                    strokeWidth={2.3}
+                    className={`shrink-0 transition-colors ${
+                      systemSubnavOpen
+                        ? "text-amber-300 group-hover:text-amber-200"
+                        : "text-cyan-300 group-hover:text-cyan-200"
+                    }`}
                   />
                 ) : null}
               </button>

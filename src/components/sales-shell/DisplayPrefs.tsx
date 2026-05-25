@@ -133,6 +133,7 @@ export function DisplayPrefs({
       : null;
   const rawHpin = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("hpin") : null;
   const rawSpin = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("spin") : null;
+  const rawNavicon = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("navicon") : null;
   const visKpi = prefs.kpi;
   const visCharts = prefs.charts;
   const systemDisplay = isSystem ? readSystemTabDisplay(systemTab) : null;
@@ -214,7 +215,8 @@ export function DisplayPrefs({
     (rawFilters !== null ? 1 : 0) +
     (rawHeaderStats !== null ? 1 : 0) +
     (showHeaderPin && rawHpin !== null ? 1 : 0) +
-    (!isSystem && rawSpin === "0" ? 1 : 0);
+    (!isSystem && rawSpin === "0" ? 1 : 0) +
+    (rawNavicon === "0" ? 1 : 0);
 
   const triggerClass = sidebarRow
     ? "relative flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-[var(--muted)] transition-colors hover:bg-white/5 hover:text-[var(--text)]"
@@ -299,6 +301,11 @@ export function DisplayPrefs({
                     label="Pin search bar (sticky)"
                     on={prefs.searchPin}
                     onChange={() => update({ spin: prefs.searchPin ? "0" : null })}
+                  />
+                  <ToggleRow
+                    label="Show submenu +/- icon"
+                    on={prefs.navToggleIcon}
+                    onChange={() => update({ navicon: prefs.navToggleIcon ? "0" : null })}
                   />
                 </Section>
               ) : null}
@@ -390,6 +397,7 @@ export function DisplayPrefs({
                 sstat: null,
                 hpin: null,
                 spin: null,
+                navicon: null,
               });
             }}
             className="mt-2 w-full rounded-md border border-white/10 px-2 py-1.5 text-[10px] text-[var(--muted)] hover:bg-white/[.05] hover:text-[var(--text)]"

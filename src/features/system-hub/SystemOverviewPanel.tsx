@@ -1,11 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import changelogRaw from "../../../CHANGELOG.md?raw";
 import manifestJson from "../../../tool.manifest.json";
-import { MiniBarChart, MiniDonut, type FilterDef, type FilterValues } from "../../components/sales-shell";
+import { Boxes } from "lucide-react";
+import {
+  HubResultCount,
+  HubTimeRangeSelect,
+  MiniBarChart,
+  MiniDonut,
+  ViewToggle,
+  type FilterDef,
+  type FilterValues,
+  type HubViewMode,
+} from "../../components/sales-shell";
+import { useSessionState } from "../../hooks";
 import { resolveHubKpiIcon } from "../../lib/badge-registry";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool, ToolManifest, ToolRepository } from "../../types";
-import { hubCharts, hubKpis } from "../hub/hub-aggregates";
+import { hubCharts, hubKpis, matchesTimeRange } from "../hub/hub-aggregates";
 import { DEFAULT_HUB_CHART_KEYS } from "../hub/hub-prefs";
 import { ToolOverviewContent } from "../overview/ToolOverviewContent";
 import { SystemHubShell } from "./SystemHubShell";
@@ -82,6 +93,7 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
   const [prefs, setPrefs] = useState(readHubListPrefs);
+  const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:overview:viewMode", "card");
 
   useEffect(() => {
     const sync = () => setPrefs(readHubListPrefs());
@@ -90,12 +102,12 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
   }, []);
 
   const filteredTools = useMemo(
-    () => filterToolsForSystem(tools, query, filterValues.tool),
-    [tools, query, filterValues.tool],
+    () => filterToolsForSystem(tools, query, filterValues.tool).filter((tool) => matchesTimeRange(tool.updatedAt, prefs.range)),
+    [tools, query, filterValues.tool, prefs.range],
   );
 
-  const charts = useMemo(() => hubCharts(filteredTools.length ? filteredTools : tools), [filteredTools, tools]);
-  const kpis = useMemo(() => hubKpis(filteredTools.length ? filteredTools : tools), [filteredTools, tools]);
+  const charts = useMemo(() => hubCharts(filteredTools), [filteredTools]);
+  const kpis = useMemo(() => hubKpis(filteredTools), [filteredTools]);
 
   const activeTool = useMemo(() => {
     const id = focusedId ?? hubTool.id;
@@ -133,12 +145,19 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
 
   return (
     <SystemHubShell
-      placeholder="Search tool name, code, repo, tag…"
+      placeholder="Search Overview by tool name, code, repo, tag..."
       filters={toolFilters}
       query={query}
       onQueryChange={setQuery}
       values={filterValues}
       onValuesChange={handleFilterValuesChange}
+      toolbar={
+        <>
+          <HubTimeRangeSelect value={prefs.range} />
+          <ViewToggle value={viewMode} onChange={setViewMode} />
+          <HubResultCount icon={Boxes} shown={filteredTools.length} total={tools.length} />
+        </>
+      }
       kpiItems={kpiItems}
       charts={
         <>
@@ -154,6 +173,7 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
         allTools={tools}
         hubChangelogRaw={changelogRaw}
         hideWorkspaceChrome
+        layoutMode={viewMode}
         onSelectTool={setFocusedId}
       />
     </SystemHubShell>

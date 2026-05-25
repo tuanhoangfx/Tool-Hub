@@ -2,7 +2,6 @@ import type { BarItem } from "../../components/sales-shell";
 import { resolveChartLegendIcon } from "../../lib/badge-registry";
 import type { FieldSpec } from "../../lib/hub-schema-spec";
 import { hubCharts, hubKpis } from "../hub/hub-aggregates";
-import type { DesignTemplateEntry } from "./design-template/templates";
 import type { ResolvedTool } from "../../types";
 
 const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
@@ -52,27 +51,6 @@ export function filterSchemaSpec(spec: FieldSpec[], query: string): FieldSpec[] 
     const hay = [f.key, f.label, f.col, f.type, f.mode, f.source, f.group, ...(f.options ?? [])]
       .join(" ")
       .toLowerCase();
-    return hay.includes(q);
-  });
-}
-
-export function templateKpis(templates: DesignTemplateEntry[]) {
-  const locked = templates.filter((t) => t.status === "locked").length;
-  const preview = templates.filter((t) => t.status === "preview").length;
-  return { total: templates.length, locked, preview };
-}
-
-export function templateCharts(templates: DesignTemplateEntry[]) {
-  return {
-    status: breakdown(templates.map((t) => (t.status === "locked" ? "Locked" : "Preview"))),
-  };
-}
-
-export function filterTemplates(templates: DesignTemplateEntry[], query: string): DesignTemplateEntry[] {
-  const q = query.trim().toLowerCase();
-  if (!q) return templates;
-  return templates.filter((t) => {
-    const hay = [t.id, t.label, t.blurb, t.status, t.lockedChoice ?? ""].join(" ").toLowerCase();
     return hay.includes(q);
   });
 }

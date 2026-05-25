@@ -64,7 +64,7 @@ function bulletsFor(row: ToolVersionHistoryRow): string[] {
 
 export function buildRoadmapNodes(manifest: ToolManifest, versions: ToolVersionHistoryRow[] = []): RoadmapNode[] {
   if (versions.length) {
-    return [...versions].sort(compareVersionForRoadmap).map((row) => {
+    return [...versions].sort((a, b) => compareVersionForRoadmap(b, a)).map((row) => {
       const status = statusFor(row);
       return {
         id: row.version,

@@ -8,10 +8,10 @@ export function OverviewTocNav({ idPrefix = "" }: { code?: string; idPrefix?: st
           <a
             key={id}
             href={`#${idPrefix}${id}`}
-            className="group flex h-[33px] w-full items-center gap-2 rounded-lg border border-transparent px-2 text-[11px] text-[var(--muted)] transition-colors hover:border-indigo-300/10 hover:bg-indigo-500/[.08] hover:text-[var(--text)]"
+            className="group flex h-[33px] w-full items-center gap-2 rounded-lg border border-transparent px-2 text-[13px] text-[var(--muted)] transition-colors hover:border-indigo-300/10 hover:bg-indigo-500/[.08] hover:text-[var(--text)]"
           >
             <span
-              className={`grid h-6 w-6 shrink-0 place-items-center rounded-md border text-[11px] leading-none opacity-90 transition-opacity group-hover:opacity-100 ${chipClass}`}
+              className={`grid h-6 w-6 shrink-0 place-items-center rounded-md border text-[12px] leading-none opacity-90 transition-opacity group-hover:opacity-100 ${chipClass}`}
               aria-hidden
             >
               {emoji}

@@ -177,7 +177,7 @@ export function HubListPage({
       pinSticky={searchPin && !stackChrome}
       headerPinned={prefs.headerPin}
       embedded={stackChrome}
-      placeholder="Search by name, code, repo, tag..."
+      placeholder="Search Hub by name, code, repo, tag..."
       filters={hubFilters}
       query={query}
       onQueryChange={setQuery}
