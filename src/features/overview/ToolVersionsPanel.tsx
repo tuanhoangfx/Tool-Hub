@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Check, CheckCircle2, Circle, Copy, ExternalLink, MoreHorizontal } from "lucide-react";
+import { Check, CheckCircle2, Circle, Copy, ExternalLink, GitCompare, MoreHorizontal } from "lucide-react";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
 import type { ToolVersionHistoryRow } from "./tool-versions";
@@ -49,6 +49,17 @@ function RowActions({
       >
         {copiedId === row.id ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
       </button>
+      {row.compareUrl ? (
+        <a
+          href={row.compareUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center justify-center rounded-md border border-white/10 p-1.5 text-[var(--muted)] hover:bg-white/[.05] hover:text-violet-300"
+          title="Compare với bản trước trên GitHub"
+        >
+          <GitCompare size={12} />
+        </a>
+      ) : null}
       {row.releaseUrl ? (
         <a
           href={row.releaseUrl}
@@ -188,7 +199,10 @@ export function ToolVersionsPanel({
                     ) : null}
                   </td>
                   <td className="whitespace-nowrap px-2 py-2 align-top text-[10px] text-[var(--muted)]">
-                    {row.publishedLabel ?? row.date ?? "—"}
+                    <div>{row.publishedLabel ?? row.date ?? "—"}</div>
+                    {row.assetSize ? (
+                      <div className="font-mono text-[9px] text-cyan-300/70">{row.assetSize}</div>
+                    ) : null}
                   </td>
                   <td className="max-w-[160px] truncate px-3 py-2 align-top text-[11px] text-[var(--text)]" title={row.title}>
                     {row.title ?? "—"}

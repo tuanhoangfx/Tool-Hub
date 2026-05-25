@@ -24,7 +24,10 @@ export type ToolVersionHistoryRow = {
   /** GitHub Release */
   onRelease: boolean;
   publishedLabel?: string;
+  assetSize?: string;
   releaseUrl?: string;
+  /** GitHub compare v{prev}...v{this} */
+  compareUrl?: string;
   syncStatus: VersionSyncStatus;
   syncNote: string;
 };
@@ -190,8 +193,7 @@ export function collectVersionHistory(
     row.onPush = true;
     row.releaseUrl = release.html_url;
     row.publishedLabel = release.published_at ? formatDate(release.published_at) : undefined;
-    const size = formatAssetSize(release.assets?.[0]?.size);
-    if (size) row.title = row.title ? `${row.title} · ${size}` : size;
+    row.assetSize = formatAssetSize(release.assets?.[0]?.size) ?? row.assetSize;
     row.date ??= release.published_at?.slice(0, 10);
   }
 
@@ -226,13 +228,26 @@ export function collectVersionHistory(
 
   applyPushSignals(tool, map);
 
-  return Array.from(map.values())
+  const rows = Array.from(map.values())
     .map((r) => finalize(r, tool.version))
     .sort((a, b) => {
       if (a.isCurrent !== b.isCurrent) return a.isCurrent ? -1 : 1;
       if (a.date && b.date) return b.date.localeCompare(a.date);
       return compareSemverDesc(a.version, b.version);
     });
+
+  if (tool.repo) {
+    for (let i = 0; i < rows.length; i++) {
+      const newer = rows[i];
+      const older = rows[i + 1];
+      if (!older?.onRelease || !newer.onRelease) continue;
+      const a = `v${older.version}`;
+      const b = `v${newer.version}`;
+      newer.compareUrl = `https://github.com/${tool.repo}/compare/${a}...${b}`;
+    }
+  }
+
+  return rows;
 }
 
 /** @deprecated Use collectVersionHistory */

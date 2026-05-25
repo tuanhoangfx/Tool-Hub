@@ -4,13 +4,14 @@
 
 - Version: `0.1.1`
 - Timestamp: 2026-05-25 07:42 (UTC+7)
-- Commit: pending
+- Commit: `0d4a81d`
 - Type: Patch
 - Status: Draft
 
 ### Changes
 
 - Đồng bộ version trên package, manifest và CHANGELOG.
+- Versions panel: lịch sử theo phiên bản, pipeline Commit auto-bump patch.
 
 ### Verification
 

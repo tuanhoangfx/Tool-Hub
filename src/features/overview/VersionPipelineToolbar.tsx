@@ -7,6 +7,7 @@ import {
   type VersionPipelineResult,
 } from "../../services/version-pipeline";
 import type { ToolVersionHistoryRow } from "./tool-versions";
+import { versionChecklist } from "./version-checklist";
 
 const BTNS: {
   action: VersionPipelineAction;
@@ -84,6 +85,9 @@ export function VersionPipelineToolbar({
 
   if (!currentRow?.isCurrent) return null;
 
+  const checklist = versionChecklist(currentRow);
+  const missing = checklist.filter((c) => !c.done);
+
   const nextPatch = (() => {
     const m = currentRow.version.match(/^(\d+)\.(\d+)\.(\d+)$/);
     if (!m) return "?";
@@ -150,6 +154,21 @@ export function VersionPipelineToolbar({
           </button>
         </div>
       </div>
+      {missing.length > 0 ? (
+        <div className="flex flex-wrap gap-1.5 text-[10px]">
+          <span className="text-[var(--muted)]">Còn thiếu:</span>
+          {missing.map((m) => (
+            <span
+              key={m.key}
+              className="rounded border border-amber-500/30 bg-amber-500/10 px-1.5 py-0.5 text-amber-200/90"
+            >
+              {m.label}
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="text-[10px] text-emerald-300/90">Checklist pipeline đủ cho bản hiện tại.</p>
+      )}
       {lastResult ? (
         <ul className="space-y-0.5 text-[10px] leading-snug">
           {lastResult.version ? (
