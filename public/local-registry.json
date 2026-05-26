@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-25T14:26:25.702Z",
-  "root": "E:\\Dev\\Tool",
+  "generatedAt": "2026-05-25T17:37:29.407Z",
+  "root": "E:\\Dev",
   "repositories": [
     {
       "id": "gpm-automation-console",
@@ -95,7 +95,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.2",
+      "localVersion": "0.1.3",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -126,11 +126,11 @@
       ],
       "scriptFiles": [
         "scripts/dev-with-launcher.cjs",
+        "scripts/git-pre-commit-version.cjs",
         "scripts/git-push.ps1",
+        "scripts/install-git-hooks.cjs",
         "scripts/kill-port.cjs",
-        "scripts/local-tool-launcher.cjs",
-        "scripts/publish-github-repo.cjs",
-        "scripts/push-and-deploy.ps1"
+        "scripts/local-tool-launcher.cjs"
       ]
     },
     {
@@ -539,6 +539,90 @@
         "scripts/dev-with-launcher.cjs",
         "scripts/ensure-dev.cjs",
         "scripts/find-dead-css.cjs"
+      ]
+    },
+    {
+      "id": "autovideo-studio",
+      "code": "P0021",
+      "name": "AutoVideo Studio",
+      "repo": "tuanhoangfx/AutoVideo-Studio",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.1.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Experimental",
+      "summary": "Auto-gen video: LLM script → ảnh (gen SD/DALL-E hoặc upload) → TTS (edge-tts VN) → subtitle (whisper) → Ken Burns + transition → MP4. Next.js UI + Python FastAPI worker.",
+      "localPath": "E:\\Dev\\Tool\\P0021-AutoVideo-Studio",
+      "tags": [
+        "Next.js 14",
+        "React 18",
+        "TypeScript",
+        "Tailwind",
+        "Python 3.11",
+        "FastAPI",
+        "FFmpeg",
+        "MoviePy",
+        "edge-tts",
+        "Whisper",
+        "Stable Diffusion"
+      ],
+      "localUrl": "http://127.0.0.1:3000",
+      "deployTarget": "vercel",
+      "usage": [
+        "Dev: cd app && pnpm dev",
+        "Build: cd app && pnpm build"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": []
+    },
+    {
+      "id": "cookie-bridge",
+      "code": "E0001",
+      "name": "E0001 Cookie Bridge",
+      "repo": "tuanhoangfx/E0001-cookie-bridge",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "0.5.36",
+      "category": "Extension",
+      "audience": "Tool maintainers",
+      "status": "Active",
+      "summary": "Chrome MV3 extension for masked cookie snapshots, AES-GCM vault sync, and cross-browser cookie apply.",
+      "localPath": "E:\\Dev\\Extension\\E0001-cookie-bridge",
+      "tags": [
+        "Chrome Extension",
+        "Manifest V3",
+        "JavaScript",
+        "Supabase",
+        "AES-GCM"
+      ],
+      "appUrl": "http://127.0.0.1:5177/?screen=cookie",
+      "localUrl": "chrome://extensions",
+      "deployTarget": "local",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json.",
+        "App: http://127.0.0.1:5177/?screen=cookie"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/test-bindings-pull-logic.mjs"
       ]
     }
   ]

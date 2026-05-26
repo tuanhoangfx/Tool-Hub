@@ -42,6 +42,7 @@ export type ToolManifest = {
   status?: string;
   summary?: string;
   type?: string;
+  category?: string;
   owner?: string;
   aliases?: string[];
   stack?: string[];

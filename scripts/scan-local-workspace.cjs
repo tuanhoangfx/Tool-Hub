@@ -12,20 +12,20 @@ const defaultRegistryPath = path.join(p0004Root, "public", "registry.default.jso
 const catalogPath = path.join(p0004Root, "public", "workspace-catalog.json");
 
 const { config, entries: allEntries } = scanAllRoots(undefined, { writeManifest: true });
-const toolEntries = allEntries.filter((e) => e.workspaceRoot === "tool" && e.assetKind === "project");
+const projectEntries = allEntries.filter((e) => e.assetKind === "project");
 
 const registry = {
   generatedAt: new Date().toISOString(),
-  root: config.roots.find((r) => r.id === "tool")?.path || "",
-  repositories: toolEntries.map(({ workspaceRoot, assetKind, ...repo }) => repo),
+  root: config.devRoot || config.roots.find((r) => r.id === "tool")?.path || "",
+  repositories: projectEntries.map(({ workspaceRoot, assetKind, ...repo }) => repo),
 };
 
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, `${JSON.stringify(registry, null, 2)}\n`);
-console.log(`Wrote ${toolEntries.length} tool projects to ${outputPath}`);
+console.log(`Wrote ${projectEntries.length} workspace projects to ${outputPath}`);
 
 const existingDefault = readJson(defaultRegistryPath) || [];
-const { merged, addedNew, updatedExisting } = mergeRegistryDefault(existingDefault, toolEntries);
+const { merged, addedNew, updatedExisting } = mergeRegistryDefault(existingDefault, projectEntries);
 fs.writeFileSync(defaultRegistryPath, `${JSON.stringify(merged, null, 2)}\n`);
 console.log(
   `Synced ${defaultRegistryPath} (${merged.length} entries, +${addedNew} new, ~${updatedExisting} updates)`,

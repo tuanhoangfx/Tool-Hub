@@ -49,7 +49,10 @@ export function ToolDetailSections({
   const versionRows = useMemo(() => collectVersionHistory(tool, manifest), [tool, manifest]);
   const roadmapNodes = useMemo(() => buildRoadmapNodes(manifest, versionRows), [manifest, versionRows]);
   const versionNeedsAction = useMemo(
-    () => versionRows.filter((r) => r.syncStatus === "needs-push" || r.syncStatus === "needs-sync").length,
+    () => {
+      const current = versionRows.find((r) => r.isCurrent);
+      return current?.syncStatus === "needs-push" || current?.syncStatus === "needs-sync" ? 1 : 0;
+    },
     [versionRows],
   );
 

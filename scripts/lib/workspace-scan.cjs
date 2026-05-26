@@ -206,7 +206,7 @@ function toProjectEntry(dir, index, workspaceRootId, options = {}) {
     branch: manifest?.github?.branch || "main",
     remoteEnabled: Boolean(repo),
     localVersion,
-    category: manifest?.type || "Local",
+    category: manifest?.category || manifest?.type || "Local",
     audience: "Tool maintainers",
     status: manifest?.status || "Needs review",
     summary: manifest?.summary || packageJson?.description || "Local workspace asset discovered by scanner.",
