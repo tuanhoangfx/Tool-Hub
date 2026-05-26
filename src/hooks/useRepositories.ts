@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FALLBACK_REPOSITORIES, loadDefaultRepositories } from "../data/repositories";
 import { clearCache } from "../lib/cache";
 import { mergeRepos, resolveTool } from "../lib/tooling";
@@ -61,7 +61,7 @@ export function useRepositories() {
     setLoadingAll(false);
   }
 
-  async function loadLocalRegistry() {
+  const loadLocalRegistry = useCallback(async () => {
     try {
       const response = await fetch(`/local-registry.json?t=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -70,7 +70,7 @@ export function useRepositories() {
     } catch (error) {
       setRegistryError(error instanceof Error ? error.message : "Khong doc duoc local-registry.json");
     }
-  }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +82,10 @@ export function useRepositories() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    void loadLocalRegistry();
+  }, [loadLocalRegistry]);
 
   useEffect(() => {
     if (repositories.length === 0) return undefined;
