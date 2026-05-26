@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertTriangle, Boxes } from "lucide-react";
 import { resolveHubKpiIcon } from "../../lib/badge-registry";
 import { EmptyState } from "../../components/EmptyState";
@@ -16,6 +16,7 @@ import {
   type KpiTileData,
 } from "../../components/sales-shell";
 import { useLocalHealth } from "../../hooks";
+import { compactIconSize } from "../../lib/ui-scale";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailModal } from "../overview/ToolDetailModal";
@@ -69,6 +70,7 @@ type HubListPageProps = {
   registryLabel: string;
   versionReleaseDate: string;
   versionReleaseLive: boolean;
+  headerActions?: ReactNode;
 };
 
 export function HubListPage({
@@ -87,6 +89,7 @@ export function HubListPage({
   registryLabel,
   versionReleaseDate,
   versionReleaseLive,
+  headerActions,
 }: HubListPageProps) {
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
@@ -216,6 +219,7 @@ export function HubListPage({
             pinSticky={false}
             dividerBelow={false}
             embedded
+            actions={headerActions}
           />
           {filterBar}
         </div>
@@ -235,6 +239,7 @@ export function HubListPage({
             }}
             pinSticky={prefs.headerPin}
             dividerBelow={!searchPin}
+            actions={headerActions}
           />
           {filterBar}
         </>
@@ -242,7 +247,7 @@ export function HubListPage({
 
       {registryError ? (
         <div className="mb-4 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
-          <AlertTriangle size={16} />
+          <AlertTriangle size={compactIconSize(16)} />
           {registryError}
         </div>
       ) : null}

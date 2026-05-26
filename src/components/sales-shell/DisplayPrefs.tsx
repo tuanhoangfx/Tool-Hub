@@ -16,11 +16,13 @@ import {
   SYSTEM_HEADER_STAT_DEFS,
 } from "../../features/system-hub/system-prefs";
 import { readAppScreen, type AppScreen } from "../../lib/app-screen";
+import { compactIconSize } from "../../lib/ui-scale";
 import { LIMIT_OPTIONS, patchHubListPrefs, readHubListPrefs, TIME_RANGES } from "../../lib/url-prefs";
 
 export type PrefItem = { key: string; label: string };
 
 type Tab = "general" | "display";
+type DisplayPrefsScope = "tab" | "global";
 
 export function DisplayPrefs({
   kpis,
@@ -37,6 +39,7 @@ export function DisplayPrefs({
   menuPlacement = "bottom",
   compact = false,
   sidebarRow = false,
+  scope = "tab",
 }: {
   kpis?: PrefItem[];
   charts?: PrefItem[];
@@ -56,6 +59,8 @@ export function DisplayPrefs({
   compact?: boolean;
   /** Full-width sidebar footer row (icon + label). */
   sidebarRow?: boolean;
+  /** `tab` controls current Hub/System surface; `global` controls whole-tool prefs. */
+  scope?: DisplayPrefsScope;
 }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<Tab>("general");
@@ -63,6 +68,7 @@ export function DisplayPrefs({
   const [screen, setScreen] = useState<AppScreen>(() => readAppScreen());
   const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
   const [sidebarPanelStyle, setSidebarPanelStyle] = useState<CSSProperties>({});
+  const [headerPanelStyle, setHeaderPanelStyle] = useState<CSSProperties>({});
   const ref = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -80,12 +86,32 @@ export function DisplayPrefs({
   }, []);
 
   useLayoutEffect(() => {
-    if (!open || !sidebarRow || !ref.current) return;
+    if (!open || !ref.current) return;
 
     const update = () => {
       const el = ref.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
+      const panelWidth = 288;
+      const mainRect = document.querySelector(".hub-main")?.getBoundingClientRect();
+      const minLeft = sidebarRow ? 8 : Math.max(8, (mainRect?.left ?? 0) + 8);
+
+      if (!sidebarRow) {
+        const availableWidth = Math.max(160, window.innerWidth - minLeft - 8);
+        const width = Math.min(panelWidth, availableWidth);
+        const left = Math.min(Math.max(rect.right - width, minLeft), window.innerWidth - width - 8);
+        setHeaderPanelStyle({
+          position: "fixed",
+          left,
+          top: menuPlacement === "bottom" ? rect.bottom + 6 : undefined,
+          bottom: menuPlacement === "top" ? Math.max(8, window.innerHeight - rect.top + 6) : undefined,
+          zIndex: 1100,
+          maxHeight: "min(70vh, 28rem)",
+          width,
+        });
+        return;
+      }
+
       setSidebarPanelStyle({
         position: "fixed",
         left: rect.right + 8,
@@ -103,7 +129,7 @@ export function DisplayPrefs({
       window.removeEventListener("resize", update);
       window.removeEventListener("scroll", update, true);
     };
-  }, [open, sidebarRow]);
+  }, [menuPlacement, open, sidebarRow]);
 
   useEffect(() => {
     const sync = () => setPrefs(readHubListPrefs());
@@ -140,16 +166,35 @@ export function DisplayPrefs({
   const visKpiEffective = isSystem ? systemDisplay?.kpi ?? null : visKpi;
   const visChartsEffective = isSystem ? systemDisplay?.charts ?? null : visCharts;
   const visHubFilters = prefs.hubFilters;
-  const headerStats =
-    headerStatsProp ?? (isSystem ? SYSTEM_HEADER_STAT_DEFS : HUB_HEADER_STAT_DEFS);
-  const headerStatDefaults =
-    defaultHeaderStatKeys ?? (isSystem ? DEFAULT_SYSTEM_HEADER_STAT_KEYS : DEFAULT_HUB_HEADER_STAT_KEYS);
+  const isGlobalScope = scope === "global";
+  const tabKpis = isGlobalScope ? [] : (kpis ?? []);
+  const tabCharts = isGlobalScope ? [] : (charts ?? []);
+  const tabFilters = isGlobalScope ? [] : (filters ?? []);
+  const headerStats = isGlobalScope
+    ? []
+    : (headerStatsProp ?? (isSystem ? SYSTEM_HEADER_STAT_DEFS : HUB_HEADER_STAT_DEFS));
+  const headerStatDefaults = isGlobalScope
+    ? new Set<string>()
+    : (defaultHeaderStatKeys ?? (isSystem ? DEFAULT_SYSTEM_HEADER_STAT_KEYS : DEFAULT_HUB_HEADER_STAT_KEYS));
   const visHeaderStats = isSystem ? prefs.systemHeaderStats : prefs.headerStats;
   const headerStatParam = isSystem ? "sstat" : "hstat";
 
-  function update(patch: Record<string, string | null>) {
+  function emitPrefsLog(message: string) {
+    if (typeof window === "undefined") return;
+    window.dispatchEvent(
+      new CustomEvent("tool-hub-log", {
+        detail: {
+          scope: isGlobalScope ? "Tool" : isSystem ? `System / ${systemTab}` : "Hub",
+          message,
+        },
+      }),
+    );
+  }
+
+  function update(patch: Record<string, string | null>, logMessage = "Updated display settings") {
     patchHubListPrefs(patch);
     setPrefs(readHubListPrefs());
+    emitPrefsLog(logMessage);
   }
 
   function defaultsFor(allItems: PrefItem[], defaults?: Set<string>) {
@@ -185,6 +230,7 @@ export function DisplayPrefs({
       patchSystemTabDisplay(systemTab, {
         [param]: allDefault ? null : [...next],
       });
+      emitPrefsLog(`Updated ${systemTab} display`);
       return;
     }
     if (allDefault) {
@@ -198,58 +244,68 @@ export function DisplayPrefs({
     return set === null ? defaults.has(key) : set.has(key);
   }
 
-  const kpiDefaults = defaultsFor(kpis ?? [], defaultKpiKeys);
-  const chartsDefaults = defaultsFor(charts ?? [], defaultChartKeys);
-  const filterDefaults = defaultsFor(filters ?? [], defaultFilterKeys);
+  const kpiDefaults = defaultsFor(tabKpis, defaultKpiKeys);
+  const chartsDefaults = defaultsFor(tabCharts, defaultChartKeys);
+  const filterDefaults = defaultsFor(tabFilters, defaultFilterKeys);
   const visKpiCount = visKpiEffective === null ? kpiDefaults.size : visKpiEffective.size;
   const visChartsCount = visChartsEffective === null ? chartsDefaults.size : visChartsEffective.size;
   const visFilterCount = visHubFilters === null ? filterDefaults.size : visHubFilters.size;
   const visHeaderStatCount = visHeaderStats === null ? headerStatDefaults.size : visHeaderStats.size;
   const headerStatLabel = isSystem ? "System header" : "Hub header";
+  const hasGeneralPanel = isGlobalScope
+    ? showHeaderPin
+    : showRange || showLimit;
+  const hasDisplayPanel =
+    !isGlobalScope && (tabKpis.length > 0 || tabCharts.length > 0 || tabFilters.length > 0 || headerStats.length > 0);
+
+  useEffect(() => {
+    if (!open) return;
+    if (!hasGeneralPanel && tab === "general" && hasDisplayPanel) setTab("display");
+    if (!hasDisplayPanel && tab === "display" && hasGeneralPanel) setTab("general");
+  }, [hasDisplayPanel, hasGeneralPanel, open, tab]);
 
   const activeCount =
-    (showRange && prefs.range !== "30d" ? 1 : 0) +
-    (showLimit && prefs.limit !== 100 ? 1 : 0) +
-    (rawKpi !== null ? 1 : 0) +
-    (rawCharts !== null ? 1 : 0) +
-    (rawFilters !== null ? 1 : 0) +
-    (rawHeaderStats !== null ? 1 : 0) +
-    (showHeaderPin && rawHpin !== null ? 1 : 0) +
-    (!isSystem && rawSpin === "0" ? 1 : 0) +
-    (rawNavicon === "0" ? 1 : 0);
+    scope === "global"
+      ? (showHeaderPin && rawHpin !== null ? 1 : 0) +
+        (rawSpin === "0" ? 1 : 0) +
+        (rawNavicon === "0" ? 1 : 0)
+      : (showRange && prefs.range !== "30d" ? 1 : 0) +
+        (showLimit && prefs.limit !== 100 ? 1 : 0) +
+        (rawKpi !== null ? 1 : 0) +
+        (rawCharts !== null ? 1 : 0) +
+        (rawFilters !== null ? 1 : 0) +
+        (rawHeaderStats !== null ? 1 : 0);
 
   const triggerClass = sidebarRow
     ? "relative flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-[var(--muted)] transition-colors hover:bg-white/5 hover:text-[var(--text)]"
     : compact
-      ? "btn btn-ghost relative px-2.5"
-      : "btn btn-ghost";
+      ? "btn btn-ghost relative border-amber-400/20 bg-amber-500/10 px-2.5 text-amber-200 hover:bg-amber-500/15"
+      : "btn btn-ghost border-amber-400/20 bg-amber-500/10 text-amber-200 hover:bg-amber-500/15 hover:text-amber-100";
 
   const panelShellClass =
     "overflow-y-auto rounded-xl border border-white/10 bg-[var(--bg)] p-3 shadow-2xl shadow-black/40";
-  const anchoredPanelClass =
-    menuPlacement === "top"
-      ? `absolute right-0 bottom-full z-50 mb-1.5 max-h-[min(70vh,28rem)] w-72 ${panelShellClass}`
-      : `absolute right-0 top-full z-50 mt-1.5 max-h-[min(70vh,28rem)] w-72 ${panelShellClass}`;
 
   const settingsPanel = open ? (
     <div
       ref={panelRef}
-      className={sidebarRow ? panelShellClass : anchoredPanelClass}
-      style={sidebarRow ? sidebarPanelStyle : undefined}
+      className={panelShellClass}
+      style={sidebarRow ? sidebarPanelStyle : headerPanelStyle}
     >
+          {hasGeneralPanel && hasDisplayPanel ? (
           <div className="mb-2.5 flex gap-1 rounded-lg bg-white/[.03] p-0.5">
-            <TabButton active={tab === "general"} onClick={() => setTab("general")} icon={<Sliders size={12} />}>
+            <TabButton active={tab === "general"} onClick={() => setTab("general")} icon={<Sliders size={compactIconSize(12)} />}>
               General
             </TabButton>
-            <TabButton active={tab === "display"} onClick={() => setTab("display")} icon={<BarChart3 size={12} />}>
+            <TabButton active={tab === "display"} onClick={() => setTab("display")} icon={<BarChart3 size={compactIconSize(12)} />}>
               Display
             </TabButton>
           </div>
+          ) : null}
 
-          {tab === "general" ? (
+          {tab === "general" && hasGeneralPanel ? (
             <>
               {showRange ? (
-                <Section icon={<Clock size={11} />} label="Time range">
+                <Section icon={<Clock size={compactIconSize(11)} />} label="Time range">
                   <div className="grid grid-cols-3 gap-1">
                     {TIME_RANGES.map((r) => (
                       <button
@@ -312,47 +368,47 @@ export function DisplayPrefs({
             </>
           ) : null}
 
-          {tab === "display" ? (
+          {tab === "display" && hasDisplayPanel ? (
             <>
-              {kpis && kpis.length > 0 ? (
-                <Section label={`KPI (${visKpiCount}/${kpis.length})`}>
+              {tabKpis.length > 0 ? (
+                <Section label={`KPI (${visKpiCount}/${tabKpis.length})`}>
                   <div className="space-y-0.5">
-                    {kpis.map((k) => (
+                    {tabKpis.map((k) => (
                       <ToggleRow
                         key={k.key}
                         label={k.label}
                         on={isVisible(visKpiEffective, kpiDefaults, k.key)}
-                        onChange={() => toggle("kpi", kpis, kpiDefaults, k.key)}
+                        onChange={() => toggle("kpi", tabKpis, kpiDefaults, k.key)}
                       />
                     ))}
                   </div>
                 </Section>
               ) : null}
 
-              {charts && charts.length > 0 ? (
-                <Section label={`Charts (${visChartsCount}/${charts.length})`}>
+              {tabCharts.length > 0 ? (
+                <Section label={`Charts (${visChartsCount}/${tabCharts.length})`}>
                   <div className="space-y-0.5">
-                    {charts.map((c) => (
+                    {tabCharts.map((c) => (
                       <ToggleRow
                         key={c.key}
                         label={c.label}
                         on={isVisible(visChartsEffective, chartsDefaults, c.key)}
-                        onChange={() => toggle("charts", charts, chartsDefaults, c.key)}
+                        onChange={() => toggle("charts", tabCharts, chartsDefaults, c.key)}
                       />
                     ))}
                   </div>
                 </Section>
               ) : null}
 
-              {filters && filters.length > 0 ? (
-                <Section label={`Filters (${visFilterCount}/${filters.length})`}>
+              {tabFilters.length > 0 ? (
+                <Section label={`Filters (${visFilterCount}/${tabFilters.length})`}>
                   <div className="space-y-0.5">
-                    {filters.map((f) => (
+                    {tabFilters.map((f) => (
                       <ToggleRow
                         key={f.key}
                         label={f.label}
                         on={isVisible(visHubFilters, filterDefaults, f.key)}
-                        onChange={() => toggle("hfilt", filters, filterDefaults, f.key)}
+                        onChange={() => toggle("hfilt", tabFilters, filterDefaults, f.key)}
                       />
                     ))}
                   </div>
@@ -386,19 +442,26 @@ export function DisplayPrefs({
           <button
             type="button"
             onClick={() => {
-              if (isSystem) resetSystemTabDisplay();
-              update({
-                range: null,
-                limit: null,
+              if (isGlobalScope) {
+                update({ hpin: null, spin: null, navicon: null }, "Reset global settings");
+                return;
+              }
+
+              if (isSystem) {
+                resetSystemTabDisplay(systemTab);
+                update({ sstat: null }, `Reset ${systemTab} display settings`);
+                return;
+              }
+
+              const patch: Record<string, string | null> = {
                 kpi: null,
                 charts: null,
                 hfilt: null,
                 hstat: null,
-                sstat: null,
-                hpin: null,
-                spin: null,
-                navicon: null,
-              });
+              };
+              if (showRange) patch.range = null;
+              if (showLimit) patch.limit = null;
+              update(patch, "Reset Hub display settings");
             }}
             className="mt-2 w-full rounded-md border border-white/10 px-2 py-1.5 text-[10px] text-[var(--muted)] hover:bg-white/[.05] hover:text-[var(--text)]"
           >
@@ -410,9 +473,9 @@ export function DisplayPrefs({
   return (
     <div ref={ref} className={sidebarRow ? "relative w-full" : "relative"}>
       <button type="button" onClick={() => setOpen((o) => !o)} className={triggerClass} title="Display settings">
-        <Settings size={sidebarRow ? 15 : 14} className={sidebarRow ? "shrink-0 text-amber-400/95" : undefined} />
-        {sidebarRow || !compact ? <span className={sidebarRow ? "flex-1 text-left" : "hidden sm:inline"}>Settings</span> : null}
-        {activeCount > 0 ? (
+        <Settings size={compactIconSize(sidebarRow ? 15 : 14)} className="shrink-0 text-amber-300" />
+        {sidebarRow || !compact ? <span className={sidebarRow ? "flex-1 text-left" : "hidden sm:inline"}>Setting</span> : null}
+        {activeCount > 0 && !sidebarRow ? (
           <span
             className={
               compact && !sidebarRow
@@ -427,9 +490,7 @@ export function DisplayPrefs({
         ) : null}
       </button>
 
-      {sidebarRow && settingsPanel
-        ? createPortal(settingsPanel, document.body)
-        : settingsPanel}
+      {settingsPanel ? createPortal(settingsPanel, document.body) : null}
     </div>
   );
 }
@@ -483,7 +544,7 @@ function ToggleRow({ label, on, onChange }: { label: string; on: boolean; onChan
       <span
         className={`grid h-4 w-4 place-items-center rounded border ${on ? "border-indigo-400 bg-indigo-500/30" : "border-white/15 bg-white/[.03]"}`}
       >
-        {on ? <Check size={10} className="text-indigo-200" /> : null}
+        {on ? <Check size={compactIconSize(10)} className="text-indigo-200" /> : null}
       </span>
       <span className={on ? "text-[var(--text)]" : "text-[var(--muted)]"}>{label}</span>
     </button>

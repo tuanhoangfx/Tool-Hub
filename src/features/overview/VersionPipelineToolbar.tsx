@@ -6,6 +6,7 @@ import {
   type VersionPipelineAction,
   type VersionPipelineResult,
 } from "../../services/version-pipeline";
+import { compactIconSize } from "../../lib/ui-scale";
 import type { ToolVersionHistoryRow } from "./tool-versions";
 import { versionChecklist } from "./version-checklist";
 
@@ -135,9 +136,9 @@ export function VersionPipelineToolbar({
               className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[var(--panel-2)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--text)] hover:bg-white/5 disabled:opacity-40"
             >
               {busy === action ? (
-                <Loader2 size={12} className="anim-spin" aria-hidden />
+                <Loader2 size={compactIconSize(12)} className="anim-spin" aria-hidden />
               ) : (
-                <Icon size={12} className="text-indigo-300" aria-hidden />
+                <Icon size={compactIconSize(12)} className="text-indigo-300" aria-hidden />
               )}
               {label}
             </button>
@@ -149,7 +150,7 @@ export function VersionPipelineToolbar({
             onClick={() => void run("all")}
             className="inline-flex items-center gap-1.5 rounded-lg border border-indigo-400/35 bg-indigo-500/15 px-2.5 py-1.5 text-[11px] font-semibold text-indigo-100 hover:bg-indigo-500/25 disabled:opacity-40"
           >
-            {busy === "all" ? <Loader2 size={12} className="anim-spin" /> : <RefreshCw size={12} />}
+            {busy === "all" ? <Loader2 size={compactIconSize(12)} className="anim-spin" /> : <RefreshCw size={compactIconSize(12)} />}
             All
           </button>
         </div>

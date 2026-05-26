@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CalendarDays, ChevronDown } from "lucide-react";
+import { compactIconSize } from "../../lib/ui-scale";
 import { patchHubListPrefs, TIME_RANGES, type TimeRange } from "../../lib/url-prefs";
 
 export function HubTimeRangeSelect({ value }: { value: TimeRange }) {
@@ -26,15 +27,15 @@ export function HubTimeRangeSelect({ value }: { value: TimeRange }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex h-[34px] items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors ${
+        className={`inline-flex h-[var(--hub-control-h)] items-center gap-1.5 rounded-lg border px-3 text-xs font-medium transition-colors ${
           value !== "30d"
             ? "border-amber-500/35 bg-amber-500/10 text-amber-200"
             : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
         }`}
       >
-        <CalendarDays size={13} className="shrink-0 opacity-80" />
+        <CalendarDays size={compactIconSize(13)} className="shrink-0 opacity-80" />
         <span>{label}</span>
-        <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown size={compactIconSize(12)} className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open ? (
         <div className="anim-pop absolute right-0 top-full z-30 mt-1 min-w-[9rem] rounded-xl border border-white/10 bg-[var(--panel)] p-1 shadow-xl shadow-black/40">

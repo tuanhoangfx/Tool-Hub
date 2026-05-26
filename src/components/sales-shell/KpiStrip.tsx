@@ -1,4 +1,5 @@
 import type { ElementType } from "react";
+import { compactIconSize } from "../../lib/ui-scale";
 
 type Tone = "indigo" | "emerald" | "amber" | "rose" | "blue" | "purple";
 
@@ -40,7 +41,7 @@ function KpiTile({ label, value, hint, icon: Icon, tone = "indigo" }: KpiTileDat
       <div className={`pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${t.bg} blur-2xl`} />
       <div className="relative flex items-center gap-3">
         <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${t.icon}`}>
-          {Icon ? <Icon size={18} /> : null}
+          {Icon ? <Icon size={compactIconSize(18)} /> : null}
         </div>
         <div className="min-w-0 flex-1">
           <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">{label}</div>

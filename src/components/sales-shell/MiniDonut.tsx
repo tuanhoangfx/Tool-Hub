@@ -1,4 +1,5 @@
 import type { FilterIconMeta } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 
 export type DonutItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };
 
@@ -12,7 +13,7 @@ export function MiniDonut({
   title,
   items,
   total: customTotal,
-  size = 110,
+  size = compactIconSize(110),
 }: {
   title: string;
   items: DonutItem[];
@@ -77,7 +78,7 @@ export function MiniDonut({
           {slices.slice(0, 6).map((s, i) => (
             <li key={i} className="flex items-center gap-2">
               {s.iconMeta ? (
-                <s.iconMeta.icon size={11} className={`shrink-0 ${s.iconMeta.className}`} aria-hidden />
+                <s.iconMeta.icon size={compactIconSize(11)} className={`shrink-0 ${s.iconMeta.className}`} aria-hidden />
               ) : (
                 <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: s.color }} />
               )}

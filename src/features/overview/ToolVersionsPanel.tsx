@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Check, CheckCircle2, Circle, Copy, ExternalLink, GitCompare, MoreHorizontal } from "lucide-react";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
+import { compactIconSize } from "../../lib/ui-scale";
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
 import type { ToolVersionHistoryRow } from "./tool-versions";
 import {
@@ -23,9 +24,9 @@ function PipelineCell({ on, title }: { on: boolean; title: string }) {
       title={on ? `${title} - done` : `${title} - missing`}
     >
       {on ? (
-        <CheckCircle2 size={15} className="text-emerald-400" aria-label="Done" />
+        <CheckCircle2 size={compactIconSize(15)} className="text-emerald-400" aria-label="Done" />
       ) : (
-        <Circle size={13} className="text-[var(--muted)]/35" aria-label="Missing" />
+        <Circle size={compactIconSize(13)} className="text-[var(--muted)]/35" aria-label="Missing" />
       )}
     </span>
   );
@@ -49,7 +50,7 @@ function RowActions({
         title="Copy version"
         aria-label={`Copy ${row.display}`}
       >
-        {copiedId === row.id ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+        {copiedId === row.id ? <Check size={compactIconSize(12)} className="text-emerald-400" /> : <Copy size={compactIconSize(12)} />}
       </button>
       {row.compareUrl ? (
         <a
@@ -59,7 +60,7 @@ function RowActions({
           className="inline-flex items-center justify-center rounded-md border border-white/10 p-1.5 text-[var(--muted)] hover:bg-white/[.05] hover:text-violet-300"
           title="Compare with previous version on GitHub"
         >
-          <GitCompare size={12} />
+          <GitCompare size={compactIconSize(12)} />
         </a>
       ) : null}
       {row.releaseUrl ? (
@@ -70,7 +71,7 @@ function RowActions({
           className="inline-flex items-center justify-center rounded-md border border-white/10 p-1.5 text-[var(--muted)] hover:bg-white/[.05] hover:text-cyan-300"
           title="Open GitHub release"
         >
-          <ExternalLink size={12} />
+          <ExternalLink size={compactIconSize(12)} />
         </a>
       ) : null}
     </div>
@@ -129,13 +130,13 @@ export function ToolVersionsPanel({
       <p className="text-[11px] leading-relaxed text-[var(--muted)]">
         Each row is <strong className="text-[var(--text)]">one version</strong> from package/CHANGELOG.{" "}
         <strong className="text-[var(--text)]">Commit</strong> auto-bumps the patch version (for example 0.1.0 to 0.1.1)
-        and syncs docs. <CheckCircle2 size={11} className="inline text-emerald-400" /> = completed step. Current:{" "}
+        and syncs docs. <CheckCircle2 size={compactIconSize(11)} className="inline text-emerald-400" /> = completed step. Current:{" "}
         <span className="font-mono text-indigo-200">v{canonicalVersion}</span>
         {needsActionCount > 0 ? (
           <span className="ml-2 text-amber-200/90">· {needsActionCount} need sync / push</span>
         ) : currentSynced ? (
           <span className="ml-2 inline-flex items-center gap-1 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-200">
-            <CheckCircle2 size={10} className="text-emerald-400" aria-hidden />
+            <CheckCircle2 size={compactIconSize(10)} className="text-emerald-400" aria-hidden />
             Release synced
           </span>
         ) : null}
@@ -171,7 +172,7 @@ export function ToolVersionsPanel({
       ) : (
         <div className="rounded-lg border border-white/5 p-2">
           <div className="overflow-x-auto rounded-md bg-black/10">
-          <table className="w-full min-w-[820px] border-collapse text-left text-[12px]">
+          <table className="w-full min-w-[var(--version-table-min-w)] border-collapse text-left text-[12px]">
             <thead>
               <tr className="border-b border-white/5 bg-white/[.02]">
                 <TableColumnHeader {...h.sync} />
@@ -184,7 +185,7 @@ export function ToolVersionsPanel({
                 <TableColumnHeader {...h.note} />
                 <th className="w-20 px-2 py-2 text-right font-medium" title={h.actions.title}>
                   <span className="ml-auto inline-flex items-center gap-1 normal-case tracking-normal">
-                    <MoreHorizontal size={13} className="text-slate-400" aria-hidden />
+                    <MoreHorizontal size={compactIconSize(13)} className="text-slate-400" aria-hidden />
                     <span className="text-[10px] text-[var(--muted)]">{h.actions.label}</span>
                   </span>
                 </th>
@@ -213,7 +214,7 @@ export function ToolVersionsPanel({
                       <div className="font-mono text-[9px] text-cyan-300/70">{row.assetSize}</div>
                     ) : null}
                   </td>
-                  <td className="max-w-[160px] truncate px-3 py-2 align-top text-[11px] text-[var(--text)]" title={row.title}>
+                  <td className="max-w-[var(--version-title-max-w)] truncate px-3 py-2 align-top text-[11px] text-[var(--text)]" title={row.title}>
                     {row.title ?? "—"}
                   </td>
                   {VERSION_PIPELINE_COLS.map((col) => (
@@ -221,7 +222,7 @@ export function ToolVersionsPanel({
                       <PipelineCell on={row[col.key]} title={col.title} />
                     </td>
                   ))}
-                  <td className="max-w-[200px] px-3 py-2 align-top text-[10px] leading-snug text-amber-100/80">
+                  <td className="max-w-[var(--version-note-max-w)] px-3 py-2 align-top text-[10px] leading-snug text-amber-100/80">
                     {row.syncNote || "—"}
                   </td>
                   <td className="px-2 py-2 align-top">

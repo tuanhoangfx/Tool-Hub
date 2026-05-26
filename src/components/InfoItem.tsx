@@ -1,4 +1,5 @@
 import { MaterialIcon } from "./MaterialIcon";
+import { compactIconSize } from "../lib/ui-scale";
 
 type InfoItemProps = {
   icon: string;
@@ -10,7 +11,7 @@ export function InfoItem({ icon, label, value }: InfoItemProps) {
   return (
     <div className="info-item">
       <span className="info-item-label">
-        <MaterialIcon name={icon} size={14} />
+        <MaterialIcon name={icon} size={compactIconSize(14)} />
         {label}
       </span>
       <strong>{value}</strong>

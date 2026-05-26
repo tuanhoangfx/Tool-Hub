@@ -1,4 +1,5 @@
 import { MetricBadge, RegistryMetricBadge } from "../../components/sales-shell";
+import { compactIconSize } from "../../lib/ui-scale";
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
 import type { RoadmapNode } from "./roadmap-nodes";
 
@@ -75,13 +76,13 @@ function IconOrb({ node, statusClass, placement }: { node: RoadmapNode; statusCl
         aria-label={title}
         title={title}
       >
-        <Icon size={16} aria-hidden />
+        <Icon size={compactIconSize(16)} aria-hidden />
       </a>
     );
   }
   return (
     <span className={className} aria-label={title} title={title}>
-      <Icon size={16} aria-hidden />
+      <Icon size={compactIconSize(16)} aria-hidden />
     </span>
   );
 }

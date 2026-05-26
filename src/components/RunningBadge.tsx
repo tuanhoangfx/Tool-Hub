@@ -1,4 +1,5 @@
 import { MaterialIcon } from "./MaterialIcon";
+import { compactIconSize } from "../lib/ui-scale";
 import type { HealthState } from "../hooks/useLocalHealth";
 
 type RunningBadgeProps = {
@@ -20,7 +21,7 @@ export function RunningBadge({ state, localUrl, compact }: RunningBadgeProps) {
       onClick={(e) => e.stopPropagation()}
     >
       <span className="running-badge-dot" aria-hidden="true" />
-      <MaterialIcon name="play_arrow" size={12} />
+      <MaterialIcon name="play_arrow" size={compactIconSize(12)} />
       <span className="running-badge-label">RUNNING</span>
     </a>
   );

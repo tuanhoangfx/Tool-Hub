@@ -1,6 +1,7 @@
 import { GROUP_TONE, TYPE_TONE, slug, type FieldSpec, type Mode } from "../../../lib/hub-schema-spec";
 import { resolveDeployBadge } from "../../../lib/badge-registry";
 import { resolveFieldSpecIcon, resolveHealthStatusIcon } from "../../../lib/badge-registry";
+import { compactIconSize } from "../../../lib/ui-scale";
 import { MetricBadge } from "../../../components/sales-shell/MetricBadge";
 import { SchemaGroupBadge, SchemaModeBadge } from "./SchemaBadges";
 
@@ -117,7 +118,7 @@ export function SpecTable({
                             {(() => {
                               const fieldIcon = resolveFieldSpecIcon(f);
                               const FieldIcon = fieldIcon.icon;
-                              return <FieldIcon size={12} className={`shrink-0 ${fieldIcon.className}`} aria-hidden />;
+                              return <FieldIcon size={compactIconSize(12)} className={`shrink-0 ${fieldIcon.className}`} aria-hidden />;
                             })()}
                             <span className="font-medium">{f.label}</span>
                             {f.pk ? (

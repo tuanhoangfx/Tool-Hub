@@ -22,7 +22,7 @@ export function ToolDetailContent({
   const code = tool.code;
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[200px_minmax(0,1fr)]">
+    <div className="grid gap-4 lg:grid-cols-[var(--overview-detail-toc-col-w)_minmax(0,1fr)]">
       <aside className="lg:sticky lg:top-0 lg:self-start">
         <OverviewTocNav code={code} idPrefix={idPrefix} />
       </aside>

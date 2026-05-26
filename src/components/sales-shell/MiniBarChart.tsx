@@ -1,4 +1,5 @@
 import type { FilterIconMeta } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 
 export type BarItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };
 
@@ -31,7 +32,7 @@ export function MiniBarChart({
             <li key={i} className="anim-slide flex items-center gap-2 text-xs">
               <span className="flex w-24 min-w-0 items-center gap-1 truncate text-[var(--muted)]" title={it.label}>
                 {it.iconMeta ? (
-                  <it.iconMeta.icon size={11} className={`shrink-0 ${it.iconMeta.className}`} aria-hidden />
+                  <it.iconMeta.icon size={compactIconSize(11)} className={`shrink-0 ${it.iconMeta.className}`} aria-hidden />
                 ) : null}
                 <span className="truncate">{it.label}</span>
               </span>

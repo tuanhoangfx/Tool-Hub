@@ -6,6 +6,7 @@ import {
   resolveLinkKindBadge,
   resolveLinkStatusBadge,
 } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 import { useLocalHealth, type HealthState } from "../../hooks/useLocalHealth";
 import type { ToolLinkRow } from "./tool-links";
 import {
@@ -52,7 +53,7 @@ function LinkActions({
         title="Copy value"
         aria-label={`Copy ${link.label}`}
       >
-        {copiedId === link.id ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+        {copiedId === link.id ? <Check size={compactIconSize(12)} className="text-emerald-400" /> : <Copy size={compactIconSize(12)} />}
       </button>
       {link.href ? (
         <a
@@ -62,7 +63,7 @@ function LinkActions({
           className="inline-flex items-center justify-center rounded-md border border-white/10 p-1.5 text-[var(--muted)] hover:bg-white/[.05] hover:text-cyan-300"
           title={`Open ${link.label}`}
         >
-          <ExternalLink size={12} />
+          <ExternalLink size={compactIconSize(12)} />
         </a>
       ) : null}
     </div>
@@ -146,7 +147,7 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
                 onClick={() => void check()}
                 disabled={checking}
               >
-                <RefreshCcw size={12} className={checking ? "anim-spin" : ""} />
+                <RefreshCcw size={compactIconSize(12)} className={checking ? "anim-spin" : ""} />
                 Recheck health
               </button>
             ) : null}

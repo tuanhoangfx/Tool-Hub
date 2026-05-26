@@ -1,4 +1,5 @@
 import { MaterialIcon } from "./MaterialIcon";
+import { compactIconSize } from "../lib/ui-scale";
 
 type ToolAvatarProps = {
   code: string;
@@ -7,11 +8,15 @@ type ToolAvatarProps = {
   size?: "sm" | "md" | "lg";
 };
 
-const SIZE = { sm: 32, md: 40, lg: 48 } as const;
+const SIZE = {
+  sm: compactIconSize(32),
+  md: compactIconSize(40),
+  lg: compactIconSize(48),
+} as const;
 
 export function ToolAvatar({ code, iconName, svgSrc, size = "md" }: ToolAvatarProps) {
   const px = SIZE[size];
-  const glyphPx = size === "lg" ? 32 : size === "md" ? 26 : 20;
+  const glyphPx = size === "lg" ? compactIconSize(32) : size === "md" ? compactIconSize(26) : compactIconSize(20);
 
   if (svgSrc) {
     return (
@@ -22,7 +27,7 @@ export function ToolAvatar({ code, iconName, svgSrc, size = "md" }: ToolAvatarPr
   }
 
   const initials = code.slice(0, 2).toUpperCase();
-  const iconPx = size === "lg" ? 22 : size === "md" ? 18 : 16;
+  const iconPx = size === "lg" ? compactIconSize(22) : size === "md" ? compactIconSize(18) : compactIconSize(16);
   return (
     <div className={`tool-avatar tool-avatar-${size}`} style={{ width: px, height: px }}>
       <span className="tool-avatar-initials" aria-hidden="true">

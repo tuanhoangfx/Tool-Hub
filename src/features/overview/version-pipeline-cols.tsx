@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react";
+import { compactIconSize } from "../../lib/ui-scale";
 import type { PipelineColDef } from "./version-pipeline-defs";
 
 export function PipelineColumnHeader({ col }: { col: PipelineColDef }) {
@@ -6,7 +7,7 @@ export function PipelineColumnHeader({ col }: { col: PipelineColDef }) {
   return (
     <th className="min-w-[5.5rem] px-1.5 py-2 text-center font-medium" title={col.title}>
       <span className="mx-auto inline-flex items-center justify-center gap-1 normal-case tracking-normal">
-        <Icon size={13} className={`shrink-0 ${col.iconClass}`} aria-hidden />
+        <Icon size={compactIconSize(13)} className={`shrink-0 ${col.iconClass}`} aria-hidden />
         <span className="text-[10px] leading-none text-[var(--text)]">{col.shortLabel}</span>
       </span>
     </th>
@@ -35,7 +36,7 @@ export function TableColumnHeader({
           align === "center" ? "mx-auto justify-center" : align === "right" ? "ml-auto justify-end" : ""
         }`}
       >
-        <Icon size={13} className={iconClass} aria-hidden />
+        <Icon size={compactIconSize(13)} className={iconClass} aria-hidden />
         <span className="text-[10px] text-[var(--muted)]">{label}</span>
       </span>
     </th>

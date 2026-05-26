@@ -1,4 +1,5 @@
 import type { Appearance } from "../hooks/useTheme";
+import { compactIconSize } from "../lib/ui-scale";
 import { MaterialIcon } from "./MaterialIcon";
 
 type ThemeToggleProps = {
@@ -16,7 +17,7 @@ export function ThemeToggle({ appearance, onCycle }: ThemeToggleProps) {
   const { icon, label } = LABELS[appearance];
   return (
     <button className="theme-toggle" type="button" onClick={onCycle} aria-label={label} title={label}>
-      <MaterialIcon name={icon} size={22} />
+      <MaterialIcon name={icon} size={compactIconSize(22)} />
     </button>
   );
 }

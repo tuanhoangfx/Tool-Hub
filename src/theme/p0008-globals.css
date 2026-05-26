@@ -4,6 +4,25 @@
 
 :root,
 .theme-hub {
+  --hub-compact-scale: 0.9;
+  --hub-control-h: 31px;
+  --hub-card-min-h: 198px;
+  --hub-search-min-w: 180px;
+  --hub-count-badge-min-w: 14px;
+  --hub-metric-badge-h: 20px;
+  --hub-card-meta-min-h: 6.75rem;
+  --hub-card-chip-row-min-h: 20px;
+  --overview-toc-w: 135px;
+  --overview-toc-h: 263px;
+  --overview-toc-row-h: 30px;
+  --overview-detail-toc-col-w: 180px;
+  --schema-graph-h: 414px;
+  --schema-graph-compact-h: 252px;
+  --schema-graph-side-w: 198px;
+  --schema-hover-min-h: 126px;
+  --version-table-min-w: 738px;
+  --version-title-max-w: 144px;
+  --version-note-max-w: 180px;
   --app-tab-header-py: 0.75rem;
   --app-tab-header-px: 1.5rem;
   --app-tab-header-min-h: 2.75rem;
@@ -22,6 +41,10 @@
   --success: #22c55e;
   --warn: #f59e0b;
   --danger: #ef4444;
+}
+
+html {
+  font-size: calc(16px * var(--hub-compact-scale));
 }
 
 html,
@@ -184,12 +207,12 @@ body,
 
 .field {
   width: 100%;
-  padding: 8px 10px;
+  padding: 7px 9px;
   background: var(--panel-2);
   color: var(--text);
   border: 1px solid #2a3158;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   transition:
     border-color 0.15s,
     box-shadow 0.15s,
@@ -207,10 +230,10 @@ body,
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
+  gap: 5px;
+  padding: 6px 13px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12px;
   background: var(--accent);
   color: white;
   border: 0;
@@ -245,10 +268,10 @@ body,
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 8px;
+  gap: 3px;
+  padding: 2px 7px;
   border-radius: 999px;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
 }
 

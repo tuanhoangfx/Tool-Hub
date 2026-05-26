@@ -26,6 +26,7 @@ import {
   ToolCodeBadge,
 } from "./hub-tool-ui";
 import { healthDotColor } from "./hub-tool-ui-utils";
+import { compactIconSize } from "../../lib/ui-scale";
 
 const META: Record<string, { Icon: LucideIcon; tint: string }> = {
   summary: { Icon: User2, tint: "#38bdf8" },
@@ -52,7 +53,7 @@ export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
     <button
       type="button"
       onClick={() => onOpen(tool.id)}
-      className="group flex h-full min-h-[220px] w-full flex-col rounded-xl border border-white/5 bg-[var(--panel)] p-4 text-left transition-[border-color,box-shadow,background-color] duration-200 hover:border-indigo-500/40 hover:bg-white/[0.02] hover:shadow-[0_8px_24px_rgba(99,102,241,0.12)]"
+      className="group flex h-full min-h-[var(--hub-card-min-h)] w-full flex-col rounded-xl border border-white/5 bg-[var(--panel)] p-4 text-left transition-[border-color,box-shadow,background-color] duration-200 hover:border-indigo-500/40 hover:bg-white/[0.02] hover:shadow-[0_8px_24px_rgba(99,102,241,0.12)]"
     >
       <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
@@ -76,10 +77,10 @@ export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
             </div>
           </div>
         </div>
-        <Pencil size={14} className="shrink-0 text-[var(--muted)] opacity-0 transition-opacity group-hover:opacity-100" />
+        <Pencil size={compactIconSize(14)} className="shrink-0 text-[var(--muted)] opacity-0 transition-opacity group-hover:opacity-100" />
       </div>
 
-      <div className="min-h-[7.5rem] shrink-0 space-y-1.5 text-xs text-[var(--muted)]">
+      <div className="min-h-[var(--hub-card-meta-min-h)] shrink-0 space-y-1.5 text-xs text-[var(--muted)]">
         <MetaRow kind="summary">
           <span className="line-clamp-2">{tool.summary || tool.category || "—"}</span>
         </MetaRow>
@@ -108,7 +109,7 @@ export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
       </div>
 
       <div className="mt-auto shrink-0 pt-3">
-        <div className="flex min-h-[22px] flex-wrap items-center gap-1.5">
+        <div className="flex min-h-[var(--hub-card-chip-row-min-h)] flex-wrap items-center gap-1.5">
           <QuietChip label={healthLabel} tone="ok" iconMeta={resolveHealthStatusIcon(healthLabel)} />
           <QuietChip
             label={deployLabel(tool.deployTarget)}
@@ -148,7 +149,7 @@ function MetaRow({ kind, children }: { kind: keyof typeof META; children: React.
   const { Icon, tint } = META[kind];
   return (
     <div className="flex items-center gap-2">
-      <Icon size={12} className="shrink-0" strokeWidth={2} style={{ color: tint, opacity: 0.72 }} />
+      <Icon size={compactIconSize(12)} className="shrink-0" strokeWidth={2} style={{ color: tint, opacity: 0.72 }} />
       <div className="min-w-0 flex-1 truncate">{children}</div>
     </div>
   );

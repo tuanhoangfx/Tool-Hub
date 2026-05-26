@@ -1,4 +1,5 @@
 import type { BadgeSpec, FilterIconMeta } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 
 export type MetricBadgeTone = "ok" | "neutral" | "warn" | "bad";
 
@@ -45,12 +46,12 @@ export function MetricBadge({
   return (
     <span
       title={title}
-      className={`inline-flex h-[22px] shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-1.5 text-[10px] font-medium leading-none ${border} ${
+      className={`inline-flex h-[var(--hub-metric-badge-h)] shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-1.5 text-[10px] font-medium leading-none ${border} ${
         uppercase ? "uppercase tracking-wide" : ""
       } ${mono ? "font-mono font-semibold tracking-wide" : ""} ${className}`}
     >
       {Icon ? (
-        <Icon size={11} className={`shrink-0 ${iconMeta.className}`} aria-hidden />
+        <Icon size={compactIconSize(11)} className={`shrink-0 ${iconMeta.className}`} aria-hidden />
       ) : dot ? (
         <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: dot }} aria-hidden />
       ) : null}

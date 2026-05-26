@@ -1,5 +1,6 @@
 import { Box, Database, Layers } from "lucide-react";
 import type { HubEntity } from "../../../lib/hub-schema-spec";
+import { compactIconSize } from "../../../lib/ui-scale";
 
 const ENTITY_META: Record<HubEntity, { label: string; icon: typeof Database; tone: string }> = {
   catalog: { label: "catalog", icon: Database, tone: "text-indigo-300" },
@@ -39,7 +40,7 @@ export function SchemaSidebar({
             }`}
           >
             <div className="flex items-center gap-2">
-              <Icon size={14} className={active ? "text-indigo-300" : meta.tone} />
+              <Icon size={compactIconSize(14)} className={active ? "text-indigo-300" : meta.tone} />
               <span className={`font-mono text-[13px] ${active ? "text-indigo-200" : "text-[var(--text)]"}`}>
                 {meta.label}
               </span>

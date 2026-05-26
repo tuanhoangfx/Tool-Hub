@@ -5,6 +5,7 @@ import { readSystemTab, type SystemTab } from "../../features/system-hub/compone
 import { readHubListPrefs } from "../../lib/url-prefs";
 import { ToolAvatar } from "../ToolAvatar";
 import type { AppScreen } from "../../lib/app-screen";
+import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import { SystemTabSubNav } from "./SystemTabSubNav";
 
@@ -14,7 +15,7 @@ type SidebarProps = {
   loadingAll: boolean;
   onLoadRegistry: () => void;
   onRefreshAll: () => void;
-  /** Display prefs — always mounted (Hub + System). */
+  /** Global display prefs, mirrored with per-tab header settings. */
   displayPrefs: ReactNode;
 };
 
@@ -59,10 +60,10 @@ function SidebarFooterButton({
       disabled={disabled}
       title={title}
     >
-      <Icon size={15} className={`shrink-0 ${iconClass}`} />
+      <Icon size={compactIconSize(15)} className={`shrink-0 ${iconClass}`} />
       <span className="flex-1 text-left">{label}</span>
       {trailing}
-      {loading ? <RefreshCcw size={14} className="anim-spin opacity-80" /> : null}
+      {loading ? <RefreshCcw size={compactIconSize(14)} className="anim-spin opacity-80" /> : null}
     </button>
   );
 }
@@ -117,7 +118,7 @@ export function SalesSidebar({
             <div key={id}>
               <button
                 type="button"
-                aria-expanded={id === "system" && screen === "system" ? systemSubnavOpen : undefined}
+                aria-expanded={id === "system" ? systemSubnavOpen : undefined}
                 onClick={() => {
                   if (id === "system" && screen === "system") {
                     setSystemSubnavOpen((v) => !v);
@@ -135,11 +136,11 @@ export function SalesSidebar({
                 {menuActive ? (
                   <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-indigo-400" />
                 ) : null}
-                <Icon size={16} className={menuActive ? "text-indigo-300" : ""} />
+                <Icon size={compactIconSize(16)} className={menuActive ? "text-indigo-300" : ""} />
                 <span className="flex-1 text-left">{label}</span>
                 {id === "system" && showSubnavToggleIcon ? (
                   <ToggleIcon
-                    size={13}
+                    size={compactIconSize(13)}
                     strokeWidth={2.3}
                     className={`shrink-0 transition-colors ${
                       systemSubnavOpen
@@ -149,7 +150,7 @@ export function SalesSidebar({
                   />
                 ) : null}
               </button>
-              {id === "system" && screen === "system" && systemSubnavOpen ? <SystemTabSubNav activeTab={systemTab} /> : null}
+              {id === "system" && systemSubnavOpen ? <SystemTabSubNav activeTab={screen === "system" ? systemTab : null} /> : null}
             </div>
           );
         })}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { compactIconSize } from "../lib/ui-scale";
 import { tagToTheSvgSlug, theSvgIconSources } from "../lib/thesvg";
 
 type StackTagIconProps = {
@@ -14,7 +15,7 @@ function tagColor(tag: string): string {
   return PALETTE[Math.abs(h) % PALETTE.length];
 }
 
-export function StackTagIcon({ tag, size = 12 }: StackTagIconProps) {
+export function StackTagIcon({ tag, size = compactIconSize(12) }: StackTagIconProps) {
   const slug = tagToTheSvgSlug(tag);
   const sources = slug ? theSvgIconSources(slug) : [];
   const [sourceIndex, setSourceIndex] = useState(0);

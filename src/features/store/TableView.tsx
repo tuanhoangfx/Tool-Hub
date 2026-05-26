@@ -16,6 +16,7 @@ import {
   resolveLocalOnlyIcon,
   resolveLocalPortIcon,
 } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { HealthState } from "../../hooks/useLocalHealth";
 import type { ResolvedTool } from "../../types";
@@ -128,12 +129,12 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                 <td className="col-drift align-top">
                   {tool.driftAlerts.length > 0 ? (
                     <span className="mini-stat mini-stat-warn inline-flex items-center gap-1" title={tool.driftAlerts.join("\n")}>
-                      <DriftWarnIcon size={14} className={driftWarn.className} aria-hidden />
+                      <DriftWarnIcon size={compactIconSize(14)} className={driftWarn.className} aria-hidden />
                       {tool.driftAlerts.length}
                     </span>
                   ) : (
                     <span className="mini-stat mini-stat-ok inline-flex items-center gap-1">
-                      <DriftOkIcon size={14} className={driftOk.className} aria-hidden />
+                      <DriftOkIcon size={compactIconSize(14)} className={driftOk.className} aria-hidden />
                       OK
                     </span>
                   )}
@@ -159,7 +160,7 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                         rel="noreferrer"
                         title={`Production: ${tool.appUrl}`}
                       >
-                        <MaterialIcon name="public" size={16} />
+                        <MaterialIcon name="public" size={compactIconSize(16)} />
                       </a>
                     ) : null}
                     {tool.localUrl ? (
@@ -170,7 +171,7 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                         rel="noreferrer"
                         title={`Local: ${tool.localUrl}`}
                       >
-                        <MaterialIcon name="dns" size={16} />
+                        <MaterialIcon name="dns" size={compactIconSize(16)} />
                       </a>
                     ) : null}
                     {tool.repo ? (
@@ -181,7 +182,7 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                         rel="noreferrer"
                         title={`Repo: ${tool.repo}`}
                       >
-                        <MaterialIcon name="hub" size={16} />
+                        <MaterialIcon name="hub" size={compactIconSize(16)} />
                       </a>
                     ) : null}
                     {tool.localPath ? (
@@ -191,7 +192,7 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                         onClick={() => onCopyPath(tool.localPath)}
                         title={`${folderName(tool.localPath)} — copy path`}
                       >
-                        <MaterialIcon name="folder" size={16} />
+                        <MaterialIcon name="folder" size={compactIconSize(16)} />
                       </button>
                     ) : null}
                   </div>

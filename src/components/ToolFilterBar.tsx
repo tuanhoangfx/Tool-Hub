@@ -1,4 +1,5 @@
 import { STATUS_ORDER } from "../lib/tooling";
+import { compactIconSize } from "../lib/ui-scale";
 import { MaterialIcon } from "./MaterialIcon";
 
 const CHIP_META: Record<string, { label: string; icon: string }> = {
@@ -38,7 +39,7 @@ export function ToolFilterBar({
     <div className="filter-toolbar" role="search">
       <div className="filter-toolbar-row">
         <label className="search-box grow">
-          <MaterialIcon name="search" size={18} />
+          <MaterialIcon name="search" size={compactIconSize(18)} />
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
@@ -58,7 +59,7 @@ export function ToolFilterBar({
                   type="button"
                   onClick={() => onStatusFilterChange(status)}
                 >
-                  <MaterialIcon name={meta.icon} size={15} />
+                  <MaterialIcon name={meta.icon} size={compactIconSize(15)} />
                   {meta.label}
                 </button>
               );
@@ -66,7 +67,7 @@ export function ToolFilterBar({
           </div>
         ) : null}
         <span className="filter-meta">
-          <MaterialIcon name="filter_alt" size={14} />
+          <MaterialIcon name="filter_alt" size={compactIconSize(14)} />
           {shown}/{total}
         </span>
         {viewMode && onViewModeChange ? (
@@ -78,7 +79,7 @@ export function ToolFilterBar({
               aria-pressed={viewMode === "grid"}
               aria-label="Card view"
             >
-              <MaterialIcon name="grid_view" size={14} />
+              <MaterialIcon name="grid_view" size={compactIconSize(14)} />
               <span>Cards</span>
             </button>
             <button
@@ -88,7 +89,7 @@ export function ToolFilterBar({
               aria-pressed={viewMode === "table"}
               aria-label="Table view"
             >
-              <MaterialIcon name="table_rows" size={14} />
+              <MaterialIcon name="table_rows" size={compactIconSize(14)} />
               <span>Table</span>
             </button>
           </div>

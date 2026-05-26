@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type ElementType } from "react";
+import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
 import { ChevronDown, Clock } from "lucide-react";
 import { usePageSessionSeconds } from "../../hooks/usePageSessionSeconds";
+import { compactIconSize } from "../../lib/ui-scale";
 import "./app-tab-header.css";
 
 export type TabTitleMenuItem = {
@@ -11,7 +12,7 @@ export type TabTitleMenuItem = {
 
 export type TabHeaderMetaItem = {
   icon: ElementType<{ size?: number; className?: string }>;
-  /** Omit or empty to hide label (e.g. release line: icon · v0.1.0 · date). */
+  /** Omit or empty to hide label (e.g. release line: icon · version · date). */
   title?: string;
   value: string;
   live?: boolean;
@@ -41,6 +42,7 @@ type AppTabHeaderProps = {
   dividerBelow?: boolean;
   /** Inside shared sticky chrome (header + search); no own sticky/margins. */
   embedded?: boolean;
+  actions?: ReactNode;
 };
 
 function TitleWithMenu({
@@ -80,7 +82,7 @@ function TitleWithMenu({
         onClick={() => setOpen((v) => !v)}
         className="inline-flex max-w-full items-center gap-1 rounded-lg py-0.5 pr-1 text-left transition-colors hover:bg-white/[.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400/50"
       >
-        <TitleIcon size={16} className={`shrink-0 ${titleIconClass}`} aria-hidden />
+        <TitleIcon size={compactIconSize(16)} className={`shrink-0 ${titleIconClass}`} aria-hidden />
         <span className="flex min-w-0 flex-col leading-tight">
           <span className="text-base font-semibold tracking-tight text-[var(--text)]">{title}</span>
           {active ? (
@@ -88,7 +90,7 @@ function TitleWithMenu({
           ) : null}
         </span>
         <ChevronDown
-          size={14}
+          size={compactIconSize(14)}
           className={`shrink-0 text-[var(--muted)] transition-transform ${open ? "rotate-180" : ""}`}
           aria-hidden
         />
@@ -115,7 +117,7 @@ function TitleWithMenu({
                     : "text-[var(--muted)] hover:bg-white/[.05] hover:text-[var(--text)]"
                 }`}
               >
-                {Icon ? <Icon size={14} className={isActive ? "text-indigo-300" : ""} /> : null}
+                {Icon ? <Icon size={compactIconSize(14)} className={isActive ? "text-indigo-300" : ""} /> : null}
                 {label}
               </button>
             );
@@ -136,10 +138,10 @@ function MetaLine({ icon: Icon, title, value, live }: TabHeaderMetaItem) {
   const tip = title ? `${title}: ${value}` : value;
   return (
     <div
-      className="inline-flex max-w-full min-w-0 items-center gap-1.5 text-[13px] leading-none text-[var(--muted)]"
+      className="inline-flex max-w-full min-w-0 items-center gap-1.5 text-[0.8125rem] leading-none text-[var(--muted)]"
       title={tip}
     >
-      <Icon size={14} className="shrink-0 text-indigo-400/90" />
+      <Icon size={compactIconSize(14)} className="shrink-0 text-indigo-400/90" />
       {title ? <span className="shrink-0">{title}</span> : null}
       {live !== undefined ? (
         <span
@@ -149,6 +151,16 @@ function MetaLine({ icon: Icon, title, value, live }: TabHeaderMetaItem) {
       ) : null}
       <span className="truncate tabular-nums text-[var(--text)]/90">{value}</span>
     </div>
+  );
+}
+
+function SessionLine({ value }: { value: string }) {
+  return (
+    <span className="hidden shrink-0 items-center gap-1.5 text-[0.8125rem] leading-none text-[var(--muted)] sm:flex">
+      <Clock size={compactIconSize(14)} className="shrink-0 text-indigo-400/90" />
+      <span>Session</span>
+      <span className="tabular-nums text-[var(--text)]/90">{value}</span>
+    </span>
   );
 }
 
@@ -165,10 +177,10 @@ function StatLine({
 }) {
   return (
     <div
-      className="inline-flex items-center gap-1.5 text-[13px] leading-none text-[var(--muted)]"
+      className="inline-flex items-center gap-1.5 text-[0.8125rem] leading-none text-[var(--muted)]"
       title={label}
     >
-      <Icon size={14} className={`shrink-0 ${toneClass}`} />
+      <Icon size={compactIconSize(14)} className={`shrink-0 ${toneClass}`} />
       <span className="font-semibold tabular-nums text-[var(--text)]/90">{value}</span>
       <span>{label}</span>
     </div>
@@ -188,12 +200,14 @@ export function AppTabHeader({
   pinSticky = true,
   dividerBelow = true,
   embedded = false,
+  actions,
 }: AppTabHeaderProps) {
   const sessionMmSs = usePageSessionSeconds();
-  const positionClass = embedded ? "relative" : pinSticky ? "sticky top-0 z-40" : "relative z-0";
+  const positionClass = embedded ? "relative z-50" : pinSticky ? "sticky top-0 z-40" : "relative z-0";
   const dividerClass = embedded || !dividerBelow ? "" : "border-b border-white/5";
   const gapBelow = embedded || !dividerBelow ? "" : "mb-[var(--app-tab-header-gap-below)]";
   const chromeClass = embedded ? "" : "-mx-6";
+  const metaVisibility = (index: number) => (index === 0 ? "hidden sm:inline-flex" : index === 1 ? "hidden md:inline-flex" : "hidden lg:inline-flex");
 
   return (
     <header
@@ -212,12 +226,16 @@ export function AppTabHeader({
           />
         ) : (
           <>
-            <TitleIcon size={16} className={`shrink-0 ${titleIconClass}`} aria-hidden />
+            <TitleIcon size={compactIconSize(16)} className={`shrink-0 ${titleIconClass}`} aria-hidden />
             <h1 className="shrink-0 text-base font-semibold leading-none tracking-tight text-[var(--text)]">{title}</h1>
           </>
         )}
+        <span className="hidden items-center gap-x-2.5 sm:inline-flex">
+          <Rule />
+          <SessionLine value={sessionMmSs} />
+        </span>
         {metaItems.map((item, index) => (
-          <span key={`${item.title}-${index}`} className="inline-flex items-center gap-x-2.5">
+          <span key={`${item.title}-${index}`} className={`${metaVisibility(index)} items-center gap-x-2.5`}>
             <Rule visibleFrom={index === 0 ? "sm" : index === 1 ? "md" : "lg"} />
             <MetaLine {...item} />
           </span>
@@ -237,10 +255,8 @@ export function AppTabHeader({
         ))}
       </div>
 
-      <div className="flex shrink-0 items-center justify-self-end gap-1.5 text-[13px] leading-none text-[var(--muted)]">
-        <Clock size={14} className="shrink-0 text-indigo-400/90" />
-        <span>Session</span>
-        <span className="tabular-nums text-[var(--text)]/90">{sessionMmSs}</span>
+      <div className="flex min-w-0 items-center justify-self-end gap-1.5" aria-label={`${title} actions`}>
+        {actions}
       </div>
     </header>
   );

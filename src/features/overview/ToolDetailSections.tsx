@@ -5,6 +5,7 @@ import {
   resolveDeployTargetIcon,
   resolveHealthStatusIcon,
 } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 import type { ResolvedTool } from "../../types";
 import { QuietChip, ToolCodeBadge } from "../hub/hub-tool-ui";
 import { overviewSectionTitle } from "./overview-toc";
@@ -125,7 +126,7 @@ export function ToolDetailSections({
         <ul className="grid gap-1.5 md:grid-cols-2">
           {features.map((f, i) => (
             <li key={i} className="flex items-start gap-2 rounded-md border border-white/5 bg-white/[.02] px-2.5 py-1.5 text-[12px]">
-              <CheckCircle2 size={11} className="mt-0.5 shrink-0 text-emerald-300" />
+              <CheckCircle2 size={compactIconSize(11)} className="mt-0.5 shrink-0 text-emerald-300" />
               <span>{f}</span>
             </li>
           ))}

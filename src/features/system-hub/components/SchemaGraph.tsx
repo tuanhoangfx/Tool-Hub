@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import type { FieldSpec } from "../../../lib/hub-schema-spec";
 import { GROUP_TONE } from "../../../lib/hub-schema-spec";
 import { resolveFieldSpecIcon } from "../../../lib/badge-registry";
+import { compactIconSize } from "../../../lib/ui-scale";
 import { SchemaGroupBadge, SchemaModeBadge } from "./SchemaBadges";
 
 /**
@@ -100,9 +101,9 @@ export function SchemaGraph({ spec, groups, entity, overrides, customs, compact 
         </div>
       </header>
 
-      <div className="grid gap-3 md:grid-cols-[1fr_220px]">
+      <div className="grid gap-3 md:grid-cols-[1fr_var(--schema-graph-side-w)]">
         <div className="overflow-hidden rounded-xl border border-white/5 bg-[radial-gradient(ellipse_at_center,rgba(99,102,241,0.06),transparent_70%)]">
-          <svg viewBox={`0 0 ${W} ${H}`} className={compact ? "h-[min(280px,42vh)] w-full" : "h-[460px] w-full"}>
+          <svg viewBox={`0 0 ${W} ${H}`} className={compact ? "h-[min(var(--schema-graph-compact-h),42vh)] w-full" : "h-[var(--schema-graph-h)] w-full"}>
             {/* Grid backdrop */}
             <defs>
               <pattern id="g-dots" width="24" height="24" patternUnits="userSpaceOnUse">
@@ -265,7 +266,7 @@ export function SchemaGraph({ spec, groups, entity, overrides, customs, compact 
             </div>
           </div>
 
-          <div className="min-h-[140px] rounded-xl border border-white/5 bg-white/[.02] p-2.5">
+          <div className="min-h-[var(--schema-hover-min-h)] rounded-xl border border-white/5 bg-white/[.02] p-2.5">
             <div className="text-[9px] uppercase tracking-wider text-[var(--muted)]/70">Hover detail</div>
             {hoveredField ? (
               <div className="mt-1 space-y-1 text-[10px]">
@@ -273,7 +274,7 @@ export function SchemaGraph({ spec, groups, entity, overrides, customs, compact 
                   {(() => {
                     const fi = resolveFieldSpecIcon(hoveredField);
                     const FieldIcon = fi.icon;
-                    return <FieldIcon size={12} className={fi.className} aria-hidden />;
+                    return <FieldIcon size={compactIconSize(12)} className={fi.className} aria-hidden />;
                   })()}
                   <span className="font-semibold">{hoveredField.label}</span>
                 </div>

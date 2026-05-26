@@ -1,4 +1,5 @@
 import { MaterialIcon } from "./MaterialIcon";
+import { compactIconSize } from "../lib/ui-scale";
 import { buildDriftTooltip } from "../lib/tooltips";
 import { Tooltip } from "./Tooltip";
 
@@ -13,7 +14,7 @@ export function DriftHint({ alerts }: DriftHintProps) {
 
   const chip = (
     <span className="mini-stat mini-stat-warn">
-      <MaterialIcon name="warning" size={15} />
+      <MaterialIcon name="warning" size={compactIconSize(15)} />
       {alerts.length} drift
     </span>
   );

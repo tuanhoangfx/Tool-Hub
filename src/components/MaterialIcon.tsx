@@ -1,3 +1,5 @@
+import { compactIconSize } from "../lib/ui-scale";
+
 type MaterialIconProps = {
   name: string;
   className?: string;
@@ -5,7 +7,7 @@ type MaterialIconProps = {
   size?: number;
 };
 
-export function MaterialIcon({ name, className = "", filled = false, size = 20 }: MaterialIconProps) {
+export function MaterialIcon({ name, className = "", filled = false, size = compactIconSize(20) }: MaterialIconProps) {
   return (
     <span
       className={`material-symbols-outlined ${filled ? "fill-1" : ""} ${className}`.trim()}

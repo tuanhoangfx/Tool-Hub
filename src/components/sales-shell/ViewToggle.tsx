@@ -1,12 +1,13 @@
 import { LayoutGrid, Table2 } from "lucide-react";
+import { compactIconSize } from "../../lib/ui-scale";
 
 export type HubViewMode = "table" | "card";
 
 export function ViewToggle({ value, onChange }: { value: HubViewMode; onChange: (v: HubViewMode) => void }) {
   return (
-    <div className="inline-flex h-[34px] items-center rounded-lg border border-white/10 bg-[var(--panel)] p-0.5">
-      <Btn active={value === "table"} onClick={() => onChange("table")} icon={<Table2 size={14} />} label="Table" />
-      <Btn active={value === "card"} onClick={() => onChange("card")} icon={<LayoutGrid size={14} />} label="Cards" />
+    <div className="inline-flex h-[var(--hub-control-h)] items-center rounded-lg border border-white/10 bg-[var(--panel)] p-0.5">
+      <Btn active={value === "table"} onClick={() => onChange("table")} icon={<Table2 size={compactIconSize(14)} />} label="Table" />
+      <Btn active={value === "card"} onClick={() => onChange("card")} icon={<LayoutGrid size={compactIconSize(14)} />} label="Cards" />
     </div>
   );
 }

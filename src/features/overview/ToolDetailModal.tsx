@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { compactIconSize } from "../../lib/ui-scale";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailContent } from "./ToolDetailContent";
 import hubChangelogRaw from "../../../CHANGELOG.md?raw";
@@ -38,7 +39,7 @@ export function ToolDetailModal({ tool, onClose, onRefreshTool }: ToolDetailModa
         onClick={(e) => e.stopPropagation()}
       >
         <button type="button" className="modal-close modal-close--tool-detail" onClick={onClose} aria-label="Close">
-          <X size={16} />
+          <X size={compactIconSize(16)} />
         </button>
         <div className="modal-shell__scroll">
           <ToolDetailContent

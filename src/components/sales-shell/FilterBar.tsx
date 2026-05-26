@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import type { FilterIconMeta } from "../../lib/badge-registry";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "../../lib/badge-registry";
+import { compactIconSize } from "../../lib/ui-scale";
 
 export type FilterOption = { value: string; label: string; color?: string };
 export type FilterDef = {
@@ -103,15 +104,15 @@ export function FilterBar({
     (query ? 1 : 0) + filters.reduce((n, f) => n + (values[f.key]?.length ?? 0), 0);
 
   const searchField = (
-    <div className="relative min-w-[200px] flex-1">
-      <Search size={14} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" />
+    <div className="relative min-w-[var(--hub-search-min-w)] flex-1">
+      <Search size={compactIconSize(14)} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" />
       <input
         ref={inputRef}
         value={query}
         onChange={(e) => onQueryChange(e.target.value)}
         placeholder={placeholder}
         className="field w-full"
-        style={{ paddingLeft: 34, paddingRight: query ? 28 : 56 }}
+        style={{ paddingLeft: 31, paddingRight: query ? 25 : 50 }}
       />
       {!query ? (
         <span className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-0.5 sm:flex">
@@ -125,7 +126,7 @@ export function FilterBar({
           onClick={() => onQueryChange("")}
           className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
         >
-          <X size={12} />
+          <X size={compactIconSize(12)} />
         </button>
       ) : null}
     </div>
@@ -135,11 +136,11 @@ export function FilterBar({
     <button
       type="button"
       onClick={clearAll}
-      className="inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 text-xs font-medium text-rose-200 transition-colors hover:bg-rose-500/20"
+      className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-rose-500/30 bg-rose-500/10 px-3 text-xs font-medium text-rose-200 transition-colors hover:bg-rose-500/20"
       title="Clear search and all filters"
     >
       Clear filters
-      <span className="grid h-4 min-w-[16px] place-items-center rounded-full bg-rose-500/80 px-1 text-[9px] font-bold text-white">
+      <span className="grid h-4 min-w-[var(--hub-count-badge-min-w)] place-items-center rounded-full bg-rose-500/80 px-1 text-[9px] font-bold text-white">
         {activeCount}
       </span>
     </button>
@@ -162,7 +163,7 @@ export function FilterBar({
           {searchField}
           {toolbar ? <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">{toolbar}</div> : null}
         </div>
-        <div className="flex min-h-[34px] flex-wrap items-center gap-2">
+        <div className="flex min-h-[var(--hub-control-h)] flex-wrap items-center gap-2">
           {filterDropdowns}
           {clearFiltersBtn ? <div className="ml-auto flex shrink-0">{clearFiltersBtn}</div> : null}
         </div>
@@ -212,7 +213,7 @@ export function FilterBar({
   );
 }
 
-function FilterIconGlyph({ meta, size = 14 }: { meta: FilterIconMeta; size?: number }) {
+function FilterIconGlyph({ meta, size = compactIconSize(14) }: { meta: FilterIconMeta; size?: number }) {
   const Icon = meta.icon;
   return <Icon size={size} className={`shrink-0 ${meta.className}`} aria-hidden />;
 }
@@ -282,33 +283,33 @@ function MultiFilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex h-[34px] items-center gap-1.5 rounded-lg border px-3 text-xs transition-colors ${
+        className={`inline-flex h-[var(--hub-control-h)] items-center gap-1.5 rounded-lg border px-3 text-xs transition-colors ${
           selected.length > 0
             ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-200"
             : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
         }`}
       >
-        {soleIcon ? <FilterIconGlyph meta={soleIcon} size={12} /> : Icon ? <Icon size={12} className="shrink-0 opacity-75" /> : null}
+        {soleIcon ? <FilterIconGlyph meta={soleIcon} size={compactIconSize(12)} /> : Icon ? <Icon size={compactIconSize(12)} className="shrink-0 opacity-75" /> : null}
         <span>{buttonLabel}</span>
         {selected.length > 1 ? (
-          <span className="grid h-4 min-w-[16px] place-items-center rounded-full bg-indigo-500 px-1 text-[9px] font-bold text-white">
+          <span className="grid h-4 min-w-[var(--hub-count-badge-min-w)] place-items-center rounded-full bg-indigo-500 px-1 text-[9px] font-bold text-white">
             {selected.length}
           </span>
         ) : null}
-        <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown size={compactIconSize(12)} className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open ? (
         <div className="anim-pop absolute left-0 top-full z-30 mt-1 w-72 rounded-xl border border-white/10 bg-[var(--panel)] shadow-xl shadow-black/40">
           <div className="border-b border-white/5 p-2">
             <div className="relative">
-              <Search size={12} className="pointer-events-none absolute left-2.5 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" />
+              <Search size={compactIconSize(12)} className="pointer-events-none absolute left-2.5 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={`Search ${filter.label.toLowerCase()}...`}
                 className="field text-xs"
-                style={{ paddingLeft: 28, paddingTop: 4, paddingBottom: 4 }}
+                style={{ paddingLeft: 25, paddingTop: 4, paddingBottom: 4 }}
                 autoFocus
               />
             </div>
@@ -362,7 +363,7 @@ function Circle({ checked, indeterminate }: { checked: boolean; indeterminate?: 
         indeterminate ? (
           <div className="h-1 w-2 rounded-full bg-white" />
         ) : (
-          <Check size={9} className="text-white" />
+          <Check size={compactIconSize(9)} className="text-white" />
         )
       ) : null}
     </div>
@@ -399,7 +400,7 @@ function ActivePills({
 
   return (
     <div className="flex flex-wrap items-center gap-1.5 border-t border-white/5 pt-2 text-xs">
-      <SlidersHorizontal size={10} className="text-[var(--muted)]" />
+      <SlidersHorizontal size={compactIconSize(10)} className="text-[var(--muted)]" />
       <span className="text-[10px] uppercase tracking-wider text-[var(--muted)]">Active:</span>
       {query ? (
         <button
@@ -407,7 +408,7 @@ function ActivePills({
           onClick={onClearQ}
           className="badge cursor-pointer border border-indigo-500/30 bg-indigo-500/15 text-indigo-200 hover:bg-indigo-500/25"
         >
-          q: &quot;{query}&quot; <X size={10} className="ml-1" />
+          q: &quot;{query}&quot; <X size={compactIconSize(10)} className="ml-1" />
         </button>
       ) : null}
       {activeItems.map((it) => {
@@ -419,8 +420,8 @@ function ActivePills({
           onClick={() => onRemove(it.key, (values[it.key] ?? []).filter((v) => v !== it.value))}
           className="badge inline-flex cursor-pointer items-center gap-1 border border-white/15 bg-white/10 hover:bg-white/15"
         >
-          {PillIcon ? <PillIcon size={10} className={it.iconMeta!.className} aria-hidden /> : null}
-          {it.label} <X size={10} className="ml-0.5" />
+          {PillIcon ? <PillIcon size={compactIconSize(10)} className={it.iconMeta!.className} aria-hidden /> : null}
+          {it.label} <X size={compactIconSize(10)} className="ml-0.5" />
         </button>
         );
       })}

@@ -27,10 +27,12 @@ type SystemHubScreenProps = {
   registryLabel: string;
   versionReleaseDate: string;
   versionReleaseLive: boolean;
+  headerActions?: ReactNode;
 };
 
 export function SystemHubScreen({
   tools,
+  headerActions,
 }: SystemHubScreenProps) {
   const [tab, setTab] = useState<SystemTab>(() => readSystemTab());
   const [prefs, setPrefs] = useState(readHubListPrefs);
@@ -56,6 +58,7 @@ export function SystemHubScreen({
       pinSticky={stackChrome ? false : prefs.headerPin}
       dividerBelow={stackChrome ? false : !prefs.searchPin}
       embedded={stackChrome}
+      actions={headerActions}
     />
   );
 

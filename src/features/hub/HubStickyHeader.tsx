@@ -1,4 +1,5 @@
 import { Database, LayoutGrid, Tag } from "lucide-react";
+import type { ReactNode } from "react";
 import { AppTabHeader } from "../../components/sales-shell/AppTabHeader";
 import { APP_VERSION } from "../../lib/app-meta";
 import { DEFAULT_HUB_HEADER_STAT_KEYS } from "./hub-prefs";
@@ -21,20 +22,30 @@ type HubStickyHeaderProps = {
   pinSticky?: boolean;
   dividerBelow?: boolean;
   embedded?: boolean;
+  actions?: ReactNode;
 };
 
 export function HubStickyHeader({
   registryLive,
   registryLabel,
   versionReleaseDate,
-  versionReleaseLive,
+  versionReleaseLive: _versionReleaseLive,
   visibleHeaderStats,
   kpi,
   pinSticky = true,
   dividerBelow = true,
   embedded = false,
+  actions,
 }: HubStickyHeaderProps) {
   const statKeys = visibleHeaderStats.size > 0 ? visibleHeaderStats : DEFAULT_HUB_HEADER_STAT_KEYS;
+
+  const metaItems = [
+    ...(registryLive ? [{ icon: Database, value: registryLabel, live: true }] : []),
+    {
+      icon: Tag,
+      value: `v${APP_VERSION} · ${versionReleaseDate}`,
+    },
+  ];
 
   return (
     <AppTabHeader
@@ -44,16 +55,10 @@ export function HubStickyHeader({
       pinSticky={pinSticky}
       dividerBelow={dividerBelow}
       embedded={embedded}
-      metaItems={[
-        { icon: Database, title: "Registry", value: registryLabel, live: registryLive },
-        {
-          icon: Tag,
-          value: `v${APP_VERSION} · ${versionReleaseDate}`,
-          live: versionReleaseLive,
-        },
-      ]}
+      metaItems={metaItems}
       centerStats={buildHubHeaderStats(statKeys, kpi)}
       titleIconClass="text-indigo-400"
+      actions={actions}
     />
   );
 }

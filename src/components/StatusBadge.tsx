@@ -1,4 +1,5 @@
 import { MaterialIcon } from "./MaterialIcon";
+import { compactIconSize } from "../lib/ui-scale";
 
 type StatusBadgeProps = {
   icon: string;
@@ -18,7 +19,7 @@ const DEFAULT_TITLES: Record<string, string> = {
 export function StatusBadge({ icon, label, tone, title }: StatusBadgeProps) {
   return (
     <span className={`status-badge status-badge-${tone}`} title={title ?? DEFAULT_TITLES[label] ?? label}>
-      <MaterialIcon name={icon} size={14} />
+      <MaterialIcon name={icon} size={compactIconSize(14)} />
       {label}
     </span>
   );

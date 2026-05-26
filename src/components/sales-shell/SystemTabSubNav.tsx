@@ -1,6 +1,7 @@
 import { setSystemTab, SYSTEM_TAB_ITEMS, type SystemTab } from "../../features/system-hub/components/SystemTabs";
+import { compactIconSize } from "../../lib/ui-scale";
 
-export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab }) {
+export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab | null }) {
   return (
     <div className="system-tab-subnav ml-3 mt-1.5 space-y-0.5">
       {SYSTEM_TAB_ITEMS.map(({ id, label, icon: Icon }) => {
@@ -27,7 +28,7 @@ export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab }) {
                   : "text-[var(--muted)] group-hover:bg-white/[.04] group-hover:text-[var(--text)]"
               }`}
             >
-              <Icon size={14} className={isActive ? "text-indigo-300" : ""} />
+              <Icon size={compactIconSize(14)} className={isActive ? "text-indigo-300" : ""} />
               <span className="min-w-0 flex-1 truncate text-left">{label}</span>
             </span>
           </button>
