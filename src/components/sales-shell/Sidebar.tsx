@@ -1,8 +1,9 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutGrid, Minus, Plus, RefreshCcw, Search, Settings2, Upload, User } from "lucide-react";
+import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User } from "lucide-react";
 import { APP_USER_LABEL } from "../../lib/app-meta";
 import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { readHubListPrefs } from "../../lib/url-prefs";
+import { formatHubHeaderDate } from "../../lib/tooling";
 import { ToolAvatar } from "../ToolAvatar";
 import type { AppScreen } from "../../lib/app-screen";
 import { compactIconSize } from "../../lib/ui-scale";
@@ -17,7 +18,6 @@ type SidebarProps = {
   scanStatus: "idle" | "scanning" | "success" | "error";
   scanMessage: string;
   lastScanAt?: string;
-  onScanWorkspace: () => void;
   onRefreshAll: () => void;
   /** Global display prefs, mirrored with per-tab header settings. */
   displayPrefs: ReactNode;
@@ -64,10 +64,9 @@ function SidebarFooterButton({
       disabled={disabled}
       title={title}
     >
-      <Icon size={compactIconSize(15)} className={`shrink-0 ${iconClass}`} />
+      <Icon size={compactIconSize(15)} className={`shrink-0 ${iconClass} ${loading ? "anim-spin" : ""}`} />
       <span className="flex-1 text-left">{label}</span>
       {trailing}
-      {loading ? <RefreshCcw size={compactIconSize(14)} className="anim-spin opacity-80" /> : null}
     </button>
   );
 }
@@ -80,7 +79,6 @@ export function SalesSidebar({
   scanStatus,
   scanMessage,
   lastScanAt,
-  onScanWorkspace,
   onRefreshAll,
   displayPrefs,
 }: SidebarProps) {
@@ -176,22 +174,14 @@ export function SalesSidebar({
           trailing={<span className="text-xs font-medium text-[var(--text)]/80">{APP_USER_LABEL}</span>}
         />
         <SidebarFooterButton
-          icon={Search}
-          iconClass="text-cyan-400"
-          label="Scan workspace"
-          onClick={onScanWorkspace}
-          disabled={scanningWorkspace}
-          trailing={scanIndicator}
-          title={scanMessage || "Run scan:local via local launcher, then reload local registry"}
-        />
-        <SidebarFooterButton
           icon={RefreshCcw}
           iconClass="text-indigo-300"
           label="Refresh"
           onClick={onRefreshAll}
-          disabled={loadingAll}
-          loading={loadingAll}
-          title="Refresh from GitHub"
+          disabled={scanningWorkspace || loadingAll}
+          loading={scanningWorkspace || loadingAll}
+          trailing={scanIndicator}
+          title={scanMessage || "Scan local workspace, check GitHub dry-run, then refresh metadata"}
         />
         {displayPrefs}
       </footer>
@@ -201,35 +191,38 @@ export function SalesSidebar({
 
 function buildScanIndicator(status: "idle" | "scanning" | "success" | "error", message: string, lastScanAt?: string) {
   if (status === "scanning") {
-    return (
-      <span className="shrink-0 text-[12px] leading-none" title={message || "Scanning workspace"}>
-        🔍
-      </span>
-    );
+    return null;
   }
 
   if (status === "success") {
-    return (
-      <span className="shrink-0 text-[12px] leading-none" title={message || "Workspace scan completed"}>
-        ✔️
-      </span>
-    );
+    const { className, dateLabel, title } = scanFreshness(lastScanAt);
+    return <ScanFreshnessDot className={className} dateLabel={dateLabel} title={message || title} />;
   }
 
   if (status === "error") {
     return (
-      <span className="grid h-2.5 w-2.5 shrink-0 place-items-center rounded-full bg-rose-400" title={message || "Workspace scan failed"} />
+      <ScanFreshnessDot className="bg-rose-400" dateLabel={formatShortDate(lastScanAt)} title={message || "Workspace refresh failed"} />
     );
   }
 
-  const { className, title } = scanFreshness(lastScanAt);
-  return <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${className}`} title={title} aria-label={title} />;
+  const { className, dateLabel, title } = scanFreshness(lastScanAt);
+  return <ScanFreshnessDot className={className} dateLabel={dateLabel} title={title} />;
+}
+
+function ScanFreshnessDot({ className, dateLabel, title }: { className: string; dateLabel?: string; title: string }) {
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1" title={title} aria-label={title}>
+      <span className={`h-2.5 w-2.5 rounded-full ${className}`} />
+      {dateLabel ? <span className="text-[10px] font-medium tabular-nums text-[var(--muted)]">{dateLabel}</span> : null}
+    </span>
+  );
 }
 
 function scanFreshness(lastScanAt?: string) {
   if (!lastScanAt) {
     return {
       className: "bg-white/20",
+      dateLabel: undefined,
       title: "No workspace scan loaded yet",
     };
   }
@@ -238,6 +231,7 @@ function scanFreshness(lastScanAt?: string) {
   if (Number.isNaN(scannedAt)) {
     return {
       className: "bg-white/20",
+      dateLabel: undefined,
       title: "Workspace scan time is invalid",
     };
   }
@@ -246,10 +240,12 @@ function scanFreshness(lastScanAt?: string) {
   const hours = ageMs / (60 * 60 * 1000);
   const days = hours / 24;
   const scannedLabel = new Date(scannedAt).toLocaleString("vi-VN");
+  const dateLabel = formatShortDate(lastScanAt);
 
   if (hours < 12) {
     return {
       className: "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.65)]",
+      dateLabel,
       title: `Last workspace scan: ${scannedLabel} (<12h)`,
     };
   }
@@ -257,12 +253,19 @@ function scanFreshness(lastScanAt?: string) {
   if (days <= 7) {
     return {
       className: "bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.55)]",
+      dateLabel,
       title: `Last workspace scan: ${scannedLabel} (${days <= 3 ? "12h-3d" : "3d-7d"})`,
     };
   }
 
   return {
     className: "bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.55)]",
+    dateLabel,
     title: `Last workspace scan: ${scannedLabel} (>7d)`,
   };
+}
+
+function formatShortDate(value?: string) {
+  const label = formatHubHeaderDate(value);
+  return label === "—" ? undefined : label;
 }

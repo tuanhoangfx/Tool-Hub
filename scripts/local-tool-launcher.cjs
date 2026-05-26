@@ -106,8 +106,16 @@ function launchTool(id, entry) {
 }
 
 function runWorkspaceScan() {
+  return runWorkspaceCommand(["pnpm", "scan:local"], "Workspace scan completed", "Workspace scan failed");
+}
+
+function runGitHubCheck() {
+  return runWorkspaceCommand(["pnpm", "sync:workspace:dry"], "GitHub check completed", "GitHub check failed");
+}
+
+function runWorkspaceCommand(args, successMessage, failureMessage) {
   return new Promise((resolve) => {
-    const child = spawn("corepack", ["pnpm", "scan:local"], {
+    const child = spawn("corepack", args, {
       cwd: path.resolve(__dirname, ".."),
       shell: process.platform === "win32",
       windowsHide: true,
@@ -136,10 +144,29 @@ function runWorkspaceScan() {
         code,
         stdout,
         stderr,
-        message: code === 0 ? "Workspace scan completed" : `Workspace scan failed with code ${code}`,
+        message: code === 0 ? successMessage : `${failureMessage} with code ${code}`,
       });
     });
   });
+}
+
+async function runWorkspaceRefresh() {
+  const scan = await runWorkspaceScan();
+  const github = scan.ok
+    ? await runGitHubCheck()
+    : { ok: false, code: -1, stdout: "", stderr: "", message: "Skipped GitHub check because workspace scan failed" };
+  return {
+    ok: scan.ok && github.ok,
+    code: scan.ok && github.ok ? 0 : scan.code || github.code || 1,
+    message:
+      scan.ok && github.ok
+        ? "Workspace refresh completed"
+        : `${scan.message}${github.message ? `; ${github.message}` : ""}`,
+    scan,
+    github,
+    stdout: [scan.stdout, github.stdout].filter(Boolean).join("\n"),
+    stderr: [scan.stderr, github.stderr].filter(Boolean).join("\n"),
+  };
 }
 
 const server = http.createServer(async (req, res) => {
@@ -203,6 +230,15 @@ const server = http.createServer(async (req, res) => {
   if (req.method === "POST" && url.pathname === "/scan-workspace") {
     try {
       const result = await runWorkspaceScan();
+      return sendJson(res, result.ok ? 200 : 500, result);
+    } catch (error) {
+      return sendJson(res, 500, { ok: false, message: error.message, stdout: "", stderr: "" });
+    }
+  }
+
+  if (req.method === "POST" && url.pathname === "/refresh-workspace") {
+    try {
+      const result = await runWorkspaceRefresh();
       return sendJson(res, result.ok ? 200 : 500, result);
     } catch (error) {
       return sendJson(res, 500, { ok: false, message: error.message, stdout: "", stderr: "" });

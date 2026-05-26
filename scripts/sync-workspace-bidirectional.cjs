@@ -236,7 +236,7 @@ async function main() {
     process.exit(1);
   }
 
-  let { config, entries: scanned } = scanAllRoots(undefined, { writeManifest: true });
+  let { config, entries: scanned } = scanAllRoots(undefined, { writeManifest: !dryRun });
   const syncResults = [];
   const cloneResults = [];
   const byRepo = new Map();

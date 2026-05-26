@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T22:39:08.487Z",
+  "generatedAt": "2026-05-26T23:49:44.407Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -95,7 +95,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.7",
+      "localVersion": "0.1.8",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -585,6 +585,7 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/start-desktop-dev.ps1",
         "scripts/start-public-worker.ps1"
       ]
     },
@@ -595,7 +596,7 @@
       "repo": "tuanhoangfx/E0001-cookie-bridge",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.5.47",
+      "localVersion": "0.5.52",
       "category": "Extension",
       "audience": "Tool maintainers",
       "status": "Active",

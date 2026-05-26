@@ -119,7 +119,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.1.7",
+    "localVersion": "0.1.8",
     "remoteEnabled": true
   },
   {
@@ -575,7 +575,7 @@
     "repo": "tuanhoangfx/E0001-cookie-bridge",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.5.47",
+    "localVersion": "0.5.52",
     "category": "Extension",
     "audience": "Tool maintainers",
     "status": "Active",

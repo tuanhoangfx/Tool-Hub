@@ -6,13 +6,15 @@ export type WorkspaceScanResult = {
   message?: string;
   stdout?: string;
   stderr?: string;
+  scan?: WorkspaceScanResult;
+  github?: WorkspaceScanResult;
 };
 
-export async function runWorkspaceScan(): Promise<WorkspaceScanResult> {
+async function postLauncher(path: string, timeoutMs: number): Promise<WorkspaceScanResult> {
   try {
-    const response = await fetch(`${LAUNCHER_BASE}/scan-workspace`, {
+    const response = await fetch(`${LAUNCHER_BASE}${path}`, {
       method: "POST",
-      signal: AbortSignal.timeout(125_000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
     const data = (await response.json()) as WorkspaceScanResult;
     if (!response.ok) {
@@ -28,4 +30,12 @@ export async function runWorkspaceScan(): Promise<WorkspaceScanResult> {
           : "Launcher did not respond",
     };
   }
+}
+
+export async function runWorkspaceScan(): Promise<WorkspaceScanResult> {
+  return postLauncher("/scan-workspace", 125_000);
+}
+
+export async function runWorkspaceRefresh(): Promise<WorkspaceScanResult> {
+  return postLauncher("/refresh-workspace", 240_000);
 }

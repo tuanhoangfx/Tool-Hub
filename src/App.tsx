@@ -33,7 +33,7 @@ import { readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
 import { formatDate } from "./lib/tooling";
 import { compactIconSize } from "./lib/ui-scale";
-import { runWorkspaceScan } from "./services/workspace-scan";
+import { runWorkspaceRefresh } from "./services/workspace-scan";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
 type ScanStatus = "idle" | "scanning" | "success" | "error";
@@ -299,32 +299,29 @@ function App() {
     setScreen(next);
   };
 
-  const handleScanWorkspace = async () => {
+  const handleRefreshAll = async () => {
     if (scanningWorkspace) return;
     setScanningWorkspace(true);
-    settleScanStatus("scanning", "Scanning workspace via local launcher...");
-    addLog("Tool", "Workspace scan requested");
+    settleScanStatus("scanning", "Refreshing: scan local workspace + check GitHub dry-run...");
+    addLog("Tool", "Workspace refresh requested");
     try {
-      const result = await runWorkspaceScan();
+      const result = await runWorkspaceRefresh();
       if (!result.ok) {
-        const message = `${result.message ?? "Workspace scan failed"}; loaded existing registry if available`;
+        const message = `${result.message ?? "Workspace refresh failed"}; loaded existing registry if available`;
         settleScanStatus("error", message);
         addLog("Tool", message);
         await loadLocalRegistry();
+        void refreshAll();
         return;
       }
-      const message = "Workspace scan completed; registry reloaded";
+      const message = "Workspace refresh completed; registry reloaded";
       settleScanStatus("success", message);
       addLog("Tool", message);
       await loadLocalRegistry();
+      void refreshAll();
     } finally {
       setScanningWorkspace(false);
     }
-  };
-
-  const handleRefreshAll = () => {
-    addLog("Tool", "Refresh all requested");
-    void refreshAll();
   };
 
   const handleRefreshTool = (id: string) => {
@@ -354,8 +351,7 @@ function App() {
         scanStatus={scanStatus}
         scanMessage={scanMessage}
         lastScanAt={localRegistry?.generatedAt}
-        onScanWorkspace={() => void handleScanWorkspace()}
-        onRefreshAll={handleRefreshAll}
+        onRefreshAll={() => void handleRefreshAll()}
         displayPrefs={<AppDisplayPrefs sidebarRow scope="global" />}
       />
 
