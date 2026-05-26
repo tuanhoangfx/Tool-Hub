@@ -26,6 +26,16 @@ if (!exists("package.json") || !exists("tool.manifest.json") || !exists("CHANGEL
   process.exit(0);
 }
 
+const stagedFiles = git(["diff", "--cached", "--name-only"])
+  .split(/\r?\n/)
+  .map((file) => file.trim())
+  .filter(Boolean);
+
+if (stagedFiles.length > 0 && stagedFiles.every((file) => file === "CHANGELOG.md")) {
+  console.log("[version-hook] Changelog-only commit; skipping version bump.");
+  process.exit(0);
+}
+
 const title = process.env.TOOL_HUB_VERSION_TITLE || "Git commit version stamp";
 const result = bumpAndSyncDocs(process.cwd(), {
   title,
