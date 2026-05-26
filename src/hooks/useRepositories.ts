@@ -91,7 +91,7 @@ export function useRepositories() {
     return () => window.clearTimeout(timer);
     // Refresh whenever the catalog size changes (initial load, registry load).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [repositories.length]);
+  }, [repositories]);
 
   async function refreshTool(toolId: string) {
     const repo = repositories.find((r) => r.id === toolId);

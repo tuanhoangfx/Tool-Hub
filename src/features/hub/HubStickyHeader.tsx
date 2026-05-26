@@ -1,4 +1,4 @@
-import { Database, LayoutGrid, Tag } from "lucide-react";
+import { LayoutGrid, Tag } from "lucide-react";
 import type { ReactNode } from "react";
 import { AppTabHeader } from "../../components/sales-shell/AppTabHeader";
 import { APP_VERSION } from "../../lib/app-meta";
@@ -26,8 +26,6 @@ type HubStickyHeaderProps = {
 };
 
 export function HubStickyHeader({
-  registryLive,
-  registryLabel,
   versionReleaseDate,
   versionReleaseLive: _versionReleaseLive,
   visibleHeaderStats,
@@ -40,7 +38,6 @@ export function HubStickyHeader({
   const statKeys = visibleHeaderStats.size > 0 ? visibleHeaderStats : DEFAULT_HUB_HEADER_STAT_KEYS;
 
   const metaItems = [
-    ...(registryLive ? [{ icon: Database, value: registryLabel, live: true }] : []),
     {
       icon: Tag,
       value: `v${APP_VERSION} · ${versionReleaseDate}`,

@@ -33,8 +33,10 @@ import { readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
 import { formatDate } from "./lib/tooling";
 import { compactIconSize } from "./lib/ui-scale";
+import { runWorkspaceScan } from "./services/workspace-scan";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
+type ScanStatus = "idle" | "scanning" | "success" | "error";
 
 type AppLogEntry = {
   id: string;
@@ -202,6 +204,9 @@ function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
   const [screen, setScreen] = useState<AppScreen>(() => readAppScreen());
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
+  const [scanningWorkspace, setScanningWorkspace] = useState(false);
+  const [scanStatus, setScanStatus] = useState<ScanStatus>("idle");
+  const [scanMessage, setScanMessage] = useState("");
   const [logs, setLogs] = useState<AppLogEntry[]>(() => [
     {
       id: `boot-${Date.now()}`,
@@ -235,6 +240,16 @@ function App() {
       },
       ...prev,
     ].slice(0, 30));
+  }, []);
+
+  const settleScanStatus = useCallback((status: ScanStatus, message: string) => {
+    setScanStatus(status);
+    setScanMessage(message);
+    if (status === "scanning") return;
+    window.setTimeout(() => {
+      setScanStatus("idle");
+      setScanMessage("");
+    }, 10_000);
   }, []);
 
   useEffect(() => {
@@ -284,9 +299,27 @@ function App() {
     setScreen(next);
   };
 
-  const handleLoadRegistry = () => {
-    addLog("Tool", "Load registry requested");
-    void loadLocalRegistry();
+  const handleScanWorkspace = async () => {
+    if (scanningWorkspace) return;
+    setScanningWorkspace(true);
+    settleScanStatus("scanning", "Scanning workspace via local launcher...");
+    addLog("Tool", "Workspace scan requested");
+    try {
+      const result = await runWorkspaceScan();
+      if (!result.ok) {
+        const message = `${result.message ?? "Workspace scan failed"}; loaded existing registry if available`;
+        settleScanStatus("error", message);
+        addLog("Tool", message);
+        await loadLocalRegistry();
+        return;
+      }
+      const message = "Workspace scan completed; registry reloaded";
+      settleScanStatus("success", message);
+      addLog("Tool", message);
+      await loadLocalRegistry();
+    } finally {
+      setScanningWorkspace(false);
+    }
   };
 
   const handleRefreshAll = () => {
@@ -317,7 +350,11 @@ function App() {
         screen={screen}
         onNavigate={navigate}
         loadingAll={loadingAll}
-        onLoadRegistry={handleLoadRegistry}
+        scanningWorkspace={scanningWorkspace}
+        scanStatus={scanStatus}
+        scanMessage={scanMessage}
+        lastScanAt={localRegistry?.generatedAt}
+        onScanWorkspace={() => void handleScanWorkspace()}
         onRefreshAll={handleRefreshAll}
         displayPrefs={<AppDisplayPrefs sidebarRow scope="global" />}
       />

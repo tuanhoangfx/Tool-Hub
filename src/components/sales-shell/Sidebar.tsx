@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User } from "lucide-react";
+import { LayoutGrid, Minus, Plus, RefreshCcw, Search, Settings2, Upload, User } from "lucide-react";
 import { APP_USER_LABEL } from "../../lib/app-meta";
 import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { readHubListPrefs } from "../../lib/url-prefs";
@@ -13,7 +13,11 @@ type SidebarProps = {
   screen: AppScreen;
   onNavigate: (screen: AppScreen) => void;
   loadingAll: boolean;
-  onLoadRegistry: () => void;
+  scanningWorkspace: boolean;
+  scanStatus: "idle" | "scanning" | "success" | "error";
+  scanMessage: string;
+  lastScanAt?: string;
+  onScanWorkspace: () => void;
   onRefreshAll: () => void;
   /** Global display prefs, mirrored with per-tab header settings. */
   displayPrefs: ReactNode;
@@ -72,7 +76,11 @@ export function SalesSidebar({
   screen,
   onNavigate,
   loadingAll,
-  onLoadRegistry,
+  scanningWorkspace,
+  scanStatus,
+  scanMessage,
+  lastScanAt,
+  onScanWorkspace,
   onRefreshAll,
   displayPrefs,
 }: SidebarProps) {
@@ -92,6 +100,8 @@ export function SalesSidebar({
   useEffect(() => {
     window.sessionStorage.setItem(SYSTEM_SUBNAV_OPEN_KEY, systemSubnavOpen ? "1" : "0");
   }, [systemSubnavOpen]);
+
+  const scanIndicator = buildScanIndicator(scanStatus, scanMessage, lastScanAt);
 
   return (
     <aside className="flex h-full min-h-0 w-60 shrink-0 flex-col overflow-visible border-r border-white/5 bg-[var(--panel)] p-4">
@@ -166,11 +176,13 @@ export function SalesSidebar({
           trailing={<span className="text-xs font-medium text-[var(--text)]/80">{APP_USER_LABEL}</span>}
         />
         <SidebarFooterButton
-          icon={Upload}
+          icon={Search}
           iconClass="text-cyan-400"
-          label="Load registry"
-          onClick={onLoadRegistry}
-          title="Load local registry JSON"
+          label="Scan workspace"
+          onClick={onScanWorkspace}
+          disabled={scanningWorkspace}
+          trailing={scanIndicator}
+          title={scanMessage || "Run scan:local via local launcher, then reload local registry"}
         />
         <SidebarFooterButton
           icon={RefreshCcw}
@@ -185,4 +197,72 @@ export function SalesSidebar({
       </footer>
     </aside>
   );
+}
+
+function buildScanIndicator(status: "idle" | "scanning" | "success" | "error", message: string, lastScanAt?: string) {
+  if (status === "scanning") {
+    return (
+      <span className="shrink-0 text-[12px] leading-none" title={message || "Scanning workspace"}>
+        🔍
+      </span>
+    );
+  }
+
+  if (status === "success") {
+    return (
+      <span className="shrink-0 text-[12px] leading-none" title={message || "Workspace scan completed"}>
+        ✔️
+      </span>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <span className="grid h-2.5 w-2.5 shrink-0 place-items-center rounded-full bg-rose-400" title={message || "Workspace scan failed"} />
+    );
+  }
+
+  const { className, title } = scanFreshness(lastScanAt);
+  return <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${className}`} title={title} aria-label={title} />;
+}
+
+function scanFreshness(lastScanAt?: string) {
+  if (!lastScanAt) {
+    return {
+      className: "bg-white/20",
+      title: "No workspace scan loaded yet",
+    };
+  }
+
+  const scannedAt = new Date(lastScanAt).getTime();
+  if (Number.isNaN(scannedAt)) {
+    return {
+      className: "bg-white/20",
+      title: "Workspace scan time is invalid",
+    };
+  }
+
+  const ageMs = Date.now() - scannedAt;
+  const hours = ageMs / (60 * 60 * 1000);
+  const days = hours / 24;
+  const scannedLabel = new Date(scannedAt).toLocaleString("vi-VN");
+
+  if (hours < 12) {
+    return {
+      className: "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.65)]",
+      title: `Last workspace scan: ${scannedLabel} (<12h)`,
+    };
+  }
+
+  if (days <= 7) {
+    return {
+      className: "bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.55)]",
+      title: `Last workspace scan: ${scannedLabel} (${days <= 3 ? "12h-3d" : "3d-7d"})`,
+    };
+  }
+
+  return {
+    className: "bg-rose-400 shadow-[0_0_8px_rgba(251,113,133,0.55)]",
+    title: `Last workspace scan: ${scannedLabel} (>7d)`,
+  };
 }

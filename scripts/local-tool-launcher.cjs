@@ -105,6 +105,43 @@ function launchTool(id, entry) {
   };
 }
 
+function runWorkspaceScan() {
+  return new Promise((resolve) => {
+    const child = spawn("corepack", ["pnpm", "scan:local"], {
+      cwd: path.resolve(__dirname, ".."),
+      shell: process.platform === "win32",
+      windowsHide: true,
+    });
+    let stdout = "";
+    let stderr = "";
+    const timer = setTimeout(() => {
+      child.kill();
+      resolve({ ok: false, code: -1, stdout, stderr, message: "Workspace scan timed out after 120s" });
+    }, 120_000);
+
+    child.stdout?.on("data", (chunk) => {
+      stdout += chunk.toString();
+    });
+    child.stderr?.on("data", (chunk) => {
+      stderr += chunk.toString();
+    });
+    child.on("error", (error) => {
+      clearTimeout(timer);
+      resolve({ ok: false, code: -1, stdout, stderr, message: error.message });
+    });
+    child.on("exit", (code) => {
+      clearTimeout(timer);
+      resolve({
+        ok: code === 0,
+        code,
+        stdout,
+        stderr,
+        message: code === 0 ? "Workspace scan completed" : `Workspace scan failed with code ${code}`,
+      });
+    });
+  });
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", `http://${HOST}:${PORT}`);
 
@@ -160,6 +197,15 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, result.ok ? 200 : 500, result);
     } catch (error) {
       return sendJson(res, 500, { ok: false, message: error.message, steps: [] });
+    }
+  }
+
+  if (req.method === "POST" && url.pathname === "/scan-workspace") {
+    try {
+      const result = await runWorkspaceScan();
+      return sendJson(res, result.ok ? 200 : 500, result);
+    } catch (error) {
+      return sendJson(res, 500, { ok: false, message: error.message, stdout: "", stderr: "" });
     }
   }
 
