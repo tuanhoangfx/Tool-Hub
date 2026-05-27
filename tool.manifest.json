@@ -37,7 +37,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "0.1.10",
+    "version": "0.1.11",
     "readiness": [
       "build",
       "lint",
@@ -66,7 +66,7 @@
     "team": "tuanhoangfxs-projects",
     "notes": "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infix1.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
   },
-  "manifestUpdatedAt": "2026-05-26T23:58:45.494Z",
+  "manifestUpdatedAt": "2026-05-27T01:43:49.747Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infix1.io.vn). Library-only catalog."
