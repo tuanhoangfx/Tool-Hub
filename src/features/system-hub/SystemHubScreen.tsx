@@ -11,6 +11,9 @@ const SystemOverviewPanel = lazy(() =>
 const SystemSchemaPanel = lazy(() =>
   import("./SystemSchemaPanel").then((m) => ({ default: m.SystemSchemaPanel })),
 );
+const SystemSupabaseQuotaPanel = lazy(() =>
+  import("./SystemSupabaseQuotaPanel").then((m) => ({ default: m.SystemSupabaseQuotaPanel })),
+);
 import { DesignTemplateHub } from "./design-template/DesignTemplateHub";
 
 function SystemTabFallback({ label }: { label: string }) {
@@ -87,6 +90,11 @@ export function SystemHubScreen({
           {tab === "schema" ? (
             <Suspense fallback={<SystemTabFallback label="schema" />}>
               <SystemSchemaPanel />
+            </Suspense>
+          ) : null}
+          {tab === "supabase-quota" ? (
+            <Suspense fallback={<SystemTabFallback label="Supabase Quota" />}>
+              <SystemSupabaseQuotaPanel />
             </Suspense>
           ) : null}
           {tab === "template" ? <DesignTemplateHub /> : null}

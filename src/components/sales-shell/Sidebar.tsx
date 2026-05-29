@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User } from "lucide-react";
-import { APP_USER_LABEL } from "../../lib/app-meta";
+import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User, Users } from "lucide-react";
+import { HubUserModal } from "../../features/identity/HubUserModal";
+import { useHubAuth } from "../../features/identity/useHubAuth";
 import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import { formatHubHeaderDate } from "../../lib/tooling";
@@ -25,6 +26,7 @@ type SidebarProps = {
 
 const items: { screen: AppScreen; label: string; icon: typeof LayoutGrid }[] = [
   { screen: "library", label: "Hub", icon: LayoutGrid },
+  { screen: "users", label: "Users", icon: Users },
   { screen: "system", label: "System", icon: Settings2 },
 ];
 
@@ -82,9 +84,13 @@ export function SalesSidebar({
   onRefreshAll,
   displayPrefs,
 }: SidebarProps) {
+  const { session } = useHubAuth();
+  const [userModalOpen, setUserModalOpen] = useState(false);
   const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
   const [systemSubnavOpen, setSystemSubnavOpen] = useState(readSystemSubnavOpen);
   const [showSubnavToggleIcon, setShowSubnavToggleIcon] = useState(() => readHubListPrefs().navToggleIcon);
+  const footerUserLabel =
+    session?.user?.email?.trim() || (session?.user?.id ? session.user.id.slice(0, 8) : "Sign in");
 
   useEffect(() => {
     const sync = () => {
@@ -169,9 +175,11 @@ export function SalesSidebar({
           icon={User}
           iconClass="text-violet-400"
           label="User"
-          title="User management (coming soon)"
-          disabled
-          trailing={<span className="text-xs font-medium text-[var(--text)]/80">{APP_USER_LABEL}</span>}
+          title="Account & sign out"
+          onClick={() => setUserModalOpen(true)}
+          trailing={
+            <span className="max-w-[108px] truncate text-xs font-medium text-[var(--text)]/80">{footerUserLabel}</span>
+          }
         />
         <SidebarFooterButton
           icon={RefreshCcw}
@@ -185,6 +193,7 @@ export function SalesSidebar({
         />
         {displayPrefs}
       </footer>
+      <HubUserModal open={userModalOpen} onClose={() => setUserModalOpen(false)} session={session} />
     </aside>
   );
 }

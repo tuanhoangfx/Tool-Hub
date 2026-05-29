@@ -1,7 +1,7 @@
 {
   "name": "tool-hub",
   "private": true,
-  "version": "0.1.11",
+  "version": "0.1.12",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
@@ -29,6 +29,7 @@
     "preview": "vite preview --host 127.0.0.1 --port 4176"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "@vitejs/plugin-react": "^5.1.1",
     "lucide-react": "^0.451.0",
     "react": "^19.2.1",

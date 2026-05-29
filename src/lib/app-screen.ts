@@ -1,10 +1,11 @@
-export type AppScreen = "library" | "system";
+export type AppScreen = "library" | "system" | "users";
 
 export function readAppScreen(): AppScreen {
   if (typeof window === "undefined") return "library";
   const p = new URLSearchParams(window.location.search);
   const screen = p.get("screen") ?? p.get("tab");
   if (screen === "system") return "system";
+  if (screen === "users") return "users";
   return "library";
 }
 
@@ -15,6 +16,11 @@ export function setAppScreen(screen: AppScreen) {
     p.set("stab", "overview");
   }
   if (screen === "library") {
+    p.delete("stab");
+    p.delete("table");
+    p.delete("detail");
+  }
+  if (screen === "users") {
     p.delete("stab");
     p.delete("table");
     p.delete("detail");

@@ -1,10 +1,11 @@
-import { Database, LayoutGrid, Palette } from "lucide-react";
+import { Database, Gauge, LayoutGrid, Palette } from "lucide-react";
 
-export type SystemTab = "overview" | "schema" | "template";
+export type SystemTab = "overview" | "schema" | "supabase-quota" | "template";
 
 const tabs: { id: SystemTab; label: string; icon: typeof LayoutGrid }[] = [
   { id: "overview", label: "Overview", icon: LayoutGrid },
   { id: "schema", label: "Schema", icon: Database },
+  { id: "supabase-quota", label: "Supabase Quota", icon: Gauge },
   { id: "template", label: "Design Template", icon: Palette },
 ];
 
@@ -12,6 +13,7 @@ export function readSystemTab(): SystemTab {
   if (typeof window === "undefined") return "overview";
   const t = new URLSearchParams(window.location.search).get("stab");
   if (t === "schema") return "schema";
+  if (t === "supabase-quota") return "supabase-quota";
   if (t === "template") return "template";
   return "overview";
 }

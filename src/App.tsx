@@ -28,6 +28,9 @@ import { HubListPage } from "./features/hub";
 const SystemHubScreen = lazy(() =>
   import("./features/system-hub/SystemHubScreen").then((m) => ({ default: m.SystemHubScreen })),
 );
+const UserManagementScreen = lazy(() =>
+  import("./features/identity/UserManagementScreen").then((m) => ({ default: m.UserManagementScreen })),
+);
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
 import { readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
@@ -294,7 +297,10 @@ function App() {
   };
 
   const navigate = (next: AppScreen) => {
-    if (next !== screen) addLog("Navigation", `Switched to ${next === "system" ? "System" : "Hub"}`);
+    if (next !== screen) {
+      const label = next === "system" ? "System" : next === "users" ? "Users" : "Hub";
+      addLog("Navigation", `Switched to ${label}`);
+    }
     setAppScreen(next);
     setScreen(next);
   };
@@ -356,7 +362,17 @@ function App() {
       />
 
       <main className="hub-main flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden">
-        {screen === "system" ? (
+        {screen === "users" ? (
+          <Suspense
+            fallback={
+              <div className="flex min-h-[40vh] items-center justify-center text-sm text-[var(--muted)]">
+                Loading Users…
+              </div>
+            }
+          >
+            <UserManagementScreen headerActions={headerActions} />
+          </Suspense>
+        ) : screen === "system" ? (
           <Suspense
             fallback={
               <div className="flex min-h-[40vh] items-center justify-center text-sm text-[var(--muted)]">

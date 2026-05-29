@@ -36,6 +36,37 @@ export const SYSTEM_TEMPLATE_CHART_DEFS: PrefItem[] = [
 export const DEFAULT_SYSTEM_TEMPLATE_KPI_KEYS = new Set(["total", "locked", "preview"]);
 export const DEFAULT_SYSTEM_TEMPLATE_CHART_KEYS = new Set(["status_donut"]);
 
+export const SYSTEM_SUPABASE_QUOTA_KPI_DEFS: PrefItem[] = [
+  { key: "total", label: "Projects (shown)" },
+  { key: "orgs", label: "Organizations" },
+  { key: "errors", label: "Errors" },
+  { key: "restricted", label: "Restricted" },
+  { key: "pro", label: "Pro projects" },
+  { key: "api_total", label: "API requests (sum)" },
+  { key: "api_rest", label: "REST / min (sum)" },
+  { key: "quota_file", label: "Max file size (min–max)" },
+  { key: "quota_log", label: "Log retention (min–max)" },
+  { key: "quota_fn", label: "Functions max (min–max)" },
+  { key: "quota_rt", label: "Realtime users (min–max)" },
+];
+
+export const SYSTEM_SUPABASE_QUOTA_CHART_DEFS: PrefItem[] = [
+  { key: "category_bar", label: "By region (bar)" },
+  { key: "health_bar", label: "By plan (bar)" },
+];
+
+export const DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS = new Set([
+  "total",
+  "orgs",
+  "errors",
+  "restricted",
+  "api_total",
+  "quota_file",
+  "quota_log",
+  "quota_fn",
+]);
+export const DEFAULT_SYSTEM_SUPABASE_QUOTA_CHART_KEYS = new Set(["category_bar", "health_bar"]);
+
 /** Overview hides all KPI and chart cards by default. */
 export const DEFAULT_SYSTEM_OVERVIEW_KPI_KEYS = new Set<string>();
 export const DEFAULT_SYSTEM_OVERVIEW_CHART_KEYS = new Set<string>();
@@ -62,6 +93,13 @@ export function systemDisplayDefs(stab: SystemTab = readSystemTab()) {
         charts: SYSTEM_SCHEMA_CHART_DEFS,
         defaultKpiKeys: DEFAULT_SYSTEM_SCHEMA_KPI_KEYS,
         defaultChartKeys: DEFAULT_SYSTEM_SCHEMA_CHART_KEYS,
+      };
+    case "supabase-quota":
+      return {
+        kpis: SYSTEM_SUPABASE_QUOTA_KPI_DEFS,
+        charts: SYSTEM_SUPABASE_QUOTA_CHART_DEFS,
+        defaultKpiKeys: DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS,
+        defaultChartKeys: DEFAULT_SYSTEM_SUPABASE_QUOTA_CHART_KEYS,
       };
     case "template":
       return {
