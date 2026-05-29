@@ -30,7 +30,12 @@ import {
 import { APP_VERSION } from "../../lib/app-meta";
 import { HubAuthGate } from "./HubAuthGate";
 import { useHubAuth } from "./useHubAuth";
-import { fetchUserManagementRows, type UserManagementRow } from "./userManagementRepository";
+import {
+  fetchCurrentProfileRole,
+  fetchUserManagementRows,
+  updateUserRole,
+  type UserManagementRow,
+} from "./userManagementRepository";
 
 const USER_FILTERS: FilterDef[] = [
   {
@@ -144,16 +149,53 @@ function sortableValue(user: UserManagementRow, key: SortKey) {
   return user[key];
 }
 
+const ROLE_OPTIONS: UserManagementRow["role"][] = ["admin", "manager", "employee"];
+
+function RoleEditor({
+  user,
+  canEdit,
+  saving,
+  onChange,
+}: {
+  user: UserManagementRow;
+  canEdit: boolean;
+  saving: boolean;
+  onChange: (role: UserManagementRow["role"]) => void;
+}) {
+  if (!canEdit) return <RoleBadge role={user.role} />;
+  return (
+    <select
+      className="field min-w-[7.5rem] cursor-pointer py-1.5 text-center text-xs font-semibold"
+      value={user.role}
+      disabled={saving}
+      onChange={(e) => onChange(e.target.value as UserManagementRow["role"])}
+      aria-label={`Role for ${user.email}`}
+    >
+      {ROLE_OPTIONS.map((role) => (
+        <option key={role} value={role}>
+          {roleLabel(role)}
+        </option>
+      ))}
+    </select>
+  );
+}
+
 function UserTable({
   users,
   sortKey,
   sortDir,
   onSort,
+  canManageRoles,
+  savingRoleId,
+  onRoleChange,
 }: {
   users: UserManagementRow[];
   sortKey: SortKey;
   sortDir: "asc" | "desc";
   onSort: (key: SortKey) => void;
+  canManageRoles: boolean;
+  savingRoleId: string | null;
+  onRoleChange: (userId: string, role: UserManagementRow["role"]) => void;
 }) {
   const headers: { key: SortKey; label: string; align?: string }[] = [
     { key: "fullName", label: "Name" },
@@ -204,7 +246,12 @@ function UserTable({
                   </span>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <RoleBadge role={user.role} />
+                  <RoleEditor
+                    user={user}
+                    canEdit={canManageRoles}
+                    saving={savingRoleId === user.id}
+                    onChange={(role) => onRoleChange(user.id, role)}
+                  />
                 </td>
                 <td className="px-4 py-3 text-center">
                   <span className="font-semibold tabular-nums text-[var(--text)]">{user.projectCount}</span>
@@ -232,7 +279,17 @@ function UserTable({
   );
 }
 
-function UserCards({ users }: { users: UserManagementRow[] }) {
+function UserCards({
+  users,
+  canManageRoles,
+  savingRoleId,
+  onRoleChange,
+}: {
+  users: UserManagementRow[];
+  canManageRoles: boolean;
+  savingRoleId: string | null;
+  onRoleChange: (userId: string, role: UserManagementRow["role"]) => void;
+}) {
   return (
     <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {users.map((user) => (
@@ -243,7 +300,12 @@ function UserCards({ users }: { users: UserManagementRow[] }) {
               <div className="truncate font-semibold">{user.fullName}</div>
               <div className="truncate text-xs text-[var(--muted)]">{user.email || "N/A"}</div>
             </div>
-            <RoleBadge role={user.role} />
+            <RoleEditor
+              user={user}
+              canEdit={canManageRoles}
+              saving={savingRoleId === user.id}
+              onChange={(role) => onRoleChange(user.id, role)}
+            />
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
             <span className="rounded-xl border border-white/5 bg-white/[.03] p-2">
@@ -279,6 +341,11 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   const [viewMode, setViewMode] = useState<HubViewMode>("table");
   const [sortKey, setSortKey] = useState<SortKey>("lastActiveAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [myRole, setMyRole] = useState<UserManagementRow["role"] | null>(null);
+  const [savingRoleId, setSavingRoleId] = useState<string | null>(null);
+  const [roleMessage, setRoleMessage] = useState<string | null>(null);
+
+  const canManageRoles = myRole === "admin";
 
   const refresh = useCallback(async () => {
     if (!session) return;
@@ -290,9 +357,35 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     } catch (error) {
       const message = error instanceof Error ? error.message : "Unable to load users";
       setDataWarning(message);
+    } finally {
       setLoading(false);
     }
   }, [session]);
+
+  useEffect(() => {
+    if (!session?.user.id) {
+      setMyRole(null);
+      return;
+    }
+    void fetchCurrentProfileRole(session.user.id).then(setMyRole);
+  }, [session?.user.id]);
+
+  const handleRoleChange = useCallback(
+    async (userId: string, role: UserManagementRow["role"]) => {
+      if (!canManageRoles) return;
+      setSavingRoleId(userId);
+      setRoleMessage(null);
+      const result = await updateUserRole(userId, role);
+      setSavingRoleId(null);
+      if (!result.ok) {
+        setRoleMessage(result.error ?? "Unable to update role");
+        return;
+      }
+      setRows((prev) => prev.map((row) => (row.id === userId ? { ...row, role } : row)));
+      setRoleMessage("Role updated.");
+    },
+    [canManageRoles],
+  );
 
   useEffect(() => {
     if (session) void refresh();
@@ -484,10 +577,35 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
         </div>
       ) : null}
 
+      {canManageRoles ? (
+        <p className="mb-3 text-xs text-[var(--muted)]">
+          Admins can change roles in the <strong className="text-emerald-300">Position</strong> column.
+        </p>
+      ) : null}
+
+      {roleMessage ? (
+        <div className="mb-3 rounded-xl border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">
+          {roleMessage}
+        </div>
+      ) : null}
+
       {viewMode === "card" ? (
-        <UserCards users={sortedRows} />
+        <UserCards
+          users={sortedRows}
+          canManageRoles={canManageRoles}
+          savingRoleId={savingRoleId}
+          onRoleChange={(id, role) => void handleRoleChange(id, role)}
+        />
       ) : (
-        <UserTable users={sortedRows} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+        <UserTable
+          users={sortedRows}
+          sortKey={sortKey}
+          sortDir={sortDir}
+          onSort={handleSort}
+          canManageRoles={canManageRoles}
+          savingRoleId={savingRoleId}
+          onRoleChange={(id, role) => void handleRoleChange(id, role)}
+        />
       )}
 
       {loading && rows.length === 0 ? (

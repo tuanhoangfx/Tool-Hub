@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { KeyRound, LogOut, Mail, RefreshCcw, ShieldCheck, User, X } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import type { Session } from "@supabase/supabase-js";
+import { fetchCurrentProfileRole } from "./userManagementRepository";
 
 type Props = {
   open: boolean;
@@ -14,18 +15,42 @@ function userDisplay(email: string | null | undefined) {
   return email?.trim() || "Not signed in";
 }
 
+function roleLabel(role: string) {
+  if (role === "admin") return "Admin";
+  if (role === "manager") return "Manager";
+  if (role === "employee") return "Employee";
+  return role;
+}
+
 export function HubUserModal({ open, onClose, session }: Props) {
   const [signingOut, setSigningOut] = useState(false);
+  const [profileRole, setProfileRole] = useState<string | null>(null);
   const user = session?.user ?? null;
   const email = user?.email ?? null;
-  const role = String(user?.app_metadata?.role ?? user?.user_metadata?.role ?? "authenticated");
   const provider = String(user?.app_metadata?.provider ?? "email");
   const createdAt = user?.created_at ? new Date(user.created_at).toLocaleString("vi-VN") : "—";
   const lastSignIn = user?.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString("vi-VN") : "—";
+  const role =
+    profileRole ??
+    String(user?.app_metadata?.role ?? user?.user_metadata?.role ?? "authenticated");
   const initials = useMemo(() => {
     const base = email || user?.id || "U";
     return base.slice(0, 2).toUpperCase();
   }, [email, user?.id]);
+
+  useEffect(() => {
+    if (!open || !user?.id) {
+      setProfileRole(null);
+      return;
+    }
+    let cancelled = false;
+    void fetchCurrentProfileRole(user.id).then((r) => {
+      if (!cancelled && r) setProfileRole(r);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, user?.id]);
 
   if (!open || typeof document === "undefined") return null;
 
@@ -54,7 +79,9 @@ export function HubUserModal({ open, onClose, session }: Props) {
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-200/80">Tool Hub user</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-200/80">
+                Workspace user
+              </p>
               <h2 className="mt-1 truncate text-lg font-semibold text-[var(--text)]">{userDisplay(email)}</h2>
               <p className="mt-0.5 font-mono text-[10px] text-[var(--muted)]">{user?.id ?? "No active session"}</p>
             </div>
@@ -63,7 +90,7 @@ export function HubUserModal({ open, onClose, session }: Props) {
         <div className="grid gap-2 p-4 text-sm">
           {[
             { label: "Email", value: userDisplay(email), icon: Mail },
-            { label: "Role", value: role, icon: ShieldCheck },
+            { label: "Role", value: roleLabel(role), icon: ShieldCheck },
             { label: "Provider", value: provider, icon: KeyRound },
             { label: "Created", value: createdAt, icon: User },
             { label: "Last sign in", value: lastSignIn, icon: RefreshCcw },

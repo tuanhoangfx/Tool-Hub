@@ -1,4 +1,5 @@
 import { Database, Gauge, LayoutGrid, Palette } from "lucide-react";
+import { buildAppUrl } from "../../../lib/hub-path";
 
 export type SystemTab = "overview" | "schema" | "supabase-quota" | "template";
 
@@ -22,9 +23,8 @@ export const SYSTEM_TAB_ITEMS = tabs;
 
 export function setSystemTab(id: SystemTab) {
   const p = new URLSearchParams(window.location.search);
-  p.set("screen", "system");
   p.set("stab", id);
   if (id === "schema" && !p.get("table")) p.set("table", "catalog");
-  window.history.replaceState(null, "", `${window.location.pathname}?${p.toString()}`);
+  window.history.replaceState(null, "", buildAppUrl("system", p.toString()));
   window.dispatchEvent(new PopStateEvent("popstate"));
 }

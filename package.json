@@ -1,7 +1,7 @@
 {
   "name": "tool-hub",
   "private": true,
-  "version": "0.1.13",
+  "version": "0.1.14",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",

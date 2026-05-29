@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { appScreenToPath, pathnameToAppScreen } from "../lib/hub-path";
 
 type UrlState = {
   tool: string | null;
@@ -22,8 +23,12 @@ function writeUrl(next: UrlState, options: { replace?: boolean } = {}) {
   else params.delete("tool");
   if (next.detail) params.set("detail", "1");
   else params.delete("detail");
+  params.delete("screen");
+  params.delete("tab");
+  const pathScreen = pathnameToAppScreen(window.location.pathname) ?? "library";
+  const pathname = appScreenToPath(pathScreen);
   const query = params.toString();
-  const url = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+  const url = `${pathname}${query ? `?${query}` : ""}${window.location.hash}`;
   if (options.replace) window.history.replaceState(null, "", url);
   else window.history.pushState(null, "", url);
 }

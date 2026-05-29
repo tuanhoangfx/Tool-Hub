@@ -73,6 +73,21 @@ function missingRpc(message: string) {
   return /workspace_user_directory/i.test(message) && /does not exist|not found|PGRST202|42883/i.test(message);
 }
 
+export async function updateUserRole(
+  targetUserId: string,
+  role: UserManagementRow["role"],
+): Promise<{ ok: boolean; error: string | null }> {
+  const { error } = await supabase.from("profiles").update({ role, updated_at: new Date().toISOString() }).eq("id", targetUserId);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, error: null };
+}
+
+export async function fetchCurrentProfileRole(userId: string): Promise<UserManagementRow["role"] | null> {
+  const { data, error } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
+  if (error || !data?.role) return null;
+  return cleanRole(data.role);
+}
+
 export async function fetchUserManagementRows(session: Session): Promise<{
   rows: UserManagementRow[];
   warning: string | null;

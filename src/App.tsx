@@ -32,7 +32,7 @@ const UserManagementScreen = lazy(() =>
   import("./features/identity/UserManagementScreen").then((m) => ({ default: m.UserManagementScreen })),
 );
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
-import { readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
+import { migrateAppUrl, readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
 import { formatDate } from "./lib/tooling";
 import { compactIconSize } from "./lib/ui-scale";
@@ -205,7 +205,7 @@ function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
 
 function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
-  const [screen, setScreen] = useState<AppScreen>(() => readAppScreen());
+  const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
   const [scanningWorkspace, setScanningWorkspace] = useState(false);
   const [scanStatus, setScanStatus] = useState<ScanStatus>("idle");
