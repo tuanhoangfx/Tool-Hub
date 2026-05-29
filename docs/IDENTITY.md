@@ -11,9 +11,16 @@ VITE_SUPABASE_URL=https://fmnrafpzctuhxjaaomzt.supabase.co
 VITE_SUPABASE_ANON_KEY=<anon key from Dashboard → API>
 ```
 
-2. Run SQL migration in [SQL Editor](https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new):
+2. Apply SQL (once per project):
 
-`supabase/migrations/20260529120000_hub_identity_profiles.sql`
+```powershell
+# Requires SUPABASE_ACCESS_TOKEN in env
+powershell -ExecutionPolicy Bypass -File scripts/apply-hub-identity-migration.ps1
+```
+
+Or paste `supabase/migrations/20260529120000_hub_identity_profiles.sql` in [SQL Editor](https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new).
+
+**Status (2026-05-29):** Migration applied on `fmnrafpzctuhxjaaomzt` via Management API.
 
 3. `pnpm dev` → open **Users** tab or footer **User** (account / sign out).
 
