@@ -1,4 +1,4 @@
-import { BookOpen, Bot, CalendarDays, FileCode, ScrollText, Sparkles } from "lucide-react";
+import { BookOpen, Bot, CalendarDays, FileCode, Link2, ScrollText, Shield, Sparkles } from "lucide-react";
 import { MetricBadge } from "../../../components/sales-shell/MetricBadge";
 import { QuietChip } from "../../hub/hub-tool-ui";
 import { compactIconSize } from "../../../lib/ui-scale";
@@ -32,9 +32,9 @@ function kindCode(kind: AgentContextKind) {
 }
 
 function kindIcon(kind: AgentContextKind) {
-  if (kind === "rule") return ScrollText;
+  if (kind === "rule") return Shield;
   if (kind === "skill") return Sparkles;
-  if (kind === "contract") return FileCode;
+  if (kind === "contract") return Link2;
   return FileCode;
 }
 

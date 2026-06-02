@@ -4,7 +4,9 @@ import {
   CalendarDays,
   FileCode,
   FolderOpen,
+  Link2,
   Pencil,
+  Shield,
   ScrollText,
   Sparkles,
   Tag,
@@ -21,10 +23,10 @@ const KIND_META: Record<
   AgentContextKind,
   { code: string; Icon: LucideIcon; tint: string; avatarIcon: string }
 > = {
-  rule: { code: "RULE", Icon: ScrollText, tint: "#34d399", avatarIcon: "scroll" },
+  rule: { code: "RULE", Icon: Shield, tint: "#34d399", avatarIcon: "scroll" },
   skill: { code: "SKILL", Icon: Sparkles, tint: "#a855f7", avatarIcon: "sparkles" },
   file: { code: "FILE", Icon: FileCode, tint: "#38bdf8", avatarIcon: "file" },
-  contract: { code: "CNTR", Icon: FileCode, tint: "#fbbf24", avatarIcon: "link" },
+  contract: { code: "CNTR", Icon: Link2, tint: "#fbbf24", avatarIcon: "link" },
 };
 
 const META: Record<string, { Icon: LucideIcon; tint: string }> = {
@@ -84,6 +86,13 @@ export function AgentContextCard({ item, onOpen }: AgentContextCardProps) {
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
               <MetricBadge label={meta.code} mono variantClass={kindBadgeClass(item.kind)} />
+              <span
+                className="inline-flex h-6 w-6 items-center justify-center rounded-lg border border-white/10 bg-white/[0.02]"
+                title={item.kind}
+                aria-hidden
+              >
+                <meta.Icon size={compactIconSize(14)} style={{ color: meta.tint }} />
+              </span>
               <span className="min-w-0 line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">{item.name}</span>
             </div>
           </div>
