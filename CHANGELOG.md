@@ -4,7 +4,7 @@
 
 - Version: `0.2.5`
 - Timestamp: 2026-06-02 15:32 (UTC+7)
-- Commit: pending
+- Commit: `c8357e9`
 - Type: Patch
 - Status: Draft
 
