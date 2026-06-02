@@ -1,0 +1,54 @@
+import type { ElementType } from "react";
+import { compactIconSize } from "../../lib/ui-scale";
+
+type Tone = "indigo" | "emerald" | "amber" | "rose" | "blue" | "purple";
+
+const tones: Record<Tone, { bg: string; ring: string; icon: string }> = {
+  indigo: { bg: "from-indigo-500/20 to-indigo-500/0", ring: "ring-indigo-500/30", icon: "text-indigo-300 bg-indigo-500/15" },
+  emerald: { bg: "from-emerald-500/20 to-emerald-500/0", ring: "ring-emerald-500/30", icon: "text-emerald-300 bg-emerald-500/15" },
+  amber: { bg: "from-amber-500/20 to-amber-500/0", ring: "ring-amber-500/30", icon: "text-amber-300 bg-amber-500/15" },
+  rose: { bg: "from-rose-500/20 to-rose-500/0", ring: "ring-rose-500/30", icon: "text-rose-300 bg-rose-500/15" },
+  blue: { bg: "from-blue-500/20 to-blue-500/0", ring: "ring-blue-500/30", icon: "text-blue-300 bg-blue-500/15" },
+  purple: { bg: "from-purple-500/20 to-purple-500/0", ring: "ring-purple-500/30", icon: "text-purple-300 bg-purple-500/15" },
+};
+
+export type KpiTileData = {
+  label: string;
+  value: string | number;
+  hint?: string;
+  icon?: ElementType<{ size?: number; className?: string }>;
+  tone?: Tone;
+  /** Matches DisplayPrefs KPI keys (total, ready, …). */
+  prefKey?: string;
+};
+
+export function KpiStrip({ items, className = "" }: { items: KpiTileData[]; className?: string }) {
+  return (
+    <div className={`stagger grid grid-cols-2 gap-3 sm:grid-cols-4 ${className}`}>
+      {items.map((it, i) => (
+        <KpiTile key={i} {...it} />
+      ))}
+    </div>
+  );
+}
+
+function KpiTile({ label, value, hint, icon: Icon, tone = "indigo" }: KpiTileData) {
+  const t = tones[tone];
+  return (
+    <div
+      className={`anim-slide relative overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)] p-4 transition-all hover:-translate-y-0.5 hover:ring-2 ${t.ring}`}
+    >
+      <div className={`pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${t.bg} blur-2xl`} />
+      <div className="relative flex items-center gap-3">
+        <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${t.icon}`}>
+          {Icon ? <Icon size={compactIconSize(18)} /> : null}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">{label}</div>
+          <div className="mt-0.5 truncate text-2xl font-semibold tabular-nums">{value}</div>
+          {hint ? <div className="text-[10px] text-[var(--muted)]">{hint}</div> : null}
+        </div>
+      </div>
+    </div>
+  );
+}

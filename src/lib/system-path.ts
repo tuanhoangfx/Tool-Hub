@@ -8,7 +8,7 @@ export type SystemRoute = {
   tab: SystemTab;
   schemaEntity?: SchemaEntity;
   design?: {
-    template: "tool-access" | "agent-context";
+    template: "tool-access" | "agent-context" | "hub-chrome-spacing";
     variant: number;
     live: boolean;
   };

@@ -33,7 +33,16 @@ type DisplayPrefsProps = Omit<
   showUsersTableColumns?: boolean;
 };
 
-export function DisplayPrefs({ showUsersTableColumns = false, ...props }: DisplayPrefsProps) {
+/** Match P0020 Cookie Auto header Settings panel (width, tabs, max height). */
+const P0020_SETTINGS_PANEL_WIDTH = 420;
+const P0020_SETTINGS_MAX_PANEL_HEIGHT = "min(80vh, 42rem)";
+
+export function DisplayPrefs({
+  showUsersTableColumns = false,
+  panelWidth = P0020_SETTINGS_PANEL_WIDTH,
+  maxPanelHeight = P0020_SETTINGS_MAX_PANEL_HEIGHT,
+  ...props
+}: DisplayPrefsProps) {
   const [hiddenUserCols, setHiddenUserCols] = useState(() =>
     showUsersTableColumns ? countHiddenUserTableColumns() : 0,
   );
@@ -47,6 +56,8 @@ export function DisplayPrefs({ showUsersTableColumns = false, ...props }: Displa
 
   return (
     <HubDisplayPrefs
+      panelWidth={panelWidth}
+      maxPanelHeight={maxPanelHeight}
       {...props}
       readPrefs={readHubListPrefs}
       patchPrefs={(patch) => patchHubListPrefs(patch)}

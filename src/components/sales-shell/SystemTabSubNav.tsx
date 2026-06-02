@@ -1,17 +1,22 @@
+import { readAppScreen, setAppScreen } from "../../lib/app-screen";
 import { setSystemTab, SYSTEM_TAB_ITEMS, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { prefetchSystemTab } from "../../features/system-hub/system-tab-prefetch";
-import { compactIconSize } from "../../lib/ui-scale";
+
+function openSystemTab(id: SystemTab) {
+  if (readAppScreen() !== "system") setAppScreen("system");
+  setSystemTab(id);
+}
 
 export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab | null }) {
   return (
     <div className="system-tab-subnav ml-3 mt-1.5 space-y-0.5">
-      {SYSTEM_TAB_ITEMS.map(({ id, label, icon: Icon }) => {
+      {SYSTEM_TAB_ITEMS.map(({ id, label }) => {
         const isActive = activeTab === id;
         return (
           <button
             key={id}
             type="button"
-            onClick={() => setSystemTab(id)}
+            onClick={() => openSystemTab(id)}
             onMouseEnter={() => prefetchSystemTab(id)}
             onFocus={() => prefetchSystemTab(id)}
             className="group grid h-8 w-full grid-cols-[1.25rem_minmax(0,1fr)] items-center text-left text-[13px]"
@@ -25,13 +30,12 @@ export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab | null }) 
               />
             </span>
             <span
-              className={`flex h-8 min-w-0 items-center gap-2 rounded-xl px-3 transition-colors ${
+              className={`flex h-8 min-w-0 items-center rounded-xl px-3 transition-colors ${
                 isActive
-                  ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/5 text-indigo-100"
+                  ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/5 font-medium text-indigo-100"
                   : "text-[var(--muted)] group-hover:bg-white/[.04] group-hover:text-[var(--text)]"
               }`}
             >
-              <Icon size={compactIconSize(14)} className={isActive ? "text-indigo-300" : ""} />
               <span className="min-w-0 flex-1 truncate text-left">{label}</span>
             </span>
           </button>

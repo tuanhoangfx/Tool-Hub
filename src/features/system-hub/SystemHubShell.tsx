@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import {
   FilterBar,
   KpiStrip,
@@ -8,8 +9,6 @@ import {
 } from "../../components/sales-shell";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import { readSystemTab, type SystemTab } from "./components/SystemTabs";
-
-const STACK_FILTER_TABS: SystemTab[] = ["supabase-quota", "agent"];
 import {
   readSystemTabDisplay,
   systemDisplayDefs,
@@ -31,6 +30,8 @@ export type SystemHubShellProps = {
   kpiItems: KpiTileData[];
   /** Render when matching chart pref keys (health_bar, category_bar, deploy_donut, status_donut). */
   charts?: ReactNode;
+  /** When set, only this System tab portals FilterBar into the sticky chrome stack. */
+  stickyFilterTab?: SystemTab;
   children: ReactNode;
 };
 
@@ -44,6 +45,7 @@ export function SystemHubShell({
   toolbar,
   kpiItems,
   charts,
+  stickyFilterTab,
   children,
 }: SystemHubShellProps) {
   const [prefs, setPrefs] = useState(readHubListPrefs);
@@ -110,24 +112,24 @@ export function SystemHubShell({
     ],
   );
 
-  useEffect(() => {
-    if (!chrome?.stackChrome) {
-      chrome?.registerFilter(null);
-      return;
-    }
-    if (!STACK_FILTER_TABS.includes(stab)) {
-      chrome.registerFilter(null);
-      return;
-    }
-    chrome.registerFilter(filterBar);
-    return () => chrome.registerFilter(null);
-  }, [chrome, filterBar, stab]);
+  const portalFilter =
+    Boolean(chrome?.stackChrome) &&
+    Boolean(chrome?.filterAnchorReady) &&
+    stickyFilterTab != null &&
+    stab === stickyFilterTab &&
+    chrome?.filterAnchorRef.current != null;
+
+  const filterChrome =
+    portalFilter && chrome?.filterAnchorRef.current
+      ? createPortal(filterBar, chrome.filterAnchorRef.current)
+      : null;
 
   const showFilterInline = !chrome?.stackChrome;
 
   return (
     <div className={`system-hub-shell anim-fade ${showFilterInline ? "space-y-4" : "space-y-4 pt-4"}`}>
       {showFilterInline ? filterBar : null}
+      {filterChrome}
 
       {hasAnalytics ? (
         <div className="mt-5 space-y-5">

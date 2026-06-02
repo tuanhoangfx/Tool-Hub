@@ -15,10 +15,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
+    "baseUrl": ".",
     "paths": {
-      "@dev/hub-load": ["../packages/hub-load/src/index.ts"],
-      "@tool-workspace/hub-ui": ["../../packages/hub-ui/src/index.ts"],
-      "@tool-workspace/hub-ui/*": ["../../packages/hub-ui/src/*"]
+      "@dev/hub-load": ["vendor/hub-load/src/index.ts"],
+      "@tool-workspace/hub-ui": ["vendor/hub-ui/src/index.ts"],
+      "@tool-workspace/hub-ui/*": ["vendor/hub-ui/src/*"]
     }
   },
   "include": ["src", "eslint.config.js", "vite.config.ts"]

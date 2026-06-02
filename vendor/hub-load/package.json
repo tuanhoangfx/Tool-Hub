@@ -1,0 +1,24 @@
+{
+  "name": "@dev/hub-load",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Hub-like client load: stale-while-revalidate cache, background refresh hook, visited screens.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "jsdom": "^26.1.0",
+    "react": "^19.2.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.6"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  }
+}

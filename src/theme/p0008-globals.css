@@ -15,7 +15,6 @@
   --overview-toc-w: 135px;
   --overview-toc-h: 263px;
   --overview-toc-row-h: 30px;
-  --overview-detail-toc-col-w: 180px;
   --schema-graph-h: 414px;
   --schema-graph-compact-h: 252px;
   --schema-graph-side-w: 198px;
@@ -339,21 +338,4 @@ body,
   -webkit-user-select: none;
 }
 
-/** Viewport-centered loader — portaled to #hub-tab-loader-root; main pane only (sidebar excluded). */
-.hub-tab-loader-fill {
-  position: fixed;
-  z-index: 35;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: var(--hub-sidebar-width, 15rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.hub-tab-loader-fill--dim {
-  background: color-mix(in srgb, var(--bg) 45%, transparent);
-  backdrop-filter: blur(2px);
-}
+/* Hub boot + tab loader: /hub-boot.css (index.html) + main.tsx import */

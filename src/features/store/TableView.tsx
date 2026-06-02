@@ -202,7 +202,6 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
           })}
         </tbody>
       </table>
-      {tools.length === 0 ? <div className="table-empty">No projects match filters.</div> : null}
     </div>
   );
 }

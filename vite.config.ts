@@ -6,8 +6,8 @@ import { createRequire } from "node:module";
 import { loadEnv } from "vite";
 
 const toolRoot = path.dirname(fileURLToPath(import.meta.url));
-const hubUiRoot = path.resolve(toolRoot, "../../packages/hub-ui/src");
-const hubLoadRoot = path.resolve(toolRoot, "../packages/hub-load/src");
+const hubUiRoot = path.resolve(toolRoot, "vendor/hub-ui/src");
+const hubLoadRoot = path.resolve(toolRoot, "vendor/hub-load/src");
 
 const require = createRequire(import.meta.url);
 
@@ -20,19 +20,26 @@ type DevMiddlewareFactory = (opts: { cwd: string; mode?: string; loadEnv?: typeo
 function loadDevMiddleware(): {
   createSupabaseApiProxy: DevMiddlewareFactory;
   createQuotaMiddleware: DevMiddlewareFactory;
+  createWorkspaceRefreshMiddleware: DevMiddlewareFactory;
 } {
   try {
     return {
       createSupabaseApiProxy: require("./scripts/lib/supabase-api-proxy.cjs").createSupabaseApiProxy,
       createQuotaMiddleware: require("../scripts/lib/supabase-quota-fetch.cjs").createQuotaMiddleware,
+      createWorkspaceRefreshMiddleware: require("./scripts/lib/workspace-refresh.cjs").createWorkspaceRefreshMiddleware,
     };
   } catch {
     const noop: DevMiddlewareFactory = () => () => {};
-    return { createSupabaseApiProxy: noop, createQuotaMiddleware: noop };
+    return {
+      createSupabaseApiProxy: noop,
+      createQuotaMiddleware: noop,
+      createWorkspaceRefreshMiddleware: noop,
+    };
   }
 }
 
-const { createSupabaseApiProxy, createQuotaMiddleware } = loadDevMiddleware();
+const { createSupabaseApiProxy, createQuotaMiddleware, createWorkspaceRefreshMiddleware } =
+  loadDevMiddleware();
 
 export default defineConfig(({ mode }) => {
   return {
@@ -41,6 +48,7 @@ export default defineConfig(({ mode }) => {
       {
         name: "supabase-management-api-proxy",
         configureServer(server) {
+          server.middlewares.use(createWorkspaceRefreshMiddleware({ cwd: process.cwd() }));
           server.middlewares.use(createSupabaseApiProxy({ mode, cwd: process.cwd(), loadEnv }));
           server.middlewares.use(createQuotaMiddleware({ cwd: process.cwd() }));
         },
@@ -58,7 +66,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     test: {
-      exclude: [...configDefaults.exclude, "scripts/**/*.test.cjs"],
+      exclude: [...configDefaults.exclude, "scripts/**/*.test.cjs", "vendor/**"],
     },
   };
 });

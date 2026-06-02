@@ -107,6 +107,7 @@ export function SystemSchemaPanel() {
 
   return (
     <SystemHubShell
+      stickyFilterTab="schema"
       placeholder="Search Schema by field, column, type, mode, source..."
       filters={entityFilters}
       query={query}

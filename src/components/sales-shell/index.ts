@@ -9,6 +9,7 @@ export { SalesSidebar } from "./Sidebar";
 export { ViewToggle, type HubViewMode } from "./ViewToggle";
 export { HubResultCount } from "./HubResultCount";
 export { HubTimeRangeSelect } from "./HubTimeRangeSelect";
+export { HubRowLimitSelect } from "./HubRowLimitSelect";
 export {
   HubLoadingView,
   UsersLoadingView,

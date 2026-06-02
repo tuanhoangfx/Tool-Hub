@@ -52,6 +52,7 @@ export type QuotaMinMax = {
 };
 
 export function entitlementsList(entitlements: unknown): EntitlementItem[] {
+  if (Array.isArray(entitlements)) return entitlements as EntitlementItem[];
   if (!entitlements || typeof entitlements !== "object") return [];
   const e = entitlements as Record<string, unknown>;
   const list = e.entitlements;
@@ -61,7 +62,10 @@ export function entitlementsList(entitlements: unknown): EntitlementItem[] {
 export function entitlementNumeric(entitlements: unknown, featureKey: string): number | null {
   const items = entitlementsList(entitlements);
   const found = items.find((it) => it?.feature?.key === featureKey);
-  if (!found?.config || typeof found.config !== "object") return null;
+  if (!found) return null;
+  const top = found as EntitlementItem & { value?: number };
+  if (typeof top.value === "number") return top.value;
+  if (!found.config || typeof found.config !== "object") return null;
   const cfg = found.config as Record<string, unknown>;
   if (typeof cfg.value === "number") return cfg.value;
   return null;
@@ -75,6 +79,21 @@ export function formatCompact(n: number) {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}k`;
   return String(n);
+}
+
+/** One line: total + latest REST/Auth/RT per minute. */
+export function formatApiUsageInline(usage: ProjectUsageMetrics): string | null {
+  const total =
+    usage.apiRequestsTotal != null ? `${formatCompact(usage.apiRequestsTotal)} total` : null;
+  const rates: string[] = [];
+  if (usage.restLatest != null) rates.push(`REST ${formatCompact(usage.restLatest)}`);
+  if (usage.authLatest != null) rates.push(`Auth ${formatCompact(usage.authLatest)}`);
+  if (usage.realtimeLatest != null) rates.push(`RT ${formatCompact(usage.realtimeLatest)}`);
+  const ratePart = rates.length > 0 ? `${rates.join(" · ")} /min` : null;
+  if (total && ratePart) return `${total} · ${ratePart}`;
+  if (total) return total;
+  if (ratePart) return ratePart;
+  return null;
 }
 
 export function formatBytes(bytes: number) {

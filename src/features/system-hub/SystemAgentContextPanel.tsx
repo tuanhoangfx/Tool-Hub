@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { prefetchAgentManifest } from "../../lib/hub-background-prefetch";
 import { AlertTriangle, BookOpen, Bot, RefreshCw, ScrollText, Sparkles } from "lucide-react";
 import {
   HubResultCount,
-  HubLoadingView,
   MiniBarChart,
   MiniDonut,
   ViewToggle,
@@ -10,7 +10,6 @@ import {
   type FilterValues,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { EmptyState } from "../../components/EmptyState";
 import { compactIconSize } from "../../lib/ui-scale";
 import { useSessionState } from "../../hooks/useSessionState";
 import { SystemHubShell } from "./SystemHubShell";
@@ -23,6 +22,7 @@ import {
   matchesAgentContext,
 } from "./agent-context/agent-context-filters";
 import { HubLikeDataSectionRule } from "./agent-context/HubLikeDataSectionRule";
+import { sortAgentContextItems } from "./agent-context/agent-context-sort";
 import type { AgentContextItem } from "./agent-context/types";
 import { useAgentManifest } from "./agent-context/useAgentManifest";
 
@@ -32,16 +32,22 @@ export function SystemAgentContextPanel() {
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
   const [detail, setDetail] = useState<AgentContextItem | null>(null);
-  const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:agent:viewMode", "card");
+  const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:agent:viewMode", "table");
+
+  useEffect(() => {
+    prefetchAgentManifest();
+  }, []);
+
+  const sortedItems = useMemo(() => sortAgentContextItems(items), [items]);
 
   const filters = useMemo(
-    () => agentFiltersWithCounts(items, query, filterValues),
-    [items, query, filterValues],
+    () => agentFiltersWithCounts(sortedItems, query, filterValues),
+    [sortedItems, query, filterValues],
   );
 
   const filtered = useMemo(
-    () => items.filter((item) => matchesAgentContext(item, query, filterValues)),
-    [items, query, filterValues],
+    () => sortedItems.filter((item) => matchesAgentContext(item, query, filterValues)),
+    [sortedItems, query, filterValues],
   );
 
   const kpis = useMemo(() => agentContextKpis(filtered), [filtered]);
@@ -88,14 +94,6 @@ export function SystemAgentContextPanel() {
     [filtered.length, items.length, loading, reload, viewMode, setViewMode],
   );
 
-  if (loading && items.length === 0) {
-    return (
-      <div className="relative min-h-[min(360px,50vh)]">
-        <HubLoadingView icon={Bot} ariaLabel="Loading agent context" variant="overlay" />
-      </div>
-    );
-  }
-
   const body = (
     <>
       {error ? (
@@ -108,9 +106,14 @@ export function SystemAgentContextPanel() {
         </div>
       ) : null}
 
-      {filtered.length === 0 ? (
-        <EmptyState title="No agent context items" description="Adjust filters or run Sync manifest after build." />
-      ) : viewMode === "table" ? (
+      {loading && items.length === 0 ? (
+        <p className="py-10 text-center text-sm text-[var(--muted)]">Loading agent context in background…</p>
+      ) : items.length === 0 && !error ? (
+        <p className="py-10 text-center text-sm text-[var(--muted)]">
+          No agent manifest items. Run{" "}
+          <code className="rounded bg-white/5 px-1">pnpm agent:manifest</code> then Sync manifest.
+        </p>
+      ) : filtered.length === 0 ? null : viewMode === "table" ? (
         <div className="pb-8">
           <HubLikeDataSectionRule label="Agent context" />
           <AgentContextTableView items={filtered} onOpen={setDetail} />
@@ -131,6 +134,7 @@ export function SystemAgentContextPanel() {
   return (
     <>
       <SystemHubShell
+        stickyFilterTab="agent"
         placeholder="Search rules, skills, paths, triggers…"
         filters={filters}
         query={query}

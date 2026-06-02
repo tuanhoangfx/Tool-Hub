@@ -20,7 +20,6 @@ import { hubCharts, hubKpis, matchesTimeRange } from "../hub/hub-aggregates";
 import { DEFAULT_HUB_CHART_KEYS } from "../hub/hub-prefs";
 import { ToolOverviewContent } from "../overview/ToolOverviewContent";
 import { SystemHubShell } from "./SystemHubShell";
-import { enrichFilterDefs } from "../../lib/filter-option-counts";
 import { filterToolsForSystem } from "./system-hub-aggregates";
 
 function hubToolFromManifest(manifest: ToolManifest): ResolvedTool {
@@ -103,7 +102,10 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
   }, []);
 
   const filteredTools = useMemo(
-    () => filterToolsForSystem(tools, query, filterValues.tool).filter((tool) => matchesTimeRange(tool.updatedAt, prefs.range)),
+    () =>
+      filterToolsForSystem(tools, query, filterValues.tool).filter((tool) =>
+        matchesTimeRange(tool.updatedAt, prefs.range),
+      ),
     [tools, query, filterValues.tool, prefs.range],
   );
 
@@ -116,26 +118,12 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
     return tools.find((t) => t.id === id) ?? hubTool;
   }, [focusedId, tools, hubTool]);
 
-  const toolFiltersBase = useMemo((): FilterDef[] => {
+  const toolFilters = useMemo((): FilterDef[] => {
     const options = [...tools]
       .sort((a, b) => a.code.localeCompare(b.code))
       .map((t) => ({ value: t.id, label: `${t.code} · ${t.name}` }));
     return [{ key: "tool", label: "Tool", options, showAllLabel: true }];
   }, [tools]);
-
-  const toolFilters = useMemo(
-    () =>
-      enrichFilterDefs(
-        tools,
-        toolFiltersBase,
-        query,
-        filterValues,
-        (tool, q, f) =>
-          filterToolsForSystem([tool], q, f.tool).length > 0 && matchesTimeRange(tool.updatedAt, prefs.range),
-        (tool, _key, value) => tool.id === value,
-      ),
-    [tools, toolFiltersBase, query, filterValues, prefs.range],
-  );
 
   const handleFilterValuesChange = useCallback((next: FilterValues) => {
     setFilterValues(next);
@@ -160,6 +148,7 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
 
   return (
     <SystemHubShell
+      stickyFilterTab="overview"
       placeholder="Search Overview by tool name, code, repo, tag..."
       filters={toolFilters}
       query={query}
@@ -189,6 +178,7 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
         hubChangelogRaw={changelogRaw}
         hideWorkspaceChrome
         layoutMode={viewMode}
+        scrollRootSelector=".hub-main"
         onSelectTool={setFocusedId}
       />
     </SystemHubShell>

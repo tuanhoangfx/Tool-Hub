@@ -1,18 +1,24 @@
 import type { ReactNode } from "react";
-import { BookOpen, CalendarDays, FolderOpen, Pencil, Tag } from "lucide-react";
+import { BookOpen, CalendarDays, Layers, Pencil, Tag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { HubCardAvatar } from "../../../components/HubCardAvatar";
 import { QuietChip } from "../../hub/hub-tool-ui";
 import { compactIconSize } from "../../../lib/ui-scale";
 import { formatDate } from "../../../lib/tooling";
 import type { AgentContextItem } from "./types";
 import { AgentKindBadge, AgentScopeBadge } from "./AgentContextBadges";
+import { agentKindIcon, agentStatusDotColor } from "./agent-kind-icon";
 
-const META: Record<string, { Icon: LucideIcon; tint: string }> = {
+const META = {
   summary: { Icon: BookOpen, tint: "#38bdf8" },
-  path: { Icon: FolderOpen, tint: "#fbbf24" },
+  scope: { Icon: Layers, tint: "#22d3ee" },
   lines: { Icon: Tag, tint: "#a78bfa" },
   updated: { Icon: CalendarDays, tint: "#f472b6" },
-};
+} as const satisfies Record<string, { Icon: LucideIcon; tint: string }>;
+
+type MetaRowKind = keyof typeof META;
+
+const META_FALLBACK = { Icon: BookOpen, tint: "#94a3b8" };
 
 function applyModeLabel(item: AgentContextItem) {
   if (item.alwaysApply) return "Always apply";
@@ -42,11 +48,20 @@ export function AgentContextCard({ item, onOpen }: AgentContextCardProps) {
       onClick={() => onOpen(item)}
       className="group flex h-full min-h-[var(--hub-card-min-h)] w-full flex-col rounded-xl border border-white/5 bg-[var(--panel)] p-4 text-left transition-[border-color,box-shadow,background-color] duration-200 hover:border-indigo-500/40 hover:bg-white/[0.02] hover:shadow-[0_8px_24px_rgba(99,102,241,0.12)]"
     >
-      <div className="mb-3 flex shrink-0 items-start justify-between gap-2">
-        <div className="flex min-w-0 flex-1 items-start gap-2.5">
-          <AgentKindBadge kind={item.kind} className="mt-0.5 shrink-0 rounded-full px-2" />
+      <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <HubCardAvatar
+            variant="agent"
+            icon={agentKindIcon(item.kind)}
+            size="sm"
+            statusColor={agentStatusDotColor(item)}
+            statusTitle={applyModeLabel(item)}
+          />
           <div className="min-w-0 flex-1">
-            <p className="line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">{item.name}</p>
+            <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
+              <AgentKindBadge kind={item.kind} className="shrink-0 rounded-full px-2" />
+              <p className="min-w-0 line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">{item.name}</p>
+            </div>
             <p className="mt-1 truncate font-mono text-[10px] text-indigo-200/75">{fileName(item.path)}</p>
           </div>
         </div>
@@ -80,8 +95,8 @@ export function AgentContextCard({ item, onOpen }: AgentContextCardProps) {
   );
 }
 
-function MetaRow({ kind, children }: { kind: keyof typeof META; children: ReactNode }) {
-  const { Icon, tint } = META[kind];
+function MetaRow({ kind, children }: { kind: MetaRowKind; children: ReactNode }) {
+  const { Icon, tint } = META[kind] ?? META_FALLBACK;
   return (
     <div className="flex items-center gap-2">
       <Icon size={compactIconSize(12)} className="shrink-0" strokeWidth={2} style={{ color: tint, opacity: 0.72 }} />

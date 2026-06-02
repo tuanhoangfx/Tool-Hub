@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { BookOpen, FileCode, ScrollText, Sparkles, X } from "lucide-react";
+import { X } from "lucide-react";
+import { HubCardAvatar } from "../../../components/HubCardAvatar";
 import { compactIconSize } from "../../../lib/ui-scale";
 import type { AgentContextItem } from "./types";
+import { agentKindIcon, agentStatusDotColor } from "./agent-kind-icon";
 
 const DETAIL_TOC = [
   { id: "overview", label: "Overview", emoji: "◎" },
@@ -10,20 +12,6 @@ const DETAIL_TOC = [
   { id: "paths", label: "Paths & sync", emoji: "⎘" },
   { id: "triggers", label: "Triggers", emoji: "⚡" },
 ] as const;
-
-function kindIcon(kind: AgentContextItem["kind"]) {
-  if (kind === "rule") return ScrollText;
-  if (kind === "skill") return Sparkles;
-  if (kind === "contract") return BookOpen;
-  return FileCode;
-}
-
-function kindTone(kind: AgentContextItem["kind"]) {
-  if (kind === "rule") return "text-indigo-300 border-indigo-400/30 bg-indigo-500/10";
-  if (kind === "skill") return "text-emerald-300 border-emerald-400/30 bg-emerald-500/10";
-  if (kind === "contract") return "text-amber-300 border-amber-400/30 bg-amber-500/10";
-  return "text-cyan-300 border-cyan-400/30 bg-cyan-500/10";
-}
 
 type AgentContextDetailModalProps = {
   item: AgentContextItem | null;
@@ -47,7 +35,6 @@ export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: 
 
   if (!item) return null;
 
-  const Icon = kindIcon(item.kind);
   const idPrefix = `ac-${item.id}-`;
 
   return createPortal(
@@ -65,11 +52,15 @@ export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: 
         <div className="modal-shell__scroll">
           <header className="mb-4 border-b border-white/5 pb-4">
             <div className="flex flex-wrap items-start gap-3">
-              <span
-                className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border ${kindTone(item.kind)}`}
-              >
-                <Icon size={compactIconSize(20)} />
-              </span>
+              <HubCardAvatar
+                variant="agent"
+                icon={agentKindIcon(item.kind)}
+                size="md"
+                statusColor={agentStatusDotColor(item)}
+                statusTitle={
+                  item.alwaysApply ? "Always apply" : item.agentRequestable ? "Agent requestable" : "Manual"
+                }
+              />
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-indigo-300/90">
                   Agent context · {item.kind}

@@ -1,11 +1,11 @@
 {
   "ok": true,
-  "generatedAt": "2026-05-30T17:39:13.390Z",
+  "generatedAt": "2026-06-02T20:53:18.067Z",
   "summary": {
     "projectCount": 5,
-    "toolBindingCount": 19,
-    "toolsScanned": 15,
-    "toolsWithSupabase": 6
+    "toolBindingCount": 21,
+    "toolsScanned": 13,
+    "toolsWithSupabase": 7
   },
   "projects": [
     {
@@ -18,9 +18,9 @@
       "bindings": [
         {
           "toolId": "p0020-data-box",
-          "toolCode": "P0020",
+          "toolCode": "LOCAL-013",
           "toolName": "P0020-Data-Box",
-          "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
+          "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
           "envKey": "VITE_SUPABASE_URL",
@@ -30,15 +30,146 @@
         },
         {
           "toolId": "p0020-data-box",
-          "toolCode": "P0020",
+          "toolCode": "LOCAL-013",
           "toolName": "P0020-Data-Box",
-          "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
+          "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
           "envKey": "tool.manifest.json",
           "envLabel": "Manifest/docs",
           "url": "https://bklxcjrkhrevdcqjscku.supabase.co",
           "ref": "bklxcjrkhrevdcqjscku"
+        }
+      ]
+    },
+    {
+      "ref": "fmnrafpzctuhxjaaomzt",
+      "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+      "labels": [
+        "Primary",
+        "Manifest/docs",
+        "Hub identity"
+      ],
+      "bindings": [
+        {
+          "toolId": "tool-hub",
+          "toolCode": "LOCAL-003",
+          "toolName": "P0004-Tool-Hub",
+          "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
+          "workspaceRoot": "tool",
+          "envFile": ".env.example",
+          "envKey": "VITE_SUPABASE_URL",
+          "envLabel": "Primary",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "tool-hub",
+          "toolCode": "LOCAL-003",
+          "toolName": "P0004-Tool-Hub",
+          "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
+          "workspaceRoot": "tool",
+          "envFile": ".env.local",
+          "envKey": "VITE_SUPABASE_URL",
+          "envLabel": "Primary",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "tool-hub",
+          "toolCode": "LOCAL-003",
+          "toolName": "P0004-Tool-Hub",
+          "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
+          "workspaceRoot": "tool",
+          "envFile": "tool.manifest.json",
+          "envKey": "tool.manifest.json",
+          "envLabel": "Manifest/docs",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "zalo-ai-bot",
+          "toolCode": "LOCAL-004",
+          "toolName": "P0005-zalo-ai-bot",
+          "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
+          "workspaceRoot": "tool",
+          "envFile": ".env",
+          "envKey": "VITE_SUPABASE_URL",
+          "envLabel": "Primary",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "zalo-ai-bot",
+          "toolCode": "LOCAL-004",
+          "toolName": "P0005-zalo-ai-bot",
+          "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
+          "workspaceRoot": "tool",
+          "envFile": ".env",
+          "envKey": "HUB_SUPABASE_URL",
+          "envLabel": "Hub identity",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "sales-console",
+          "toolCode": "LOCAL-006",
+          "toolName": "P0008-Sales-Console",
+          "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
+          "workspaceRoot": "tool",
+          "envFile": "app/.env.local",
+          "envKey": "NEXT_PUBLIC_SUPABASE_URL",
+          "envLabel": "Primary",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "sales-console",
+          "toolCode": "LOCAL-006",
+          "toolName": "P0008-Sales-Console",
+          "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
+          "workspaceRoot": "tool",
+          "envFile": "tool.manifest.json",
+          "envKey": "tool.manifest.json",
+          "envLabel": "Manifest/docs",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "p0020-data-box",
+          "toolCode": "LOCAL-013",
+          "toolName": "P0020-Data-Box",
+          "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
+          "workspaceRoot": "tool",
+          "envFile": ".env.example",
+          "envKey": "VITE_HUB_SUPABASE_URL",
+          "envLabel": "Hub identity",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "p0020-data-box",
+          "toolCode": "LOCAL-013",
+          "toolName": "P0020-Data-Box",
+          "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
+          "workspaceRoot": "tool",
+          "envFile": ".env.local",
+          "envKey": "VITE_HUB_SUPABASE_URL",
+          "envLabel": "Hub identity",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
+        },
+        {
+          "toolId": "p0020-data-box",
+          "toolCode": "LOCAL-013",
+          "toolName": "P0020-Data-Box",
+          "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
+          "workspaceRoot": "tool",
+          "envFile": "tool.manifest.json",
+          "envKey": "tool.manifest.json",
+          "envLabel": "Manifest/docs",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
         }
       ]
     },
@@ -51,9 +182,9 @@
       ],
       "bindings": [
         {
-          "toolId": "czp-youtube-tda-team",
-          "toolCode": "P0013",
-          "toolName": "CzP YouTube TDA Team",
+          "toolId": "youtube-channel-dashboard",
+          "toolCode": "LOCAL-010",
+          "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -63,9 +194,9 @@
           "ref": "ibwnrwxrzqrctqjiikzi"
         },
         {
-          "toolId": "czp-youtube-tda-team",
-          "toolCode": "P0013",
-          "toolName": "CzP YouTube TDA Team",
+          "toolId": "youtube-channel-dashboard",
+          "toolCode": "LOCAL-010",
+          "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -75,9 +206,9 @@
           "ref": "ibwnrwxrzqrctqjiikzi"
         },
         {
-          "toolId": "czp-youtube-tda-team",
-          "toolCode": "P0013",
-          "toolName": "CzP YouTube TDA Team",
+          "toolId": "youtube-channel-dashboard",
+          "toolCode": "LOCAL-010",
+          "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -97,9 +228,9 @@
       ],
       "bindings": [
         {
-          "toolId": "infi-work-performance",
-          "toolCode": "P0019",
-          "toolName": "Infi Work Performance",
+          "toolId": "infi-project-performance-tracker",
+          "toolCode": "LOCAL-012",
+          "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -109,9 +240,9 @@
           "ref": "ncsbudhkfwppdcmdrxhh"
         },
         {
-          "toolId": "infi-work-performance",
-          "toolCode": "P0019",
-          "toolName": "Infi Work Performance",
+          "toolId": "infi-project-performance-tracker",
+          "toolCode": "LOCAL-012",
+          "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -121,9 +252,9 @@
           "ref": "ncsbudhkfwppdcmdrxhh"
         },
         {
-          "toolId": "infi-work-performance",
-          "toolCode": "P0019",
-          "toolName": "Infi Work Performance",
+          "toolId": "infi-project-performance-tracker",
+          "toolCode": "LOCAL-012",
+          "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -143,9 +274,9 @@
       ],
       "bindings": [
         {
-          "toolId": "mie-hair-performance",
-          "toolCode": "P0009",
-          "toolName": "Mie Hair Performance",
+          "toolId": "p0009-mie-hair-performance",
+          "toolCode": "LOCAL-007",
+          "toolName": "P0009-Mie-Hair-Performance",
           "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -155,9 +286,9 @@
           "ref": "xrnzsmjjbtclmkmrlfxj"
         },
         {
-          "toolId": "mie-hair-performance",
-          "toolCode": "P0009",
-          "toolName": "Mie Hair Performance",
+          "toolId": "p0009-mie-hair-performance",
+          "toolCode": "LOCAL-007",
+          "toolName": "P0009-Mie-Hair-Performance",
           "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -167,9 +298,9 @@
           "ref": "xrnzsmjjbtclmkmrlfxj"
         },
         {
-          "toolId": "mie-hair-performance",
-          "toolCode": "P0009",
-          "toolName": "Mie Hair Performance",
+          "toolId": "p0009-mie-hair-performance",
+          "toolCode": "LOCAL-007",
+          "toolName": "P0009-Mie-Hair-Performance",
           "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -177,113 +308,6 @@
           "envLabel": "Manifest/docs",
           "url": "https://xrnzsmjjbtclmkmrlfxj.supabase.co",
           "ref": "xrnzsmjjbtclmkmrlfxj"
-        }
-      ]
-    },
-    {
-      "ref": "fmnrafpzctuhxjaaomzt",
-      "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-      "labels": [
-        "Primary",
-        "Manifest/docs",
-        "Hub identity"
-      ],
-      "bindings": [
-        {
-          "toolId": "tool-hub",
-          "toolCode": "P0004",
-          "toolName": "Tool Hub",
-          "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
-          "workspaceRoot": "tool",
-          "envFile": ".env.example",
-          "envKey": "VITE_SUPABASE_URL",
-          "envLabel": "Primary",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "tool-hub",
-          "toolCode": "P0004",
-          "toolName": "Tool Hub",
-          "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
-          "workspaceRoot": "tool",
-          "envFile": ".env.local",
-          "envKey": "VITE_SUPABASE_URL",
-          "envLabel": "Primary",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "tool-hub",
-          "toolCode": "P0004",
-          "toolName": "Tool Hub",
-          "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
-          "workspaceRoot": "tool",
-          "envFile": "tool.manifest.json",
-          "envKey": "tool.manifest.json",
-          "envLabel": "Manifest/docs",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "sales-console",
-          "toolCode": "P0008",
-          "toolName": "Seller Center",
-          "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
-          "workspaceRoot": "tool",
-          "envFile": "app/.env.local",
-          "envKey": "NEXT_PUBLIC_SUPABASE_URL",
-          "envLabel": "Primary",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "sales-console",
-          "toolCode": "P0008",
-          "toolName": "Seller Center",
-          "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
-          "workspaceRoot": "tool",
-          "envFile": "tool.manifest.json",
-          "envKey": "tool.manifest.json",
-          "envLabel": "Manifest/docs",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "p0020-data-box",
-          "toolCode": "P0020",
-          "toolName": "P0020-Data-Box",
-          "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
-          "workspaceRoot": "tool",
-          "envFile": ".env.example",
-          "envKey": "VITE_HUB_SUPABASE_URL",
-          "envLabel": "Hub identity",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "p0020-data-box",
-          "toolCode": "P0020",
-          "toolName": "P0020-Data-Box",
-          "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
-          "workspaceRoot": "tool",
-          "envFile": ".env.local",
-          "envKey": "VITE_HUB_SUPABASE_URL",
-          "envLabel": "Hub identity",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "p0020-data-box",
-          "toolCode": "P0020",
-          "toolName": "P0020-Data-Box",
-          "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
-          "workspaceRoot": "tool",
-          "envFile": "tool.manifest.json",
-          "envKey": "tool.manifest.json",
-          "envLabel": "Manifest/docs",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
         }
       ]
     }

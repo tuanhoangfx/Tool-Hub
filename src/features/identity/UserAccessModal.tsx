@@ -16,6 +16,8 @@ import {
   toolAccessFiltersWithCounts,
 } from "./tool-access-filters";
 import { useToolAccessFilterPrefs } from "./use-tool-access-filter-prefs";
+import { TocHighlightContent, TocSectionHighlightProvider } from "../overview/toc-section-highlight-context";
+import { USER_ACCESS_TOC } from "./user-access-toc";
 import { UserAccessTocNav } from "./UserAccessTocNav";
 
 export type UserAccessSavePayload = {
@@ -80,6 +82,10 @@ export function UserAccessModal({
 
   const isAdminUser = user?.role === "admin";
   const idPrefix = user ? `ua-${user.id}-` : "";
+  const tocSectionIds = useMemo(
+    () => USER_ACCESS_TOC.map(({ id }) => `${idPrefix}${id}`),
+    [idPrefix],
+  );
   const registryOnlyCount = countRegistryOnlyTools(tools);
 
   const { query, setQuery, filterValues, setFilterValues } = useToolAccessFilterPrefs(user?.id ?? null);
@@ -260,12 +266,13 @@ export function UserAccessModal({
           </div>
         </header>
         <div className="modal-shell__scroll modal-shell__scroll--user-access">
-          <div className="grid gap-4 lg:grid-cols-[var(--overview-detail-toc-col-w)_minmax(0,1fr)]">
-            <aside className="lg:sticky lg:top-0 lg:self-start">
-              <UserAccessTocNav idPrefix={idPrefix} />
-            </aside>
+          <TocSectionHighlightProvider sectionIds={tocSectionIds}>
+            <div className="grid gap-4 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
+              <aside className="lg:sticky lg:top-0 lg:self-start">
+                <UserAccessTocNav idPrefix={idPrefix} />
+              </aside>
 
-            <div className="min-w-0 space-y-4 p-1 sm:p-2">
+              <TocHighlightContent className="min-w-0 space-y-4 p-1 sm:p-2">
               <div className="flex items-center gap-3 pb-1">
                 <HubUserAvatar user={user} size="md" />
                 <div className="min-w-0 flex-1">
@@ -516,8 +523,9 @@ export function UserAccessModal({
                   {!canEdit ? " · view only" : null}
                 </span>
               </footer>
+              </TocHighlightContent>
             </div>
-          </div>
+          </TocSectionHighlightProvider>
         </div>
       </div>
     </div>,

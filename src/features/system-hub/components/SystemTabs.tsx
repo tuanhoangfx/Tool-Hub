@@ -1,4 +1,5 @@
 import { Bot, Database, Gauge, LayoutGrid, Palette } from "lucide-react";
+import { readAppScreen, setAppScreen } from "../../../lib/app-screen";
 import { buildSystemUrl, readSystemRoute } from "../../../lib/system-path";
 import { sanitizeQueryForScreen } from "../../../lib/hub-query";
 import type { SchemaEntity } from "../../../lib/system-path";
@@ -20,6 +21,10 @@ export function readSystemTab(): SystemTab {
 export const SYSTEM_TAB_ITEMS = tabs;
 
 export function setSystemTab(id: SystemTab) {
+  if (typeof window !== "undefined" && readAppScreen() !== "system") {
+    setAppScreen("system");
+  }
+
   const onSystemPath = typeof window !== "undefined" && window.location.pathname.startsWith("/system");
   const route = onSystemPath ? readSystemRoute() : { tab: id as SystemTab };
   route.tab = id;

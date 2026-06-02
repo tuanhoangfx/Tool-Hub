@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { readSystemTab, type SystemTab } from "./components/SystemTabs";
@@ -31,8 +31,8 @@ function TabPanel({
   visited: Set<SystemTab>;
   children: ReactNode;
 }) {
-  if (!visited.has(tabId)) return null;
   const isActive = activeTab === tabId;
+  if (!isActive && !visited.has(tabId)) return null;
   return (
     <div className={isActive ? undefined : "hidden"} aria-hidden={!isActive}>
       {children}
@@ -47,15 +47,21 @@ export function SystemHubScreen({
   const [tab, setTab] = useState<SystemTab>(() => readSystemTab());
   const [visited, setVisited] = useState<Set<SystemTab>>(() => new Set([readSystemTab()]));
   const [prefs, setPrefs] = useState(readHubListPrefs);
-  const [filterSlot, setFilterSlot] = useState<ReactNode>(null);
+  const filterAnchorRef = useRef<HTMLDivElement | null>(null);
+  const [filterAnchorReady, setFilterAnchorReady] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const sync = () => {
       const next = readSystemTab();
       setTab(next);
-      setVisited((prev) => new Set(prev).add(next));
+      setVisited((prev) => {
+        const merged = new Set(prev);
+        merged.add(next);
+        return merged;
+      });
       setPrefs(readHubListPrefs());
     };
+    sync();
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
   }, []);
@@ -69,10 +75,16 @@ export function SystemHubScreen({
   }, []);
 
   const stackChrome = prefs.searchPin && prefs.headerPin;
-  const registerFilter = useCallback((node: ReactNode | null) => {
-    setFilterSlot(node);
+
+  const bindFilterAnchor = useCallback((node: HTMLDivElement | null) => {
+    filterAnchorRef.current = node;
+    setFilterAnchorReady(node != null);
   }, []);
-  const chromeValue = useMemo(() => ({ stackChrome, registerFilter }), [stackChrome, registerFilter]);
+
+  const chromeValue = useMemo(
+    () => ({ stackChrome, filterAnchorRef, filterAnchorReady }),
+    [stackChrome, filterAnchorReady],
+  );
 
   const header = (
     <SystemTabHeader
@@ -93,7 +105,7 @@ export function SystemHubScreen({
         {stackChrome ? (
           <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
             {header}
-            {filterSlot}
+            <div ref={bindFilterAnchor} className="system-filter-portal" />
           </div>
         ) : (
           header

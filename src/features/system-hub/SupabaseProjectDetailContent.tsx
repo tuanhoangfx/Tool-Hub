@@ -1,5 +1,5 @@
 import { CheckCircle2, ExternalLink, Layers } from "lucide-react";
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { MetricBadge } from "../../components/sales-shell";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { resolveHealthStatusIcon } from "../../lib/badge-registry";
@@ -9,10 +9,14 @@ import { SupabaseProjectToolBadges } from "./SupabaseProjectToolBadges";
 import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
 import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 import type { OrgRow, ProjectRow } from "./SystemSupabaseQuotaPanel.types";
+import { QuotaBudgetBlock } from "./QuotaUsageBar";
 import { SupabaseDetailTocNav } from "./SupabaseDetailTocNav";
+import { SUPABASE_DETAIL_TOC } from "./supabase-detail-toc";
+import { TocHighlightContent, TocSectionHighlightProvider } from "../overview/toc-section-highlight-context";
+import { computeQuotaBudget, formatQuotaLineInline } from "./supabase-quota-budget";
 import {
+  formatApiUsageInline,
   formatBytes,
-  formatCompact,
   orgEntitlementSummary,
   parseHealthServices,
   parseProjectInfra,
@@ -66,12 +70,14 @@ export function SupabaseProjectDetailContent({
   const infra = parseProjectInfra(project);
   const health = parseHealthServices(project);
   const restriction = parseProjectRestriction(project);
+  const metricsSource = resolveProjectMetricsSource(project);
   const quota = org ? orgEntitlementSummary(org.entitlements) : null;
+  const budgetLines = metricsSource === "live" ? computeQuotaBudget(project, org) : [];
+  const dbBudget = budgetLines.find((l) => l.key === "db_disk");
   const plans = resolvePlanDisplay(project, org);
   const refShort = project.projectRef.slice(0, 8);
   const dashboardUrl = `https://supabase.com/dashboard/project/${encodeURIComponent(project.projectRef)}`;
   const hasError = Boolean(project.error);
-  const metricsSource = resolveProjectMetricsSource(project);
   const healthLabel = resolveProjectHealthLabel(project);
   const healthTone = restriction.restricted || hasError ? "bad" : healthLabel === "Live" || healthLabel === "Healthy" ? "ok" : "warn";
 
@@ -80,13 +86,19 @@ export function SupabaseProjectDetailContent({
       ? `${project.projectName} on Supabase (${project.region ?? "unknown region"}). Organization ${project.orgSlug}. Metrics below are from the Management API.`
       : `${project.projectName} on Supabase (${project.region ?? "unknown region"}). Organization ${project.orgSlug}. Showing catalog metadata — live metrics load in background.`;
 
-  return (
-    <div className="grid gap-4 lg:grid-cols-[var(--overview-detail-toc-col-w)_minmax(0,1fr)]">
-      <aside className="lg:sticky lg:top-0 lg:self-start">
-        <SupabaseDetailTocNav idPrefix={idPrefix} />
-      </aside>
+  const tocSectionIds = useMemo(
+    () => SUPABASE_DETAIL_TOC.map(({ id }) => `${idPrefix}${id}`),
+    [idPrefix],
+  );
 
-      <div className="min-w-0 space-y-5 p-1 sm:p-2">
+  return (
+    <TocSectionHighlightProvider sectionIds={tocSectionIds}>
+      <div className="grid gap-4 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
+        <aside className="lg:sticky lg:top-0 lg:self-start">
+          <SupabaseDetailTocNav idPrefix={idPrefix} />
+        </aside>
+
+        <TocHighlightContent className="min-w-0 space-y-5 p-1 sm:p-2">
         <div className="flex items-center gap-3 pb-1">
           <ToolAvatar code="SB" iconName="cloud" size="md" />
           <div className="min-w-0">
@@ -135,15 +147,20 @@ export function SupabaseProjectDetailContent({
         </DetailSection>
 
         <DetailSection id={sid("usage")} title="Usage">
+          {budgetLines.length > 0 ? (
+            <div className="rounded-xl border border-white/8 bg-white/[.02] px-3 py-2">
+              <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
+                Used vs allowed
+              </p>
+              <QuotaBudgetBlock lines={budgetLines} maxLines={4} excludeKeys={["db_disk", "api_total"]} />
+            </div>
+          ) : null}
           <div className="grid gap-1.5 md:grid-cols-2">
             <MetricRow
-              label="api_requests_total"
-              value={usage.apiRequestsTotal == null ? "—" : formatCompact(usage.apiRequestsTotal)}
-              good={usage.apiRequestsTotal != null}
+              label="api"
+              value={formatApiUsageInline(usage) ?? "—"}
+              good={usage.apiRequestsTotal != null || usage.restLatest != null}
             />
-            <MetricRow label="rest_per_min" value={usage.restLatest == null ? "—" : String(usage.restLatest)} good />
-            <MetricRow label="auth_per_min" value={usage.authLatest == null ? "—" : String(usage.authLatest)} good />
-            <MetricRow label="realtime_per_min" value={usage.realtimeLatest == null ? "—" : String(usage.realtimeLatest)} good />
             <MetricRow
               label="storage_req_per_min"
               value={usage.storageLatest == null ? "—" : String(usage.storageLatest)}
@@ -171,14 +188,15 @@ export function SupabaseProjectDetailContent({
             <MetricRow label="org_plan" value={plans.orgPlan ?? "—"} good={Boolean(plans.orgPlan)} />
             <MetricRow label="project_plan" value={plans.projectPlan ?? "—"} good={Boolean(plans.projectPlan)} />
             <MetricRow
-              label="db_disk_used"
-              value={infra.diskUsedBytes == null ? "—" : formatBytes(infra.diskUsedBytes)}
+              label="db_disk"
+              value={
+                dbBudget
+                  ? formatQuotaLineInline(dbBudget)
+                  : infra.diskUsedBytes == null
+                    ? "—"
+                    : formatBytes(infra.diskUsedBytes)
+              }
               good={infra.diskUsedBytes != null}
-            />
-            <MetricRow
-              label="db_disk_avail"
-              value={infra.diskAvailBytes == null ? "—" : formatBytes(infra.diskAvailBytes)}
-              good
             />
             <MetricRow
               label="disk_size_gb"
@@ -284,7 +302,8 @@ export function SupabaseProjectDetailContent({
             ) : null}
           </div>
         </DetailSection>
+        </TocHighlightContent>
       </div>
-    </div>
+    </TocSectionHighlightProvider>
   );
 }

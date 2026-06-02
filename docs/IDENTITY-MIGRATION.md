@@ -10,7 +10,7 @@ Notes/Cookie/Todo **data** vẫn trên yhnqwx; map ID qua `legacy_user_map` / `l
 |------|------|
 | `E:\Dev\.env.shared` | `SUPABASE_MANAGEMENT_TOKEN` or `SUPABASE_ACCESS_TOKEN` (SQL + api-keys) |
 | `P0004-Tool-Hub/.env.local` | `VITE_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` |
-| `P0020-Workspace-Notes/.env.local` | `VITE_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` |
+| `P0020-Data-Box/.env.local` | `VITE_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` |
 
 Service role: Supabase Dashboard → Project → Settings → API → `service_role` (secret).
 

@@ -1,8 +1,9 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, type RefObject } from "react";
 
 export type SystemChromeContextValue = {
   stackChrome: boolean;
-  registerFilter: (node: ReactNode | null) => void;
+  filterAnchorRef: RefObject<HTMLDivElement | null>;
+  filterAnchorReady: boolean;
 };
 
 export const SystemChromeContext = createContext<SystemChromeContextValue | null>(null);

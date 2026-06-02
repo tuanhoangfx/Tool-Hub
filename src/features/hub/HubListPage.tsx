@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertTriangle, Boxes } from "lucide-react";
 import { resolveHubKpiIcon } from "../../lib/badge-registry";
-import { EmptyState } from "../../components/EmptyState";
 import {
   FilterBar,
   HubResultCount,
+  HubRowLimitSelect,
   HubTimeRangeSelect,
   KpiStrip,
   MiniBarChart,
@@ -20,7 +20,12 @@ import { compactIconSize } from "../../lib/ui-scale";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailModal } from "../overview/ToolDetailModal";
-import { TableView } from "../store/TableView";
+import {
+  HubToolsDirectoryTable,
+  sortHubTools,
+  type HubTableSortKey,
+} from "./HubToolsDirectoryTable";
+import { HubToolBulkActionBar } from "./HubToolBulkActionBar";
 import { filterHubTools, filterOptions, hubCharts, hubFiltersWithCounts, hubKpis } from "./hub-aggregates";
 import {
   DEFAULT_HUB_CHART_KEYS,
@@ -61,6 +66,7 @@ type HubListPageProps = {
   modalOpen: boolean;
   onCloseModal: () => void;
   loadingAll: boolean;
+  scanningWorkspace?: boolean;
   registryError: string | null;
   onRefresh: () => void;
   onRefreshTool?: (toolId: string) => void;
@@ -79,9 +85,10 @@ export function HubListPage({
   onSelect,
   modalOpen,
   onCloseModal,
-  loadingAll: _loadingAll,
+  loadingAll,
+  scanningWorkspace = false,
   registryError,
-  onRefresh: _onRefresh,
+  onRefresh,
   onRefreshTool,
   viewMode,
   onViewModeChange,
@@ -94,6 +101,9 @@ export function HubListPage({
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
   const [prefs, setPrefs] = useState(readHubListPrefs);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [sortKey, setSortKey] = useState<HubTableSortKey>("code");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const sync = () => setPrefs(readHubListPrefs());
@@ -105,6 +115,44 @@ export function HubListPage({
     () => filterHubTools(allTools, query, filterValues, prefs.range),
     [allTools, query, filterValues, prefs.range],
   );
+
+  const sortedFiltered = useMemo(
+    () => sortHubTools(filtered, sortKey, sortDir),
+    [filtered, sortKey, sortDir],
+  );
+
+  const allVisibleSelected =
+    sortedFiltered.length > 0 && sortedFiltered.every((tool) => selectedIds.has(tool.id));
+
+  const handleSort = (key: HubTableSortKey) => {
+    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const handleToggleSelect = (toolId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(toolId)) next.delete(toolId);
+      else next.add(toolId);
+      return next;
+    });
+  };
+
+  const handleToggleSelectAll = () => {
+    setSelectedIds((prev) => {
+      if (allVisibleSelected) {
+        const next = new Set(prev);
+        for (const tool of sortedFiltered) next.delete(tool.id);
+        return next;
+      }
+      const next = new Set(prev);
+      for (const tool of sortedFiltered) next.add(tool.id);
+      return next;
+    });
+  };
 
   const opts = useMemo(() => filterOptions(allTools), [allTools]);
   const charts = useMemo(() => hubCharts(filtered), [filtered]);
@@ -179,6 +227,13 @@ export function HubListPage({
   const searchPin = prefs.searchPin;
   const stackChrome = searchPin && prefs.headerPin;
 
+  const hubBusy = loadingAll || scanningWorkspace;
+
+  const handleRefreshSelected = () => {
+    if (!onRefreshTool) return;
+    for (const id of selectedIds) onRefreshTool(id);
+  };
+
   const filterBar = (
     <FilterBar
       layout="hub"
@@ -194,9 +249,19 @@ export function HubListPage({
       toolbar={
         <>
           <HubTimeRangeSelect value={prefs.range} />
+          <HubRowLimitSelect value={prefs.limit} />
           <ViewToggle value={viewMode} onChange={(v) => onViewModeChange(v)} />
           <HubResultCount icon={Boxes} shown={filtered.length} total={allTools.length} />
         </>
+      }
+      row2Actions={
+        <HubToolBulkActionBar
+          hasSelection={selectedIds.size > 0}
+          selectedCount={selectedIds.size}
+          busy={hubBusy}
+          onRefreshSelected={handleRefreshSelected}
+          onSyncWorkspace={onRefresh}
+        />
       }
     />
   );
@@ -276,9 +341,7 @@ export function HubListPage({
 
       <div className="space-y-3">
         {viewMode === "card" ? (
-          filtered.length === 0 ? (
-            <EmptyState />
-          ) : (
+          filtered.length === 0 ? null : (
             <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filtered.map((tool) => (
                 <HubToolCard
@@ -290,23 +353,28 @@ export function HubListPage({
               ))}
             </div>
           )
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)]">
-            <TableView
-              tools={filtered}
-              selectedId={selectedId}
-              onSelect={onSelect}
-              onCopyPath={async (path) => {
-                if (!path) return;
-                try {
-                  await navigator.clipboard.writeText(path);
-                } catch {
-                  /* ignore */
-                }
-              }}
-              healthState={healthState}
-            />
-          </div>
+        ) : sortedFiltered.length === 0 ? null : (
+          <HubToolsDirectoryTable
+            tools={sortedFiltered}
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSort={handleSort}
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onToggleSelectAll={handleToggleSelectAll}
+            allVisibleSelected={allVisibleSelected}
+            detailToolId={modalOpen ? selectedId : null}
+            onSelect={onSelect}
+            onCopyPath={async (path) => {
+              if (!path) return;
+              try {
+                await navigator.clipboard.writeText(path);
+              } catch {
+                /* ignore */
+              }
+            }}
+            healthState={healthState}
+          />
         )}
       </div>
       </div>

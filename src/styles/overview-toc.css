@@ -1,0 +1,12 @@
+/* TOC label highlight — driven by pointer over matching content section */
+
+.overview-toc-nav__item.is-highlighted .overview-toc-nav__label {
+  color: rgb(224 231 255);
+  background: linear-gradient(to right, rgba(99, 102, 241, 0.22), rgba(168, 85, 247, 0.08));
+  box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.2);
+}
+
+.overview-toc-nav__item:focus-visible .overview-toc-nav__label {
+  outline: 2px solid rgba(129, 140, 248, 0.55);
+  outline-offset: 1px;
+}

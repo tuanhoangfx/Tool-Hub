@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Gauge, RefreshCcw } from "lucide-react";
+import { SUPABASE_QUOTA_REFRESH_EVENT } from "./supabase-quota-events";
 import {
   HubResultCount,
   MiniBarChart,
@@ -32,7 +33,7 @@ import {
   sumFilteredUsage,
 } from "./supabase-quota-metrics";
 import { readSupabaseQuotaStaleCache, writeSupabaseQuotaClientCache } from "./supabase-quota-client-cache";
-import { mergeQuotaProjectPatches } from "./supabase-quota-merge";
+import { mergeQuotaPayloadPatches } from "./supabase-quota-merge";
 import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 
 /** Accent divider before data section — mirror HubListPage. */
@@ -318,13 +319,14 @@ export function SystemSupabaseQuotaPanel() {
         setPayload({ ...data, metricsPhase: data.metricsPhase ?? "live" });
         writeSupabaseQuotaClientCache(data);
       } catch (e) {
-        const stillNoData = readSupabaseQuotaStaleCache() == null;
+        const stale = readSupabaseQuotaStaleCache();
+        const showError = forceRefresh || stale == null;
         if (e instanceof Error && e.name === "AbortError") {
-          if (stillNoData) {
+          if (showError) {
             setError(`Request timed out after ${FETCH_TIMEOUT_MS / 1000}s. Dev server running? Click Refresh to retry.`);
           }
-        } else if (stillNoData) {
-          setPayload(null);
+        } else if (showError) {
+          if (!stale) setPayload(null);
           setError(e instanceof Error ? e.message : String(e));
         }
       } finally {
@@ -352,7 +354,10 @@ export function SystemSupabaseQuotaPanel() {
 
       setPayload((prev) => {
         if (!prev) return prev;
-        const merged = mergeQuotaProjectPatches(prev, patches);
+        const merged = mergeQuotaPayloadPatches(prev, {
+          projects: patches,
+          organizations: data.organizations ?? [],
+        });
         writeSupabaseQuotaClientCache(merged);
         return merged;
       });
@@ -367,6 +372,12 @@ export function SystemSupabaseQuotaPanel() {
     void fetchData(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount / panel visit
   }, []);
+
+  useEffect(() => {
+    const onSidebarRefresh = () => void fetchData(true);
+    window.addEventListener(SUPABASE_QUOTA_REFRESH_EVENT, onSidebarRefresh);
+    return () => window.removeEventListener(SUPABASE_QUOTA_REFRESH_EVENT, onSidebarRefresh);
+  }, [fetchData]);
 
   useEffect(() => {
     void loadWorkspaceMap(false);
@@ -686,6 +697,7 @@ export function SystemSupabaseQuotaPanel() {
   return (
     <>
       <SystemHubShell
+      stickyFilterTab="supabase-quota"
       placeholder="Search Supabase by org, owner, tool, project, ref, plan, region..."
       filters={filters}
       query={query}

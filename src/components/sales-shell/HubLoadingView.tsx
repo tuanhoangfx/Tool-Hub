@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Users, type LucideIcon } from "lucide-react";
 import { compactIconSize } from "../../lib/ui-scale";
-import { HUB_TAB_LOADER_ROOT_ID } from "./HubLoaderRoot";
+import { ensureHubTabLoaderRoot, HUB_TAB_LOADER_ROOT_ID } from "./HubLoaderRoot";
 
 export type HubLoadingViewProps = {
   icon: LucideIcon;
@@ -11,7 +11,7 @@ export type HubLoadingViewProps = {
 
 function getLoaderRoot() {
   if (typeof document === "undefined") return null;
-  return document.getElementById(HUB_TAB_LOADER_ROOT_ID);
+  return document.getElementById(HUB_TAB_LOADER_ROOT_ID) ?? ensureHubTabLoaderRoot();
 }
 
 function HubLoaderOrb({ Icon }: { Icon: LucideIcon }) {

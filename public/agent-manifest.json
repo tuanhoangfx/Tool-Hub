@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T19:19:01.367Z",
+  "generatedAt": "2026-06-02T23:56:42.030Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -24,9 +24,9 @@
       "path": "Tool\\P0004-Tool-Hub\\src\\lib\\hub-background-prefetch.ts",
       "scope": "workspace",
       "summary": "Hub load / catalog reference: hub-background-prefetch.ts",
-      "bodyPreview": "import { prefetchJson } from \"@dev/hub-load\";\nimport type { AgentManifest } from \"../features/system-hub/agent-context/types\";\nimport { hydrateHubCatalogFromLocalRegistry } from \"./hub-catalog-hydrate\";\nimport { agentManifestCache } from \"./agent-manifest-cache\";\nimport { QuotaPayloadSchema } from \"../features/system-hub/supabase-quota-schema\";\nimport {\n  readSupabaseQuotaStaleCache,\n  writeSupabaseQuotaClientCache,\n} from \"../features/system-hub/supabase-quota-client-cache\";\n\nconst AGENT_MANIFEST_URL = \"/agent-manifest.json\";\n\nfunction applyAgentManifest(json: unknown): void {\n  try {\n    const data = json as AgentManifest;\n    if (Array.isArray(data?.items)) agentManifestCache.write(data);\n  } catch {\n    /* invalid manifest */\n  }\n}\n\nconst SNAPSHOT_URL = \"/supabase-quota-catalog.snapshot.json\";\n\nfunction applyQuotaPayload(json: unknown): void {\n  try {\n    const data = QuotaPayloadSchema.parse(json);\n    if (data.ok) writeSupabaseQuotaClientCache(data);\n  } catch {\n    /* invalid snapshot */\n  }\n}\n\n/** Instant catalog from build-time snapshot (no dev server). */\nexport function hydrateSupabaseQuotaFromBuildSnapshot(): void {\n  if (readSupabaseQuotaStaleCache()) return;\n  prefetc",
-      "lines": 62,
-      "updatedAt": "2026-06-01T19:11:12.051Z",
+      "bodyPreview": "import { prefetchJson } from \"@dev/hub-load\";\nimport { normalizeAgentManifest } from \"../features/system-hub/agent-context/normalize-agent-manifest\";\nimport { hydrateHubCatalogFromLocalRegistry } from \"./hub-catalog-hydrate\";\nimport { agentManifestCache } from \"./agent-manifest-cache\";\nimport { QuotaPayloadSchema } from \"../features/system-hub/supabase-quota-schema\";\nimport {\n  readSupabaseQuotaStaleCache,\n  writeSupabaseQuotaClientCache,\n} from \"../features/system-hub/supabase-quota-client-cache\";\nimport { mergeQuotaPayloadPatches } from \"../features/system-hub/supabase-quota-merge\";\n\nconst AGENT_MANIFEST_URL = \"/agent-manifest.json\";\n\nfunction applyAgentManifest(json: unknown): void {\n  try {\n    const data = normalizeAgentManifest(json);\n    if (data) agentManifestCache.write(data);\n  } catch {\n    /* invalid manifest */\n  }\n}\n\nconst SNAPSHOT_URL = \"/supabase-quota-catalog.snapshot.json\";\n\nfunction applyQuotaPayload(json: unknown): void {\n  try {\n    const data = QuotaPayloadSchema.parse(json);\n    if (!data.ok) return;\n    const prev = readSupabaseQuotaStaleCache();\n    if (\n      prev &&\n      data.projects?.length &&\n      (data.projects.length < (prev.projects?.length ?? 0) ",
+      "lines": 81,
+      "updatedAt": "2026-06-02T21:09:25.437Z",
       "tags": [
         "hub-load",
         "p0004"
@@ -48,173 +48,36 @@
       ]
     },
     {
-      "id": "cursor-rules-design-preview-cleanup-mdc",
+      "id": "cursor-rules-dev-workspace-mdc",
       "kind": "rule",
-      "name": "design-preview-cleanup",
-      "path": ".cursor\\rules\\design-preview-cleanup.mdc",
+      "name": "dev-workspace",
+      "path": ".cursor\\rules\\dev-workspace.mdc",
       "scope": "workspace",
       "alwaysApply": true,
       "agentRequestable": false,
-      "summary": "Remove design preview code after a design is selected",
-      "bodyPreview": "# Design Preview Cleanup\n\n- Create design mockups **only when the user explicitly requests** them (not proactive design-first for every feature).\n- For Tool Hub and workspace UI features, Design Template is only for **active** review work, shown **in the Design Template tab** (5-card picker + inline preview).\n- After the user selects/locks a design (`Design: V1`…`V5` or Lock in tab), delete the related preview scaffolding, mock data, variant registry, preview-only styles, and archived decision UI from production code.\n- Do not keep \"locked\", \"approved\", or historical design data in the app unless the user explicitly asks for a durable design archive.\n- If no designs are under active review, the Design Template body should render only `No active designs`, while keeping the shared header/search shell used by Hub/System pages.\n- Keep the chosen production implementation and tests; remove only review/preview code that is no longer needed.",
-      "lines": 8,
-      "updatedAt": "2026-06-01T19:01:22.278Z",
+      "summary": "\"HARD GATE: version bump + browser verify loop until task passes. Dev E:\\\\Dev.\"",
+      "bodyPreview": "# Dev workspace — single rule file (agent)\n\n**Source of truth:** `E:\\Dev\\.cursor\\rules\\dev-workspace.mdc`  \n**Human review (Vietnamese):** `E:\\Dev\\.cursor\\RULES-HUMAN-VI.md` — keep in sync when policy changes.  \n**Release pipeline:** `E:\\Dev\\Rules\\RELEASE-STANDARD.md` · `Tool/scripts/ship-product.ps1`\n\n---\n\n## 0. VERSION BUMP — hard gate (read first, every task)\n\nWhen you change **meaningful code or UI** in `Tool/P00xx-*` or `Extension/E00xx-*`:\n\n1. **Before** final reply / commit / push: bump the correct tier; sync `package.json`, `tool.manifest.json`, `CHANGELOG.md`, extension manifests as applicable.\n2. **Last line of summary** (required): `Version: X.Y.Z → A.B.C` — or `Version: no bump (read-only / whitespace only)`.\n3. **Never** wait for the user to say “nhớ bump version”.\n4. A **`stop` hook** may follow up if git shows code changes without version files — treat as blocking.\n5. Product extras: `P0021-.../p0021-version-bump.mdc`, `E0001-.../e0001-auto-bump-version.mdc`.\n\n| Tier | When | Bump |\n|------|------|------|\n| **Patch** | Task done with meaningful code/UI change | `PATCH + 1` |\n| **Minor** | User requests **commit** (or you commit in-task) | `MINOR + 1`, `PATCH = 1` |\n|",
+      "lines": 116,
+      "updatedAt": "2026-06-02T22:04:03.057Z",
       "tags": [
         "rule",
         "rules"
       ]
     },
     {
-      "id": "cursor-rules-env-shared-standard-mdc",
-      "kind": "rule",
-      "name": "env-shared-standard",
-      "path": ".cursor\\rules\\env-shared-standard.mdc",
+      "id": "cursor-skills-browser-verify-until-done-SKILL-md",
+      "kind": "skill",
+      "name": "browser-verify-until-done",
+      "path": ".cursor\\skills\\browser-verify-until-done\\SKILL.md",
       "scope": "workspace",
-      "alwaysApply": true,
-      "agentRequestable": false,
-      "summary": "Workspace shared secrets — E:\\Dev\\.env.shared for all P00xx tools",
-      "bodyPreview": "# Shared environment (`E:\\Dev\\.env.shared`)\r\n\r\n- **Secrets shared across tools** (e.g. `SUPABASE_MANAGEMENT_TOKEN`) belong in `E:\\Dev\\.env.shared`, not in per-tool `.env.local` (those get overwritten on workspace sync).\r\n- Template: `E:\\Dev\\.env.shared.example` (commit-safe). Real file is gitignored via `E:\\Dev\\.gitignore`.\r\n- **Load order** in Node/Vite: `process.env` → `E:\\Dev\\.env.shared` → tool `.env.local` (tool wins only if you intentionally override).\r\n- Use `Tool/scripts/lib/read-env-file.cjs` (`readSharedEnv`, `workspaceDevRoot`) — do not duplicate parsers in each repo.\r\n\r\nWhen adding a new P00xx tool that needs workspace PATs, wire `readSharedEnv()` in vite/scripts on first setup; do not ask the user each time.",
-      "lines": 8,
-      "updatedAt": "2026-06-01T13:37:49.565Z",
+      "trigger": ">-",
+      "summary": ">-",
+      "bodyPreview": "# Browser verify until done\n\n## When this applies\n\n- Changed **UI**, routes, client logic, or styles in `Tool/P00xx-*` / `Extension/E00xx-*`\n- User reports a **bug** visible in the app or extension popup\n- **Deploy / release** smoke test (with production or local URL)\n- User says: *fix xong*, *test browser*, *loop đến khi được*, *smoke test*\n\n**Skip** only when: pure docs, read-only review, server-only change with no UI surface, or user says *skip browser*.\n\n## Browsers (priority)\n\n1. **Cursor IDE browser MCP** — default (`browser_navigate`, `browser_snapshot`, console/network tools)\n2. **Chrome profile 0010** — if user already logged in there and MCP cannot reach local host / extension-only flow\n\nDo not ask the user to log in again if a session is already authenticated.\n\n## Fix loop (mandatory)\n\nRepeat until **done** or **blocked**:\n\n```\nEDIT → RUN (dev/build if needed) → BROWSER VERIFY → pass?\n         ↑                                    |\n         └──────── no: diagnose, fix ─────────┘\n```\n\n### 1. Prepare\n\n- Know the **URL** (local port from `tool.manifest.json` / README, or production URL).\n- Know **acceptance**: what screen, button, or data proves the fix.\n\n### 2. Browser ver",
+      "lines": 73,
+      "updatedAt": "2026-06-02T21:07:36.131Z",
       "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-github-push-browser-mdc",
-      "kind": "rule",
-      "name": "github-push-browser",
-      "path": ".cursor\\rules\\github-push-browser.mdc",
-      "scope": "workspace",
-      "alwaysApply": true,
-      "agentRequestable": false,
-      "summary": "Push GitHub using the Cursor browser GitHub account through gh auth",
-      "bodyPreview": "# Push GitHub — dùng tài khoản browser Cursor\n\n## Mong muốn của user\n\nKhi push Git/GitHub: **dùng tài khoản đã đăng nhập trên browser Cursor** (tab GitHub agent đang dùng), **không** yêu cầu đăng nhập lại ở terminal, Git GUI, hay browser hệ thống khác.\n\n## Giới hạn kỹ thuật (ngắn gọn)\n\n- `git push` chạy trong **shell**, không đọc cookie tab browser.\n- Cần **một lần** ủy quyền CLI qua **cùng browser Cursor** (device OAuth — user đã login thì chỉ bấm **Authorize github**).\n- Sau đó `gh` lưu token local → mọi `git push` sau **tự động**, không hỏi login.\n\n## Quy trình agent (bắt buộc khi user yêu cầu push)\n\n1. `gh auth status` — nếu **đã** login → `git push` (hoặc `pnpm run push`).\n2. Nếu **chưa** login:\n   - Chạy `gh auth login -h github.com -p https -w` (background).\n   - Lấy mã device từ output → `browser_navigate` https://github.com/login/device → nhập mã → **Authorize github** (click tọa độ nếu nút disabled trong snapshot).\n   - `gh auth setup-git` (một lần).\n3. `git push` — **không** hướng dẫn user `gh auth login` trên terminal riêng hay Credential Manager trừ khi bước 2 thất bại.\n\n## Không làm\n\n- Không nói \"bạn cần login GitHub\" khi tab browser đã là `tuanhoangfx` — hãy **chủ độ",
-      "lines": 25,
-      "updatedAt": "2026-06-01T13:37:49.258Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-p0004-design-template-mdc",
-      "kind": "rule",
-      "name": "p0004-design-template",
-      "path": ".cursor\\rules\\p0004-design-template.mdc",
-      "scope": "workspace",
-      "alwaysApply": false,
-      "agentRequestable": true,
-      "summary": "P0004 Design Template — on-demand mockups, in-tab compare, cleanup on lock",
-      "bodyPreview": "# P0004 Design Template\n\n## When to create mockups\n\n- **Only** when the user explicitly requests design review (5 variants, Design Template, \"tạo mẫu\", etc.).\n- **Never** block production work or auto-scaffold previews for every new UI.\n\n## Where mockups live\n\n- **System → Design Template** tab only (`DesignTemplatePage.tsx`).\n- Use the **5 variant cards** + **inline preview** pattern (sticky picker, full preview below).\n- Prefer cloning existing Hub patterns (`modal-shell--tool-detail`, `overview-toc-nav`, detail tables).\n\n## Active feature registry\n\n- Register active reviews in `design-registry.ts`.\n- Lock state: `lib/design-template-state.ts` (removes feature from tab until next request).\n- One `*-mock.tsx` per feature with `V1`…`V5` exports.\n\n## After user locks (`Design: V1` … `V5`)\n\n1. Remove `*-mock.tsx`, preview-only styles, and registry entry for that feature.\n2. Implement or confirm production UI in the real screen (e.g. Users modal).\n3. Design tab shows `DesignTemplateEmpty` — **No active designs**.\n4. Do not keep locked/approved mock data in the repo unless the user asks for an archive.\n\n## Tool UI language\n\n- All strings in Design Template and Tool Hub UI: **English**.",
-      "lines": 39,
-      "updatedAt": "2026-06-01T19:10:51.813Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-p0004-filter-hub-contract-mdc",
-      "kind": "rule",
-      "name": "p0004-filter-hub-contract",
-      "path": ".cursor\\rules\\p0004-filter-hub-contract.mdc",
-      "scope": "workspace",
-      "alwaysApply": false,
-      "agentRequestable": true,
-      "summary": "P0004 filter bar, faceted counts, and badge-registry icon contract for Tool/* UI",
-      "bodyPreview": "# P0004 filter & Hub tab UI contract\n\nReference implementation: `Tool/P0004-Tool-Hub`.\n\n## Filters\n\n- Use shared `FilterBar` (`layout=\"hub\"` on list/analytics screens). Tool UI strings in **English**.\n- Every filter dimension: `FilterDef` + `showAllLabel: true` when “All {label}” applies.\n- Faceted counts via `enrichFilterDefs` (or a thin wrapper); expose `totalCount` on def and `count` on each option.\n- Icons only through `badge-registry.ts`:\n  - `resolveFilterAllIcon(filterKey)` for trigger + “All …” row\n  - `resolveFilterOptionIcon(filterKey, option)` for options\n  - No `option.color` color-dots when registry has an icon\n- New filter keys: add `FILTER_ALL` entry + `resolveFilterOptionIcon` cases before shipping.\n\n## Hub / System / Users tabs\n\n- Hub list: pinned filter chrome, `HubStickyHeader`, KPI/chart defs from hub prefs.\n- System: `SystemTabSubNav` + per-tab `SystemTabHeader`; same filter bar pattern as Hub.\n- Users: `UserDirectoryTable` + role badges via same registry as filters (`WORKSPACE_ROLE`).\n- **User access modal** (`UserAccessModal`): same **Links panel** pattern as `ToolLinksPanel` — `FilterBar` + `tool-access-filters.ts` + `enrichFilterDefs` + `use-tool-access-fil",
-      "lines": 33,
-      "updatedAt": "2026-06-01T19:01:20.429Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-p0004-shell-ui-standard-mdc",
-      "kind": "rule",
-      "name": "p0004-shell-ui-standard",
-      "path": ".cursor\\rules\\p0004-shell-ui-standard.mdc",
-      "scope": "workspace",
-      "alwaysApply": true,
-      "agentRequestable": false,
-      "summary": "Use P0004 Tool Hub as the workspace UI shell standard",
-      "bodyPreview": "# P0004 Shell UI Standard\n\n- **Canonical UI**: `Tool/P0004-Tool-Hub` — shell, Hub/Users/System tabs, `FilterBar`, `badge-registry`, **Hub-like load** (local-first, SWR cache, eager routes, keep-mounted, shell-first), `HubLoadingView` (orb only when zero data), tokens (`p0008-globals.css`), compact 90% (`ui-scale.ts`).\n- **Full migration workflow**: skill `.cursor/skills/sync-p0004-ui-shell/` + checklist `reference.md`.\n- **Filters** (when touching filter files): rule `p0004-filter-hub-contract.mdc` — `enrichFilterDefs`, icons via registry, no color dots.\n- Sync **presentation only**; preserve target data, auth, APIs, routes, storage, schema, and business logic unless explicitly asked.\n- Prefer adapt/copy shell assets at boundaries; avoid overwriting domain routes or sample Hub data.\n- **New UI**: design-first — 5 variants in System/Design Template (`workspace-design-preview-gate`) unless design is locked.\n- Before broad edits: short plan → scoped layers (theme → shell → tabs → **loading** → filters → tables) → target `tsc`/lint/build.\n\n## Settings / DisplayPrefs (clone to other tools)\n\nCanonical: **`packages/hub-ui`** (`HubDisplayPrefs`, `.hub-check-indicator`), app adapter `src/co",
-      "lines": 37,
-      "updatedAt": "2026-06-01T19:16:44.827Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-p0020-cookie-agent-context-mdc",
-      "kind": "rule",
-      "name": "p0020-cookie-agent-context",
-      "path": ".cursor\\rules\\p0020-cookie-agent-context.mdc",
-      "scope": "workspace",
-      "alwaysApply": false,
-      "agentRequestable": true,
-      "summary": "Persistent context for P0020 Cookie Auto browser-agent workflow",
-      "bodyPreview": "# P0020 Cookie Agent Context\n\n- Project: `Tool/P0020-Data-Box`; extension: `Extension/E0001-cookie-bridge`.\n- Supabase project ref: `yhnqwxejjkfgmjmiquhb`; URL: `https://yhnqwxejjkfgmjmiquhb.supabase.co`.\n- Cookie Auto local URL: `http://127.0.0.1:5177/?screen=cookie`.\n- Route under test: `.facebook.com` / note `Cookie Facebook · TM-4b5ab60a`.\n- Browser agents use Supabase tables `cookie_bridge_agents` and `cookie_bridge_commands`.\n- Known agent IDs in this workflow: `33101c8f` is the Facebook-login source; `5ad932dc` is the no-login target.\n- Prefer background agent commands (`Sync source`, `Load vault`, `Check`, `Reload ext`) over mouse/keyboard automation in Chrome profiles.\n- Do not store Supabase service role keys, DB passwords, Facebook cookies, or raw cookie values in repo files or rules. Use existing browser login/session where possible.\n- When changing unpacked extension manifest/source, manual `chrome://extensions` reload may still be needed; `Reload ext` only reloads the extension runtime.",
-      "lines": 11,
-      "updatedAt": "2026-05-29T08:29:50.130Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-p0020-cookie-icon-standard-mdc",
-      "kind": "rule",
-      "name": "p0020-cookie-icon-standard",
-      "path": ".cursor\\rules\\p0020-cookie-icon-standard.mdc",
-      "scope": "workspace",
-      "alwaysApply": true,
-      "agentRequestable": false,
-      "summary": "Standardize Cookie Auto brand icons across P0020 Web and E0001 Extension",
-      "bodyPreview": "# P0020 Cookie Auto Icon Standard\r\n\r\n- Khi chỉnh Cookie Auto routes, luôn ưu tiên brand icon trước fallback generic.\r\n- Source ưu tiên: theSVG CDN (`https://thesvg.org/`) bằng slug brand. Nếu theSVG không có, kiểm tra favicon/logo từ website. Nếu URL ngoài bị chặn hoặc không ổn định, lưu asset local.\r\n- Nguồn chuẩn duy nhất là `Tool/P0020-Data-Box/src/features/cookie/cookieBrandIcons.registry.json`.\r\n- Sau khi sửa registry, chạy hoặc cập nhật output tương đương từ `Tool/P0020-Data-Box/scripts/sync-cookie-brand-icons.mjs` để Extension dùng `Extension/E0001-cookie-bridge/cookie-brand-icons.generated.js`.\r\n- Không hardcode mapping riêng lẻ trong Web/Extension ngoài registry.\r\n- Kalodata đang dùng asset local đã lưu:\r\n  - Extension: `assets/brand-icons/kalodata.png`\r\n  - Web: `public/assets/brand-icons/kalodata.png`\r\n- Surfshark dùng theSVG slug `surfshark`.\r\n- Khi thêm brand mới, cập nhật changelog/version metadata Extension nếu popup behavior/asset thay đổi.",
-      "lines": 12,
-      "updatedAt": "2026-05-29T08:29:50.193Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-user-rules-version-gate-mdc",
-      "kind": "rule",
-      "name": "user-rules-version-gate",
-      "path": ".cursor\\rules\\user-rules-version-gate.mdc",
-      "scope": "workspace",
-      "alwaysApply": true,
-      "agentRequestable": false,
-      "summary": "User Rule — bắt buộc bump version khi sửa product; không chờ user nhắc (mirror cho Cursor User Rules)",
-      "bodyPreview": "# Version gate (User Rule)\r\n\r\nKhi sửa `Tool/P00xx-*` hoặc `Extension/E00xx-*`: trước khi kết thúc task **bắt buộc** bump version theo `e:\\Dev\\.cursor\\rules\\workspace-version-bump.mdc` và báo **Version `X.Y.Z` → `A.B.C`**. Không chờ user nhắc.\r\n\r\nĐồng bộ: `package.json`, `tool.manifest.json` (`release.version`), `CHANGELOG.md`, và `app-release.ts` (P0021) nếu có.",
-      "lines": 5,
-      "updatedAt": "2026-06-01T13:37:49.267Z",
-      "tags": [
-        "rule",
-        "rules"
-      ]
-    },
-    {
-      "id": "cursor-rules-workspace-version-bump-mdc",
-      "kind": "rule",
-      "name": "workspace-version-bump",
-      "path": ".cursor\\rules\\workspace-version-bump.mdc",
-      "scope": "workspace",
-      "alwaysApply": true,
-      "agentRequestable": false,
-      "summary": "3-tier manual version bumps (edit/commit/push) + agent checklist + git tag on official push",
-      "bodyPreview": "# Workspace version — agent bump thủ công (không script)\n\n## Cổng kết thúc task (bắt buộc — không chờ user nhắc)\n\nNếu trong session bạn đã **sửa code hoặc UI có nghĩa** trong bất kỳ `Tool/P00xx-*` hoặc `Extension/E00xx-*`:\n\n1. **Trước** khi trả lời “xong” / trước commit / trước push: bump version đúng tầng và đồng bộ mọi file trong bảng dưới + `CHANGELOG.md`.\n2. Trong tóm tắt cuối **luôn** ghi: `Version: X.Y.Z → A.B.C` (hoặc “không bump — chỉ đọc/whitespace”).\n3. Product có rule riêng (vd. `P0021-AutoVideo-Studio/.cursor/rules/*-version-bump.mdc`): đọc và làm theo checklist file cụ thể.\n\n**Không** kết thúc task chỉ vì user chưa nói “nhớ bump version”.\n\nFormat `MAJOR.MINOR.PATCH`. Mỗi **product** (một `Tool/P00xx-*` hoặc `Extension/E00xx-*`) giữ **một dãy version riêng**.\n\n## 3 tầng (agent tự sửa file, không dùng script/hook bump)\n\n| Tầng | Khi nào | Cách tăng | Ví dụ |\n|------|---------|-----------|--------|\n| **Patch** | Hoàn thành task có **đổi code/UI có ý nghĩa** | `PATCH + 1` | `0.1.12` → `0.1.13` |\n| **Minor** | User yêu cầu **commit** (hoặc agent commit trong task) | `MINOR + 1`, `PATCH = 1` | `0.1.13` → `0.2.1` |\n| **Major** | User yêu cầu **push GitHub chính thức** lên `ma",
-      "lines": 58,
-      "updatedAt": "2026-05-30T11:39:53.904Z",
-      "tags": [
-        "rule",
-        "rules"
+        "skill",
+        "workspace"
       ]
     },
     {
@@ -223,11 +86,27 @@
       "name": "p00xx-release-workflow",
       "path": ".cursor\\skills\\p00xx-release-workflow\\SKILL.md",
       "scope": "workspace",
-      "trigger": "Runs a standard release workflow for Tool/P00xx repositories: verify build/tests, commit safe changes, push GitHub, deploy to Vercel or VPS, smoke test production, and create the GitHub release. Use when the user asks to release, deploy, push, publish, create a GitHub release, or execute numbered suggestions that include build, commit, push, Vercel/VPS deploy, smoke test, or release for a P00xx tool.",
-      "summary": "Runs a standard release workflow for Tool/P00xx repositories: verify build/tests, commit safe changes, push GitHub, deploy to Vercel or VPS, smoke test production, and create the GitHub release. Use when the user asks to release, deploy, pu",
+      "trigger": "Runs release/deploy for Tool/P00xx. Triggers on Release/Push/Git + product code (e.g. Release P0004), deploy, push, publish, gh release. See p00xx-ship-keywords for Git vs Push vs Release.",
+      "summary": "Runs release/deploy for Tool/P00xx. Triggers on Release/Push/Git + product code (e.g. Release P0004), deploy, push, publish, gh release. See p00xx-ship-keywords for Git vs Push vs Release.",
       "bodyPreview": "# P00xx Release Workflow\n\n## Scope\n\nUse this for `Tool/P00xx-*` repositories. It standardizes release work while respecting each repo's own scripts and deployment target.\n\n## Safety Rules\n\n- Only commit, push, deploy, or create releases when the user explicitly asks.\n- Never commit secrets or local runtime data: `.env*`, credentials, Supabase service role keys, DB passwords, cookies, VPS env files, backups, private exports, or token-bearing config.\n- Preserve unrelated user changes. If the working tree has unrelated edits, leave them out of the commit or ask when separation is impossible.\n- Do not use destructive git commands, force-push, skip hooks, or change git config unless the user explicitly requests it.\n\n## Workflow\n\n1. Identify the repo:\n   - Confirm current tool path, branch, remote, package version, and deployment target.\n   - Read `package.json`, `tool.manifest.json` if present, `.vercel/project.json` if present, and relevant deploy docs/scripts.\n\n2. Inspect work to release:\n   - Run `git status --short --branch`, `git diff --stat`, `git diff`, and recent `git log`.\n   - Decide which files are relevant and safe to stage.\n   - Warn about secrets or unrelated files.\n\n3. Ve",
-      "lines": 81,
-      "updatedAt": "2026-05-29T20:36:08.804Z",
+      "lines": 77,
+      "updatedAt": "2026-06-02T21:29:49.005Z",
+      "tags": [
+        "skill",
+        "workspace"
+      ]
+    },
+    {
+      "id": "cursor-skills-p00xx-ship-keywords-SKILL-md",
+      "kind": "skill",
+      "name": "p00xx-ship-keywords",
+      "path": ".cursor\\skills\\p00xx-ship-keywords\\SKILL.md",
+      "scope": "workspace",
+      "trigger": ">-",
+      "summary": ">-",
+      "bodyPreview": "# P00xx ship keywords (Git · Push · Release)\n\n## Parse the command\n\nPattern: **`{Git|Push|Release} {CODE}`**\n\n| User says | CODE examples | Resolve path |\n|-----------|---------------|--------------|\n| `Git P0004` | P0004, P0020, E0001 | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | case-insensitive | Match folder by code prefix; read `tool.manifest.json` |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n**P0005** release/deploy: use `zalo-ai-bot-release` skill instead of generic deploy step 6.\n\n---\n\n## Keyword → pipeline (cumulative)\n\nEach level **includes all steps above it**:\n\n| Keyword | Steps | Version tier (§0) |\n|---------|--------|-------------------|\n| **Git** | 1 verify/build → 2 commit | **Minor** before commit (`MINOR+1`, `PATCH=1`) |\n| **Push** | Git + 3 push GitHub | Minor on commit; **no Major** unless user also said Release |\n| **Release** | Push + 4 deploy → 5 smoke → 6 tag + `gh release` | **Major** before official push to `main` (`MAJOR+1`, `MINOR=1`, `PATCH=1`) |\n\n**Patch** is separate: bump when **finishing a code task**, before any Git/Push/Release keyword.\n\n### Step detail\n\n1. **Verify / build**",
+      "lines": 74,
+      "updatedAt": "2026-06-02T21:29:00.790Z",
       "tags": [
         "skill",
         "workspace"
@@ -243,7 +122,7 @@
       "summary": "Syncs the P0004 Tool Hub UI shell, design tokens, typography, spacing, effects, sidebar/header/tab patterns, Hub-like data loading (stale-while-revalidate, eager tabs, keep-mounted, build snapshots, background sync), HubLoadingView, FilterB",
       "bodyPreview": "# Sync P0004 UI Shell\n\n## Goal\n\nApply `Tool/P0004-Tool-Hub` as the visual and structural standard for a target tool **without** changing domain behavior, data, or backends.\n\n## When to use\n\n- New P00xx fork or “làm giống Hub / P0004”\n- Đồng bộ filter, tab header, font, sidebar, table style, **loading UI**\n- Audit tool đích so với Hub (Users, System, Hub list)\n\n## Architecture (what to copy vs share)\n\n| Approach | When |\n|----------|------|\n| **Copy + adapt** (current) | One-off migration; fastest |\n| **Extract `packages/hub-ui`** (future) | 3+ tools need identical shell; worth refactor later |\n| **Rule + skill only** | Agent remembers contract; manual copy per screen |\n\nStart with **copy + adapt** using the manifest in [reference.md](reference.md).\n\n## Workflow\n\n1. **Identify** source `Tool/P0004-Tool-Hub`, target `Tool/P00xx-*`.\n2. **Read** [reference.md](reference.md) manifest; open listed source files.\n3. **Read target**: `package.json`, entry, theme, layout, existing filters/tabs.\n4. **Plan** (short): shell → tokens → tabs → **Hub-like load** → filters → tables/cards → verify.\n5. **Migrate** in order (see reference.md “Migration order”).\n6. **Verify**: `pnpm exec tsc --noEmit`,",
       "lines": 158,
-      "updatedAt": "2026-06-01T19:10:59.392Z",
+      "updatedAt": "2026-06-02T21:02:04.939Z",
       "tags": [
         "skill",
         "workspace"
@@ -274,8 +153,8 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# Workspace design template gate\n\n## When to use\n\n- User **explicitly** asks for design review, 5 mockups, Design Template, or `Design: V1`…`V5`\n- **Do not** scaffold design previews proactively for every new feature\n\n## Rules\n\n1. **On-demand only** — no design-first gate before production unless the user requests it.\n2. **In-tab only** — mockups live under **System → Design Template** (`/system/template`), with the existing 5-card picker + inline preview (not separate `/design-preview/*` routes unless the user asks).\n3. **≥5 distinct variants** per feature; static mock data; clone existing Hub shells when relevant (e.g. `modal-shell--tool-detail` + TOC).\n4. **After lock** — when the user says `Design: V1`…`V5` (or uses Lock in the tab):\n   - Delete `*-mock.tsx`, preview-only CSS, and registry entries for that feature\n   - Update `design-registry.ts` / remove feature from active list\n   - Tab shows **No active designs** until the next review is requested\n   - Keep production implementation only; no durable “approved design archive” in app code unless asked\n5. Document `docs/DESIGN-PREVIEW-{feature}.md` during review; optional `docs/DESIGN-DECISION.md` after lock.\n\n## P0004 Tool Hub",
-      "lines": 41,
-      "updatedAt": "2026-06-01T19:01:06.445Z",
+      "lines": 39,
+      "updatedAt": "2026-06-02T20:30:44.292Z",
       "tags": [
         "skill",
         "workspace"

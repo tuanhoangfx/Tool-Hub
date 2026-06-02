@@ -12,6 +12,7 @@ import { FileText } from "lucide-react";
 import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
+import { dispatchSupabaseQuotaRefresh } from "./features/system-hub/supabase-quota-events";
 import { UserManagementScreen } from "./features/identity/UserManagementScreen";
 import { SystemHubScreen } from "./features/system-hub/SystemHubScreen";
 import { systemDisplayDefs } from "./features/system-hub/system-display-prefs";
@@ -35,6 +36,7 @@ import { compactIconSize } from "./lib/ui-scale";
 import { runWorkspaceRefresh } from "./services/workspace-scan";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
+const ALL_APP_SCREENS: AppScreen[] = ["library", "users", "system"];
 type ScanStatus = "idle" | "scanning" | "success" | "error";
 
 type AppLogEntry = {
@@ -73,7 +75,7 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
       defaultChartKeys={defs?.defaultChartKeys ?? DEFAULT_HUB_CHART_KEYS}
       defaultFilterKeys={DEFAULT_HUB_FILTER_KEYS}
       showRange={false}
-      showLimit={!isGlobal && screen !== "system"}
+      showLimit={false}
       showHeaderPin={isGlobal}
       showUsersTableColumns={!isGlobal && screen === "users"}
       sidebarRow={sidebarRow}
@@ -194,8 +196,8 @@ function AppLogButton({ logs }: { logs: AppLogEntry[] }) {
 function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
   return (
     <div className="flex shrink-0 items-center gap-1.5">
-      <AppDisplayPrefs scope="tab" />
       <AppLogButton logs={logs} />
+      <AppDisplayPrefs scope="tab" />
     </div>
   );
 }
@@ -203,7 +205,8 @@ function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
 function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
   const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
-  const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set([migrateAppUrl()]));
+  /** Eager keep-mounted — avoids blank main when URL is /system/* before visited effect runs. */
+  const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set(ALL_APP_SCREENS));
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
   const [scanningWorkspace, setScanningWorkspace] = useState(false);
   const [scanStatus, setScanStatus] = useState<ScanStatus>("idle");
@@ -253,15 +256,20 @@ function App() {
     }, 10_000);
   }, []);
 
-  useEffect(() => {
-    const onPop = () => setScreen(readAppScreen());
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
+  useLayoutEffect(() => {
+    const syncFromUrl = () => {
+      const next = readAppScreen();
+      setScreen(next);
+      setVisitedScreens((prev) => {
+        const merged = new Set(prev);
+        merged.add(next);
+        return merged;
+      });
+    };
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
   }, []);
-
-  useEffect(() => {
-    setVisitedScreens((prev) => new Set(prev).add(screen));
-  }, [screen]);
 
   useEffect(() => {
     const warm = () => {
@@ -323,9 +331,15 @@ function App() {
 
   const handleRefreshAll = async () => {
     if (scanningWorkspace) return;
+    if (screen === "system" && readSystemTab() === "supabase-quota") {
+      dispatchSupabaseQuotaRefresh();
+      addLog("System", "Supabase Quota refresh requested");
+      return;
+    }
+    dispatchSupabaseQuotaRefresh();
     setScanningWorkspace(true);
-    settleScanStatus("scanning", "Refreshing: scan local workspace + check GitHub dry-run...");
-    addLog("Tool", "Workspace refresh requested");
+    settleScanStatus("scanning", "Refreshing workspace + Supabase quota…");
+    addLog("Tool", "Workspace + quota refresh requested");
     try {
       const result = await runWorkspaceRefresh();
       if (!result.ok) {
@@ -388,6 +402,7 @@ function App() {
               modalOpen={urlState.detail}
               onCloseModal={handleCloseDetail}
               loadingAll={loadingAll}
+              scanningWorkspace={scanningWorkspace}
               registryError={registryError}
               onRefresh={handleRefreshAll}
               onRefreshTool={handleRefreshTool}

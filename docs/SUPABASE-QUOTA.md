@@ -34,6 +34,7 @@ SUPABASE_PAT_czprofess=sbp_xxxxxxxx
 |--------|----------|------------------------|
 | Org list | `GET /v1/organizations` | Org slug |
 | Org detail | `GET /v1/organizations/{slug}` | Org plan |
+| Org entitlements | `GET /v1/organizations/{slug}/entitlements` | Limits: DB size, egress cap, max file, log retention, … |
 | Projects | `GET /v1/organizations/{slug}/projects` | Name, ref, region |
 | Project detail | `GET /v1/projects/{ref}` | Project plan |
 | API counts | `GET /v1/projects/{ref}/analytics/endpoints/usage.api-counts` | REST / Auth / RT / Storage per minute |
@@ -70,7 +71,8 @@ P0020 Data box: `pnpm db:migrate:api`, `pnpm db:bundle:api` → `supabase/APPLY_
 - Per-project calls run in parallel (6 workers).
 - Each upstream call times out after 12s (avoids hung tab).
 - Server cache: 120s; client sessionStorage: 5 min.
-- Removed slow/unused fetches: platform usage, billing addons, entitlements, disk config.
+- Removed slow/unused fetches: platform usage, billing addons, disk config.
+- **Used vs allowed:** cards and Hub tools show progress bars when both usage and org entitlements are available (DB disk). Egress **limit** from entitlements; **used GB** still requires Dashboard → Usage.
 
 ## Troubleshooting
 

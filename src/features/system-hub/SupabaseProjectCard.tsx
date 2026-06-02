@@ -3,6 +3,7 @@ import {
   AtSign,
   Building2,
   CheckCircle2,
+  Cloud,
   Globe2,
   HardDrive,
   Layers,
@@ -12,13 +13,14 @@ import {
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { MetricBadge } from "../../components/sales-shell/MetricBadge";
-import { ToolAvatar } from "../../components/ToolAvatar";
+import { HubCardAvatar } from "../../components/HubCardAvatar";
 import { compactIconSize } from "../../lib/ui-scale";
 import { resolveHealthStatusIcon } from "../../lib/badge-registry";
-import type { ProjectRow } from "./SystemSupabaseQuotaPanel.types";
+import type { OrgRow, ProjectRow } from "./SystemSupabaseQuotaPanel.types";
+import { computeQuotaBudget, formatQuotaLineInline, resolveQuotaHeadlineStatus } from "./supabase-quota-budget";
 import {
+  formatApiUsageInline,
   formatBytes,
-  formatCompact,
   parseProjectInfra,
   parseProjectRestriction,
   parseProjectUsage,
@@ -37,8 +39,7 @@ const META: Record<string, { Icon: LucideIcon; tint: string }> = {
   org: { Icon: Building2, tint: "#38bdf8" },
   region: { Icon: Globe2, tint: "#a78bfa" },
   plan: { Icon: Layers, tint: "#34d399" },
-  apiTotal: { Icon: Activity, tint: "#fbbf24" },
-  apiWindow: { Icon: Zap, tint: "#f472b6" },
+  api: { Icon: Activity, tint: "#fbbf24" },
   disk: { Icon: HardDrive, tint: "#60a5fa" },
 };
 
@@ -96,7 +97,7 @@ function UsageFooter({ project }: { project: ProjectRow }) {
 
 type SupabaseProjectCardProps = {
   project: ProjectRow;
-  org?: { plan?: string | null } | null;
+  org?: OrgRow | null;
   tools?: string[];
   onOpen: (ref: string) => void;
 };
@@ -106,6 +107,9 @@ export function SupabaseProjectCard({ project, org, tools: toolsProp, onOpen }: 
   const infra = parseProjectInfra(project);
   const restriction = parseProjectRestriction(project);
   const metricsSource = resolveProjectMetricsSource(project);
+  const budgetLines = metricsSource === "live" ? computeQuotaBudget(project, org) : [];
+  const dbBudget = budgetLines.find((l) => l.key === "db_disk");
+  const headline = resolveQuotaHeadlineStatus(project, org);
   const isCatalogOnly = metricsSource === "catalog";
   const refShort = project.projectRef ? project.projectRef.slice(0, 8) : "—";
   const planDisplay = resolvePlanDisplay(project, org);
@@ -133,14 +137,13 @@ export function SupabaseProjectCard({ project, org, tools: toolsProp, onOpen }: 
     >
       <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
         <div className="flex min-w-0 items-center gap-2.5">
-          <div className="relative shrink-0">
-            <ToolAvatar code="SB" iconName="cloud" size="sm" />
-            <span
-              className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ring-2 ring-[var(--panel)]"
-              style={{ background: statusDot }}
-              title={healthLabel}
-            />
-          </div>
+          <HubCardAvatar
+            variant="supabase"
+            icon={Cloud}
+            size="sm"
+            statusColor={statusDot}
+            statusTitle={healthLabel}
+          />
           <div className="min-w-0 flex-1">
             <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
               <MetricBadge label={refShort} mono variantClass={refBadgeClass()} />
@@ -187,33 +190,27 @@ export function SupabaseProjectCard({ project, org, tools: toolsProp, onOpen }: 
             ) : null}
           </span>
         </MetaRow>
-        <MetaRow kind="apiTotal">
+        <MetaRow kind="api">
           <span className="font-medium text-[var(--text)]">
-            {usage.apiRequestsTotal == null ? "—" : formatCompact(usage.apiRequestsTotal)}
-            <span className="ml-1 text-[10px] text-[var(--muted)]">API requests (total)</span>
+            {formatApiUsageInline(usage) ?? "—"}
+            <span className="ml-1 text-[10px] text-[var(--muted)]">API</span>
           </span>
-        </MetaRow>
-        <MetaRow kind="apiWindow">
-          {usage.restLatest != null || usage.authLatest != null ? (
-            <span>
-              REST {usage.restLatest ?? "—"} · Auth {usage.authLatest ?? "—"} · RT {usage.realtimeLatest ?? "—"}
-              <span className="ml-1 text-[10px] text-[var(--muted)]">/ min (latest)</span>
-            </span>
-          ) : (
-            <span>—</span>
-          )}
         </MetaRow>
         <MetaRow kind="disk">
           <span className="font-medium text-[var(--text)]">
-            {infra.diskUsedBytes == null ? "—" : formatBytes(infra.diskUsedBytes)}
-            <span className="ml-1 text-[10px] text-[var(--muted)]">DB disk used</span>
+            {dbBudget
+              ? formatQuotaLineInline(dbBudget)
+              : infra.diskUsedBytes == null
+                ? "—"
+                : formatBytes(infra.diskUsedBytes)}
+            <span className="ml-1 text-[10px] text-[var(--muted)]">DB disk</span>
           </span>
         </MetaRow>
       </div>
 
       <div className="mt-auto shrink-0 pt-3">
         <div className="flex min-h-[var(--hub-card-chip-row-min-h)] flex-wrap items-center gap-1.5">
-          {metricsSource === "live" && restriction.restricted ? (
+          {metricsSource === "live" && headline.status === "restricted" ? (
             <QuietChip
               label="Restricted"
               tone="bad"
@@ -223,8 +220,20 @@ export function SupabaseProjectCard({ project, org, tools: toolsProp, onOpen }: 
               }
               iconMeta={resolveHealthStatusIcon("Restricted")}
             />
+          ) : metricsSource === "live" && (headline.status === "warn" || headline.status === "critical") ? (
+            <QuietChip
+              label={headline.label}
+              tone="bad"
+              title={headline.title}
+              iconMeta={resolveHealthStatusIcon("Needs review")}
+            />
           ) : metricsSource === "live" ? (
-            <QuietChip label={healthLabel} tone={healthTone} iconMeta={resolveHealthStatusIcon(healthLabel)} />
+            <QuietChip
+              label={headline.label}
+              tone={headline.status === "ok" ? "ok" : "neutral"}
+              title={headline.title}
+              iconMeta={resolveHealthStatusIcon(healthLabel)}
+            />
           ) : project.error ? (
             <QuietChip label="No PAT" tone="neutral" title={project.error} />
           ) : null}

@@ -1,4 +1,38 @@
-# Changelog
+# Changelog - P0004-Tool-Hub
+
+> **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
+> **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
+> **Script:** `powershell -File E:\Dev\Tool\scripts\ship-product.ps1 -Code P0004 -Keyword Push`
+
+## 2026-06-03 - Release v0.2.7: Agent context, Supabase quota, Hub shell
+
+- Version: `0.2.7`
+- Type: Minor
+- Product: P0004
+- Prompt: Release P0004 v0.2.7 — commit WIP, vendor deps for Vercel, gh release
+- Commit: pending
+- Status: Draft
+- Release: (after gh release)
+
+### Changes
+
+- System Agent tab: manifest normalize, kind badges, card/table views, sticky filter portal fix.
+- Supabase quota: client cache, budget bars, Hub list quota chips, snapshot prefetch.
+- HubCardAvatar; overview TOC spy; workspace refresh middleware; vendor hub-load/hub-ui for standalone Vercel build.
+- Hub boot loader, ScreenErrorBoundary, tools directory table and bulk actions.
+
+### Verification
+
+- `corepack pnpm build` — pass
+- Production: https://infix1.io.vn
+
+### Rollback
+
+```powershell
+git checkout v0.2.6
+```
+
+---
 
 ## 2026-06-03 - Git commit version stamp
 
@@ -6,7 +40,9 @@
 - Timestamp: 2026-06-03 00:09 (UTC+7)
 - Commit: `d2a7eff`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -23,7 +59,9 @@
 - Timestamp: 2026-06-02 15:32 (UTC+7)
 - Commit: `c8357e9`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -40,7 +78,9 @@
 - Timestamp: 2026-06-02 15:19 (UTC+7)
 - Commit: `cf2f53f`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -57,7 +97,9 @@
 - Timestamp: 2026-06-02 15:06 (UTC+7)
 - Commit: `d6846bc`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -74,7 +116,9 @@
 - Timestamp: 2026-06-02 15:05 (UTC+7)
 - Commit: `57f9885`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -93,7 +137,9 @@
 - Timestamp: 2026-05-30 01:50 (UTC+7)
 - Commit: `f15268f`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -110,7 +156,9 @@
 - Timestamp: 2026-05-30 01:41 (UTC+7)
 - Commit: `5e70eae`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -127,7 +175,9 @@
 - Timestamp: 2026-05-30 01:38 (UTC+7)
 - Commit: `04cbc32`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -144,7 +194,9 @@
 - Timestamp: 2026-05-27 08:43 (UTC+7)
 - Commit: `96eec3a`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -161,7 +213,9 @@
 - Timestamp: 2026-05-27 06:58 (UTC+7)
 - Commit: `ee02743`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -178,7 +232,9 @@
 - Timestamp: 2026-05-27 06:52 (UTC+7)
 - Commit: `de15859`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -195,7 +251,9 @@
 - Timestamp: 2026-05-27 05:45 (UTC+7)
 - Commit: `a2907da`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -212,7 +270,9 @@
 - Timestamp: 2026-05-27 04:41 (UTC+7)
 - Commit: `19f8789`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -229,7 +289,9 @@
 - Timestamp: 2026-05-26 13:50 (UTC+7)
 - Commit: `d8fe7a6`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -246,7 +308,9 @@
 - Timestamp: 2026-05-26 02:40 (UTC+7)
 - Commit: `41ed8ee`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -263,7 +327,9 @@
 - Timestamp: 2026-05-26 02:37 (UTC+7)
 - Commit: `0cf6433`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Git commit version stamp
+- Status: Committed
 
 ### Changes
 
@@ -280,7 +346,9 @@
 - Timestamp: 2026-05-26 00:10 (UTC+7)
 - Commit: `cac106a`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: System Hub version workflow and roadmap polish
+- Status: Committed
 
 ### Changes
 
@@ -300,6 +368,8 @@
 - Version: `0.1.2`
 - Timestamp: 2026-05-25 21:30 (UTC+7)
 - Type: Patch
+- Product: P0004
+- Prompt: Roadmap UI crypto-style timeline
 - Status: Draft
 
 ### Changes
@@ -321,7 +391,9 @@
 - Timestamp: 2026-05-25 07:42 (UTC+7)
 - Commit: `0d4a81d`
 - Type: Patch
-- Status: Draft
+- Product: P0004
+- Prompt: Hub version pipeline auto-bump on commit
+- Status: Committed
 
 ### Changes
 
@@ -333,6 +405,8 @@
 - pending
 
 ---
+- Product: P0004
+- Prompt: Full infra rename Tool Hub
 ## 2026-05-24 - Full infra rename Tool Hub
 
 - Folder `P0004-Tool-Hub`, GitHub `tuanhoangfx/Tool-Hub`, Vercel `tool-hub`.
@@ -349,6 +423,8 @@
 - Timestamp: 2026-04-30 00:00 (UTC+7)
 - Commit: pending
 - Type: Feature
+- Product: P0004
+- Prompt: Rebrand Tool Hub
 - Status: Stable
 
 ### Changes

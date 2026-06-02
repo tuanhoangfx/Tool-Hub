@@ -2,7 +2,10 @@ import { ToolAvatar } from "../../components/ToolAvatar";
 import { ToolCodeBadge } from "../hub/hub-tool-ui";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
+import { useMemo } from "react";
 import { OverviewTocNav } from "./OverviewTocNav";
+import { OVERVIEW_TOC } from "./overview-toc";
+import { TocHighlightContent, TocSectionHighlightProvider } from "./toc-section-highlight-context";
 import { ToolDetailSections } from "./ToolDetailSections";
 
 export type ToolDetailContentProps = {
@@ -20,14 +23,23 @@ export function ToolDetailContent({
   onRefreshTool,
 }: ToolDetailContentProps) {
   const code = tool.code;
+  const tocSectionIds = useMemo(
+    () => OVERVIEW_TOC.map(({ id }) => `${idPrefix}${id}`),
+    [idPrefix],
+  );
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[var(--overview-detail-toc-col-w)_minmax(0,1fr)]">
-      <aside className="lg:sticky lg:top-0 lg:self-start">
-        <OverviewTocNav code={code} idPrefix={idPrefix} />
-      </aside>
+    <TocSectionHighlightProvider sectionIds={tocSectionIds}>
+      <div className="grid gap-4 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
+        <aside className="lg:sticky lg:top-0 lg:self-start">
+          <OverviewTocNav
+            code={code}
+            idPrefix={idPrefix}
+            scrollRootSelector=".modal-shell--tool-detail .modal-shell__scroll"
+          />
+        </aside>
 
-      <div className="min-w-0 space-y-5 p-1 sm:p-2">
+        <TocHighlightContent className="min-w-0 space-y-5 p-1 sm:p-2">
         <div className="flex items-center gap-3 pb-1">
           <ToolAvatar
             code={tool.code}
@@ -48,7 +60,8 @@ export function ToolDetailContent({
           statsMode="tool"
           onRefresh={onRefreshTool}
         />
+        </TocHighlightContent>
       </div>
-    </div>
+    </TocSectionHighlightProvider>
   );
 }

@@ -130,6 +130,51 @@ table.hub-users-table {
 .hub-users-col--activity { width: 14%; text-align: center; }
 .hub-users-col--actions { width: 7%; text-align: center; }
 
+/* Hub tools table (same skin as Users) */
+.hub-users-col--hub-code {
+  width: 4.5rem;
+  min-width: 4.5rem;
+  text-align: left;
+}
+.hub-users-col--hub-project {
+  width: 26%;
+  min-width: 11rem;
+  text-align: left;
+}
+.hub-users-col--hub-version {
+  width: 5.5rem;
+  min-width: 5.5rem;
+  text-align: center;
+}
+.hub-users-col--hub-status {
+  width: 6.5rem;
+  min-width: 6.5rem;
+  text-align: center;
+}
+.hub-users-col--hub-drift {
+  width: 3.75rem;
+  min-width: 3.75rem;
+  text-align: center;
+}
+.hub-users-col--hub-updated {
+  width: 6.25rem;
+  min-width: 6.25rem;
+  text-align: center;
+}
+.hub-users-col--hub-links {
+  width: auto;
+  min-width: 7.5rem;
+  text-align: center;
+}
+
+.hub-users-table .hub-users-col--hub-links .link-row {
+  justify-content: center;
+}
+
+.hub-users-th-btn--static {
+  cursor: default;
+}
+
 .hub-users-select-all,
 .hub-users-select-row {
   display: flex;

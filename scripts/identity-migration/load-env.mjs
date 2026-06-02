@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const hubRoot = path.resolve(__dirname, "../..");
-const databoxRoot = path.resolve(hubRoot, "../P0020-Workspace-Notes");
+const databoxRoot = path.resolve(hubRoot, "../P0020-Data-Box");
 const sharedEnv = path.resolve(hubRoot, "../../.env.shared");
 
 function parseEnvFile(filePath) {

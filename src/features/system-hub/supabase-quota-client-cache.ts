@@ -1,4 +1,5 @@
 import { createClientCache } from "@dev/hub-load";
+import { dispatchSupabaseQuotaUpdated } from "./supabase-quota-events";
 import type { QuotaPayload } from "./supabase-quota-schema";
 
 const cache = createClientCache<QuotaPayload>({
@@ -21,4 +22,5 @@ export function readSupabaseQuotaClientCache(): QuotaPayload | null {
 export function writeSupabaseQuotaClientCache(payload: QuotaPayload) {
   if (!payload.ok) return;
   cache.write(payload);
+  dispatchSupabaseQuotaUpdated();
 }

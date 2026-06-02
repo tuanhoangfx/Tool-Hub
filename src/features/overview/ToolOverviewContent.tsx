@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { ArrowLeftRight, Network, Search } from "lucide-react";
 import type { ResolvedTool } from "../../types";
-import { compactIconSize } from "../../lib/ui-scale";
 import { toolsToWorkspace, workspaceStats } from "../system-hub/workspace-data";
 import { OverviewTocNav } from "./OverviewTocNav";
+import { OVERVIEW_TOC } from "./overview-toc";
+import { TocHighlightContent, TocSectionHighlightProvider } from "./toc-section-highlight-context";
 import { ToolDetailSections } from "./ToolDetailSections";
 import { manifestForTool, stackForTool } from "./tool-overview-data";
 
@@ -43,8 +44,10 @@ export type ToolOverviewContentProps = {
   onSelectTool?: (toolId: string) => void;
   /** Hide workspace grid + compare strip (System overview uses Hub shell instead). */
   hideWorkspaceChrome?: boolean;
-  /** System overview cards/table toggle: cards keep TOC, table gives dense full-width content. */
+  /** Cards vs compact table density (TOC always visible on the left). */
   layoutMode?: "card" | "table";
+  /** Scroll root hint for TOC jump (System overview: `.hub-main`). */
+  scrollRootSelector?: string;
 };
 
 export function ToolOverviewContent({
@@ -55,6 +58,7 @@ export function ToolOverviewContent({
   onSelectTool,
   hideWorkspaceChrome = false,
   layoutMode = "card",
+  scrollRootSelector,
 }: ToolOverviewContentProps) {
   const [workspaceFilter, setWorkspaceFilter] = useState<WorkspaceFilter>("all");
   const [filterOpen, setFilterOpen] = useState(false);
@@ -73,7 +77,6 @@ export function ToolOverviewContent({
 
   const stackYou = stack.slice(0, 2).join(" + ") || tool.category;
   const isHub = tool.code === "P0004";
-  const showToc = layoutMode === "card";
 
   const visibleWorkspace = useMemo(
     () => workspace.filter((w) => matchesWorkspaceFilter(w.status, workspaceFilter)),
@@ -85,6 +88,11 @@ export function ToolOverviewContent({
     if (picked && onSelectTool) onSelectTool(picked.id);
   };
 
+  const tocSectionIds = useMemo(
+    () => OVERVIEW_TOC.map(({ id }) => `${idPrefix}${id}`),
+    [idPrefix],
+  );
+
   return (
     <div className="space-y-3">
       {hideWorkspaceChrome ? null : (
@@ -92,7 +100,7 @@ export function ToolOverviewContent({
           <section className="rounded-2xl border border-slate-400/20 bg-gradient-to-r from-slate-500/10 via-slate-500/5 to-transparent">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 px-4 py-2.5">
           <div className="flex items-center gap-2">
-            <Network size={compactIconSize(14)} className="text-fuchsia-300" />
+            <Network size={14} className="text-fuchsia-300" />
             <span className="text-sm font-semibold">Workspace</span>
             <code className="rounded-md bg-black/30 px-1.5 py-0.5 font-mono text-[10px] text-[var(--muted)]">E:\Dev\Tool</code>
             <span className="text-[10px] text-[var(--muted)]">·</span>
@@ -113,7 +121,7 @@ export function ToolOverviewContent({
                   : "border-white/10 bg-white/[.02] hover:bg-white/[.05]"
               }`}
             >
-              <Search size={compactIconSize(9)} /> filter
+              <Search size={9} /> filter
               {workspaceFilter !== "all" ? (
                 <span className="rounded bg-indigo-500/30 px-1 font-mono text-[9px]">{workspaceFilter}</span>
               ) : null}
@@ -128,7 +136,7 @@ export function ToolOverviewContent({
                   : "border-fuchsia-400/30 bg-fuchsia-500/10 text-fuchsia-200 hover:bg-fuchsia-500/20"
               }`}
             >
-              <ArrowLeftRight size={compactIconSize(9)} /> compare
+              <ArrowLeftRight size={9} /> compare
             </button>
           </div>
         </div>
@@ -240,29 +248,33 @@ export function ToolOverviewContent({
         </>
       )}
 
-      <div className={showToc ? "grid gap-3 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]" : "grid gap-3"}>
-        {showToc ? (
+      <TocSectionHighlightProvider sectionIds={tocSectionIds}>
+        <div className="grid gap-3 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
           <aside
-            className={`w-[var(--overview-toc-w)] shrink-0 lg:sticky lg:self-start ${
+            className={`relative z-10 w-[var(--overview-toc-w)] shrink-0 lg:sticky lg:self-start ${
               hideWorkspaceChrome
                 ? "lg:top-[calc(var(--hub-chrome-sticky-est-h)+1.5rem)]"
                 : "lg:top-[calc(var(--app-tab-header-sticky-h)+1.5rem)]"
             }`}
           >
-            <OverviewTocNav idPrefix={idPrefix} />
+            <OverviewTocNav idPrefix={idPrefix} scrollRootSelector={scrollRootSelector} />
           </aside>
-        ) : null}
 
-        <main className="space-y-6 rounded-2xl border border-white/5 bg-[var(--panel)] p-6">
-          <ToolDetailSections
-            tool={tool}
-            hubChangelogRaw={hubChangelogRaw}
-            idPrefix={idPrefix}
-            statsMode={hideWorkspaceChrome ? "workspace" : "tool"}
-            catalogToolCount={totalRows}
-          />
-        </main>
-      </div>
+          <TocHighlightContent
+            className={`space-y-6 rounded-2xl border border-white/5 bg-[var(--panel)] ${
+              layoutMode === "table" ? "p-4 text-[13px]" : "p-6"
+            }`}
+          >
+            <ToolDetailSections
+              tool={tool}
+              hubChangelogRaw={hubChangelogRaw}
+              idPrefix={idPrefix}
+              statsMode={hideWorkspaceChrome ? "workspace" : "tool"}
+              catalogToolCount={totalRows}
+            />
+          </TocHighlightContent>
+        </div>
+      </TocSectionHighlightProvider>
     </div>
   );
 }

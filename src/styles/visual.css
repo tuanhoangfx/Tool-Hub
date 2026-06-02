@@ -41,6 +41,38 @@
   color: #fff;
 }
 
+/* Hub / System cards — one glyph only (no initials watermark). */
+.hub-card-avatar {
+  position: relative;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hub-card-avatar--xs {
+  border-radius: 8px;
+}
+
+.hub-card-avatar--supabase {
+  background: linear-gradient(145deg, #3ecf8e 0%, #2da96a 42%, #1a7f6e 100%);
+  box-shadow: 0 4px 14px rgba(62, 207, 142, 0.22);
+}
+
+.hub-card-avatar--agent {
+  background: linear-gradient(145deg, #a78bfa 0%, #6366f1 48%, #4338ca 100%);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28);
+}
+
+.hub-card-avatar__icon {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.28));
+}
+
 /* Colored initial badge for tags without a known logo */
 .tag-icon-initial {
   display: inline-flex;

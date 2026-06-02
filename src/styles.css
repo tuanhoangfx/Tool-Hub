@@ -1,4 +1,4 @@
-@import "../../../packages/hub-ui/src/styles/hub-check-indicator.css";
+@import "../vendor/hub-ui/src/styles/hub-check-indicator.css";
 @import "./styles/base.css";
 @import "./theme/hub-appearance.css";
 @import "./styles/layout.css";
@@ -9,4 +9,5 @@
 @import "./styles/modal.css";
 @import "./styles/running-badge.css";
 @import "./styles/roadmap-timeline.css";
+@import "./styles/overview-toc.css";
 @import "./features/identity/hub-users-table.css";

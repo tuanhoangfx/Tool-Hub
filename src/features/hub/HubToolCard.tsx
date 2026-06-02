@@ -26,6 +26,8 @@ import {
   ToolCodeBadge,
 } from "./hub-tool-ui";
 import { healthDotColor } from "./hub-tool-ui-utils";
+import { HubSupabaseQuotaChip } from "./HubSupabaseQuotaChip";
+import { HubSupabaseQuotaHint } from "./HubSupabaseQuotaHint";
 import { compactIconSize } from "../../lib/ui-scale";
 
 const META: Record<string, { Icon: LucideIcon; tint: string }> = {
@@ -138,7 +140,9 @@ export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
               iconMeta={resolveLinkGapChipIcon()}
             />
           ) : null}
+          <HubSupabaseQuotaChip toolCode={tool.code} />
         </div>
+        <HubSupabaseQuotaHint toolCode={tool.code} />
         <LinkManifestFooter linkGaps={linkGaps} />
       </div>
     </button>

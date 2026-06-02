@@ -42,7 +42,7 @@ While Tool Hub is open, identity JWT is relayed as `E0001_HUB_IDENTITY_AUTH` (st
 - **App nào login app đó:** P0020 uses `NotesAuthGate` on Data Box; P0004 uses `HubAuthGate` on x1z10 P01.
 - **Quản lý qua P0004:** P0020 sidebar **Users** links to Hub `/users` (no duplicate directory on Data Box).
 - Identity migration aligns `auth.users` / profiles on Hub; data (notes, vault, todo) stays on Data Box.
-- See `Tool/P0020-Workspace-Notes/docs/HUB-IDENTITY.md`.
+- See `Tool/P0020-Data-Box/docs/HUB-IDENTITY.md`.
 
 ## Identity migration (Data Box → Hub)
 

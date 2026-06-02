@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@dev/hub-load':
-        specifier: file:../packages/hub-load
-        version: file:../packages/hub-load(react@19.2.5)
+        specifier: file:./vendor/hub-load
+        version: file:vendor/hub-load(react@19.2.5)
       '@supabase/supabase-js':
         specifier: ^2.106.2
         version: 2.106.2
       '@tool-workspace/hub-ui':
-        specifier: file:../../packages/hub-ui
-        version: file:../../packages/hub-ui(lucide-react@0.451.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        specifier: file:./vendor/hub-ui
+        version: file:vendor/hub-ui(lucide-react@0.451.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@vitejs/plugin-react':
         specifier: ^5.1.1
         version: 5.2.0(vite@7.3.2(@types/node@25.9.1)(jiti@2.7.0)(yaml@2.9.0))
@@ -180,8 +180,8 @@ packages:
     resolution: {integrity: sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==}
     engines: {node: '>=6.9.0'}
 
-  '@dev/hub-load@file:../packages/hub-load':
-    resolution: {directory: ../packages/hub-load, type: directory}
+  '@dev/hub-load@file:vendor/hub-load':
+    resolution: {directory: vendor/hub-load, type: directory}
     peerDependencies:
       react: '>=18.0.0'
 
@@ -715,8 +715,8 @@ packages:
     resolution: {integrity: sha512-2/RZ/1fmJx/MRSEDG2Xk8+J4JVk5clM9V0uSI6kUTrcS32KA89DtqI5RUOC9r6mzY3WBC9qexLjssIHjbLyVJA==}
     engines: {node: '>=20.0.0'}
 
-  '@tool-workspace/hub-ui@file:../../packages/hub-ui':
-    resolution: {directory: ../../packages/hub-ui, type: directory}
+  '@tool-workspace/hub-ui@file:vendor/hub-ui':
+    resolution: {directory: vendor/hub-ui, type: directory}
     peerDependencies:
       lucide-react: '>=0.451.0'
       react: ^19.0.0
@@ -2285,7 +2285,7 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@dev/hub-load@file:../packages/hub-load(react@19.2.5)':
+  '@dev/hub-load@file:vendor/hub-load(react@19.2.5)':
     dependencies:
       react: 19.2.5
 
@@ -2664,7 +2664,7 @@ snapshots:
       '@supabase/realtime-js': 2.106.2
       '@supabase/storage-js': 2.106.2
 
-  '@tool-workspace/hub-ui@file:../../packages/hub-ui(lucide-react@0.451.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@tool-workspace/hub-ui@file:vendor/hub-ui(lucide-react@0.451.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       lucide-react: 0.451.0(react@19.2.5)
       react: 19.2.5

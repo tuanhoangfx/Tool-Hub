@@ -183,12 +183,10 @@ export function FilterBar({
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {row2Leading ? <div className="flex shrink-0 flex-wrap items-center gap-2">{row2Leading}</div> : null}
             {filterDropdowns}
+            {clearFiltersBtn}
           </div>
-          {row2Actions || clearFiltersBtn ? (
-            <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
-              {row2Actions}
-              {clearFiltersBtn}
-            </div>
+          {row2Actions ? (
+            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">{row2Actions}</div>
           ) : null}
         </div>
       </div>
