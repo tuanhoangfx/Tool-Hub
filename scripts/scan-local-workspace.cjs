@@ -5,6 +5,7 @@ const {
   mergeRegistryDefault,
   readJson,
 } = require("./lib/workspace-scan.cjs");
+const { scanSupabaseWorkspace } = require("./lib/supabase-workspace-scan.cjs");
 
 const p0004Root = path.resolve(__dirname, "..");
 const outputPath = path.join(p0004Root, "public", "local-registry.json");
@@ -44,3 +45,10 @@ const catalog = {
 };
 fs.writeFileSync(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
 console.log(`Wrote workspace catalog (${allEntries.length} entries) to ${catalogPath}`);
+
+const supabaseMapPath = path.join(p0004Root, "public", "supabase-workspace-map.json");
+const supabaseMap = scanSupabaseWorkspace();
+fs.writeFileSync(supabaseMapPath, `${JSON.stringify(supabaseMap, null, 2)}\n`);
+console.log(
+  `Wrote Supabase workspace map (${supabaseMap.summary.projectCount} refs, ${supabaseMap.summary.toolBindingCount} bindings) to ${supabaseMapPath}`,
+);

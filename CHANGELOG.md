@@ -1,10 +1,46 @@
 # Changelog
 
+## 2026-06-02 - Git commit version stamp
+
+- Version: `0.2.3`
+- Timestamp: 2026-06-02 15:06 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-02 - Git commit version stamp
+
+- Version: `0.2.2`
+- Timestamp: 2026-06-02 15:05 (UTC+7)
+- Commit: `57f9885`
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Add System → Agent tab: rules/skills manifest, Hub-standard FilterBar + KPI/charts, card/table views + optional flat mode.
+- Standardize hub-load caches/prefetch and remove design-preview mocks after locking V2.
+- Version stamp for git commit.
+
+### Verification
+
+- `pnpm exec tsc --noEmit`
+
+---
 ## 2026-05-30 - Git commit version stamp
 
 - Version: `0.1.14`
 - Timestamp: 2026-05-30 01:50 (UTC+7)
-- Commit: pending
+- Commit: `f15268f`
 - Type: Patch
 - Status: Draft
 

@@ -174,10 +174,9 @@ export function parseProjectUsage(project: Pick<ProjectRow, "usage">): ProjectUs
 
 export function parseProjectInfra(project: Pick<ProjectRow, "usage">): ProjectInfraMetrics {
   const diskUtil = project.usage?.diskUtil;
-  const diskConfig = project.usage?.diskConfig;
   let diskUsedBytes: number | null = null;
   let diskAvailBytes: number | null = null;
-  let diskSizeGb: number | null = null;
+  const diskSizeGb: number | null = null;
 
   if (diskUtil && typeof diskUtil === "object" && !("error" in diskUtil)) {
     const metrics = (diskUtil as { metrics?: Record<string, unknown> }).metrics;
@@ -185,11 +184,6 @@ export function parseProjectInfra(project: Pick<ProjectRow, "usage">): ProjectIn
       if (typeof metrics.fs_used_bytes === "number") diskUsedBytes = metrics.fs_used_bytes;
       if (typeof metrics.fs_avail_bytes === "number") diskAvailBytes = metrics.fs_avail_bytes;
     }
-  }
-
-  if (diskConfig && typeof diskConfig === "object" && !("error" in diskConfig)) {
-    const attrs = (diskConfig as { attributes?: Record<string, unknown> }).attributes;
-    if (attrs && typeof attrs.size_gb === "number") diskSizeGb = attrs.size_gb;
   }
 
   return { diskUsedBytes, diskAvailBytes, diskSizeGb };
@@ -263,6 +257,13 @@ export function parseProjectRestriction(project: Pick<ProjectRow, "usage" | "err
   return { restricted, violations: violationList, summary, overallStatus };
 }
 
+/** Primary violation code for tooltips (e.g. exceed_egress_quota). */
+export function restrictionPrimaryViolation(project: Pick<ProjectRow, "usage" | "error">): string | null {
+  const { restricted, violations } = parseProjectRestriction(project);
+  if (!restricted) return null;
+  return violations.find((v) => v.includes("egress")) ?? violations[0] ?? "restricted";
+}
+
 export function resolveProjectHealthLabel(project: Pick<ProjectRow, "usage" | "error">): string {
   if (project.error) return "Error";
   const restriction = parseProjectRestriction(project);
@@ -285,157 +286,48 @@ export function orgEntitlementSummary(entitlements: unknown) {
   };
 }
 
-type OrgUsageMetricRow = {
-  metric?: string;
-  usage?: number;
-  usage_original?: number;
-  pricing_free_units?: number;
-  unlimited?: boolean;
+export type PlanDisplay = {
+  orgPlan: string | null;
+  projectPlan: string | null;
+  metaLine: string;
+  showRow: boolean;
 };
 
-export type EgressQuotaMetrics = {
-  egressUsedGb: number | null;
-  egressLimitGb: number | null;
-  egressPercent: number | null;
-  cachedEgressUsedGb: number | null;
-  cachedEgressLimitGb: number | null;
-  cachedEgressPercent: number | null;
-  unifiedUsedGb: number | null;
-  unifiedLimitGb: number | null;
-  unifiedPercent: number | null;
-  exceeded: boolean;
-};
+export function resolvePlanDisplay(
+  project: Pick<ProjectRow, "plan" | "orgPlan">,
+  org?: { plan?: string | null } | null,
+): PlanDisplay {
+  const orgPlan = (project.orgPlan ?? org?.plan ?? "").trim() || null;
+  const projectPlan = (project.plan ?? "").trim() || null;
 
-const EMPTY_EGRESS: EgressQuotaMetrics = {
-  egressUsedGb: null,
-  egressLimitGb: null,
-  egressPercent: null,
-  cachedEgressUsedGb: null,
-  cachedEgressLimitGb: null,
-  cachedEgressPercent: null,
-  unifiedUsedGb: null,
-  unifiedLimitGb: null,
-  unifiedPercent: null,
-  exceeded: false,
-};
-
-function pctUsed(used: number | null, limit: number | null): number | null {
-  if (used == null || limit == null || limit <= 0) return null;
-  return Math.round((used / limit) * 1000) / 10;
-}
-
-export function formatEgressQuotaShort(metrics: EgressQuotaMetrics): string {
-  if (metrics.egressUsedGb == null && metrics.cachedEgressUsedGb == null) return "—";
-  if (metrics.egressUsedGb != null && metrics.egressLimitGb != null) {
-    const pct = metrics.egressPercent != null ? ` · ${metrics.egressPercent}%${metrics.exceeded ? "+" : ""}` : "";
-    return `${metrics.egressUsedGb} / ${metrics.egressLimitGb} GB${pct}`;
+  if (!orgPlan && !projectPlan) {
+    return { orgPlan: null, projectPlan: null, metaLine: "", showRow: false };
   }
-  if (metrics.unifiedUsedGb != null && metrics.unifiedLimitGb != null) {
-    const pct = metrics.unifiedPercent != null ? ` · ${metrics.unifiedPercent}%${metrics.exceeded ? "+" : ""}` : "";
-    return `${metrics.unifiedUsedGb} / ${metrics.unifiedLimitGb} GB${pct}`;
+
+  if (orgPlan && projectPlan && orgPlan.toLowerCase() === projectPlan.toLowerCase()) {
+    return { orgPlan, projectPlan, metaLine: `${projectPlan} (org & project)`, showRow: true };
   }
-  if (metrics.egressUsedGb != null) return `${metrics.egressUsedGb} GB used`;
-  return "—";
-}
-
-const PLAN_EGRESS_LIMITS_GB: Record<string, { uncached: number; cached: number }> = {
-  free: { uncached: 5, cached: 5 },
-  pro: { uncached: 250, cached: 250 },
-  team: { uncached: 250, cached: 250 },
-  enterprise: { uncached: 250, cached: 250 },
-};
-
-function planEgressLimits(plan: string | null | undefined) {
-  const key = (plan ?? "free").toLowerCase();
-  if (key.includes("pro")) return PLAN_EGRESS_LIMITS_GB.pro;
-  if (key.includes("team")) return PLAN_EGRESS_LIMITS_GB.team;
-  if (key.includes("enterprise")) return PLAN_EGRESS_LIMITS_GB.enterprise;
-  return PLAN_EGRESS_LIMITS_GB[key] ?? PLAN_EGRESS_LIMITS_GB.free;
-}
-
-function parseEgressFromOrgUsage(raw: unknown): EgressQuotaMetrics {
-  if (!raw || typeof raw !== "object" || "error" in raw) return EMPTY_EGRESS;
-  const usages = (raw as { usages?: OrgUsageMetricRow[] }).usages;
-  if (!Array.isArray(usages)) return EMPTY_EGRESS;
-
-  const egress = usages.find((u) => u.metric === "EGRESS");
-  const cached = usages.find((u) => u.metric === "CACHED_EGRESS");
-
-  const egressUsedGb = typeof egress?.usage === "number" ? egress.usage : null;
-  const egressLimitGb =
-    egress?.unlimited === true
-      ? null
-      : typeof egress?.pricing_free_units === "number"
-        ? egress.pricing_free_units
-        : null;
-
-  const cachedEgressUsedGb = typeof cached?.usage === "number" ? cached.usage : null;
-  const cachedEgressLimitGb =
-    cached?.unlimited === true
-      ? null
-      : typeof cached?.pricing_free_units === "number"
-        ? cached.pricing_free_units
-        : null;
-
-  const egressPercent = pctUsed(egressUsedGb, egressLimitGb);
-  const cachedEgressPercent = pctUsed(cachedEgressUsedGb, cachedEgressLimitGb);
-
-  const unifiedUsedGb =
-    egressUsedGb == null && cachedEgressUsedGb == null ? null : (egressUsedGb ?? 0) + (cachedEgressUsedGb ?? 0);
-  const unifiedLimitGb =
-    egressLimitGb == null && cachedEgressLimitGb == null ? null : (egressLimitGb ?? 0) + (cachedEgressLimitGb ?? 0);
-  const unifiedPercent = pctUsed(unifiedUsedGb, unifiedLimitGb);
-
-  const exceeded =
-    (egressPercent != null && egressPercent >= 100) || (cachedEgressPercent != null && cachedEgressPercent >= 100);
-
+  if (orgPlan && !projectPlan) {
+    return { orgPlan, projectPlan: null, metaLine: `${orgPlan} (org)`, showRow: true };
+  }
+  if (!orgPlan && projectPlan) {
+    return { orgPlan: null, projectPlan, metaLine: `${projectPlan} (project)`, showRow: true };
+  }
   return {
-    egressUsedGb,
-    egressLimitGb,
-    egressPercent,
-    cachedEgressUsedGb,
-    cachedEgressLimitGb,
-    cachedEgressPercent,
-    unifiedUsedGb,
-    unifiedLimitGb,
-    unifiedPercent,
-    exceeded,
+    orgPlan,
+    projectPlan,
+    metaLine: `${projectPlan} (project) · ${orgPlan} (org)`,
+    showRow: true,
   };
 }
 
-function egressFallbackFromRestriction(
-  project: Pick<ProjectRow, "usage" | "plan" | "error">,
-  orgPlan?: string | null,
-): EgressQuotaMetrics {
-  const restriction = parseProjectRestriction(project);
-  const hitEgress =
-    restriction.restricted &&
-    restriction.violations.some((v) => v.includes("egress") || v.includes("quota") || v === "restricted");
-  if (!hitEgress) return EMPTY_EGRESS;
-
-  const limits = planEgressLimits(project.plan ?? orgPlan);
-  return {
-    egressUsedGb: limits.uncached,
-    egressLimitGb: limits.uncached,
-    egressPercent: 100,
-    cachedEgressUsedGb: null,
-    cachedEgressLimitGb: limits.cached,
-    cachedEgressPercent: null,
-    unifiedUsedGb: limits.uncached,
-    unifiedLimitGb: limits.uncached + limits.cached,
-    unifiedPercent: 100,
-    exceeded: true,
-  };
-}
-
-/** Billing-cycle egress: platform org usage when PAT allows, else plan-limit fallback when restricted. */
-export function parseEgressQuota(
-  project: Pick<ProjectRow, "usage" | "plan" | "error">,
-  orgPlan?: string | null,
-): EgressQuotaMetrics {
-  const fromPlatform = parseEgressFromOrgUsage(project.usage?.orgUsage);
-  if (fromPlatform.egressUsedGb != null || fromPlatform.cachedEgressUsedGb != null) return fromPlatform;
-  return egressFallbackFromRestriction(project, orgPlan);
+/** Plan label for filters/charts — prefers org billing plan, then project tier. */
+export function effectivePlanLabel(
+  project: Pick<ProjectRow, "plan" | "orgPlan">,
+  org?: { plan?: string | null } | null,
+): string {
+  const { orgPlan, projectPlan } = resolvePlanDisplay(project, org);
+  return projectPlan ?? orgPlan ?? "—";
 }
 
 export function sumFilteredUsage(projects: ProjectRow[]): {

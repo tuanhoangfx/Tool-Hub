@@ -1,17 +1,20 @@
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase";
+import { deduplicateUserRows } from "./hubUserDisplay";
 
 export type UserManagementRow = {
   id: string;
   fullName: string;
   email: string;
-  role: "admin" | "manager" | "employee";
+  role: "admin" | "manager" | "user";
   avatarUrl: string | null;
   createdAt: string | null;
   updatedAt: string | null;
   lastActiveAt: string | null;
   projectCount: number;
   projectNames: string[];
+  toolCount: number;
+  toolCodes: string[];
   activityCount: number;
   status: "online" | "active" | "idle" | "offline";
 };
@@ -29,12 +32,15 @@ type ProfileRow = {
   last_activity_at?: string | null;
   project_count?: number | null;
   project_names?: string[] | null;
+  tool_count?: number | null;
+  tool_codes?: string[] | null;
   activity_count?: number | null;
 };
 
 function cleanRole(value: string | null | undefined): UserManagementRow["role"] {
-  if (value === "admin" || value === "manager" || value === "employee") return value;
-  return "employee";
+  if (value === "admin" || value === "manager") return value;
+  if (value === "user" || value === "employee") return "user";
+  return "user";
 }
 
 function statusFromLastActive(value: string | null): UserManagementRow["status"] {
@@ -53,17 +59,20 @@ function normalizeProfile(row: ProfileRow): UserManagementRow {
   const fullName = row.full_name?.trim() || email || id;
   const lastActiveAt = row.last_activity_at ?? row.last_sign_in_at ?? null;
   const projectNames = Array.isArray(row.project_names) ? row.project_names.filter(Boolean) : [];
+  const toolCodes = Array.isArray(row.tool_codes) ? row.tool_codes.filter(Boolean) : [];
   return {
     id,
     fullName,
     email,
     role: cleanRole(row.role),
-    avatarUrl: row.avatar_url ?? null,
+    avatarUrl: null,
     createdAt: row.created_at ?? null,
     updatedAt: row.updated_at ?? null,
     lastActiveAt,
     projectCount: row.project_count ?? projectNames.length,
     projectNames,
+    toolCount: row.tool_count ?? toolCodes.length,
+    toolCodes,
     activityCount: row.activity_count ?? 0,
     status: statusFromLastActive(lastActiveAt),
   };
@@ -82,11 +91,33 @@ export async function updateUserRole(
   return { ok: true, error: null };
 }
 
+export type UserProfilePatch = {
+  fullName?: string;
+  email?: string;
+  role?: UserManagementRow["role"];
+};
+
+export async function updateUserProfile(
+  targetUserId: string,
+  patch: UserProfilePatch,
+): Promise<{ ok: boolean; error: string | null }> {
+  const row: Record<string, string> = { updated_at: new Date().toISOString() };
+  if (patch.fullName !== undefined) row.full_name = patch.fullName.trim();
+  if (patch.email !== undefined) row.email = patch.email.trim().toLowerCase();
+  if (patch.role !== undefined) row.role = patch.role;
+
+  const { error } = await supabase.from("profiles").update(row).eq("id", targetUserId);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, error: null };
+}
+
 export async function fetchCurrentProfileRole(userId: string): Promise<UserManagementRow["role"] | null> {
   const { data, error } = await supabase.from("profiles").select("role").eq("id", userId).maybeSingle();
   if (error || !data?.role) return null;
   return cleanRole(data.role);
 }
+
+export const TOOL_NONE = "__no_tools__";
 
 export async function fetchUserManagementRows(session: Session): Promise<{
   rows: UserManagementRow[];
@@ -95,10 +126,10 @@ export async function fetchUserManagementRows(session: Session): Promise<{
   const directory = await supabase.rpc("workspace_user_directory");
 
   if (!directory.error && Array.isArray(directory.data)) {
-    return {
-      rows: (directory.data as ProfileRow[]).map(normalizeProfile).filter((row) => row.id),
-      warning: null,
-    };
+    const rows = deduplicateUserRows(
+      (directory.data as ProfileRow[]).map(normalizeProfile).filter((row) => row.id),
+    );
+    return { rows, warning: null };
   }
 
   const message = directory.error?.message ?? "Unable to load user directory from database.";

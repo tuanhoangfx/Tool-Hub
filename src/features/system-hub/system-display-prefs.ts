@@ -41,13 +41,8 @@ export const SYSTEM_SUPABASE_QUOTA_KPI_DEFS: PrefItem[] = [
   { key: "orgs", label: "Organizations" },
   { key: "errors", label: "Errors" },
   { key: "restricted", label: "Restricted" },
-  { key: "pro", label: "Pro projects" },
   { key: "api_total", label: "API requests (sum)" },
   { key: "api_rest", label: "REST / min (sum)" },
-  { key: "quota_file", label: "Max file size (min–max)" },
-  { key: "quota_log", label: "Log retention (min–max)" },
-  { key: "quota_fn", label: "Functions max (min–max)" },
-  { key: "quota_rt", label: "Realtime users (min–max)" },
 ];
 
 export const SYSTEM_SUPABASE_QUOTA_CHART_DEFS: PrefItem[] = [
@@ -61,11 +56,30 @@ export const DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS = new Set([
   "errors",
   "restricted",
   "api_total",
-  "quota_file",
-  "quota_log",
-  "quota_fn",
 ]);
 export const DEFAULT_SYSTEM_SUPABASE_QUOTA_CHART_KEYS = new Set(["category_bar", "health_bar"]);
+
+export const SYSTEM_AGENT_KPI_DEFS: PrefItem[] = [
+  { key: "total", label: "Items (shown)" },
+  { key: "rules", label: "Rules" },
+  { key: "skills", label: "Skills" },
+  { key: "always", label: "Always on" },
+];
+
+export const SYSTEM_AGENT_CHART_DEFS: PrefItem[] = [
+  { key: "health_bar", label: "By kind (bar)" },
+  { key: "category_bar", label: "By scope (bar)" },
+  { key: "deploy_donut", label: "Apply mode (donut)" },
+  { key: "status_donut", label: "Size (lines) (donut)" },
+];
+
+export const DEFAULT_SYSTEM_AGENT_KPI_KEYS = new Set(["total", "rules", "skills", "always"]);
+export const DEFAULT_SYSTEM_AGENT_CHART_KEYS = new Set([
+  "health_bar",
+  "category_bar",
+  "deploy_donut",
+  "status_donut",
+]);
 
 /** Overview hides all KPI and chart cards by default. */
 export const DEFAULT_SYSTEM_OVERVIEW_KPI_KEYS = new Set<string>();
@@ -100,6 +114,13 @@ export function systemDisplayDefs(stab: SystemTab = readSystemTab()) {
         charts: SYSTEM_SUPABASE_QUOTA_CHART_DEFS,
         defaultKpiKeys: DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS,
         defaultChartKeys: DEFAULT_SYSTEM_SUPABASE_QUOTA_CHART_KEYS,
+      };
+    case "agent":
+      return {
+        kpis: SYSTEM_AGENT_KPI_DEFS,
+        charts: SYSTEM_AGENT_CHART_DEFS,
+        defaultKpiKeys: DEFAULT_SYSTEM_AGENT_KPI_KEYS,
+        defaultChartKeys: DEFAULT_SYSTEM_AGENT_CHART_KEYS,
       };
     case "template":
       return {

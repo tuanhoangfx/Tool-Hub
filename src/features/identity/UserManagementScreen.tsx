@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Activity,
-  BriefcaseBusiness,
-  CalendarClock,
   CheckCircle2,
   Crown,
-  Mail,
+  Package,
   RefreshCw,
   ShieldCheck,
   UserRound,
@@ -19,6 +17,7 @@ import {
   MiniBarChart,
   MiniDonut,
   ViewToggle,
+  UsersLoadingView,
   type BarItem,
   type DonutItem,
   type FilterDef,
@@ -29,23 +28,45 @@ import {
 } from "../../components/sales-shell";
 import { APP_VERSION } from "../../lib/app-meta";
 import { HubAuthGate } from "./HubAuthGate";
+import { HubRoleBadge } from "./HubRoleBadge";
+import { HubUserAvatar } from "./HubUserAvatar";
+import { hubRoleLabel, resolveSessionActorRole } from "./hubUserDisplay";
+import { UserDirectoryTable, type UserTableSortKey } from "./UserDirectoryTable";
+import { readUserTableColumns, type UserTableColumnKey } from "./user-table-prefs";
+import { UserBulkActionBar } from "./UserBulkActionBar";
+import { UserAccessModal } from "./UserAccessModal";
 import { useHubAuth } from "./useHubAuth";
 import {
   fetchCurrentProfileRole,
   fetchUserManagementRows,
-  updateUserRole,
   type UserManagementRow,
 } from "./userManagementRepository";
+import {
+  readUserManagementClientCache,
+  readUserManagementStaleCache,
+  writeUserManagementClientCache,
+} from "./user-management-client-cache";
+import type { UserAccessSavePayload } from "./UserAccessModal";
+import {
+  countRegistryOnlyTools,
+  fetchHubTools,
+  loadWorkspaceToolCatalog,
+  mergeHubToolCatalog,
+  revokeAllToolAccessForUsers,
+  syncHubToolsCatalog,
+  type HubToolRow,
+} from "./toolAccessRepository";
+import { matchesUserFilters, TOOL_NONE, userFiltersWithCounts } from "./user-filter-counts";
 
-const USER_FILTERS: FilterDef[] = [
+const BASE_USER_FILTERS: FilterDef[] = [
   {
     key: "role",
     label: "Role",
     showAllLabel: true,
     options: [
-      { value: "admin", label: "Admin", color: "#818cf8" },
-      { value: "manager", label: "Manager", color: "#a855f7" },
-      { value: "employee", label: "Employee", color: "#22c55e" },
+      { value: "admin", label: "Admin" },
+      { value: "manager", label: "Manager" },
+      { value: "user", label: "User" },
     ],
   },
   {
@@ -53,50 +74,25 @@ const USER_FILTERS: FilterDef[] = [
     label: "Activity",
     showAllLabel: true,
     options: [
-      { value: "online", label: "Online", color: "#22c55e" },
-      { value: "active", label: "Active", color: "#06b6d4" },
-      { value: "idle", label: "Idle", color: "#f59e0b" },
-      { value: "offline", label: "Offline", color: "#64748b" },
+      { value: "online", label: "Online" },
+      { value: "active", label: "Active" },
+      { value: "idle", label: "Idle" },
+      { value: "offline", label: "Offline" },
     ],
   },
 ];
 
-type SortKey = "fullName" | "email" | "role" | "createdAt" | "lastActiveAt" | "projectCount" | "activityCount";
-
 function fmtDate(value: string | null): string {
-  if (!value) return "N/A";
+  if (!value) return "—";
   const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "N/A";
+  if (!Number.isFinite(date.getTime())) return "—";
   return new Intl.DateTimeFormat("vi-VN", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
+    year: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-}
-
-function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
-function roleLabel(role: UserManagementRow["role"]) {
-  return role === "admin" ? "Admin" : role === "manager" ? "Manager" : "Employee";
-}
-
-function RoleBadge({ role }: { role: UserManagementRow["role"] }) {
-  const cls =
-    role === "admin"
-      ? "border-indigo-400/25 bg-indigo-500/15 text-indigo-200"
-      : role === "manager"
-        ? "border-purple-400/25 bg-purple-500/15 text-purple-200"
-        : "border-emerald-400/25 bg-emerald-500/15 text-emerald-200";
-  return <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${cls}`}>{roleLabel(role)}</span>;
 }
 
 function StatusBadge({ status }: { status: UserManagementRow["status"] }) {
@@ -134,183 +130,76 @@ function DataSectionRule() {
   );
 }
 
-function UserAvatar({ user }: { user: UserManagementRow }) {
-  return user.avatarUrl ? (
-    <img src={user.avatarUrl} alt="" className="h-9 w-9 rounded-xl object-cover ring-1 ring-white/10" />
-  ) : (
-    <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-emerald-500/25 to-indigo-500/15 text-xs font-bold text-emerald-100 ring-1 ring-white/10">
-      {initials(user.fullName)}
-    </span>
-  );
-}
-
-function sortableValue(user: UserManagementRow, key: SortKey) {
+function sortableValue(user: UserManagementRow, key: UserTableSortKey) {
   if (key === "createdAt" || key === "lastActiveAt") return user[key] ? new Date(user[key]!).getTime() : 0;
+  if (key === "status") return user.status;
+  if (key === "id") return user.id;
   return user[key];
-}
-
-const ROLE_OPTIONS: UserManagementRow["role"][] = ["admin", "manager", "employee"];
-
-function RoleEditor({
-  user,
-  canEdit,
-  saving,
-  onChange,
-}: {
-  user: UserManagementRow;
-  canEdit: boolean;
-  saving: boolean;
-  onChange: (role: UserManagementRow["role"]) => void;
-}) {
-  if (!canEdit) return <RoleBadge role={user.role} />;
-  return (
-    <select
-      className="field min-w-[7.5rem] cursor-pointer py-1.5 text-center text-xs font-semibold"
-      value={user.role}
-      disabled={saving}
-      onChange={(e) => onChange(e.target.value as UserManagementRow["role"])}
-      aria-label={`Role for ${user.email}`}
-    >
-      {ROLE_OPTIONS.map((role) => (
-        <option key={role} value={role}>
-          {roleLabel(role)}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-function UserTable({
-  users,
-  sortKey,
-  sortDir,
-  onSort,
-  canManageRoles,
-  savingRoleId,
-  onRoleChange,
-}: {
-  users: UserManagementRow[];
-  sortKey: SortKey;
-  sortDir: "asc" | "desc";
-  onSort: (key: SortKey) => void;
-  canManageRoles: boolean;
-  savingRoleId: string | null;
-  onRoleChange: (userId: string, role: UserManagementRow["role"]) => void;
-}) {
-  const headers: { key: SortKey; label: string; align?: string }[] = [
-    { key: "fullName", label: "Name" },
-    { key: "email", label: "Email" },
-    { key: "role", label: "Position", align: "text-center" },
-    { key: "projectCount", label: "Projects", align: "text-center" },
-    { key: "createdAt", label: "Created", align: "text-center" },
-    { key: "lastActiveAt", label: "Latest activity", align: "text-center" },
-    { key: "activityCount", label: "Actions", align: "text-center" },
-  ];
-
-  return (
-    <div className="overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)]">
-      <div className="overflow-x-auto">
-        <table className="min-w-[980px] w-full text-left text-sm">
-          <thead className="bg-white/[.035] text-[10px] uppercase tracking-[0.14em] text-[var(--muted)]">
-            <tr>
-              {headers.map((header) => (
-                <th key={header.key} className={`px-4 py-3 font-semibold ${header.align ?? ""}`}>
-                  <button
-                    type="button"
-                    onClick={() => onSort(header.key)}
-                    className="inline-flex items-center gap-1 rounded-md px-1 py-0.5 transition-colors hover:bg-white/5 hover:text-[var(--text)]"
-                  >
-                    {header.label}
-                    {sortKey === header.key ? <span className="text-emerald-300">{sortDir === "asc" ? "^" : "v"}</span> : null}
-                  </button>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/[.055]">
-            {users.map((user) => (
-              <tr key={user.id} className="transition-colors hover:bg-white/[.035]">
-                <td className="px-4 py-3">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <UserAvatar user={user} />
-                    <div className="min-w-0">
-                      <div className="truncate font-semibold text-[var(--text)]">{user.fullName}</div>
-                      <div className="truncate font-mono text-[10px] text-[var(--muted)]">{user.id}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <span className="inline-flex max-w-[220px] items-center gap-1.5 truncate text-[var(--muted)]">
-                    <Mail size={13} className="shrink-0 text-indigo-300/80" />
-                    <span className="truncate">{user.email || "N/A"}</span>
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <RoleEditor
-                    user={user}
-                    canEdit={canManageRoles}
-                    saving={savingRoleId === user.id}
-                    onChange={(role) => onRoleChange(user.id, role)}
-                  />
-                </td>
-                <td className="px-4 py-3 text-center">
-                  <span className="font-semibold tabular-nums text-[var(--text)]">{user.projectCount}</span>
-                  {user.projectNames.length ? (
-                    <div className="mx-auto mt-1 max-w-[150px] truncate text-[10px] text-[var(--muted)]" title={user.projectNames.join(", ")}>
-                      {user.projectNames.join(", ")}
-                    </div>
-                  ) : null}
-                </td>
-                <td className="px-4 py-3 text-center text-xs tabular-nums text-[var(--muted)]">{fmtDate(user.createdAt)}</td>
-                <td className="px-4 py-3 text-center">
-                  <div className="flex flex-col items-center gap-1">
-                    <StatusBadge status={user.status} />
-                    <span className="text-xs tabular-nums text-[var(--muted)]">{fmtDate(user.lastActiveAt)}</span>
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-center font-mono text-xs tabular-nums text-[var(--text)]/90">{user.activityCount}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {users.length === 0 ? <div className="py-10 text-center text-sm text-[var(--muted)]">No users found.</div> : null}
-      </div>
-    </div>
-  );
 }
 
 function UserCards({
   users,
-  canManageRoles,
-  savingRoleId,
-  onRoleChange,
+  selectedIds,
+  onToggleSelect,
+  detailUserId,
+  onOpenUser,
 }: {
   users: UserManagementRow[];
-  canManageRoles: boolean;
-  savingRoleId: string | null;
-  onRoleChange: (userId: string, role: UserManagementRow["role"]) => void;
+  selectedIds: Set<string>;
+  onToggleSelect: (userId: string) => void;
+  detailUserId: string | null;
+  onOpenUser: (user: UserManagementRow) => void;
 }) {
   return (
     <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {users.map((user) => (
-        <article key={user.id} className="anim-slide rounded-2xl border border-white/5 bg-[var(--panel)] p-4 transition-all hover:-translate-y-0.5 hover:ring-2 hover:ring-emerald-500/25">
+        <article
+          key={user.id}
+          role="button"
+          tabIndex={0}
+          onClick={() => onOpenUser(user)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onOpenUser(user);
+            }
+          }}
+          className={`anim-slide cursor-pointer rounded-2xl border border-white/5 bg-[var(--panel)] p-4 transition-all hover:-translate-y-0.5 hover:ring-2 hover:ring-emerald-500/25 ${
+            detailUserId === user.id ? "ring-2 ring-emerald-500/40" : ""
+          } ${selectedIds.has(user.id) ? "border-indigo-400/30 bg-indigo-500/5" : ""}`}
+        >
           <div className="flex items-start gap-3">
-            <UserAvatar user={user} />
+            <label
+              className="hub-users-select-row shrink-0 pt-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="checkbox"
+                className="hub-checkbox"
+                checked={selectedIds.has(user.id)}
+                onChange={() => onToggleSelect(user.id)}
+                aria-label={`Select ${user.fullName}`}
+              />
+            </label>
+            <HubUserAvatar user={user} size="md" />
             <div className="min-w-0 flex-1">
-              <div className="truncate font-semibold">{user.fullName}</div>
-              <div className="truncate text-xs text-[var(--muted)]">{user.email || "N/A"}</div>
+              <div className="truncate text-sm font-semibold">{user.fullName}</div>
+              <div className="truncate text-[11px] text-[var(--muted)]">{user.email || "N/A"}</div>
             </div>
-            <RoleEditor
-              user={user}
-              canEdit={canManageRoles}
-              saving={savingRoleId === user.id}
-              onChange={(role) => onRoleChange(user.id, role)}
-            />
+            <HubRoleBadge role={user.role} />
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
             <span className="rounded-xl border border-white/5 bg-white/[.03] p-2">
-              <small className="block text-[10px] uppercase tracking-wider text-[var(--muted)]">Projects</small>
-              <strong className="text-base tabular-nums">{user.projectCount}</strong>
+              <small className="block text-[10px] uppercase tracking-wider text-[var(--muted)]">Tools</small>
+              <strong className="mt-1 inline-flex text-base tabular-nums">
+                <span
+                  className={`hub-users-tool-badge hub-users-tool-badge--card${
+                    user.toolCount === 0 ? " hub-users-tool-badge--empty" : ""
+                  }${user.role === "admin" ? " hub-users-tool-badge--admin" : ""}`}
+                >
+                  {user.toolCount}
+                </span>
+              </strong>
             </span>
             <span className="rounded-xl border border-white/5 bg-white/[.03] p-2">
               <small className="block text-[10px] uppercase tracking-wider text-[var(--muted)]">Actions</small>
@@ -335,32 +224,72 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   const { session, loading: authLoading, isSupabaseConfigured } = useHubAuth();
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
-  const [rows, setRows] = useState<UserManagementRow[]>([]);
+  const initialCache = readUserManagementStaleCache();
+  const [rows, setRows] = useState<UserManagementRow[]>(() => initialCache?.rows ?? []);
   const [dataWarning, setDataWarning] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [viewMode, setViewMode] = useState<HubViewMode>("table");
-  const [sortKey, setSortKey] = useState<SortKey>("lastActiveAt");
+  const [hubTools, setHubTools] = useState<HubToolRow[]>(() => initialCache?.hubTools ?? []);
+  const [accessUser, setAccessUser] = useState<UserManagementRow | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [visibleColumns, setVisibleColumns] = useState<Set<UserTableColumnKey>>(() => readUserTableColumns());
+  const [sortKey, setSortKey] = useState<UserTableSortKey>("lastActiveAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [myRole, setMyRole] = useState<UserManagementRow["role"] | null>(null);
-  const [savingRoleId, setSavingRoleId] = useState<string | null>(null);
   const [roleMessage, setRoleMessage] = useState<string | null>(null);
 
-  const canManageRoles = myRole === "admin";
+  const actorRole = useMemo(
+    () => resolveSessionActorRole(myRole, session?.user.id, rows),
+    [myRole, session?.user.id, rows],
+  );
 
-  const refresh = useCallback(async () => {
-    if (!session) return;
-    setLoading(true);
-    try {
-      const result = await fetchUserManagementRows(session);
-      setRows(result.rows);
-      setDataWarning(result.warning);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to load users";
-      setDataWarning(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [session]);
+  const canManageRoles = actorRole === "admin";
+  const canManageTools = actorRole === "admin";
+
+  const syncWorkspaceTools = useCallback(async (): Promise<{ ok: boolean; error: string | null; count: number }> => {
+    const catalog = await loadWorkspaceToolCatalog();
+    if (!catalog.length) return { ok: true, error: null, count: 0 };
+    const sync = await syncHubToolsCatalog(catalog);
+    return { ok: !sync.error, error: sync.error, count: sync.count };
+  }, []);
+
+  const refresh = useCallback(
+    async (opts?: { silent?: boolean }) => {
+      if (!session) return;
+      const silent = opts?.silent !== false;
+      if (silent) setRefreshing(true);
+      else if (rows.length === 0) setLoading(true);
+      else setRefreshing(true);
+      try {
+        const [profileRole, catalog, result, toolsResult] = await Promise.all([
+          myRole ? Promise.resolve(myRole) : fetchCurrentProfileRole(session.user.id),
+          loadWorkspaceToolCatalog(),
+          fetchUserManagementRows(session),
+          fetchHubTools(),
+        ]);
+        if (profileRole) setMyRole(profileRole);
+        const effectiveRole = profileRole ?? resolveSessionActorRole(null, session.user.id, result.rows);
+        const mergedTools = mergeHubToolCatalog(toolsResult.tools, catalog);
+        setRows(result.rows);
+        setHubTools(mergedTools);
+        writeUserManagementClientCache(result.rows, mergedTools);
+        const pending = countRegistryOnlyTools(mergedTools);
+        const warnParts = [result.warning, toolsResult.error].filter(Boolean);
+        if (pending > 0 && effectiveRole === "admin") {
+          warnParts.push(`${pending} tool(s)/extension(s) need Sync tools before grants can be saved.`);
+        }
+        setDataWarning(warnParts.join(" · ") || null);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Unable to load users";
+        if (rows.length === 0 && !readUserManagementStaleCache()) setDataWarning(message);
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [myRole, session, rows.length],
+  );
 
   useEffect(() => {
     if (!session?.user.id) {
@@ -370,48 +299,105 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     void fetchCurrentProfileRole(session.user.id).then(setMyRole);
   }, [session?.user.id]);
 
-  const handleRoleChange = useCallback(
-    async (userId: string, role: UserManagementRow["role"]) => {
-      if (!canManageRoles) return;
-      setSavingRoleId(userId);
-      setRoleMessage(null);
-      const result = await updateUserRole(userId, role);
-      setSavingRoleId(null);
-      if (!result.ok) {
-        setRoleMessage(result.error ?? "Unable to update role");
-        return;
-      }
-      setRows((prev) => prev.map((row) => (row.id === userId ? { ...row, role } : row)));
-      setRoleMessage("Role updated.");
-    },
-    [canManageRoles],
-  );
+  useEffect(() => {
+    const sync = () => setVisibleColumns(readUserTableColumns());
+    window.addEventListener("user-table-columns-change", sync);
+    return () => window.removeEventListener("user-table-columns-change", sync);
+  }, []);
 
   useEffect(() => {
-    if (session) void refresh();
-  }, [refresh, session]);
+    if (visibleColumns.has(sortKey as UserTableColumnKey)) return;
+    setSortKey("lastActiveAt");
+  }, [sortKey, visibleColumns]);
 
-  const filteredRows = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const selectedRoles = filterValues.role ?? [];
-    const selectedStatuses = filterValues.status ?? [];
-    return rows.filter((row) => {
-      if (selectedRoles.length && !selectedRoles.includes(row.role)) return false;
-      if (selectedStatuses.length && !selectedStatuses.includes(row.status)) return false;
-      if (!q) return true;
-      const haystack = [
-        row.fullName,
-        row.email,
-        row.id,
-        row.role,
-        row.status,
-        ...row.projectNames,
-      ]
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(q);
-    });
-  }, [filterValues.role, filterValues.status, query, rows]);
+  useEffect(() => {
+    if (!session) return;
+    void refresh({ silent: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- refresh when session identity changes only
+  }, [session?.user.id]);
+
+  const toolFilterOptions = useMemo(() => {
+    const byCode = new Map<string, string>();
+    hubTools.forEach((t) => byCode.set(t.tool_code, t.name));
+    rows.forEach((row) => row.toolCodes.forEach((code) => {
+      if (!byCode.has(code)) byCode.set(code, code);
+    }));
+    const options = [...byCode.entries()]
+      .sort((a, b) => a[1].localeCompare(b[1], "vi"))
+      .map(([value, label]) => ({ value, label }));
+    if (rows.some((row) => row.toolCount === 0)) {
+      options.unshift({ value: TOOL_NONE, label: "No tool access" });
+    }
+    return options;
+  }, [hubTools, rows]);
+
+  const userFiltersBase = useMemo<FilterDef[]>(
+    () => [
+      ...BASE_USER_FILTERS,
+      {
+        key: "tool",
+        label: "Tool",
+        showAllLabel: true,
+        options: toolFilterOptions,
+      },
+    ],
+    [toolFilterOptions],
+  );
+
+  const handleUserSaved = useCallback((userId: string, payload: UserAccessSavePayload) => {
+    setRows((prev) =>
+      prev.map((row) =>
+        row.id === userId
+          ? {
+              ...row,
+              fullName: payload.fullName,
+              email: payload.email,
+              role: payload.role,
+              toolCodes: payload.toolCodes,
+              toolCount: payload.role === "admin" ? row.toolCount : payload.toolCodes.length,
+            }
+          : row,
+      ),
+    );
+    setRoleMessage("User updated.");
+  }, []);
+
+  const handleSyncToolsClick = useCallback(async () => {
+    if (!canManageTools) return;
+    setLoading(true);
+    setRoleMessage(null);
+    const sync = await syncWorkspaceTools();
+    await refresh();
+    setLoading(false);
+    if (sync.error) {
+      setRoleMessage(sync.error);
+      return;
+    }
+    setRoleMessage(`Synced ${sync.count} tools and extensions from workspace.`);
+  }, [canManageTools, refresh, syncWorkspaceTools]);
+
+  const handleAddUserInfo = useCallback(() => {
+    setRoleMessage("New users appear after Supabase sign-in. Syncing workspace tools and extensions…");
+    void handleSyncToolsClick();
+  }, [handleSyncToolsClick]);
+
+  const handleSyncCatalogForModal = useCallback(async () => {
+    const sync = await syncWorkspaceTools();
+    const catalog = await loadWorkspaceToolCatalog();
+    const { tools } = await fetchHubTools();
+    setHubTools(mergeHubToolCatalog(tools, catalog));
+    return { ok: sync.ok, error: sync.error };
+  }, [syncWorkspaceTools]);
+
+  const userFilters = useMemo(
+    () => userFiltersWithCounts(rows, userFiltersBase, query, filterValues),
+    [rows, userFiltersBase, query, filterValues],
+  );
+
+  const filteredRows = useMemo(
+    () => rows.filter((row) => matchesUserFilters(row, query, filterValues)),
+    [filterValues, query, rows],
+  );
 
   const sortedRows = useMemo(() => {
     return [...filteredRows].sort((a, b) => {
@@ -422,14 +408,85 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     });
   }, [filteredRows, sortDir, sortKey]);
 
+  const selectedUsers = useMemo(
+    () => sortedRows.filter((row) => selectedIds.has(row.id)),
+    [sortedRows, selectedIds],
+  );
+
+  const allVisibleSelected = sortedRows.length > 0 && sortedRows.every((row) => selectedIds.has(row.id));
+  const hasSelection = selectedIds.size > 0;
+  const isAdmin = actorRole === "admin";
+  const isManager = actorRole === "manager";
+  const roleLoading = Boolean(session) && rows.length > 0 && actorRole === null && !authLoading;
+
+  useEffect(() => {
+    const visible = new Set(sortedRows.map((row) => row.id));
+    setSelectedIds((prev) => {
+      const next = new Set([...prev].filter((id) => visible.has(id)));
+      return next.size === prev.size ? prev : next;
+    });
+  }, [sortedRows]);
+
+  const toggleSelect = useCallback((userId: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+  }, []);
+
+  const toggleSelectAll = useCallback(() => {
+    setSelectedIds((prev) => {
+      if (sortedRows.every((row) => prev.has(row.id))) {
+        const next = new Set(prev);
+        sortedRows.forEach((row) => next.delete(row.id));
+        return next;
+      }
+      const next = new Set(prev);
+      sortedRows.forEach((row) => next.add(row.id));
+      return next;
+    });
+  }, [sortedRows]);
+
+  const handleBulkEdit = useCallback(() => {
+    const target = selectedUsers[0] ?? null;
+    if (target) setAccessUser(target);
+  }, [selectedUsers]);
+
+  const handleBulkDelete = useCallback(async () => {
+    if (!canManageTools || selectedUsers.length === 0) return;
+    const nonAdmins = selectedUsers.filter((u) => u.role !== "admin");
+    if (!nonAdmins.length) {
+      setRoleMessage("Admin accounts keep implicit tool access and cannot be bulk-cleared.");
+      return;
+    }
+    const ok = window.confirm(
+      `Clear Hub tool access for ${nonAdmins.length} user(s)? Profiles and auth accounts are kept.`,
+    );
+    if (!ok) return;
+    setLoading(true);
+    const result = await revokeAllToolAccessForUsers(nonAdmins.map((u) => u.id));
+    setLoading(false);
+    if (!result.ok) {
+      setRoleMessage(result.error ?? "Unable to clear tool access");
+      return;
+    }
+    const cleared = new Set(nonAdmins.map((u) => u.id));
+    setRows((prev) =>
+      prev.map((row) => (cleared.has(row.id) ? { ...row, toolCodes: [], toolCount: 0 } : row)),
+    );
+    setSelectedIds(new Set());
+    setRoleMessage(`Cleared tool access for ${nonAdmins.length} user(s).`);
+  }, [canManageTools, selectedUsers]);
+
   const stats = useMemo(() => {
     const total = filteredRows.length;
     const admins = filteredRows.filter((row) => row.role === "admin").length;
     const managers = filteredRows.filter((row) => row.role === "manager").length;
     const active = filteredRows.filter((row) => row.status === "online" || row.status === "active").length;
-    const projects = filteredRows.reduce((sum, row) => sum + row.projectCount, 0);
-    const actions = filteredRows.reduce((sum, row) => sum + row.activityCount, 0);
-    return { total, admins, managers, active, projects, actions };
+    const toolGrants = filteredRows.reduce((sum, row) => sum + row.toolCount, 0);
+    return { total, admins, managers, active, toolGrants };
   }, [filteredRows]);
 
   const kpis = useMemo<KpiTileData[]>(
@@ -437,31 +494,36 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
       { label: "Users (shown)", value: stats.total, icon: Users, tone: "indigo" },
       { label: "Active now", value: stats.active, icon: Activity, tone: "emerald" },
       { label: "Admins", value: stats.admins, icon: Crown, tone: "amber" },
-      { label: "Project seats", value: stats.projects, icon: BriefcaseBusiness, tone: "purple" },
+      { label: "Tool grants", value: stats.toolGrants, icon: Package, tone: "purple" },
     ],
     [stats],
   );
 
-  const charts = useMemo<{ roleItems: BarItem[]; statusItems: BarItem[]; projectItems: BarItem[]; activityItems: DonutItem[] }>(() => {
+  const charts = useMemo<{
+    roleItems: BarItem[];
+    statusItems: BarItem[];
+    toolItems: BarItem[];
+    activityItems: DonutItem[];
+  }>(() => {
     const roleItems = [
       { label: "Admin", value: filteredRows.filter((row) => row.role === "admin").length, color: "#818cf8" },
       { label: "Manager", value: filteredRows.filter((row) => row.role === "manager").length, color: "#a855f7" },
-      { label: "Employee", value: filteredRows.filter((row) => row.role === "employee").length, color: "#22c55e" },
+      { label: "User", value: filteredRows.filter((row) => row.role === "user").length, color: "#22c55e" },
     ];
     const statusItems = ["online", "active", "idle", "offline"].map((status, index) => ({
       label: status,
       value: filteredRows.filter((row) => row.status === status).length,
       color: ["#22c55e", "#06b6d4", "#f59e0b", "#64748b"][index],
     }));
-    const projectItems = [...filteredRows]
-      .sort((a, b) => b.projectCount - a.projectCount)
+    const toolItems = [...filteredRows]
+      .sort((a, b) => b.toolCount - a.toolCount)
       .slice(0, 6)
-      .map((row) => ({ label: row.fullName, value: row.projectCount, color: "#10b981" }));
+      .map((row) => ({ label: row.fullName, value: row.toolCount, color: "#10b981" }));
     const activityItems = [
       { label: "Has activity", value: filteredRows.filter((row) => row.activityCount > 0).length, color: "#818cf8" },
       { label: "No activity", value: filteredRows.filter((row) => row.activityCount === 0).length, color: "#64748b" },
     ];
-    return { roleItems, statusItems, projectItems, activityItems };
+    return { roleItems, statusItems, toolItems, activityItems };
   }, [filteredRows]);
 
   const centerStats = useMemo<TabHeaderStatItem[]>(
@@ -469,12 +531,12 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
       { key: "active", icon: CheckCircle2, label: "active", value: stats.active, toneClass: "text-emerald-300" },
       { key: "admins", icon: ShieldCheck, label: "admins", value: stats.admins, toneClass: "text-indigo-300" },
       { key: "managers", icon: UserRound, label: "managers", value: stats.managers, toneClass: "text-purple-300" },
-      { key: "projects", icon: BriefcaseBusiness, label: "seats", value: stats.projects, toneClass: "text-amber-300" },
+      { key: "tools", icon: Package, label: "grants", value: stats.toolGrants, toneClass: "text-amber-300" },
     ],
     [stats],
   );
 
-  function handleSort(next: SortKey) {
+  function handleSort(next: UserTableSortKey) {
     if (next === sortKey) {
       setSortDir((dir) => (dir === "asc" ? "desc" : "asc"));
       return;
@@ -484,32 +546,58 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   }
 
   if (!isSupabaseConfigured) {
-    return <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">Supabase is not configured.</div>;
+    return (
+      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+        Supabase is not configured.
+      </div>
+    );
   }
 
-  if (authLoading) {
-    return <div className="rounded-2xl border border-white/5 bg-[var(--panel)] p-6 text-sm text-[var(--muted)]">Loading session...</div>;
+  if (authLoading && rows.length === 0 && !readUserManagementStaleCache()) {
+    return (
+      <div className="anim-fade space-y-0">
+        <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
+          <AppTabHeader
+            ariaLabel="Users header"
+            titleIcon={Users}
+            titleIconClass="text-emerald-300"
+            title="Users"
+            metaItems={[{ icon: Users, title: "Build", value: `v${APP_VERSION}` }]}
+            centerStats={[]}
+            actions={headerActions}
+            embedded
+            dividerBelow={false}
+          />
+        </div>
+        <div className="relative mt-6 min-h-[320px]">
+          <UsersLoadingView variant="overlay" />
+        </div>
+      </div>
+    );
   }
 
   if (!session) {
-    return (
-      <div className="anim-fade space-y-4">
-        <AppTabHeader
-          ariaLabel="Users header"
-          titleIcon={Users}
-          titleIconClass="text-emerald-300"
-          title="Users"
-          metaItems={[
-            { icon: Users, title: "Build", value: `v${APP_VERSION}` },
-          ]}
-          centerStats={[]}
-          actions={headerActions}
-          pinSticky={false}
-          dividerBelow
-        />
-        <HubAuthGate variant="users" />
-      </div>
-    );
+    const hasStale = rows.length > 0 || readUserManagementStaleCache() != null;
+    if (authLoading && hasStale) {
+      /* paint cached users while session resolves */
+    } else {
+      return (
+        <div className="anim-fade space-y-4">
+          <AppTabHeader
+            ariaLabel="Users header"
+            titleIcon={Users}
+            titleIconClass="text-emerald-300"
+            title="Users"
+            metaItems={[{ icon: Users, title: "Build", value: `v${APP_VERSION}` }]}
+            centerStats={[]}
+            actions={headerActions}
+            pinSticky={false}
+            dividerBelow
+          />
+          <HubAuthGate variant="users" />
+        </div>
+      );
+    }
   }
 
   return (
@@ -535,7 +623,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
           headerPinned
           embedded
           placeholder="Search users…"
-          filters={USER_FILTERS}
+          filters={userFilters}
           query={query}
           onQueryChange={setQuery}
           values={filterValues}
@@ -544,27 +632,48 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
             <>
               <ViewToggle value={viewMode} onChange={setViewMode} />
               <HubResultCount icon={Users} shown={filteredRows.length} total={rows.length} />
+              <button
+                type="button"
+                onClick={() => void refresh({ silent: true })}
+                disabled={refreshing && !session}
+                className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-200 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <RefreshCw size={14} className={loading || refreshing ? "animate-spin" : ""} />
+                {refreshing && rows.length > 0 ? "Updating…" : "Refresh"}
+              </button>
             </>
           }
-          trailing={
-            <button
-              type="button"
-              onClick={() => void refresh()}
-              disabled={loading || !session}
-              className="inline-flex h-[34px] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-200 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
-              Refresh
-            </button>
+          row2Actions={
+            session ? (
+              <UserBulkActionBar
+                hasSelection={hasSelection}
+                selectedCount={selectedIds.size}
+                loading={loading}
+                isAdmin={isAdmin}
+                isManager={isManager}
+                roleLoading={roleLoading}
+                onAdd={handleAddUserInfo}
+                onSyncTools={() => void handleSyncToolsClick()}
+                onEdit={handleBulkEdit}
+                onDelete={() => void handleBulkDelete()}
+              />
+            ) : null
           }
         />
       </div>
-      <div className="space-y-5 pt-5">
+
+      {!session && authLoading ? (
+        <div className="mx-6 mt-3 rounded-xl border border-white/10 bg-white/[.03] px-3 py-2 text-xs text-[var(--muted)]">
+          Checking sign-in… showing cached users. Data will refresh when connected.
+        </div>
+      ) : null}
+
+      <div className={`space-y-5 pt-5 transition-opacity ${refreshing ? "opacity-80" : ""}`}>
         <KpiStrip items={kpis} />
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <MiniBarChart title="By Role" items={charts.roleItems} />
           <MiniBarChart title="By Activity" items={charts.statusItems} />
-          <MiniBarChart title="Project Seats" items={charts.projectItems} />
+          <MiniBarChart title="Tool access" items={charts.toolItems} />
           <MiniDonut title="Activity Distribution" items={charts.activityItems} />
         </div>
       </div>
@@ -577,48 +686,54 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
         </div>
       ) : null}
 
-      {canManageRoles ? (
-        <p className="mb-3 text-xs text-[var(--muted)]">
-          Admins can change roles in the <strong className="text-emerald-300">Position</strong> column.
-        </p>
-      ) : null}
-
       {roleMessage ? (
         <div className="mb-3 rounded-xl border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">
           {roleMessage}
         </div>
       ) : null}
 
-      {viewMode === "card" ? (
-        <UserCards
-          users={sortedRows}
-          canManageRoles={canManageRoles}
-          savingRoleId={savingRoleId}
-          onRoleChange={(id, role) => void handleRoleChange(id, role)}
-        />
-      ) : (
-        <UserTable
-          users={sortedRows}
-          sortKey={sortKey}
-          sortDir={sortDir}
-          onSort={handleSort}
-          canManageRoles={canManageRoles}
-          savingRoleId={savingRoleId}
-          onRoleChange={(id, role) => void handleRoleChange(id, role)}
-        />
-      )}
-
-      {loading && rows.length === 0 ? (
-        <div className="mt-3 flex items-center justify-center gap-2 rounded-2xl border border-white/5 bg-[var(--panel)] p-4 text-sm text-[var(--muted)]">
-          <RefreshCw size={14} className="animate-spin text-emerald-300" />
-          Loading users...
-        </div>
-      ) : null}
-
-      <div className="mt-3 flex items-center gap-2 text-[11px] text-[var(--muted)]">
-        <CalendarClock size={13} className="text-emerald-300/80" />
-        Identity project x1z10 P01 (`fmnrafpzctuhxjaaomzt`) — `auth.users` + `profiles`; optional tool/project joins when present.
+      <div className="relative mt-3 min-h-[200px]">
+        {rows.length === 0 && (loading || refreshing) ? (
+          <p className="py-10 text-center text-sm text-[var(--muted)]">Loading users in background…</p>
+        ) : null}
+        {rows.length > 0 && viewMode === "card" ? (
+          <UserCards
+            users={sortedRows}
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+            detailUserId={accessUser?.id ?? null}
+            onOpenUser={setAccessUser}
+          />
+        ) : null}
+        {rows.length > 0 && viewMode === "table" ? (
+          <UserDirectoryTable
+            users={sortedRows}
+            sortKey={sortKey}
+            sortDir={sortDir}
+            onSort={handleSort}
+            selectedIds={selectedIds}
+            onToggleSelect={toggleSelect}
+            onToggleSelectAll={toggleSelectAll}
+            allVisibleSelected={allVisibleSelected}
+            detailUserId={accessUser?.id ?? null}
+            onOpenUser={setAccessUser}
+            visibleColumns={visibleColumns}
+          />
+        ) : null}
       </div>
+
+      {accessUser && session ? (
+        <UserAccessModal
+          user={accessUser}
+          tools={hubTools}
+          canEdit={canManageTools}
+          canEditProfile={canManageRoles}
+          actorId={session.user.id}
+          onClose={() => setAccessUser(null)}
+          onSaved={handleUserSaved}
+          onSyncCatalog={canManageTools ? handleSyncCatalogForModal : undefined}
+        />
+      ) : null}
     </div>
   );
 }

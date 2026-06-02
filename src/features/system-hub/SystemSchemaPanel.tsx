@@ -6,6 +6,7 @@ import {
   type HubEntity,
 } from "../../lib/hub-schema-spec";
 import { readHubListPrefs } from "../../lib/url-prefs";
+import { readSchemaEntity, setSchemaEntity } from "./components/SystemTabs";
 import {
   HubResultCount,
   HubTimeRangeSelect,
@@ -22,29 +23,32 @@ import { SpecTable } from "./components/SpecTable";
 import { SystemHubShell } from "./SystemHubShell";
 import { filterSchemaSpec, schemaCharts, schemaKpis } from "./system-hub-aggregates";
 
-const ENTITIES: HubEntity[] = ["catalog", "manifest", "runtime"];
-
-function readSchemaTable(): HubEntity {
-  if (typeof window === "undefined") return "catalog";
-  const t = new URLSearchParams(window.location.search).get("table");
-  return ENTITIES.includes(t as HubEntity) ? (t as HubEntity) : "catalog";
+function entityFieldCount(entity: HubEntity, query: string) {
+  return filterSchemaSpec(specForEntity(entity), query).length;
 }
+
+const ENTITIES: HubEntity[] = ["catalog", "manifest", "runtime"];
 
 function visibleChartKeys(set: Set<string> | null) {
   return set ?? DEFAULT_HUB_CHART_KEYS;
 }
 
 export function SystemSchemaPanel() {
-  const [current, setCurrent] = useState<HubEntity>(() => readSchemaTable());
+  const [current, setCurrent] = useState<HubEntity>(() => readSchemaEntity());
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>(() => ({
-    entity: [readSchemaTable()],
+    entity: [readSchemaEntity()],
   }));
   const [prefs, setPrefs] = useState(readHubListPrefs);
   const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:schema:viewMode", "table");
 
   useEffect(() => {
-    const sync = () => setPrefs(readHubListPrefs());
+    const sync = () => {
+      setPrefs(readHubListPrefs());
+      const entity = readSchemaEntity();
+      setCurrent(entity);
+      setFilterValues((v) => ({ ...v, entity: [entity] }));
+    };
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
   }, []);
@@ -58,23 +62,25 @@ export function SystemSchemaPanel() {
   const selectEntity = useCallback((entity: HubEntity) => {
     setCurrent(entity);
     setFilterValues((v) => ({ ...v, entity: [entity] }));
-    const p = new URLSearchParams(window.location.search);
-    p.set("screen", "system");
-    p.set("stab", "schema");
-    p.set("table", entity);
-    window.history.replaceState(null, "", `${window.location.pathname}?${p.toString()}`);
+    setSchemaEntity(entity);
   }, []);
 
   const entityFilters = useMemo((): FilterDef[] => {
+    const options = ENTITIES.map((e) => ({
+      value: e,
+      label: e,
+      count: entityFieldCount(e, query),
+    }));
     return [
       {
         key: "entity",
         label: "Table",
-        options: ENTITIES.map((e) => ({ value: e, label: e })),
+        options,
         showAllLabel: false,
+        totalCount: options.reduce((sum, o) => sum + (o.count ?? 0), 0),
       },
     ];
-  }, []);
+  }, [query]);
 
   const kpiItems = useMemo(
     () => [

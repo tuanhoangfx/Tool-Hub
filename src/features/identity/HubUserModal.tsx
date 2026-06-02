@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { KeyRound, LogOut, Mail, RefreshCcw, ShieldCheck, User, X } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import type { Session } from "@supabase/supabase-js";
+import { hubRoleLabel, hubUserInitials, parseHubRole } from "./hubUserDisplay";
 import { fetchCurrentProfileRole } from "./userManagementRepository";
 
 type Props = {
@@ -13,13 +14,6 @@ type Props = {
 
 function userDisplay(email: string | null | undefined) {
   return email?.trim() || "Not signed in";
-}
-
-function roleLabel(role: string) {
-  if (role === "admin") return "Admin";
-  if (role === "manager") return "Manager";
-  if (role === "employee") return "Employee";
-  return role;
 }
 
 export function HubUserModal({ open, onClose, session }: Props) {
@@ -33,10 +27,15 @@ export function HubUserModal({ open, onClose, session }: Props) {
   const role =
     profileRole ??
     String(user?.app_metadata?.role ?? user?.user_metadata?.role ?? "authenticated");
-  const initials = useMemo(() => {
-    const base = email || user?.id || "U";
-    return base.slice(0, 2).toUpperCase();
-  }, [email, user?.id]);
+  const initials = useMemo(
+    () =>
+      hubUserInitials({
+        email: email ?? "",
+        fullName: userDisplay(email),
+        id: user?.id ?? "",
+      }),
+    [email, user?.id],
+  );
 
   useEffect(() => {
     if (!open || !user?.id) {
@@ -90,7 +89,7 @@ export function HubUserModal({ open, onClose, session }: Props) {
         <div className="grid gap-2 p-4 text-sm">
           {[
             { label: "Email", value: userDisplay(email), icon: Mail },
-            { label: "Role", value: roleLabel(role), icon: ShieldCheck },
+            { label: "Role", value: hubRoleLabel(parseHubRole(profileRole ?? role)), icon: ShieldCheck },
             { label: "Provider", value: provider, icon: KeyRound },
             { label: "Created", value: createdAt, icon: User },
             { label: "Last sign in", value: lastSignIn, icon: RefreshCcw },

@@ -1,6 +1,4 @@
 import {
-  lazy,
-  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -11,9 +9,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { FileText } from "lucide-react";
-import { DisplayPrefs, SalesSidebar } from "./components/sales-shell";
+import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
+import { UserManagementScreen } from "./features/identity/UserManagementScreen";
+import { SystemHubScreen } from "./features/system-hub/SystemHubScreen";
 import { systemDisplayDefs } from "./features/system-hub/system-display-prefs";
 import {
   DEFAULT_HUB_CHART_KEYS,
@@ -25,14 +25,10 @@ import {
 } from "./features/hub/hub-prefs";
 import { HubListPage } from "./features/hub";
 
-const SystemHubScreen = lazy(() =>
-  import("./features/system-hub/SystemHubScreen").then((m) => ({ default: m.SystemHubScreen })),
-);
-const UserManagementScreen = lazy(() =>
-  import("./features/identity/UserManagementScreen").then((m) => ({ default: m.UserManagementScreen })),
-);
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
 import { migrateAppUrl, readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
+import { prefetchAllAppScreens } from "./lib/app-screen-prefetch";
+import { prefetchHubBackgroundData } from "./lib/hub-background-prefetch";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
 import { formatDate } from "./lib/tooling";
 import { compactIconSize } from "./lib/ui-scale";
@@ -79,6 +75,7 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
       showRange={false}
       showLimit={!isGlobal && screen !== "system"}
       showHeaderPin={isGlobal}
+      showUsersTableColumns={!isGlobal && screen === "users"}
       sidebarRow={sidebarRow}
       scope={scope}
     />
@@ -206,6 +203,7 @@ function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
 function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
   const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
+  const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set([migrateAppUrl()]));
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
   const [scanningWorkspace, setScanningWorkspace] = useState(false);
   const [scanStatus, setScanStatus] = useState<ScanStatus>("idle");
@@ -259,6 +257,24 @@ function App() {
     const onPop = () => setScreen(readAppScreen());
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  useEffect(() => {
+    setVisitedScreens((prev) => new Set(prev).add(screen));
+  }, [screen]);
+
+  useEffect(() => {
+    const warm = () => {
+      prefetchHubBackgroundData();
+      prefetchAllAppScreens();
+    };
+    prefetchHubBackgroundData();
+    const idle = window.requestIdleCallback?.(warm, { timeout: 1500 });
+    if (idle == null) {
+      const t = window.setTimeout(warm, 200);
+      return () => window.clearTimeout(t);
+    }
+    return () => window.cancelIdleCallback(idle);
   }, []);
 
   useEffect(() => {
@@ -362,24 +378,36 @@ function App() {
       />
 
       <main className="hub-main flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden">
-        {screen === "users" ? (
-          <Suspense
-            fallback={
-              <div className="flex min-h-[40vh] items-center justify-center text-sm text-[var(--muted)]">
-                Loading Users…
-              </div>
-            }
-          >
+        <HubLoaderRoot />
+        {visitedScreens.has("library") ? (
+          <div className={screen !== "library" ? "hidden" : undefined} aria-hidden={screen !== "library"}>
+            <HubListPage
+              allTools={resolvedTools}
+              selectedId={selectedId}
+              onSelect={handleSelectTool}
+              modalOpen={urlState.detail}
+              onCloseModal={handleCloseDetail}
+              loadingAll={loadingAll}
+              registryError={registryError}
+              onRefresh={handleRefreshAll}
+              onRefreshTool={handleRefreshTool}
+              viewMode={hubView}
+              onViewModeChange={handleViewModeChange}
+              registryLive={registryLive}
+              registryLabel={registryLabel}
+              versionReleaseDate={versionRelease.shortLabel}
+              versionReleaseLive={versionRelease.live}
+              headerActions={headerActions}
+            />
+          </div>
+        ) : null}
+        {visitedScreens.has("users") ? (
+          <div className={screen !== "users" ? "hidden" : undefined} aria-hidden={screen !== "users"}>
             <UserManagementScreen headerActions={headerActions} />
-          </Suspense>
-        ) : screen === "system" ? (
-          <Suspense
-            fallback={
-              <div className="flex min-h-[40vh] items-center justify-center text-sm text-[var(--muted)]">
-                Loading System…
-              </div>
-            }
-          >
+          </div>
+        ) : null}
+        {visitedScreens.has("system") ? (
+          <div className={screen !== "system" ? "hidden" : undefined} aria-hidden={screen !== "system"}>
             <SystemHubScreen
               tools={resolvedTools}
               registryLive={registryLive}
@@ -388,27 +416,8 @@ function App() {
               versionReleaseLive={versionRelease.live}
               headerActions={headerActions}
             />
-          </Suspense>
-        ) : (
-          <HubListPage
-            allTools={resolvedTools}
-            selectedId={selectedId}
-            onSelect={handleSelectTool}
-            modalOpen={urlState.detail}
-            onCloseModal={handleCloseDetail}
-            loadingAll={loadingAll}
-            registryError={registryError}
-            onRefresh={handleRefreshAll}
-            onRefreshTool={handleRefreshTool}
-            viewMode={hubView}
-            onViewModeChange={handleViewModeChange}
-            registryLive={registryLive}
-            registryLabel={registryLabel}
-            versionReleaseDate={versionRelease.shortLabel}
-            versionReleaseLive={versionRelease.live}
-            headerActions={headerActions}
-          />
-        )}
+          </div>
+        ) : null}
       </main>
     </div>
   );

@@ -21,7 +21,7 @@ import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailModal } from "../overview/ToolDetailModal";
 import { TableView } from "../store/TableView";
-import { filterHubTools, filterOptions, hubCharts, hubKpis } from "./hub-aggregates";
+import { filterHubTools, filterOptions, hubCharts, hubFiltersWithCounts, hubKpis } from "./hub-aggregates";
 import {
   DEFAULT_HUB_CHART_KEYS,
   DEFAULT_HUB_FILTER_KEYS,
@@ -136,7 +136,7 @@ export function HubListPage({
     return items;
   }, [kpis, visKpi]);
 
-  const hubFilters = useMemo(() => {
+  const hubFiltersBase = useMemo(() => {
     const defs: FilterDef[] = [];
     if (visFilterKeys.has("health")) {
       defs.push({ key: "health", label: "Health", options: opts.health, showAllLabel: true });
@@ -158,6 +158,11 @@ export function HubListPage({
     }
     return defs;
   }, [opts, visFilterKeys]);
+
+  const hubFilters = useMemo(
+    () => hubFiltersWithCounts(allTools, hubFiltersBase, query, filterValues, prefs.range),
+    [allTools, hubFiltersBase, query, filterValues, prefs.range],
+  );
 
   const localUrls = useMemo(() => filtered.map((t) => t.localUrl).filter((u): u is string => Boolean(u)), [filtered]);
   const { state: healthState } = useLocalHealth(localUrls);

@@ -14,7 +14,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@dev/hub-load": ["../packages/hub-load/src/index.ts"],
+      "@tool-workspace/hub-ui": ["../../packages/hub-ui/src/index.ts"],
+      "@tool-workspace/hub-ui/*": ["../../packages/hub-ui/src/*"]
+    }
   },
   "include": ["src", "eslint.config.js", "vite.config.ts"]
 }

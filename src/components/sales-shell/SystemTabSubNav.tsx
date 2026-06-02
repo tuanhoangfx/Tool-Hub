@@ -1,4 +1,5 @@
 import { setSystemTab, SYSTEM_TAB_ITEMS, type SystemTab } from "../../features/system-hub/components/SystemTabs";
+import { prefetchSystemTab } from "../../features/system-hub/system-tab-prefetch";
 import { compactIconSize } from "../../lib/ui-scale";
 
 export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab | null }) {
@@ -11,6 +12,8 @@ export function SystemTabSubNav({ activeTab }: { activeTab: SystemTab | null }) 
             key={id}
             type="button"
             onClick={() => setSystemTab(id)}
+            onMouseEnter={() => prefetchSystemTab(id)}
+            onFocus={() => prefetchSystemTab(id)}
             className="group grid h-8 w-full grid-cols-[1.25rem_minmax(0,1fr)] items-center text-left text-[13px]"
           >
             <span className="relative flex h-full items-center justify-center" aria-hidden>

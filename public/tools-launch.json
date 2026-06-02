@@ -15,7 +15,7 @@
     "devUrl": "http://127.0.0.1:5174"
   },
   "zalo-ai-bot": {
-    "cwd": "E:\\Dev\\Tool\\zalo-ai-bot",
+    "cwd": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
     "command": "admin.bat",
     "devUrl": "http://127.0.0.1:3920/p0005/"
   }

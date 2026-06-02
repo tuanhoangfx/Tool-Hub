@@ -3,7 +3,8 @@ import type { TimeRange } from "../../lib/url-prefs";
 import { resolveChartLegendIcon } from "../../lib/badge-registry";
 import { deployLabel } from "../../lib/tooling";
 import type { ResolvedTool } from "../../types";
-import type { BarItem } from "../../components/sales-shell";
+import type { BarItem, FilterDef, FilterValues } from "../../components/sales-shell";
+import { enrichFilterDefs } from "../../lib/filter-option-counts";
 
 const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
 
@@ -51,10 +52,10 @@ export function filterOptions(tools: ResolvedTool[]) {
     deploy: uniq(tools.map((t) => deployLabel(t.deployTarget))),
     status: uniq(tools.map((t) => t.status)),
     drift: [
-      { value: "drift", label: "Has drift", color: "#f43f5e" },
-      { value: "clean", label: "No drift", color: "#22c55e" },
+      { value: "drift", label: "Has drift" },
+      { value: "clean", label: "No drift" },
     ],
-    links: [{ value: "missing", label: "Missing manifest links", color: "#f59e0b" }],
+    links: [{ value: "missing", label: "Missing manifest links" }],
   };
 }
 
@@ -124,4 +125,21 @@ export function matchesHubFilters(
   }
   if (filters.links?.includes("missing") && !hasManifestLinkGaps(tool)) return false;
   return true;
+}
+
+export function hubFiltersWithCounts(
+  allTools: ResolvedTool[],
+  defs: FilterDef[],
+  query: string,
+  values: FilterValues,
+  range: TimeRange,
+): FilterDef[] {
+  return enrichFilterDefs(
+    allTools,
+    defs,
+    query,
+    values,
+    (tool, q, f) => matchesHubFilters(tool, q, f) && matchesTimeRange(tool.updatedAt, range),
+    (tool, _key, value) => matchesHubFilters(tool, "", { [_key]: [value] }),
+  );
 }

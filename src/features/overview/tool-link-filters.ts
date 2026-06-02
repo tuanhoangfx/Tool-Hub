@@ -42,11 +42,11 @@ export const LINK_FILTER_DEFS: FilterDef[] = [
     label: "Group",
     showAllLabel: true,
     options: [
-      { value: "web", label: "Web / Local", color: "#22c55e" },
-      { value: "vercel", label: "Vercel", color: "#e5e7eb" },
-      { value: "supabase", label: "Supabase", color: "#34d399" },
-      { value: "github", label: "GitHub", color: "#a78bfa" },
-      { value: "meta", label: "Meta / IDs", color: "#94a3b8" },
+      { value: "web", label: "Web / Local" },
+      { value: "vercel", label: "Vercel" },
+      { value: "supabase", label: "Supabase" },
+      { value: "github", label: "GitHub" },
+      { value: "meta", label: "Meta / IDs" },
     ],
   },
   {
@@ -54,11 +54,11 @@ export const LINK_FILTER_DEFS: FilterDef[] = [
     label: "Status",
     showAllLabel: true,
     options: [
-      { value: "online", label: "Online", color: "#22c55e" },
-      { value: "offline", label: "Offline", color: "#f43f5e" },
-      { value: "checking", label: "Checking", color: "#f59e0b" },
-      { value: "unknown", label: "Unknown", color: "#64748b" },
-      { value: "na", label: "Not pinged", color: "#475569" },
+      { value: "online", label: "Online" },
+      { value: "offline", label: "Offline" },
+      { value: "checking", label: "Checking" },
+      { value: "unknown", label: "Unknown" },
+      { value: "na", label: "Not pinged" },
     ],
   },
   {
@@ -66,8 +66,8 @@ export const LINK_FILTER_DEFS: FilterDef[] = [
     label: "Type",
     showAllLabel: true,
     options: [
-      { value: "url", label: "URL", color: "#06b6d4" },
-      { value: "id", label: "ID / path", color: "#94a3b8" },
+      { value: "url", label: "URL" },
+      { value: "id", label: "ID / path" },
     ],
   },
 ];

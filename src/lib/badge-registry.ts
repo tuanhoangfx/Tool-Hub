@@ -35,6 +35,20 @@ import {
   ShieldCheck,
   Tag,
   Zap,
+  Crown,
+  UserRound,
+  Users,
+  X,
+  BriefcaseBusiness,
+  Clock,
+  CircleOff,
+  Building2,
+  Globe2,
+  CreditCard,
+  History,
+  Upload,
+  Download,
+  GitBranch,
 } from "lucide-react";
 import type { FilterOption } from "../components/sales-shell/FilterBar";
 import type { LinkGroup } from "../features/overview/tool-link-filters";
@@ -97,13 +111,55 @@ const LINKS: Record<string, FilterIconMeta> = {
   missing: { icon: Link2, className: "text-amber-400" },
 };
 
+/** Hub Users — workspace roles (same icons as HubRoleBadge). */
+export const WORKSPACE_ROLE: Record<string, FilterIconMeta> = {
+  admin: { icon: Crown, className: "text-indigo-300" },
+  manager: { icon: ShieldCheck, className: "text-purple-300" },
+  user: { icon: UserRound, className: "text-emerald-300" },
+  employee: { icon: UserRound, className: "text-emerald-300" },
+};
+
+/** Users tab — presence / activity filter (key `status`, label Activity). */
+const USER_ACTIVITY: Record<string, FilterIconMeta> = {
+  online: { icon: CheckCircle2, className: "text-emerald-400" },
+  active: { icon: Zap, className: "text-cyan-400" },
+  idle: { icon: Clock, className: "text-amber-400" },
+  offline: { icon: CircleOff, className: "text-slate-400" },
+};
+
+const VERSION_SYNC: Record<string, FilterIconMeta> = {
+  current: { icon: Tag, className: "text-indigo-300" },
+  synced: { icon: CheckCircle2, className: "text-emerald-400" },
+  "needs-push": { icon: Upload, className: "text-amber-300" },
+  "needs-sync": { icon: Download, className: "text-rose-300" },
+  history: { icon: History, className: "text-slate-400" },
+};
+
+const QUOTA_HEALTH: Record<string, FilterIconMeta> = {
+  ok: { icon: CheckCircle2, className: "text-emerald-400" },
+  restricted: { icon: Lock, className: "text-amber-400" },
+  unhealthy: { icon: AlertTriangle, className: "text-rose-400" },
+  error: { icon: AlertTriangle, className: "text-rose-400" },
+};
+
 const FILTER_ALL: Record<string, FilterIconMeta> = {
   health: { icon: Activity, className: "text-emerald-400" },
   category: { icon: Layers, className: "text-indigo-400" },
   deploy: { icon: Rocket, className: "text-sky-400" },
-  status: { icon: Flag, className: "text-violet-400" },
+  status: { icon: Activity, className: "text-cyan-400" },
+  role: { icon: Users, className: "text-indigo-300" },
+  project: { icon: BriefcaseBusiness, className: "text-emerald-400" },
   drift: { icon: AlertTriangle, className: "text-rose-400" },
   links: { icon: Link2, className: "text-amber-400" },
+  sync: { icon: GitBranch, className: "text-indigo-300" },
+  org: { icon: Building2, className: "text-violet-300" },
+  region: { icon: Globe2, className: "text-sky-300" },
+  plan: { icon: CreditCard, className: "text-amber-300" },
+  tool: { icon: Package, className: "text-indigo-300" },
+  entity: { icon: Database, className: "text-indigo-300" },
+  group: { icon: Layers, className: "text-indigo-300" },
+  kind: { icon: Link2, className: "text-cyan-300" },
+  grant: { icon: CheckCircle2, className: "text-emerald-400" },
 };
 
 const LINK_STATUS: Record<string, FilterIconMeta> = {
@@ -211,9 +267,28 @@ export function resolveFilterAllIcon(filterKey: string): FilterIconMeta | null {
 
 export function resolveFilterOptionIcon(filterKey: string, option: FilterOption): FilterIconMeta | null {
   switch (filterKey) {
+    case "role":
+      return pick(WORKSPACE_ROLE, option.value) ?? pick(WORKSPACE_ROLE, option.label.toLowerCase());
+    case "tool":
+      if (option.value === "__no_tools__" || option.label === "No tool access") {
+        return { icon: FolderOpen, className: "text-slate-400" };
+      }
+      return resolveCategoryDisplayIcon(option.label) ?? { icon: Package, className: "text-indigo-300" };
+    case "project":
+      if (option.value === "__none__" || option.label === "No project") {
+        return { icon: FolderOpen, className: "text-slate-400" };
+      }
+      return { icon: BriefcaseBusiness, className: "text-emerald-400" };
     case "health":
+      return (
+        pick(QUOTA_HEALTH, option.value) ??
+        pick(STATUS_HEALTH, option.label) ??
+        pick(STATUS_HEALTH, option.value) ??
+        null
+      );
     case "status":
       return (
+        pick(USER_ACTIVITY, option.value) ??
         pick(STATUS_HEALTH, option.label) ??
         pick(STATUS_HEALTH, option.value) ??
         LINK_STATUS[option.value] ??
@@ -227,10 +302,26 @@ export function resolveFilterOptionIcon(filterKey: string, option: FilterOption)
       return pick(DRIFT, option.value);
     case "links":
       return pick(LINKS, option.value);
+    case "sync":
+      return pick(VERSION_SYNC, option.value);
+    case "org":
+      return { icon: Building2, className: "text-violet-300" };
+    case "region":
+      return { icon: Globe2, className: "text-sky-300" };
+    case "plan":
+      return { icon: CreditCard, className: "text-amber-300" };
     case "group":
       return resolveLinkGroupBadge(option.value as LinkGroup).iconMeta;
     case "kind":
       return resolveLinkKindBadge(option.value).iconMeta;
+    case "grant":
+      return option.value === "granted"
+        ? { icon: CheckCircle2, className: "text-emerald-400" }
+        : { icon: X, className: "text-slate-400" };
+    case "tool":
+      return { icon: Package, className: "text-indigo-300" };
+    case "entity":
+      return { icon: Database, className: "text-indigo-300" };
     default:
       return null;
   }

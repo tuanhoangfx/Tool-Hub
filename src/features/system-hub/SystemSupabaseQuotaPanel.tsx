@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Gauge, RefreshCcw } from "lucide-react";
-import { z } from "zod";
 import {
   HubResultCount,
   MiniBarChart,
@@ -10,64 +9,31 @@ import {
   type HubViewMode,
 } from "../../components/sales-shell";
 import { EmptyState } from "../../components/EmptyState";
+import { RegionInline } from "../../components/RegionFlagBadge";
 import { compactIconSize } from "../../lib/ui-scale";
+import { regionChartLabel, resolveRegionMeta } from "../../lib/supabase-region";
 import { useSessionState } from "../../hooks";
 import { SystemHubShell } from "./SystemHubShell";
 import { SupabaseProjectCard } from "./SupabaseProjectCard";
 import { SupabaseProjectDetailModal } from "./SupabaseProjectDetailModal";
-import { OrgQuotaTable } from "./OrgQuotaTable";
 import type { OrgRow, ProjectRow, QuotaPayload } from "./SystemSupabaseQuotaPanel.types";
+import { QuotaPayloadSchema } from "./supabase-quota-schema";
+import { SupabaseWorkspaceMapSchema } from "./supabase-workspace-schema";
+import { quotaFiltersWithCounts } from "./supabase-quota-filters";
 import {
   formatBytes,
   formatCompact,
-  formatEgressQuotaShort,
-  formatMinMax,
-  parseEgressQuota,
   parseProjectInfra,
   parseProjectRestriction,
   parseProjectUsage,
-  quotaMinMaxAcrossOrgs,
+  effectivePlanLabel,
+  resolvePlanDisplay,
   resolveProjectHealthLabel,
   sumFilteredUsage,
-  toMb,
 } from "./supabase-quota-metrics";
-import { regionDisplay } from "../../lib/supabase-region";
-
-const OrgSchema = z.object({
-  slug: z.string(),
-  plan: z.string().optional().nullable(),
-  entitlements: z.unknown().optional(),
-  error: z.string().optional(),
-});
-
-const ProjectSchema = z.object({
-  orgSlug: z.string(),
-  projectRef: z.string(),
-  projectName: z.string(),
-  region: z.string().optional().nullable(),
-  plan: z.string().optional().nullable(),
-  addons: z.unknown().optional(),
-  usage: z
-    .object({
-      apiCounts: z.unknown().optional(),
-      apiRequestsCount: z.unknown().optional(),
-      diskUtil: z.unknown().optional(),
-      diskConfig: z.unknown().optional(),
-      health: z.unknown().optional(),
-      orgUsage: z.unknown().optional(),
-    })
-    .optional(),
-  error: z.string().optional(),
-});
-
-const QuotaPayloadSchema = z.object({
-  ok: z.boolean(),
-  generatedAt: z.string().optional(),
-  cacheTtlMs: z.number().optional(),
-  organizations: z.array(OrgSchema).optional(),
-  projects: z.array(ProjectSchema).optional(),
-  error: z.string().optional(),
-});
+import { readSupabaseQuotaStaleCache, writeSupabaseQuotaClientCache } from "./supabase-quota-client-cache";
+import { mergeQuotaProjectPatches } from "./supabase-quota-merge";
+import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 
 /** Accent divider before data section — mirror HubListPage. */
 function HubLikeDataSectionRule({ label }: { label: string }) {
@@ -101,10 +67,57 @@ function uniq<T>(items: T[]) {
   return [...new Set(items)];
 }
 
+/** Server `X-Cache` status — dot + tooltip instead of raw HIT/MISS text. */
+function CacheStatusDot({ status }: { status: string | null }) {
+  if (!status) return null;
+
+  const meta: Record<string, { dotClass: string; title: string }> = {
+    HIT: {
+      dotClass: "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.65)]",
+      title: "Cached (HIT) — served from server memory (~2 min), no new Supabase API calls",
+    },
+    MISS: {
+      dotClass: "bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.65)]",
+      title: "Fresh (MISS) — just fetched from Supabase Management API",
+    },
+    COALESCED: {
+      dotClass: "bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.65)]",
+      title: "Shared (COALESCED) — joined an in-flight fetch already running",
+    },
+    FAST: {
+      dotClass: "bg-indigo-400 shadow-[0_0_8px_rgba(129,140,248,0.65)]",
+      title: "Catalog snapshot — metadata only",
+    },
+    PRIORITY: {
+      dotClass: "bg-purple-400 shadow-[0_0_8px_rgba(192,132,252,0.65)]",
+      title: "Priority — live metrics for selected project(s)",
+    },
+  };
+
+  const m = meta[status] ?? {
+    dotClass: "bg-white/45",
+    title: `Cache: ${status}`,
+  };
+
+  return (
+    <span
+      className="inline-flex shrink-0 items-center"
+      title={m.title}
+      aria-label={m.title}
+    >
+      <span className={`h-1.5 w-1.5 rounded-full ${m.dotClass}`} />
+    </span>
+  );
+}
+
 function normLabel(v: string | null | undefined) {
   const t = (v ?? "").trim();
   return t ? t : "—";
 }
+
+import { resolveProjectToolCodes } from "./supabase-project-tools";
+import { SupabaseProjectToolBadges } from "./SupabaseProjectToolBadges";
+import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
 
 function breakdown(labels: Array<string | null | undefined>): Array<{ label: string; value: number }> {
   const map = new Map<string, number>();
@@ -117,6 +130,10 @@ function breakdown(labels: Array<string | null | undefined>): Array<{ label: str
     .sort((a, b) => b.value - a.value);
 }
 
+function orgForProject(orgs: OrgRow[], p: ProjectRow) {
+  return orgs.find((o) => o.slug === p.orgSlug) ?? null;
+}
+
 function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow[]; onOpen: (ref: string) => void }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)]">
@@ -125,28 +142,35 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
           <thead>
             <tr className="border-b border-white/5 bg-white/[.02] text-[10px] uppercase tracking-wider text-[var(--muted)]">
               <th className="w-36 px-3 py-2 font-medium">Org</th>
+              <th className="w-44 px-3 py-2 font-medium">Owner</th>
               <th className="w-40 px-3 py-2 font-medium">Project</th>
+              <th className="w-32 px-3 py-2 font-medium">Tools</th>
               <th className="w-24 px-3 py-2 font-medium">Region</th>
-              <th className="w-20 px-3 py-2 font-medium">Plan</th>
-              <th className="w-24 px-3 py-2 font-medium">Status</th>
+              <th className="w-28 px-3 py-2 font-medium">Org plan</th>
+              <th className="w-28 px-3 py-2 font-medium">Project plan</th>
+              <th className="w-24 px-3 py-2 font-medium">Metrics</th>
+              <th className="w-24 px-3 py-2 font-medium">Health</th>
               <th className="w-28 px-3 py-2 font-medium">API total</th>
               <th className="w-24 px-3 py-2 font-medium">REST/min</th>
               <th className="w-24 px-3 py-2 font-medium">Stor/min</th>
-              <th className="w-28 px-3 py-2 font-medium">Egress</th>
               <th className="w-28 px-3 py-2 font-medium">DB disk</th>
               <th className="px-3 py-2 font-medium">Notes</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((p) => {
-              const plan = normLabel(p.plan);
-              const tone = toneForPlan(p.plan);
+              const org = orgForProject(orgs, p);
+              const plans = resolvePlanDisplay(p, org);
+              const orgPlanLabel = normLabel(plans.orgPlan);
+              const projectPlanLabel = normLabel(plans.projectPlan);
+              const tone = toneForPlan(plans.orgPlan ?? plans.projectPlan);
               const usage = parseProjectUsage(p);
               const infra = parseProjectInfra(p);
-              const egress = parseEgressQuota(p, orgs.find((o) => o.slug === p.orgSlug)?.plan);
               const restriction = parseProjectRestriction(p);
+              const metricsSource = resolveProjectMetricsSource(p);
               const statusLabel = resolveProjectHealthLabel(p);
               const statusTone = restriction.restricted ? "rose" : statusLabel === "Live" || statusLabel === "Healthy" ? "emerald" : "amber";
+              const tools = resolveProjectToolCodes(p);
               return (
                 <tr
                   key={`${p.orgSlug}-${p.projectRef}-${p.projectName}`}
@@ -154,8 +178,14 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
                   onClick={() => p.projectRef && onOpen(p.projectRef)}
                 >
                   <td className="px-3 py-2 align-top font-mono text-[11px] text-indigo-200/90">{p.orgSlug}</td>
+                  <td className="px-3 py-2 align-top text-[11px] text-[var(--muted)]">{normLabel(p.ownerEmail)}</td>
                   <td className="px-3 py-2 align-top font-medium text-[var(--text)]">{p.projectName}</td>
-                  <td className="px-3 py-2 align-top text-[11px] text-[var(--muted)]">{regionDisplay(p.region)}</td>
+                  <td className="px-3 py-2 align-top" onClick={(e) => e.stopPropagation()}>
+                    <SupabaseProjectToolBadges tools={tools} bindings={p.toolBindings} maxVisible={3} />
+                  </td>
+                  <td className="px-3 py-2 align-top text-[11px] text-[var(--muted)]">
+                    <RegionInline region={p.region} />
+                  </td>
                   <td className="px-3 py-2 align-top">
                     <span
                       className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
@@ -166,21 +196,33 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
                             : "border-white/10 bg-white/5 text-[var(--muted)]"
                       }`}
                     >
-                      {plan}
+                      {orgPlanLabel}
                     </span>
                   </td>
                   <td className="px-3 py-2 align-top">
-                    <span
-                      className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
-                        statusTone === "rose"
-                          ? "border-rose-500/30 bg-rose-500/10 text-rose-200"
-                          : statusTone === "emerald"
-                            ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-200"
-                            : "border-amber-500/25 bg-amber-500/10 text-amber-200"
-                      }`}
-                    >
-                      {statusLabel}
+                    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-[var(--muted)]">
+                      {projectPlanLabel}
                     </span>
+                  </td>
+                  <td className="px-3 py-2 align-top">
+                    <SupabaseMetricsSourceBadge source={metricsSource} variant="pill" />
+                  </td>
+                  <td className="px-3 py-2 align-top">
+                    {metricsSource === "live" ? (
+                      <span
+                        className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
+                          statusTone === "rose"
+                            ? "border-rose-500/30 bg-rose-500/10 text-rose-200"
+                            : statusTone === "emerald"
+                              ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-200"
+                              : "border-amber-500/25 bg-amber-500/10 text-amber-200"
+                        }`}
+                      >
+                        {statusLabel}
+                      </span>
+                    ) : (
+                      <span className="text-[11px] text-[var(--muted)]">—</span>
+                    )}
                   </td>
                   <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--text)]">
                     {usage.apiRequestsTotal == null ? "—" : formatCompact(usage.apiRequestsTotal)}
@@ -190,9 +232,6 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
                   </td>
                   <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--muted)]">
                     {usage.storageLatest ?? "—"}
-                  </td>
-                  <td className={`px-3 py-2 align-top font-mono text-[11px] ${egress.exceeded ? "text-rose-200" : "text-[var(--text)]"}`}>
-                    {formatEgressQuotaShort(egress)}
                   </td>
                   <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--muted)]">
                     {infra.diskUsedBytes == null ? "—" : formatBytes(infra.diskUsedBytes)}
@@ -215,36 +254,133 @@ export function SystemSupabaseQuotaPanel() {
   const [filterValues, setFilterValues] = useState<FilterValues>({});
   const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:supabase-quota:viewMode", "card");
 
-  const [payload, setPayload] = useState<QuotaPayload | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [payload, setPayload] = useState<QuotaPayload | null>(() => readSupabaseQuotaStaleCache());
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cacheHint, setCacheHint] = useState<string | null>(null);
   const [selectedRef, setSelectedRef] = useState<string | null>(null);
+  const [toolCodesByRef, setToolCodesByRef] = useState<Record<string, string[]>>({});
 
-  const fetchData = useCallback(async (forceRefresh: boolean) => {
-    setLoading(true);
-    setError(null);
+  const FETCH_TIMEOUT_MS = 90_000;
+  const fetchInFlightRef = useRef(false);
+  const priorityInFlightRef = useRef<string | null>(null);
+
+  const loadWorkspaceMap = useCallback(async (forceRefresh = false) => {
     try {
-      const r = await fetch(`/api/supabase/quota${forceRefresh ? "?refresh=1" : ""}`, { method: "GET" });
-      const xCache = r.headers.get("X-Cache");
-      setCacheHint(xCache);
+      const r = await fetch(`/api/supabase/workspace-map${forceRefresh ? "?refresh=1" : ""}`);
+      const map = SupabaseWorkspaceMapSchema.parse(await r.json());
+      const next: Record<string, string[]> = {};
+      for (const p of map.projects) {
+        next[p.ref] = [...new Set(p.bindings.map((b) => b.toolCode))];
+      }
+      setToolCodesByRef(next);
+    } catch {
+      /* optional */
+    }
+  }, []);
+
+  const fetchData = useCallback(
+    async (forceRefresh: boolean) => {
+      if (fetchInFlightRef.current && !forceRefresh) return;
+      fetchInFlightRef.current = true;
+      setRefreshing(true);
+      setError(null);
+
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+      const { signal } = controller;
+
+      const runFast = async () => {
+        try {
+          const fastR = await fetch("/api/supabase/quota?fast=1", { signal });
+          setCacheHint(fastR.headers.get("X-Cache"));
+          const fastData = QuotaPayloadSchema.parse(await fastR.json());
+          if (fastData.ok) {
+            setPayload((prev) => prev ?? fastData);
+            writeSupabaseQuotaClientCache(fastData);
+          }
+        } catch {
+          /* catalog optional if full fetch succeeds */
+        }
+      };
+
+      void runFast();
+
+      try {
+        const [r] = await Promise.all([
+          fetch(`/api/supabase/quota${forceRefresh ? "?refresh=1" : ""}`, { method: "GET", signal }),
+          loadWorkspaceMap(forceRefresh),
+        ]);
+        window.clearTimeout(timer);
+        setCacheHint(r.headers.get("X-Cache"));
+        const data = QuotaPayloadSchema.parse(await r.json());
+        if (!data.ok) throw new Error(data.error || "Supabase quota fetch failed");
+        setPayload({ ...data, metricsPhase: data.metricsPhase ?? "live" });
+        writeSupabaseQuotaClientCache(data);
+      } catch (e) {
+        const stillNoData = readSupabaseQuotaStaleCache() == null;
+        if (e instanceof Error && e.name === "AbortError") {
+          if (stillNoData) {
+            setError(`Request timed out after ${FETCH_TIMEOUT_MS / 1000}s. Dev server running? Click Refresh to retry.`);
+          }
+        } else if (stillNoData) {
+          setPayload(null);
+          setError(e instanceof Error ? e.message : String(e));
+        }
+      } finally {
+        window.clearTimeout(timer);
+        fetchInFlightRef.current = false;
+        setRefreshing(false);
+      }
+    },
+    [loadWorkspaceMap],
+  );
+
+  const fetchPriorityMetrics = useCallback(async (refs: string[]) => {
+    const unique = [...new Set(refs.map((r) => r.trim()).filter(Boolean))];
+    if (!unique.length) return;
+
+    const refKey = unique.join(",");
+    if (priorityInFlightRef.current === refKey) return;
+    priorityInFlightRef.current = refKey;
+
+    try {
+      const r = await fetch(`/api/supabase/quota?refs=${unique.map(encodeURIComponent).join(",")}`);
       const data = QuotaPayloadSchema.parse(await r.json());
-      if (!data.ok) throw new Error(data.error || "Supabase quota fetch failed");
-      setPayload(data);
-    } catch (e) {
-      setPayload(null);
-      setError(e instanceof Error ? e.message : String(e));
+      const patches = data.projects ?? [];
+      if (!data.ok || !patches.length) return;
+
+      setPayload((prev) => {
+        if (!prev) return prev;
+        const merged = mergeQuotaProjectPatches(prev, patches);
+        writeSupabaseQuotaClientCache(merged);
+        return merged;
+      });
+    } catch {
+      /* optional */
     } finally {
-      setLoading(false);
+      if (priorityInFlightRef.current === refKey) priorityInFlightRef.current = null;
     }
   }, []);
 
   useEffect(() => {
     void fetchData(false);
-  }, [fetchData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount / panel visit
+  }, []);
+
+  useEffect(() => {
+    void loadWorkspaceMap(false);
+  }, [loadWorkspaceMap]);
 
   const organizations: OrgRow[] = payload?.organizations ?? [];
   const projectsRaw: ProjectRow[] = payload?.projects ?? [];
+
+  useEffect(() => {
+    if (!selectedRef) return;
+    const row = projectsRaw.find((p) => p.projectRef === selectedRef);
+    if (row && resolveProjectMetricsSource(row) === "live") return;
+    void fetchPriorityMetrics([selectedRef]);
+  }, [selectedRef, projectsRaw, fetchPriorityMetrics]);
 
   const modalProject = useMemo(() => {
     if (!selectedRef) return null;
@@ -266,17 +402,36 @@ export function SystemSupabaseQuotaPanel() {
 
   const regionOptions = useMemo(() => {
     const values = uniq(projectsRaw.map((p) => normLabel(p.region))).sort((a, b) => a.localeCompare(b));
-    return values.map((v) => ({ value: v, label: v }));
+    return values.map((v) => {
+      const meta = resolveRegionMeta(v === "—" ? null : v);
+      return { value: v, label: meta.region === "—" ? v : `${meta.label} (${meta.region})` };
+    });
   }, [projectsRaw]);
 
   const planOptions = useMemo(() => {
-    const values = uniq(projectsRaw.map((p) => normLabel(p.plan))).sort((a, b) => a.localeCompare(b));
+    const values = uniq(
+      projectsRaw.map((p) => normLabel(effectivePlanLabel(p, organizations.find((o) => o.slug === p.orgSlug)))),
+    ).sort((a, b) => a.localeCompare(b));
+    return values.map((v) => ({ value: v, label: v }));
+  }, [projectsRaw, organizations]);
+
+  const ownerOptions = useMemo(() => {
+    const values = uniq(projectsRaw.map((p) => normLabel(p.ownerEmail))).sort((a, b) => a.localeCompare(b));
     return values.map((v) => ({ value: v, label: v }));
   }, [projectsRaw]);
 
-  const filters = useMemo((): FilterDef[] => {
+  const toolOptions = useMemo(() => {
+    const values = uniq(projectsRaw.flatMap((p) => resolveProjectToolCodes(p, toolCodesByRef))).sort((a, b) =>
+      a.localeCompare(b),
+    );
+    return values.map((v) => ({ value: v, label: v }));
+  }, [projectsRaw, toolCodesByRef]);
+
+  const filtersBase = useMemo((): FilterDef[] => {
     return [
       { key: "org", label: "Org", options: orgOptions, showAllLabel: true },
+      { key: "owner", label: "Owner", options: ownerOptions, showAllLabel: true },
+      { key: "tool", label: "Tool", options: toolOptions, showAllLabel: true },
       { key: "region", label: "Region", options: regionOptions, showAllLabel: true },
       { key: "plan", label: "Plan", options: planOptions, showAllLabel: true },
       {
@@ -291,19 +446,35 @@ export function SystemSupabaseQuotaPanel() {
         showAllLabel: true,
       },
     ];
-  }, [orgOptions, planOptions, regionOptions]);
+  }, [orgOptions, ownerOptions, toolOptions, planOptions, regionOptions]);
+
+  const filters = useMemo(
+    () =>
+      quotaFiltersWithCounts(projectsRaw, organizations, filtersBase, query, filterValues, (p) =>
+        resolveProjectToolCodes(p, toolCodesByRef),
+      ),
+    [projectsRaw, organizations, filtersBase, query, filterValues, toolCodesByRef],
+  );
 
   const projectsFiltered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const orgPick = filterValues.org;
+    const ownerPick = filterValues.owner;
+    const toolPick = filterValues.tool;
     const regionPick = filterValues.region;
     const planPick = filterValues.plan;
     const healthPick = filterValues.health?.[0] as "ok" | "restricted" | "unhealthy" | "error" | undefined;
 
     return projectsRaw.filter((p) => {
       if (orgPick?.length && !orgPick.includes(p.orgSlug)) return false;
+      if (ownerPick?.length && !ownerPick.includes(normLabel(p.ownerEmail))) return false;
+      if (toolPick?.length) {
+        const tools = resolveProjectToolCodes(p, toolCodesByRef);
+        if (!toolPick.some((t) => tools.includes(t))) return false;
+      }
       if (regionPick?.length && !regionPick.includes(normLabel(p.region))) return false;
-      if (planPick?.length && !planPick.includes(normLabel(p.plan))) return false;
+      if (planPick?.length && !planPick.includes(normLabel(effectivePlanLabel(p, organizations.find((o) => o.slug === p.orgSlug)))))
+        return false;
       const restriction = parseProjectRestriction(p);
       if (healthPick === "ok" && (p.error || restriction.restricted || restriction.overallStatus === "unhealthy"))
         return false;
@@ -318,8 +489,13 @@ export function SystemSupabaseQuotaPanel() {
         p.orgSlug,
         p.projectName,
         p.projectRef,
+        p.ownerEmail,
+        p.accountId,
         p.region,
+        resolveProjectToolCodes(p, toolCodesByRef).join(" "),
         p.plan,
+        p.orgPlan,
+        effectivePlanLabel(p, organizations.find((o) => o.slug === p.orgSlug)),
         p.error,
         usage.apiRequestsTotal,
         usage.restLatest,
@@ -331,29 +507,42 @@ export function SystemSupabaseQuotaPanel() {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [projectsRaw, query, filterValues.org, filterValues.plan, filterValues.region, filterValues.health]);
+  }, [
+    projectsRaw,
+    organizations,
+    query,
+    toolCodesByRef,
+    filterValues.org,
+    filterValues.owner,
+    filterValues.tool,
+    filterValues.plan,
+    filterValues.region,
+    filterValues.health,
+  ]);
 
   const kpis = useMemo(() => {
     const orgsShown = new Set(projectsFiltered.map((p) => p.orgSlug)).size;
     const errors = projectsFiltered.filter((p) => Boolean(p.error)).length;
     const restricted = projectsFiltered.filter((p) => parseProjectRestriction(p).restricted).length;
-    const pro = projectsFiltered.filter((p) => (p.plan ?? "").toLowerCase().includes("pro")).length;
-    return { total: projectsFiltered.length, orgs: orgsShown, errors, restricted, pro };
+    const catalogOnly = projectsFiltered.filter((p) => resolveProjectMetricsSource(p) === "catalog").length;
+    const withMetrics = projectsFiltered.filter((p) => resolveProjectMetricsSource(p) === "live").length;
+    return { total: projectsFiltered.length, orgs: orgsShown, errors, restricted, catalogOnly, withMetrics };
   }, [projectsFiltered]);
 
-  const quotaRange = useMemo(() => quotaMinMaxAcrossOrgs(organizations), [organizations]);
   const usageSum = useMemo(() => sumFilteredUsage(projectsFiltered), [projectsFiltered]);
 
   const charts = useMemo(() => {
     return {
-      byRegion: breakdown(projectsFiltered.map((p) => regionDisplay(p.region))),
-      byPlan: breakdown(projectsFiltered.map((p) => p.plan)),
+      byRegion: breakdown(projectsFiltered.map((p) => regionChartLabel(p.region))),
+      byPlan: breakdown(projectsFiltered.map((p) => effectivePlanLabel(p, organizations.find((o) => o.slug === p.orgSlug)))),
     };
-  }, [projectsFiltered]);
+  }, [projectsFiltered, organizations]);
 
   const kpiItems = useMemo(
     () => [
       { prefKey: "total", label: "Projects (shown)", value: kpis.total, icon: Gauge, tone: "indigo" as const },
+      { prefKey: "metrics", label: "Live metrics", value: kpis.withMetrics, icon: Gauge, tone: "emerald" as const },
+      { prefKey: "catalog", label: "Catalog only", value: kpis.catalogOnly, icon: Gauge, tone: "purple" as const },
       { prefKey: "orgs", label: "Organizations", value: kpis.orgs, icon: Gauge, tone: "emerald" as const },
       { prefKey: "errors", label: "Errors", value: kpis.errors, icon: Gauge, tone: "rose" as const },
       {
@@ -363,7 +552,6 @@ export function SystemSupabaseQuotaPanel() {
         icon: Gauge,
         tone: "rose" as const,
       },
-      { prefKey: "pro", label: "Pro projects", value: kpis.pro, icon: Gauge, tone: "amber" as const },
       {
         prefKey: "api_total",
         label: "API requests (sum)",
@@ -378,36 +566,8 @@ export function SystemSupabaseQuotaPanel() {
         icon: Gauge,
         tone: "purple" as const,
       },
-      {
-        prefKey: "quota_file",
-        label: "Max file size (min–max)",
-        value: formatMinMax(quotaRange.maxFileBytes, (n) => `${toMb(n)} MB`),
-        icon: Gauge,
-        tone: "blue" as const,
-      },
-      {
-        prefKey: "quota_log",
-        label: "Log retention (min–max)",
-        value: formatMinMax(quotaRange.logDays, (n) => `${n} day${n === 1 ? "" : "s"}`),
-        icon: Gauge,
-        tone: "purple" as const,
-      },
-      {
-        prefKey: "quota_fn",
-        label: "Functions max (min–max)",
-        value: formatMinMax(quotaRange.fnMax, (n) => String(n)),
-        icon: Gauge,
-        tone: "indigo" as const,
-      },
-      {
-        prefKey: "quota_rt",
-        label: "Realtime users (min–max)",
-        value: formatMinMax(quotaRange.rtUsers, (n) => String(n)),
-        icon: Gauge,
-        tone: "emerald" as const,
-      },
     ],
-    [kpis, quotaRange, usageSum],
+    [kpis, usageSum],
   );
 
   const toolbar = useMemo(() => {
@@ -417,17 +577,18 @@ export function SystemSupabaseQuotaPanel() {
         <button
           type="button"
           onClick={() => void fetchData(true)}
-          disabled={loading}
+          disabled={refreshing}
           className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-[var(--panel-2)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-white/5 disabled:opacity-50"
-          title="Force refresh (bypass cache)"
+          title="Force refresh (bypass server cache)"
         >
-          <RefreshCcw size={compactIconSize(12)} className={loading ? "anim-spin" : ""} />
-          Refresh
+          <RefreshCcw size={compactIconSize(12)} className={refreshing ? "anim-spin" : ""} />
+          {refreshing && payload ? "Updating…" : "Refresh"}
+          <CacheStatusDot status={cacheHint} />
         </button>
         <HubResultCount icon={Gauge} shown={projectsFiltered.length} total={projectsRaw.length} label="projects" />
       </>
     );
-  }, [viewMode, setViewMode, fetchData, loading, projectsFiltered.length, projectsRaw.length]);
+  }, [viewMode, setViewMode, fetchData, refreshing, payload, projectsFiltered.length, projectsRaw.length, cacheHint]);
 
   const chartsNode = useMemo(() => {
     const regionItems = charts.byRegion.slice(0, 8).map((i: { label: string; value: number }, idx: number) => ({
@@ -447,12 +608,6 @@ export function SystemSupabaseQuotaPanel() {
       </>
     );
   }, [charts.byPlan, charts.byRegion]);
-
-  const subtitle = useMemo(() => {
-    const ts = payload?.generatedAt ? new Date(payload.generatedAt).toLocaleString() : "—";
-    const hint = cacheHint ? ` · cache=${cacheHint}` : "";
-    return `generatedAt: ${ts}${hint}`;
-  }, [payload?.generatedAt, cacheHint]);
 
   const body = useMemo(() => {
     if (error) {
@@ -479,7 +634,8 @@ export function SystemSupabaseQuotaPanel() {
                   </a>
                 </li>
                 <li>
-                  Add to <code className="rounded bg-black/30 px-1 py-0.5 font-mono text-[11px]">Tool/P0004-Tool-Hub/.env.local</code>:
+                  Add to <code className="rounded bg-black/30 px-1 py-0.5 font-mono text-[11px]">E:\Dev\.env.shared</code>{" "}
+                  (copy from <code className="font-mono text-[11px]">.env.shared.example</code>):
                   <pre className="mt-1 overflow-x-auto rounded-md border border-white/5 bg-black/20 px-2 py-1.5 font-mono text-[11px] text-emerald-200/90">
                     SUPABASE_MANAGEMENT_TOKEN=sbp_…
                   </pre>
@@ -492,40 +648,16 @@ export function SystemSupabaseQuotaPanel() {
       );
     }
 
-    if (loading && !payload) {
-      return (
-        <div className="rounded-2xl border border-white/5 bg-white/[.02] p-10 text-center text-sm text-[var(--muted)]">
-          Loading Supabase quota…
-        </div>
-      );
-    }
-
     if (!payload) {
       return (
         <div className="rounded-2xl border border-white/5 bg-white/[.02] p-10 text-center text-sm text-[var(--muted)]">
-          No data yet.
+          {refreshing ? "Loading projects in background…" : "No data yet. Click Refresh or wait for background load."}
         </div>
       );
     }
 
     return (
-      <div className="space-y-3 pb-8">
-        <div className="rounded-xl border border-white/5 bg-white/[.02] px-3 py-2 text-[11px] text-[var(--muted)]">
-          <span className="font-mono">{subtitle}</span>
-        </div>
-
-        {projectsFiltered.some((p) => parseProjectRestriction(p).restricted) ? (
-          <div className="flex items-start gap-2 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3 py-2.5 text-sm text-rose-100">
-            <AlertTriangle size={compactIconSize(16)} className="mt-0.5 shrink-0" />
-            <div>
-              <span className="font-semibold">Services restricted.</span> One or more projects cannot serve requests due to
-              quota violations (e.g. exceed egress quota). Open project details or Supabase Dashboard to upgrade billing.
-            </div>
-          </div>
-        ) : null}
-
-        <OrgQuotaTable organizations={organizations} />
-
+      <div className={`relative space-y-3 pb-8 transition-opacity ${refreshing ? "opacity-85" : ""}`}>
         <HubLikeDataSectionRule label="Projects" />
 
         {viewMode === "card" ? (
@@ -538,6 +670,7 @@ export function SystemSupabaseQuotaPanel() {
                   key={`${p.orgSlug}-${p.projectRef}`}
                   project={p}
                   org={organizations.find((o) => o.slug === p.orgSlug) ?? null}
+                  tools={resolveProjectToolCodes(p, toolCodesByRef)}
                   onOpen={openProject}
                 />
               ))}
@@ -548,12 +681,12 @@ export function SystemSupabaseQuotaPanel() {
         )}
       </div>
     );
-  }, [error, loading, payload, organizations, projectsFiltered, viewMode, subtitle, openProject]);
+  }, [error, refreshing, payload, organizations, projectsFiltered, viewMode, openProject, toolCodesByRef]);
 
   return (
     <>
       <SystemHubShell
-      placeholder="Search Supabase by org, project, ref, plan, region..."
+      placeholder="Search Supabase by org, owner, tool, project, ref, plan, region..."
       filters={filters}
       query={query}
       onQueryChange={setQuery}
@@ -565,7 +698,12 @@ export function SystemSupabaseQuotaPanel() {
     >
       {body}
     </SystemHubShell>
-      <SupabaseProjectDetailModal project={modalProject} org={modalOrg} onClose={closeModal} />
+      <SupabaseProjectDetailModal
+        project={modalProject}
+        org={modalOrg}
+        tools={modalProject ? resolveProjectToolCodes(modalProject, toolCodesByRef) : []}
+        onClose={closeModal}
+      />
     </>
   );
 }

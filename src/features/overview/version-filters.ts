@@ -7,11 +7,11 @@ export const VERSION_FILTER_DEFS: FilterDef[] = [
     label: "Sync",
     showAllLabel: true,
     options: [
-      { value: "current", label: "Current", color: "#818cf8" },
-      { value: "synced", label: "Synced", color: "#4ade80" },
-      { value: "needs-push", label: "Needs push", color: "#fbbf24" },
-      { value: "needs-sync", label: "Needs sync", color: "#fb7185" },
-      { value: "history", label: "History", color: "#94a3b8" },
+      { value: "current", label: "Current" },
+      { value: "synced", label: "Synced" },
+      { value: "needs-push", label: "Needs push" },
+      { value: "needs-sync", label: "Needs sync" },
+      { value: "history", label: "History" },
     ],
   },
 ];

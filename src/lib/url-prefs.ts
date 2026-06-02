@@ -72,13 +72,18 @@ export function readHubListPrefs(): HubListPrefs {
   };
 }
 
+import { readAppScreen } from "./app-screen";
+import { buildAppUrl } from "./hub-path";
+import { sanitizeQueryForScreen } from "./hub-query";
+
 export function patchHubListPrefs(patch: Record<string, string | null>) {
-  const sp = new URLSearchParams(window.location.search);
+  const screen = readAppScreen();
+  const sp = sanitizeQueryForScreen(screen, window.location.search);
   for (const [k, v] of Object.entries(patch)) {
     if (v == null || v === "") sp.delete(k);
     else sp.set(k, v);
   }
-  const q = sp.toString();
-  window.history.replaceState(null, "", `${window.location.pathname}${q ? `?${q}` : ""}${window.location.hash}`);
+  const url = buildAppUrl(screen, sp.toString());
+  window.history.replaceState(null, "", `${url}${window.location.hash}`);
   window.dispatchEvent(new PopStateEvent("popstate"));
 }

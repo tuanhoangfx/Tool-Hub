@@ -9,32 +9,42 @@ import {
   Layers,
   Rocket,
   Link2,
-  Flag,
   AlertTriangle,
+  ShieldCheck,
+  BriefcaseBusiness,
+  Package,
 } from "lucide-react";
 import type { FilterIconMeta } from "../../lib/badge-registry";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "../../lib/badge-registry";
 import { compactIconSize } from "../../lib/ui-scale";
 
-export type FilterOption = { value: string; label: string; color?: string };
+export type FilterOption = { value: string; label: string; color?: string; count?: number };
 export type FilterDef = {
   key: string;
   label: string;
   options: FilterOption[];
   showAllLabel?: boolean;
+  /** Items matching query + other active filters (shown on “All …” row). */
+  totalCount?: number;
 };
 
 const FILTER_ICONS: Record<string, React.ElementType> = {
   health: Activity,
   category: Layers,
   deploy: Rocket,
-  group: Layers,
-  status: Flag,
+  role: ShieldCheck,
+  tool: Package,
+  project: BriefcaseBusiness,
+  status: Activity,
   drift: AlertTriangle,
   kind: Link2,
   links: Link2,
-  tool: Layers,
+  sync: Rocket,
+  org: Layers,
+  region: Layers,
+  plan: Layers,
   entity: Layers,
+  group: Layers,
 };
 
 export type FilterValues = Record<string, string[]>;
@@ -48,6 +58,10 @@ type FilterBarProps = {
   onValuesChange: (next: FilterValues) => void;
   /** Row 1 trailing (view toggle, counts) — used with layout="hub". */
   toolbar?: React.ReactNode;
+  /** Row 2 leading — before filter dropdowns in hub layout. */
+  row2Leading?: React.ReactNode;
+  /** Row 2 trailing actions — right side of filter row (before Clear filters). */
+  row2Actions?: React.ReactNode;
   /** Single-row trailing (legacy / Links panel). */
   trailing?: React.ReactNode;
   layout?: "inline" | "hub";
@@ -67,6 +81,8 @@ export function FilterBar({
   values,
   onValuesChange,
   toolbar,
+  row2Leading,
+  row2Actions,
   trailing,
   layout = "inline",
   pinSticky = false,
@@ -164,8 +180,16 @@ export function FilterBar({
           {toolbar ? <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">{toolbar}</div> : null}
         </div>
         <div className="flex min-h-[var(--hub-control-h)] flex-wrap items-center gap-2">
-          {filterDropdowns}
-          {clearFiltersBtn ? <div className="ml-auto flex shrink-0">{clearFiltersBtn}</div> : null}
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+            {row2Leading ? <div className="flex shrink-0 flex-wrap items-center gap-2">{row2Leading}</div> : null}
+            {filterDropdowns}
+          </div>
+          {row2Actions || clearFiltersBtn ? (
+            <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
+              {row2Actions}
+              {clearFiltersBtn}
+            </div>
+          ) : null}
         </div>
       </div>
     );
@@ -218,6 +242,13 @@ function FilterIconGlyph({ meta, size = compactIconSize(14) }: { meta: FilterIco
   return <Icon size={size} className={`shrink-0 ${meta.className}`} aria-hidden />;
 }
 
+function FilterOptionCount({ value }: { value?: number }) {
+  if (value === undefined) return null;
+  return (
+    <span className="ml-auto shrink-0 tabular-nums text-[10px] font-medium text-[var(--muted)]">{value}</span>
+  );
+}
+
 function FilterOptionGlyph({ filterKey, option }: { filterKey: string; option: FilterOption }) {
   const meta = resolveFilterOptionIcon(filterKey, option);
   if (!meta) {
@@ -226,6 +257,21 @@ function FilterOptionGlyph({ filterKey, option }: { filterKey: string; option: F
     ) : null;
   }
   return <FilterIconGlyph meta={meta} />;
+}
+
+function resolveFilterTriggerIcon(filter: FilterDef, selected: string[]): FilterIconMeta | null {
+  if (selected.length === 1) {
+    const opt = filter.options.find((o) => o.value === selected[0]);
+    if (opt) {
+      const icon = resolveFilterOptionIcon(filter.key, opt);
+      if (icon) return icon;
+    }
+  }
+  const allIcon = resolveFilterAllIcon(filter.key);
+  if (allIcon) return allIcon;
+  const Fallback = FILTER_ICONS[filter.key];
+  if (Fallback) return { icon: Fallback, className: "opacity-75" };
+  return null;
 }
 
 function MultiFilterDropdown({
@@ -273,10 +319,9 @@ function MultiFilterDropdown({
     return `${filter.label}: ${selected.length} selected`;
   })();
 
-  const Icon = FILTER_ICONS[filter.key];
+  const triggerIcon = resolveFilterTriggerIcon(filter, selected);
   const allIcon = resolveFilterAllIcon(filter.key);
-  const soleOpt = selected.length === 1 ? filter.options.find((o) => o.value === selected[0]) : undefined;
-  const soleIcon = soleOpt ? resolveFilterOptionIcon(filter.key, soleOpt) : null;
+  const showTotalOnTrigger = selected.length === 0 && filter.totalCount !== undefined;
 
   return (
     <div ref={ref} className="relative">
@@ -289,8 +334,11 @@ function MultiFilterDropdown({
             : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
         }`}
       >
-        {soleIcon ? <FilterIconGlyph meta={soleIcon} size={compactIconSize(12)} /> : Icon ? <Icon size={compactIconSize(12)} className="shrink-0 opacity-75" /> : null}
+        {triggerIcon ? <FilterIconGlyph meta={triggerIcon} size={compactIconSize(12)} /> : null}
         <span>{buttonLabel}</span>
+        {showTotalOnTrigger ? (
+          <span className="shrink-0 tabular-nums text-[10px] font-medium text-[var(--muted)]">{filter.totalCount}</span>
+        ) : null}
         {selected.length > 1 ? (
           <span className="grid h-4 min-w-[var(--hub-count-badge-min-w)] place-items-center rounded-full bg-indigo-500 px-1 text-[9px] font-bold text-white">
             {selected.length}
@@ -323,7 +371,14 @@ function MultiFilterDropdown({
               <Circle checked={allSelected} indeterminate={someSelected} />
               {allIcon ? <FilterIconGlyph meta={allIcon} /> : null}
               <span>All {filter.label}</span>
-              <span className="ml-auto text-[10px] text-[var(--muted)]">{filter.options.length}</span>
+              <FilterOptionCount
+                value={
+                  filter.totalCount ??
+                  (filter.options.some((o) => o.count !== undefined)
+                    ? filter.options.reduce((sum, o) => sum + (o.count ?? 0), 0)
+                    : filter.options.length)
+                }
+              />
             </button>
             <div className="my-1 border-t border-white/5" />
             {filtered.map((o) => (
@@ -338,6 +393,7 @@ function MultiFilterDropdown({
                 <span className="flex-1 truncate text-left" title={o.label}>
                   {o.label}
                 </span>
+                <FilterOptionCount value={o.count} />
               </button>
             ))}
             {filtered.length === 0 ? <div className="py-4 text-center text-xs text-[var(--muted)]">No matches</div> : null}

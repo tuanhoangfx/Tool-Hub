@@ -8,11 +8,12 @@ import { SupabaseProjectDetailContent } from "./SupabaseProjectDetailContent";
 export type SupabaseProjectDetailModalProps = {
   project: ProjectRow | null;
   org: OrgRow | null;
+  tools?: string[];
   onClose: () => void;
 };
 
 /** Hub-style modal for one Supabase project (same shell classes as ToolDetailModal). */
-export function SupabaseProjectDetailModal({ project, org, onClose }: SupabaseProjectDetailModalProps) {
+export function SupabaseProjectDetailModal({ project, org, tools = [], onClose }: SupabaseProjectDetailModalProps) {
   useEffect(() => {
     if (!project) return;
     const handler = (e: KeyboardEvent) => {
@@ -44,6 +45,7 @@ export function SupabaseProjectDetailModal({ project, org, onClose }: SupabasePr
           <SupabaseProjectDetailContent
             project={project}
             org={org}
+            tools={tools}
             idPrefix={`sq-${project.projectRef}-`}
           />
         </div>

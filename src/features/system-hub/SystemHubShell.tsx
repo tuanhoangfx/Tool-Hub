@@ -7,7 +7,9 @@ import {
   type KpiTileData,
 } from "../../components/sales-shell";
 import { readHubListPrefs } from "../../lib/url-prefs";
-import { readSystemTab } from "./components/SystemTabs";
+import { readSystemTab, type SystemTab } from "./components/SystemTabs";
+
+const STACK_FILTER_TABS: SystemTab[] = ["supabase-quota", "agent"];
 import {
   readSystemTabDisplay,
   systemDisplayDefs,
@@ -113,9 +115,13 @@ export function SystemHubShell({
       chrome?.registerFilter(null);
       return;
     }
+    if (!STACK_FILTER_TABS.includes(stab)) {
+      chrome.registerFilter(null);
+      return;
+    }
     chrome.registerFilter(filterBar);
     return () => chrome.registerFilter(null);
-  }, [chrome, filterBar]);
+  }, [chrome, filterBar, stab]);
 
   const showFilterInline = !chrome?.stackChrome;
 
@@ -124,7 +130,7 @@ export function SystemHubShell({
       {showFilterInline ? filterBar : null}
 
       {hasAnalytics ? (
-        <div className="space-y-4">
+        <div className="mt-5 space-y-5">
           {kpiVisible.length > 0 ? <KpiStrip items={kpiVisible} /> : null}
           {showCharts ? <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">{charts}</div> : null}
         </div>

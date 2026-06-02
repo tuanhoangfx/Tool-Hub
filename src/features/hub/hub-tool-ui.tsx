@@ -6,13 +6,22 @@ import { compactIconSize } from "../../lib/ui-scale";
 import type { ManifestLinkGap } from "../overview/manifest-link-audit";
 import { toolCodeBadgeClass } from "./hub-tool-ui-utils";
 
-export function ToolCodeBadge({ code, category }: { code: string; category: string }) {
+export function ToolCodeBadge({
+  code,
+  category,
+  title,
+}: {
+  code: string;
+  category: string;
+  title?: string;
+}) {
   return (
     <MetricBadge
       label={code}
       iconMeta={resolveCategoryDisplayIcon(category)}
       mono
       variantClass={toolCodeBadgeClass(category)}
+      title={title}
     />
   );
 }

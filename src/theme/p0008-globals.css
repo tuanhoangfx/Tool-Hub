@@ -277,6 +277,7 @@ body,
 
 /* Shell — viewport-locked; scroll chỉ trong main */
 .hub-app {
+  --hub-sidebar-width: 15rem;
   display: flex;
   flex: 1;
   width: 100%;
@@ -336,4 +337,23 @@ body,
 .hub-main button {
   user-select: none;
   -webkit-user-select: none;
+}
+
+/** Viewport-centered loader — portaled to #hub-tab-loader-root; main pane only (sidebar excluded). */
+.hub-tab-loader-fill {
+  position: fixed;
+  z-index: 35;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: var(--hub-sidebar-width, 15rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.hub-tab-loader-fill--dim {
+  background: color-mix(in srgb, var(--bg) 45%, transparent);
+  backdrop-filter: blur(2px);
 }

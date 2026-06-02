@@ -1,10 +1,10 @@
 import { CheckCircle2, Database, Lock, Palette } from "lucide-react";
 import type { TabHeaderStatItem } from "../../components/sales-shell/AppTabHeader";
+import { listActiveDesignFeatures } from "./design-template/design-registry";
+import { isDesignLocked } from "../../lib/design-template-state";
 import type { SystemHeaderStatKey } from "./system-prefs";
 
 const SCHEMA_ENTITY_COUNT = 3;
-const ACTIVE_DESIGN_COUNT = 0;
-const LOCKED_DESIGN_COUNT = 0;
 
 export type SystemHeaderMetrics = {
   tools: number;
@@ -14,10 +14,12 @@ export type SystemHeaderMetrics = {
 };
 
 export function computeSystemHeaderMetrics(toolCount: number): SystemHeaderMetrics {
+  const active = listActiveDesignFeatures();
+  const locked = active.filter((f) => isDesignLocked(f.id)).length;
   return {
     tools: toolCount,
-    templates: ACTIVE_DESIGN_COUNT,
-    locked: LOCKED_DESIGN_COUNT,
+    templates: active.length,
+    locked,
     schema: SCHEMA_ENTITY_COUNT,
   };
 }

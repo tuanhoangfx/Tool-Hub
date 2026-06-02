@@ -9,6 +9,7 @@ import {
 import { compactIconSize } from "../../lib/ui-scale";
 import { useLocalHealth, type HealthState } from "../../hooks/useLocalHealth";
 import type { ToolLinkRow } from "./tool-links";
+import { enrichFilterDefs } from "../../lib/filter-option-counts";
 import {
   LINK_FILTER_DEFS,
   linkGroup,
@@ -104,6 +105,19 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
   const { state: healthState, check } = useLocalHealth(pingTargets);
   const checking = pingTargets.some((u) => healthState[u] === "checking");
 
+  const linkFilters = useMemo(
+    () =>
+      enrichFilterDefs(
+        links,
+        LINK_FILTER_DEFS,
+        query,
+        filterValues,
+        (link, q, f) => matchesLinkFilters(link, q, f, healthState),
+        (link, key, value) => matchesLinkFilters(link, "", { [key]: [value] }, healthState),
+      ),
+    [links, query, filterValues, healthState],
+  );
+
   const filtered = useMemo(
     () => links.filter((link) => matchesLinkFilters(link, query, filterValues, healthState)),
     [links, query, filterValues, healthState],
@@ -133,7 +147,7 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
     <div className="space-y-2">
       <FilterBar
         placeholder="Search Links by label, URL, ID..."
-        filters={LINK_FILTER_DEFS}
+        filters={linkFilters}
         query={query}
         onQueryChange={setQuery}
         values={filterValues}

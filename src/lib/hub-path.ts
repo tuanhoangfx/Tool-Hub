@@ -1,43 +1,42 @@
+import { buildSystemUrl, migrateSystemUrl, parseSystemRoute, readSystemRoute } from "./system-path";
+import { sanitizeQueryForScreen } from "./hub-query";
+
 export type AppScreen = "library" | "system" | "users";
-
-/** Path-first routes for Tool Hub (SPA). */
-export const APP_SCREEN_PATH: Record<AppScreen, string> = {
-  library: "/",
-  users: "/users",
-  system: "/system",
-};
-
-const PATH_TO_SCREEN = new Map<string, AppScreen>([
-  ["/", "library"],
-  ["", "library"],
-  ["/users", "users"],
-  ["/system", "system"],
-]);
 
 export function pathnameToAppScreen(pathname: string): AppScreen | null {
   const normalized = pathname.replace(/\/+$/, "") || "/";
-  return PATH_TO_SCREEN.get(normalized) ?? null;
+  if (normalized === "/" || normalized === "") return "library";
+  if (normalized === "/users" || normalized.startsWith("/users/")) return "users";
+  if (normalized === "/system" || normalized.startsWith("/system/")) return "system";
+  return null;
 }
 
-export function appScreenToPath(screen: AppScreen): string {
-  return APP_SCREEN_PATH[screen];
-}
-
-function parseSearch(search: string): URLSearchParams {
+function parseSearch(search = ""): URLSearchParams {
   const raw = search.startsWith("?") ? search.slice(1) : search;
   return new URLSearchParams(raw);
 }
 
 export function searchWithoutScreenParam(search = ""): string {
-  const p = parseSearch(search);
-  p.delete("screen");
-  p.delete("tab");
-  return p.toString();
+  const screen =
+    pathnameToAppScreen(typeof window !== "undefined" ? window.location.pathname : "/") ?? "library";
+  return sanitizeQueryForScreen(screen, search).toString();
 }
 
-/** Build URL for a screen; drops legacy `screen` when path is canonical. */
+/** Build URL for library/users; system uses path segments via `buildSystemUrl`. */
 export function buildAppUrl(screen: AppScreen, search = ""): string {
-  const base = appScreenToPath(screen);
-  const q = searchWithoutScreenParam(search);
+  if (screen === "system") {
+    if (typeof window !== "undefined") {
+      const route = readSystemRoute();
+      const p = sanitizeQueryForScreen("system", search);
+      return buildSystemUrl(route, p.toString());
+    }
+    const route = parseSystemRoute("/system/overview", search);
+    return buildSystemUrl(route, sanitizeQueryForScreen("system", search).toString());
+  }
+
+  const base = screen === "users" ? "/users" : "/";
+  const q = sanitizeQueryForScreen(screen, search).toString();
   return q ? `${base}?${q}` : base;
 }
+
+export { buildSystemUrl, migrateSystemUrl, parseSystemRoute, readSystemRoute };

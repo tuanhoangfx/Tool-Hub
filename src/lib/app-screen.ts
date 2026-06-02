@@ -1,10 +1,7 @@
-import {
-  type AppScreen,
-  appScreenToPath,
-  buildAppUrl,
-  pathnameToAppScreen,
-  searchWithoutScreenParam,
-} from "./hub-path";
+import type { AppScreen } from "./hub-path";
+import { buildAppUrl, migrateSystemUrl, pathnameToAppScreen } from "./hub-path";
+import { sanitizeQueryForScreen } from "./hub-query";
+import { buildSystemUrl, readSystemRoute } from "./system-path";
 
 export type { AppScreen };
 
@@ -30,29 +27,25 @@ export function readAppScreen(): AppScreen {
   return "library";
 }
 
-/** Normalize legacy `?screen=` URLs to path routes on first load. */
+/** Normalize legacy URLs → path routes (`/system/overview`, …). */
 export function migrateAppUrl(): AppScreen {
-  const p = new URLSearchParams(window.location.search);
-  const legacyScreen = p.get("screen") ?? (p.get("tab") === "system" ? "system" : null);
+  const legacyScreen =
+    new URLSearchParams(window.location.search).get("screen") ??
+    (new URLSearchParams(window.location.search).get("tab") === "system" ? "system" : null);
 
   let screen = readAppScreen();
-
   if (legacyScreen && LEGACY_SCREEN_MAP[legacyScreen]) {
     screen = LEGACY_SCREEN_MAP[legacyScreen];
   }
 
-  if (screen === "system" && !p.get("stab")) {
-    p.set("stab", "overview");
+  let clean: string;
+  if (screen === "system") {
+    const migrated = migrateSystemUrl();
+    clean = migrated ?? buildSystemUrl(readSystemRoute(), sanitizeQueryForScreen("system", window.location.search).toString());
+  } else {
+    clean = buildAppUrl(screen, sanitizeQueryForScreen(screen, window.location.search).toString());
   }
 
-  if (screen === "library") {
-    p.delete("stab");
-  }
-
-  p.delete("screen");
-  p.delete("tab");
-
-  const clean = buildAppUrl(screen, p.toString());
   const current = `${window.location.pathname}${window.location.search}`;
   if (current !== clean) {
     window.history.replaceState(null, "", clean);
@@ -62,27 +55,16 @@ export function migrateAppUrl(): AppScreen {
 }
 
 export function setAppScreen(screen: AppScreen, opts?: { replace?: boolean }) {
-  const p = new URLSearchParams(window.location.search);
-  p.delete("screen");
-  p.delete("tab");
+  let url: string;
 
-  if (screen === "system" && !p.get("stab")) {
-    p.set("stab", "overview");
+  if (screen === "system") {
+    const route =
+      readAppScreen() === "system" ? readSystemRoute() : { tab: "overview" as const };
+    const p = sanitizeQueryForScreen("system", window.location.search);
+    url = buildSystemUrl(route, p.toString());
+  } else {
+    url = buildAppUrl(screen, sanitizeQueryForScreen(screen, window.location.search).toString());
   }
-  if (screen === "library") {
-    p.delete("stab");
-    p.delete("table");
-    p.delete("detail");
-  }
-  if (screen === "users") {
-    p.delete("stab");
-    p.delete("table");
-    p.delete("detail");
-  }
-
-  const qs = searchWithoutScreenParam(p.toString());
-  const path = appScreenToPath(screen);
-  const url = qs ? `${path}?${qs}` : path;
 
   if (opts?.replace) window.history.replaceState(null, "", url);
   else window.history.pushState(null, "", url);

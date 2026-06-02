@@ -1,9 +1,9 @@
 import {
   Activity,
+  AtSign,
   Building2,
   CheckCircle2,
   Globe2,
-  ArrowUpRight,
   HardDrive,
   Layers,
   Pencil,
@@ -15,10 +15,23 @@ import { MetricBadge } from "../../components/sales-shell/MetricBadge";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { compactIconSize } from "../../lib/ui-scale";
 import { resolveHealthStatusIcon } from "../../lib/badge-registry";
-import type { OrgRow, ProjectRow } from "./SystemSupabaseQuotaPanel.types";
-import { formatBytes, formatCompact, formatEgressQuotaShort, parseEgressQuota, parseProjectInfra, parseProjectRestriction, parseProjectUsage, resolveProjectHealthLabel } from "./supabase-quota-metrics";
-import { regionDisplay, regionShort } from "../../lib/supabase-region";
+import type { ProjectRow } from "./SystemSupabaseQuotaPanel.types";
+import {
+  formatBytes,
+  formatCompact,
+  parseProjectInfra,
+  parseProjectRestriction,
+  parseProjectUsage,
+  resolvePlanDisplay,
+  resolveProjectHealthLabel,
+  restrictionPrimaryViolation,
+} from "./supabase-quota-metrics";
+import { RegionInline } from "../../components/RegionFlagBadge";
 import { QuietChip } from "../hub/hub-tool-ui";
+import { resolveProjectToolCodes } from "./supabase-project-tools";
+import { SupabaseProjectToolBadges } from "./SupabaseProjectToolBadges";
+import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
+import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 
 const META: Record<string, { Icon: LucideIcon; tint: string }> = {
   org: { Icon: Building2, tint: "#38bdf8" },
@@ -27,7 +40,6 @@ const META: Record<string, { Icon: LucideIcon; tint: string }> = {
   apiTotal: { Icon: Activity, tint: "#fbbf24" },
   apiWindow: { Icon: Zap, tint: "#f472b6" },
   disk: { Icon: HardDrive, tint: "#60a5fa" },
-  egress: { Icon: ArrowUpRight, tint: "#fb7185" },
 };
 
 function refBadgeClass() {
@@ -39,10 +51,6 @@ function statusDotColor(hasError: boolean, restriction: ReturnType<typeof parseP
   if (restriction.overallStatus === "unhealthy") return "#f59e0b";
   if (!hasUsage) return "#f59e0b";
   return "#22c55e";
-}
-
-function violationChipLabel(v: string) {
-  return v.replace(/_/g, " ");
 }
 
 function MetaRow({ kind, children }: { kind: keyof typeof META; children: ReactNode }) {
@@ -58,6 +66,9 @@ function MetaRow({ kind, children }: { kind: keyof typeof META; children: ReactN
 function UsageFooter({ project }: { project: ProjectRow }) {
   const usage = parseProjectUsage(project);
   const restriction = parseProjectRestriction(project);
+
+  if (restriction.restricted) return null;
+
   const hasUsage =
     usage.apiRequestsTotal != null ||
     usage.restLatest != null ||
@@ -66,9 +77,7 @@ function UsageFooter({ project }: { project: ProjectRow }) {
 
   return (
     <div className="mt-2 h-8 shrink-0 overflow-hidden">
-      {restriction.restricted ? (
-        <p className="line-clamp-2 text-[10px] leading-snug text-rose-200/95">{restriction.summary}</p>
-      ) : project.error ? (
+      {project.error ? (
         <p className="line-clamp-2 text-[10px] leading-snug text-rose-200/90">{project.error}</p>
       ) : hasUsage ? (
         <p className="flex items-center gap-1 text-[10px] leading-snug text-emerald-200/65">
@@ -87,21 +96,25 @@ function UsageFooter({ project }: { project: ProjectRow }) {
 
 type SupabaseProjectCardProps = {
   project: ProjectRow;
-  org?: OrgRow | null;
+  org?: { plan?: string | null } | null;
+  tools?: string[];
   onOpen: (ref: string) => void;
 };
 
-export function SupabaseProjectCard({ project, org, onOpen }: SupabaseProjectCardProps) {
+export function SupabaseProjectCard({ project, org, tools: toolsProp, onOpen }: SupabaseProjectCardProps) {
   const usage = parseProjectUsage(project);
   const infra = parseProjectInfra(project);
-  const egress = parseEgressQuota(project, org?.plan);
   const restriction = parseProjectRestriction(project);
+  const metricsSource = resolveProjectMetricsSource(project);
+  const isCatalogOnly = metricsSource === "catalog";
   const refShort = project.projectRef ? project.projectRef.slice(0, 8) : "—";
-  const plan = (project.plan ?? "").trim() || "—";
+  const planDisplay = resolvePlanDisplay(project, org);
   const hasError = Boolean(project.error);
   const healthLabel = resolveProjectHealthLabel(project);
-  const statusDot = statusDotColor(hasError, restriction, usage.apiRequestsTotal != null);
+  const statusDot = isCatalogOnly ? "#94a3b8" : statusDotColor(hasError, restriction, usage.apiRequestsTotal != null);
   const healthTone = restriction.restricted || hasError ? "bad" : healthLabel === "Live" || healthLabel === "Healthy" ? "ok" : "warn";
+
+  const tools = toolsProp ?? resolveProjectToolCodes(project);
 
   const open = () => {
     if (!project.projectRef) return;
@@ -128,9 +141,10 @@ export function SupabaseProjectCard({ project, org, onOpen }: SupabaseProjectCar
               title={healthLabel}
             />
           </div>
-          <div className="min-w-0">
-            <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
               <MetricBadge label={refShort} mono variantClass={refBadgeClass()} />
+              <SupabaseMetricsSourceBadge source={metricsSource} />
               <span className="min-w-0 line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">
                 {project.projectName}
               </span>
@@ -142,13 +156,36 @@ export function SupabaseProjectCard({ project, org, onOpen }: SupabaseProjectCar
 
       <div className="min-h-[var(--hub-card-meta-min-h)] shrink-0 space-y-1.5 text-xs text-[var(--muted)]">
         <MetaRow kind="org">
-          <span className="truncate font-mono text-[11px] text-indigo-200/90">{project.orgSlug}</span>
+          <span className="flex min-w-0 items-center gap-2 truncate">
+            <span className="shrink-0 font-mono text-[11px] text-indigo-200/90">{project.orgSlug}</span>
+            <span className="shrink-0 text-[var(--muted)]/45" aria-hidden>
+              ·
+            </span>
+            <span className="flex min-w-0 items-center gap-1 truncate text-[11px] text-[var(--text)]/85">
+              <AtSign
+                size={compactIconSize(10)}
+                className="shrink-0 text-pink-300/75"
+                strokeWidth={2}
+                aria-hidden
+              />
+              <span className="min-w-0 truncate" title={project.ownerEmail ?? undefined}>
+                {project.ownerEmail?.trim() || "—"}
+              </span>
+            </span>
+          </span>
         </MetaRow>
         <MetaRow kind="region">
-          <span className="truncate">{regionDisplay(project.region)}</span>
+          <RegionInline region={project.region} />
         </MetaRow>
         <MetaRow kind="plan">
-          <span className="font-medium text-[var(--text)]">{plan}</span>
+          <span className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="shrink-0 font-medium text-[var(--text)]">
+              {planDisplay.showRow ? planDisplay.metaLine : "—"}
+            </span>
+            {tools.length > 0 ? (
+              <SupabaseProjectToolBadges tools={tools} bindings={project.toolBindings} />
+            ) : null}
+          </span>
         </MetaRow>
         <MetaRow kind="apiTotal">
           <span className="font-medium text-[var(--text)]">
@@ -172,31 +209,24 @@ export function SupabaseProjectCard({ project, org, onOpen }: SupabaseProjectCar
             <span className="ml-1 text-[10px] text-[var(--muted)]">DB disk used</span>
           </span>
         </MetaRow>
-        <MetaRow kind="egress">
-          <span className={`font-medium ${egress.exceeded ? "text-rose-200" : "text-[var(--text)]"}`}>
-            {formatEgressQuotaShort(egress)}
-            <span className="ml-1 text-[10px] text-[var(--muted)]">egress (billing cycle)</span>
-          </span>
-        </MetaRow>
       </div>
 
       <div className="mt-auto shrink-0 pt-3">
         <div className="flex min-h-[var(--hub-card-chip-row-min-h)] flex-wrap items-center gap-1.5">
-          <QuietChip label={healthLabel} tone={healthTone} iconMeta={resolveHealthStatusIcon(healthLabel)} />
-          {restriction.violations.map((v) => (
-            <QuietChip key={v} label={violationChipLabel(v)} tone="bad" iconMeta={null} />
-          ))}
-          <QuietChip label={plan} tone="neutral" iconMeta={null} />
-          {project.region ? <QuietChip label={regionShort(project.region)} tone="neutral" iconMeta={null} /> : null}
-          {egress.egressPercent != null ? (
+          {metricsSource === "live" && restriction.restricted ? (
             <QuietChip
-              label={`egress ${egress.egressPercent}%`}
-              tone={egress.exceeded ? "bad" : egress.egressPercent >= 80 ? "warn" : "ok"}
-              iconMeta={null}
+              label="Restricted"
+              tone="bad"
+              title={
+                restriction.summary ??
+                `Cause: ${restrictionPrimaryViolation(project) ?? "quota violation"} (from project health API)`
+              }
+              iconMeta={resolveHealthStatusIcon("Restricted")}
             />
-          ) : null}
-          {usage.apiRequestsTotal != null ? (
-            <QuietChip label={`${formatCompact(usage.apiRequestsTotal)} req`} tone="ok" iconMeta={null} />
+          ) : metricsSource === "live" ? (
+            <QuietChip label={healthLabel} tone={healthTone} iconMeta={resolveHealthStatusIcon(healthLabel)} />
+          ) : project.error ? (
+            <QuietChip label="No PAT" tone="neutral" title={project.error} />
           ) : null}
         </div>
         <UsageFooter project={project} />

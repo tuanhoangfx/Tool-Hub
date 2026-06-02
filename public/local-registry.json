@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-26T23:49:44.407Z",
+  "generatedAt": "2026-05-30T17:39:13.256Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -95,7 +95,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.8",
+      "localVersion": "0.1.14",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -125,12 +125,12 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/apply-fix-profiles-rls.ps1",
+        "scripts/apply-hub-identity-migration.ps1",
+        "scripts/apply-hub-tool-access.ps1",
+        "scripts/apply-hub-user-directory-projects.ps1",
         "scripts/dev-with-launcher.cjs",
-        "scripts/git-post-commit-changelog.cjs",
-        "scripts/git-pre-commit-version.cjs",
-        "scripts/git-push.ps1",
-        "scripts/install-git-hooks.cjs",
-        "scripts/kill-port.cjs"
+        "scripts/git-post-commit-changelog.cjs"
       ]
     },
     {
@@ -153,7 +153,7 @@
         "Admin UI"
       ],
       "appUrl": "https://zaloai.infix1.io.vn/p0005",
-      "localUrl": "http://127.0.0.1:3920",
+      "localUrl": "http://127.0.0.1:3920/p0005/",
       "deployTarget": "vps",
       "usage": [
         "Dev: pnpm run admin",
@@ -495,9 +495,9 @@
       "scriptFiles": []
     },
     {
-      "id": "workspace-vault-hub",
+      "id": "p0020-data-box",
       "code": "P0020",
-      "name": "Workspace Hub",
+      "name": "P0020-Data-Box",
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
@@ -505,7 +505,7 @@
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
-      "summary": "Unified Tool workspace hub for notes, todo, 2FA, secure cookie vault, and browser agents. Skin P0008.",
+      "summary": "Unified data workspace for notes, todo, 2FA, secure cookie vault, and browser agents. Skin P0008.",
       "localPath": "E:\\Dev\\Tool\\P0020-Workspace-Notes",
       "tags": [
         "React",
@@ -515,13 +515,13 @@
         "Inter",
         "Chrome extension E0001-cookie-bridge"
       ],
-      "appUrl": "https://tool-manager-zeta.vercel.app",
+      "appUrl": "https://databox.infix1.io.vn",
       "localUrl": "http://127.0.0.1:5177",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
-        "App: https://tool-manager-zeta.vercel.app"
+        "App: https://databox.infix1.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -534,11 +534,11 @@
       ],
       "scriptFiles": [
         "scripts/apply-all-p0020.mjs",
+        "scripts/apply-batches-pg.mjs",
+        "scripts/apply-databox-env.mjs",
         "scripts/apply-fix-v-note.mjs",
-        "scripts/apply-vault-v4.mjs",
-        "scripts/dev-with-launcher.cjs",
-        "scripts/ensure-dev.cjs",
-        "scripts/find-dead-css.cjs"
+        "scripts/apply-migrations.mjs",
+        "scripts/apply-vault-v4.mjs"
       ]
     },
     {
@@ -548,7 +548,7 @@
       "repo": "tuanhoangfx/AutoVideo-Studio",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.0",
+      "localVersion": "0.2.14",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -585,6 +585,10 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/build-worker-exe.ps1",
+        "scripts/kill-desktop-workers.ps1",
+        "scripts/prepare-desktop-build.ps1",
+        "scripts/release-desktop.ps1",
         "scripts/start-desktop-dev.ps1",
         "scripts/start-public-worker.ps1"
       ]
@@ -596,7 +600,7 @@
       "repo": "tuanhoangfx/E0001-cookie-bridge",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.5.52",
+      "localVersion": "0.5.60",
       "category": "Extension",
       "audience": "Tool maintainers",
       "status": "Active",
@@ -609,13 +613,13 @@
         "Supabase",
         "AES-GCM"
       ],
-      "appUrl": "http://127.0.0.1:5177/?screen=cookie",
+      "appUrl": "https://databox.infix1.io.vn/cookie",
       "localUrl": "chrome://extensions",
       "deployTarget": "local",
       "usage": [
         "Run the configured dev command from package.json.",
         "Run the configured build command from package.json.",
-        "App: http://127.0.0.1:5177/?screen=cookie"
+        "App: https://databox.infix1.io.vn/cookie"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -627,6 +631,7 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/package-extension.ps1",
         "scripts/test-bindings-pull-logic.mjs"
       ]
     }

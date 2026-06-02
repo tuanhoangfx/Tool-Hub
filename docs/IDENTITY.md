@@ -1,6 +1,6 @@
 # Tool Hub identity (P0004)
 
-Workspace login and user directory live on **Supabase project x1z10 P01** (`fmnrafpzctuhxjaaomzt`) — shared with P0008 Sales Console for auth users.
+Workspace login and user directory live on **Supabase Hub identity** (`fmnrafpzctuhxjaaomzt`, x1z10 P01) — shared with P0020 hub auth and E0001 identity plane.
 
 ## Setup
 
@@ -33,7 +33,30 @@ Or paste `supabase/migrations/20260529120000_hub_identity_profiles.sql` in [SQL 
 | Account modal | Sidebar footer **User** |
 | Sign out | Account modal |
 
+## Extension (E0001)
+
+While Tool Hub is open, identity JWT is relayed as `E0001_HUB_IDENTITY_AUTH` (storage key `e0001-hub-identity-v1`). Cookie sync on P0020 still uses the Data Box Supabase JWT via `E0001_COOKIE_BRIDGE_AUTH`.
+
+## P0020 Data Box
+
+- **App nào login app đó:** P0020 uses `NotesAuthGate` on Data Box; P0004 uses `HubAuthGate` on x1z10 P01.
+- **Quản lý qua P0004:** P0020 sidebar **Users** links to Hub `/users` (no duplicate directory on Data Box).
+- Identity migration aligns `auth.users` / profiles on Hub; data (notes, vault, todo) stays on Data Box.
+- See `Tool/P0020-Workspace-Notes/docs/HUB-IDENTITY.md`.
+
+## Identity migration (Data Box → Hub)
+
+Full runbook: [IDENTITY-MIGRATION.md](./IDENTITY-MIGRATION.md)
+
+```powershell
+pnpm identity:phase0    # schema on x1z10 (or already applied)
+pnpm identity:export    # from yhnqwx — needs SUPABASE_SERVICE_ROLE_KEY in P0020 .env.local
+pnpm identity:import    # into Hub — needs service role in P0004 .env.local
+```
+
+**Phase 0 applied (2026-05-30):** `projects`, `project_members`, `legacy_user_map`, `legacy_project_map` on `fmnrafpzctuhxjaaomzt`.
+
 ## Notes
 
-- P0020 still has its own auth on `yhnqwx` until migrated to use this hub.
-- `workspace_user_directory` on x1z10 P01 does not join Todo `project_members` (Sales DB schema).
+- P0020 **data** auth remains on `yhnqwx` for Notes/Cookie/Todo; identity + memberships on Hub after import.
+- Users table UI: E0001-style `hub-users-table` + **Tool** filter and admin **Tool access** drawer. See [TOOL-ACCESS.md](./TOOL-ACCESS.md).

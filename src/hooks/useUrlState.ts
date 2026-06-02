@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { appScreenToPath, pathnameToAppScreen } from "../lib/hub-path";
+import { readAppScreen } from "../lib/app-screen";
+import { buildAppUrl } from "../lib/hub-path";
+import { sanitizeQueryForScreen } from "../lib/hub-query";
 
 type UrlState = {
   tool: string | null;
@@ -17,18 +19,13 @@ function readUrl(): UrlState {
 
 function writeUrl(next: UrlState, options: { replace?: boolean } = {}) {
   if (typeof window === "undefined") return;
-  const params = new URLSearchParams(window.location.search);
-  params.delete("tab");
+  const screen = readAppScreen();
+  const params = sanitizeQueryForScreen(screen, window.location.search);
   if (next.tool) params.set("tool", next.tool);
   else params.delete("tool");
   if (next.detail) params.set("detail", "1");
   else params.delete("detail");
-  params.delete("screen");
-  params.delete("tab");
-  const pathScreen = pathnameToAppScreen(window.location.pathname) ?? "library";
-  const pathname = appScreenToPath(pathScreen);
-  const query = params.toString();
-  const url = `${pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+  const url = `${buildAppUrl(screen, params.toString())}${window.location.hash}`;
   if (options.replace) window.history.replaceState(null, "", url);
   else window.history.pushState(null, "", url);
 }

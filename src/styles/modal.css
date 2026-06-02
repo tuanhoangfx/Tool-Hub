@@ -528,3 +528,29 @@ body.hub-modal-open {
   overflow: hidden;
 }
 
+.user-access-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.user-access-modal__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.modal-close--tool-detail-inline {
+  position: static;
+  box-shadow: none;
+}
+
+.modal-shell__scroll--user-access {
+  padding-top: 1rem;
+}
+

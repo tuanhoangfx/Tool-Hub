@@ -1,28 +1,15 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { readSystemTab, type SystemTab } from "./components/SystemTabs";
 import { SystemChromeContext } from "./system-chrome-context";
 import { SystemTabHeader } from "./SystemTabHeader";
-
-const SystemOverviewPanel = lazy(() =>
-  import("./SystemOverviewPanel").then((m) => ({ default: m.SystemOverviewPanel })),
-);
-const SystemSchemaPanel = lazy(() =>
-  import("./SystemSchemaPanel").then((m) => ({ default: m.SystemSchemaPanel })),
-);
-const SystemSupabaseQuotaPanel = lazy(() =>
-  import("./SystemSupabaseQuotaPanel").then((m) => ({ default: m.SystemSupabaseQuotaPanel })),
-);
+import { prefetchSupabaseQuotaCatalog } from "../../lib/hub-background-prefetch";
 import { DesignTemplateHub } from "./design-template/DesignTemplateHub";
-
-function SystemTabFallback({ label }: { label: string }) {
-  return (
-    <div className="flex min-h-[12rem] items-center justify-center rounded-xl border border-white/5 bg-white/[.02] py-12 text-sm text-[var(--muted)]">
-      Loading {label}…
-    </div>
-  );
-}
+import { SystemOverviewPanel } from "./SystemOverviewPanel";
+import { SystemSchemaPanel } from "./SystemSchemaPanel";
+import { SystemSupabaseQuotaPanel } from "./SystemSupabaseQuotaPanel";
+import { SystemAgentContextPanel } from "./SystemAgentContextPanel";
 
 type SystemHubScreenProps = {
   tools: ResolvedTool[];
@@ -33,21 +20,52 @@ type SystemHubScreenProps = {
   headerActions?: ReactNode;
 };
 
+function TabPanel({
+  tabId,
+  activeTab,
+  visited,
+  children,
+}: {
+  tabId: SystemTab;
+  activeTab: SystemTab;
+  visited: Set<SystemTab>;
+  children: ReactNode;
+}) {
+  if (!visited.has(tabId)) return null;
+  const isActive = activeTab === tabId;
+  return (
+    <div className={isActive ? undefined : "hidden"} aria-hidden={!isActive}>
+      {children}
+    </div>
+  );
+}
+
 export function SystemHubScreen({
   tools,
   headerActions,
 }: SystemHubScreenProps) {
   const [tab, setTab] = useState<SystemTab>(() => readSystemTab());
+  const [visited, setVisited] = useState<Set<SystemTab>>(() => new Set([readSystemTab()]));
   const [prefs, setPrefs] = useState(readHubListPrefs);
   const [filterSlot, setFilterSlot] = useState<ReactNode>(null);
 
   useEffect(() => {
     const sync = () => {
-      setTab(readSystemTab());
+      const next = readSystemTab();
+      setTab(next);
+      setVisited((prev) => new Set(prev).add(next));
       setPrefs(readHubListPrefs());
     };
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
+  }, []);
+
+  useEffect(() => {
+    setVisited((prev) => new Set(prev).add(tab));
+  }, [tab]);
+
+  useEffect(() => {
+    prefetchSupabaseQuotaCatalog();
   }, []);
 
   const stackChrome = prefs.searchPin && prefs.headerPin;
@@ -82,24 +100,27 @@ export function SystemHubScreen({
         )}
 
         <div className="relative z-0">
-          {tab === "overview" ? (
-            <Suspense fallback={<SystemTabFallback label="overview" />}>
-              <SystemOverviewPanel tools={tools} />
-            </Suspense>
+          <TabPanel tabId="overview" activeTab={tab} visited={visited}>
+            <SystemOverviewPanel tools={tools} />
+          </TabPanel>
+          <TabPanel tabId="schema" activeTab={tab} visited={visited}>
+            <SystemSchemaPanel />
+          </TabPanel>
+          <TabPanel tabId="supabase-quota" activeTab={tab} visited={visited}>
+            <SystemSupabaseQuotaPanel />
+          </TabPanel>
+          <TabPanel tabId="agent" activeTab={tab} visited={visited}>
+            <SystemAgentContextPanel />
+          </TabPanel>
+          {visited.has("template") ? (
+            <div className={tab === "template" ? undefined : "hidden"} aria-hidden={tab !== "template"}>
+              <DesignTemplateHub />
+            </div>
           ) : null}
-          {tab === "schema" ? (
-            <Suspense fallback={<SystemTabFallback label="schema" />}>
-              <SystemSchemaPanel />
-            </Suspense>
-          ) : null}
-          {tab === "supabase-quota" ? (
-            <Suspense fallback={<SystemTabFallback label="Supabase Quota" />}>
-              <SystemSupabaseQuotaPanel />
-            </Suspense>
-          ) : null}
-          {tab === "template" ? <DesignTemplateHub /> : null}
         </div>
       </div>
     </SystemChromeContext.Provider>
   );
 }
+
+export { prefetchSystemTab } from "./system-tab-prefetch";

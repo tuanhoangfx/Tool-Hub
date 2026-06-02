@@ -12,6 +12,7 @@ import {
   VERSION_PIPELINE_COLS,
   VERSION_TABLE_HEADERS,
 } from "./version-pipeline-defs";
+import { enrichFilterDefs } from "../../lib/filter-option-counts";
 import { VERSION_FILTER_DEFS, matchesVersionFilters } from "./version-filters";
 import { useVersionFilterPrefs } from "./use-version-filter-prefs";
 import { VersionPipelineToolbar } from "./VersionPipelineToolbar";
@@ -100,6 +101,19 @@ export function ToolVersionsPanel({
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const { query, setQuery, filterValues, setFilterValues } = useVersionFilterPrefs(toolCode);
 
+  const versionFilters = useMemo(
+    () =>
+      enrichFilterDefs(
+        rows,
+        VERSION_FILTER_DEFS,
+        query,
+        filterValues,
+        matchesVersionFilters,
+        (row, key, value) => matchesVersionFilters(row, "", { [key]: [value] }),
+      ),
+    [rows, query, filterValues],
+  );
+
   const filtered = useMemo(
     () => rows.filter((r) => matchesVersionFilters(r, query, filterValues)),
     [rows, query, filterValues],
@@ -153,7 +167,7 @@ export function ToolVersionsPanel({
 
       <FilterBar
         placeholder="Search Versions by version, title, notes..."
-        filters={VERSION_FILTER_DEFS}
+        filters={versionFilters}
         query={query}
         onQueryChange={setQuery}
         values={filterValues}

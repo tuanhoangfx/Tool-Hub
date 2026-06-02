@@ -1,12 +1,15 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User, Users } from "lucide-react";
 import { HubUserModal } from "../../features/identity/HubUserModal";
+import { useExtensionIdentityRelay } from "../../features/identity/useExtensionIdentityRelay";
+import { useHubReturnToRelay } from "../../features/identity/useHubReturnToRelay";
 import { useHubAuth } from "../../features/identity/useHubAuth";
 import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import { formatHubHeaderDate } from "../../lib/tooling";
 import { ToolAvatar } from "../ToolAvatar";
 import type { AppScreen } from "../../lib/app-screen";
+import { prefetchAppScreen } from "../../lib/app-screen-prefetch";
 import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import { SystemTabSubNav } from "./SystemTabSubNav";
@@ -85,6 +88,8 @@ export function SalesSidebar({
   displayPrefs,
 }: SidebarProps) {
   const { session } = useHubAuth();
+  useExtensionIdentityRelay(session);
+  useHubReturnToRelay(session);
   const [userModalOpen, setUserModalOpen] = useState(false);
   const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
   const [systemSubnavOpen, setSystemSubnavOpen] = useState(readSystemSubnavOpen);
@@ -133,6 +138,8 @@ export function SalesSidebar({
               <button
                 type="button"
                 aria-expanded={id === "system" ? systemSubnavOpen : undefined}
+                onMouseEnter={() => prefetchAppScreen(id)}
+                onFocus={() => prefetchAppScreen(id)}
                 onClick={() => {
                   if (id === "system" && screen === "system") {
                     setSystemSubnavOpen((v) => !v);

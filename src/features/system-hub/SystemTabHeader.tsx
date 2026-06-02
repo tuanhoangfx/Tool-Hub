@@ -1,6 +1,6 @@
-import { Settings2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { AppTabHeader } from "../../components/sales-shell/AppTabHeader";
+import { readSystemTab, SYSTEM_TAB_ITEMS } from "./components/SystemTabs";
 
 type SystemTabHeaderProps = {
   pinSticky?: boolean;
@@ -15,16 +15,26 @@ export function SystemTabHeader({
   embedded = false,
   actions,
 }: SystemTabHeaderProps) {
+  const tab = readSystemTab();
+  const item = SYSTEM_TAB_ITEMS.find((row) => row.id === tab) ?? SYSTEM_TAB_ITEMS[0];
+  const Icon = item.icon;
+  const metaItems =
+    tab === "template"
+      ? [{ icon: Icon, value: "5 layouts · pick V1–V5 below" }]
+      : tab === "agent"
+        ? [{ icon: Icon, value: "Read-only · workspace rules & skills" }]
+        : [];
+
   return (
     <AppTabHeader
-      ariaLabel="System header"
-      titleIcon={Settings2}
+      ariaLabel={`${item.label} header`}
+      titleIcon={Icon}
       titleIconClass="text-violet-400"
-      title="System"
+      title={item.label}
       pinSticky={pinSticky}
       dividerBelow={dividerBelow}
       embedded={embedded}
-      metaItems={[]}
+      metaItems={metaItems}
       centerStats={[]}
       actions={actions}
     />

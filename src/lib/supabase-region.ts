@@ -1,9 +1,8 @@
-/** Supabase AWS region metadata — keep in sync with Tool/P0020-Workspace-Notes/src/lib/supabase-region.ts */
+/** Supabase AWS region metadata — region id → ISO country for flagcdn badges. */
 export type SupabaseRegionMeta = {
   region: string;
   countryCode: string;
   label: string;
-  flag: string;
 };
 
 const REGION_BY_ID: Record<string, { countryCode: string; label: string }> = {
@@ -26,33 +25,16 @@ const REGION_BY_ID: Record<string, { countryCode: string; label: string }> = {
   "sa-east-1": { countryCode: "BR", label: "São Paulo" },
 };
 
-/** ISO 3166-1 alpha-2 → regional indicator emoji pair (e.g. SG → 🇸🇬). */
-export function countryCodeToFlagEmoji(countryCode: string): string {
-  const cc = countryCode.trim().toUpperCase();
-  if (cc.length !== 2 || /[^A-Z]/.test(cc)) return "🌐";
-  return String.fromCodePoint(...[...cc].map((c) => 0x1f1e6 - 65 + c.charCodeAt(0)));
-}
-
 export function resolveRegionMeta(region: string | null | undefined): SupabaseRegionMeta {
   const key = (region ?? "").trim();
-  if (!key) return { region: "—", countryCode: "", label: "Unknown", flag: "🌐" };
+  if (!key) return { region: "—", countryCode: "", label: "Unknown" };
   const row = REGION_BY_ID[key];
-  if (!row) return { region: key, countryCode: "", label: key, flag: "🌐" };
-  return { region: key, countryCode: row.countryCode, label: row.label, flag: countryCodeToFlagEmoji(row.countryCode) };
+  if (!row) return { region: key, countryCode: "", label: key };
+  return { region: key, countryCode: row.countryCode, label: row.label };
 }
 
-export function regionFlag(region: string | null | undefined) {
-  return resolveRegionMeta(region).flag;
-}
-
-export function regionDisplay(region: string | null | undefined) {
+/** Chart / filter grouping label (city name). */
+export function regionChartLabel(region: string | null | undefined): string {
   const meta = resolveRegionMeta(region);
-  if (meta.region === "—") return "—";
-  return `${meta.flag} ${meta.region} · ${meta.label}`;
-}
-
-export function regionShort(region: string | null | undefined) {
-  const meta = resolveRegionMeta(region);
-  if (meta.region === "—") return "—";
-  return `${meta.flag} ${meta.label}`;
+  return meta.region === "—" ? "—" : meta.label;
 }
