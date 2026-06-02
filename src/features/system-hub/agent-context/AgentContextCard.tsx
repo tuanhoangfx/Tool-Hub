@@ -7,7 +7,6 @@ import {
   Link2,
   Pencil,
   Shield,
-  ScrollText,
   Sparkles,
   Tag,
   type LucideIcon,
@@ -41,6 +40,13 @@ function kindBadgeClass(kind: AgentContextKind) {
   if (kind === "skill") return "border-purple-400/35 bg-purple-500/12 text-purple-200";
   if (kind === "contract") return "border-amber-400/35 bg-amber-500/12 text-amber-200";
   return "border-sky-400/35 bg-sky-500/12 text-sky-200";
+}
+
+function kindIconClass(kind: AgentContextKind) {
+  if (kind === "rule") return "text-emerald-300";
+  if (kind === "skill") return "text-purple-300";
+  if (kind === "contract") return "text-amber-300";
+  return "text-sky-300";
 }
 
 function applyModeLabel(item: AgentContextItem) {
@@ -85,14 +91,12 @@ export function AgentContextCard({ item, onOpen }: AgentContextCardProps) {
           </div>
           <div className="min-w-0">
             <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
-              <MetricBadge label={meta.code} mono variantClass={kindBadgeClass(item.kind)} />
-              <span
-                className="inline-flex h-6 w-6 items-center justify-center rounded-lg border border-white/10 bg-white/[0.02]"
-                title={item.kind}
-                aria-hidden
-              >
-                <meta.Icon size={compactIconSize(14)} style={{ color: meta.tint }} />
-              </span>
+              <MetricBadge
+                label={meta.code}
+                mono
+                iconMeta={{ icon: meta.Icon, className: kindIconClass(item.kind) }}
+                variantClass={kindBadgeClass(item.kind)}
+              />
               <span className="min-w-0 line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">{item.name}</span>
             </div>
           </div>

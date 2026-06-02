@@ -32,6 +32,7 @@ import {
   RefreshCw,
   Rocket,
   Server,
+  Shield,
   ShieldCheck,
   Tag,
   Zap,
@@ -159,6 +160,8 @@ const FILTER_ALL: Record<string, FilterIconMeta> = {
   entity: { icon: Database, className: "text-indigo-300" },
   group: { icon: Layers, className: "text-indigo-300" },
   kind: { icon: Link2, className: "text-cyan-300" },
+  agentKind: { icon: Shield, className: "text-emerald-300" },
+  agentScope: { icon: FolderOpen, className: "text-cyan-300" },
   grant: { icon: CheckCircle2, className: "text-emerald-400" },
 };
 
@@ -267,6 +270,17 @@ export function resolveFilterAllIcon(filterKey: string): FilterIconMeta | null {
 
 export function resolveFilterOptionIcon(filterKey: string, option: FilterOption): FilterIconMeta | null {
   switch (filterKey) {
+    case "agentKind":
+      if (option.value === "rule") return { icon: Shield, className: "text-emerald-300" };
+      if (option.value === "skill") return { icon: FlaskConical, className: "text-purple-300" };
+      if (option.value === "file") return { icon: FileCode2, className: "text-sky-300" };
+      if (option.value === "contract") return { icon: Link2, className: "text-amber-300" };
+      return { icon: Tag, className: "text-slate-400" };
+    case "agentScope":
+      if (option.value === "workspace") return { icon: FolderOpen, className: "text-cyan-300" };
+      if (option.value === "package") return { icon: Package, className: "text-indigo-300" };
+      if (option.value === "user") return { icon: UserRound, className: "text-emerald-300" };
+      return { icon: FolderOpen, className: "text-slate-400" };
     case "role":
       return pick(WORKSPACE_ROLE, option.value) ?? pick(WORKSPACE_ROLE, option.label.toLowerCase());
     case "tool":

@@ -2,6 +2,23 @@
 
 ## 2026-06-02 - Git commit version stamp
 
+- Version: `0.2.5`
+- Timestamp: 2026-06-02 15:32 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-02 - Git commit version stamp
+
 - Version: `0.2.4`
 - Timestamp: 2026-06-02 15:19 (UTC+7)
 - Commit: `cf2f53f`

@@ -15,8 +15,8 @@ export function matchesAgentContext(
     const hay = [item.name, item.path, item.summary, ...item.tags].join(" ").toLowerCase();
     if (!hay.includes(q)) return false;
   }
-  if (filterValues.kind?.length && !filterValues.kind.includes(item.kind)) return false;
-  if (filterValues.scope?.length && !filterValues.scope.includes(item.scope)) return false;
+  if (filterValues.agentKind?.length && !filterValues.agentKind.includes(item.kind)) return false;
+  if (filterValues.agentScope?.length && !filterValues.agentScope.includes(item.scope)) return false;
   return true;
 }
 
@@ -32,8 +32,8 @@ export function agentFiltersWithCounts(
     filterValues,
     matchesAgentContext,
     (item, filterKey, optionValue) => {
-      if (filterKey === "kind") return item.kind === optionValue;
-      if (filterKey === "scope") return item.scope === optionValue;
+      if (filterKey === "agentKind") return item.kind === optionValue;
+      if (filterKey === "agentScope") return item.scope === optionValue;
       return false;
     },
   );

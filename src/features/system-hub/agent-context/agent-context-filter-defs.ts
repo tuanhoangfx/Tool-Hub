@@ -2,7 +2,7 @@ import type { FilterDef } from "../../../components/sales-shell";
 
 export const AGENT_KIND_FILTERS: FilterDef[] = [
   {
-    key: "kind",
+    key: "agentKind",
     label: "Kind",
     showAllLabel: true,
     options: [
@@ -13,7 +13,7 @@ export const AGENT_KIND_FILTERS: FilterDef[] = [
     ],
   },
   {
-    key: "scope",
+    key: "agentScope",
     label: "Scope",
     showAllLabel: true,
     options: [
