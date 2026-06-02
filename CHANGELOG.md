@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-03 - Git commit version stamp
+
+- Version: `0.2.6`
+- Timestamp: 2026-06-03 00:09 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
 ## 2026-06-02 - Git commit version stamp
 
 - Version: `0.2.5`

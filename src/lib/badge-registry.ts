@@ -34,6 +34,7 @@ import {
   Server,
   Shield,
   ShieldCheck,
+  Sparkles,
   Tag,
   Zap,
   Crown,
@@ -224,6 +225,60 @@ export const SCHEMA_MODE: Record<Mode, FilterIconMeta> = {
   ro: { icon: Lock, className: "text-slate-300" },
 };
 
+/** Agent context tab — kind / scope chips (Schema-style tones). */
+export const AGENT_KIND_META: Record<string, FilterIconMeta> = {
+  rule: { icon: Shield, className: "text-emerald-300" },
+  skill: { icon: Sparkles, className: "text-purple-300" },
+  file: { icon: FileCode2, className: "text-sky-300" },
+  contract: { icon: Link2, className: "text-amber-300" },
+};
+
+export const AGENT_KIND_LABEL: Record<string, string> = {
+  rule: "Rule",
+  skill: "Skill",
+  file: "File",
+  contract: "Contract",
+};
+
+export const AGENT_KIND_TONE: Record<string, string> = {
+  rule: "border-emerald-500/40 bg-emerald-500/[.04] text-emerald-300",
+  skill: "border-purple-500/40 bg-purple-500/[.04] text-purple-300",
+  file: "border-sky-500/40 bg-sky-500/[.04] text-sky-300",
+  contract: "border-amber-500/40 bg-amber-500/[.04] text-amber-300",
+};
+
+export const AGENT_SCOPE_META: Record<string, FilterIconMeta> = {
+  workspace: { icon: FolderOpen, className: "text-cyan-300" },
+  user: { icon: UserRound, className: "text-emerald-300" },
+  package: { icon: Package, className: "text-indigo-300" },
+};
+
+export const AGENT_SCOPE_LABEL: Record<string, string> = {
+  workspace: "Workspace",
+  user: "User",
+  package: "Package",
+};
+
+export const AGENT_SCOPE_TONE: Record<string, string> = {
+  workspace: "border-cyan-500/35 bg-cyan-500/[.06] text-cyan-200",
+  user: "border-emerald-500/35 bg-emerald-500/[.06] text-emerald-200",
+  package: "border-indigo-500/35 bg-indigo-500/[.06] text-indigo-200",
+};
+
+export function resolveAgentKindBadge(kind: string): BadgeSpec {
+  const label = AGENT_KIND_LABEL[kind] ?? kind;
+  const iconMeta = AGENT_KIND_META[kind] ?? AGENT_KIND_META.rule;
+  const variantClass = AGENT_KIND_TONE[kind] ?? AGENT_KIND_TONE.rule;
+  return { label, iconMeta, variantClass };
+}
+
+export function resolveAgentScopeBadge(scope: string): BadgeSpec {
+  const label = AGENT_SCOPE_LABEL[scope] ?? scope;
+  const iconMeta = AGENT_SCOPE_META[scope] ?? AGENT_SCOPE_META.workspace;
+  const variantClass = AGENT_SCOPE_TONE[scope] ?? AGENT_SCOPE_TONE.workspace;
+  return { label, iconMeta, variantClass };
+}
+
 export const MODE_LABEL_SHORT: Record<Mode, string> = {
   input: "Input",
   auto: "Auto",
@@ -271,16 +326,9 @@ export function resolveFilterAllIcon(filterKey: string): FilterIconMeta | null {
 export function resolveFilterOptionIcon(filterKey: string, option: FilterOption): FilterIconMeta | null {
   switch (filterKey) {
     case "agentKind":
-      if (option.value === "rule") return { icon: Shield, className: "text-emerald-300" };
-      if (option.value === "skill") return { icon: FlaskConical, className: "text-purple-300" };
-      if (option.value === "file") return { icon: FileCode2, className: "text-sky-300" };
-      if (option.value === "contract") return { icon: Link2, className: "text-amber-300" };
-      return { icon: Tag, className: "text-slate-400" };
+      return AGENT_KIND_META[option.value] ?? { icon: Tag, className: "text-slate-400" };
     case "agentScope":
-      if (option.value === "workspace") return { icon: FolderOpen, className: "text-cyan-300" };
-      if (option.value === "package") return { icon: Package, className: "text-indigo-300" };
-      if (option.value === "user") return { icon: UserRound, className: "text-emerald-300" };
-      return { icon: FolderOpen, className: "text-slate-400" };
+      return AGENT_SCOPE_META[option.value] ?? { icon: FolderOpen, className: "text-slate-400" };
     case "role":
       return pick(WORKSPACE_ROLE, option.value) ?? pick(WORKSPACE_ROLE, option.label.toLowerCase());
     case "tool":
@@ -332,8 +380,6 @@ export function resolveFilterOptionIcon(filterKey: string, option: FilterOption)
       return option.value === "granted"
         ? { icon: CheckCircle2, className: "text-emerald-400" }
         : { icon: X, className: "text-slate-400" };
-    case "tool":
-      return { icon: Package, className: "text-indigo-300" };
     case "entity":
       return { icon: Database, className: "text-indigo-300" };
     default:
