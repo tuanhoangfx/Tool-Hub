@@ -10,8 +10,8 @@
 - Type: Minor
 - Product: P0004
 - Prompt: Release P0004 v0.4.3 — dev daemon stable, P0022 Infi Store, vendor quota lib
-- Commit: pending
-- Status: Draft
+- Commit: `58e6120`
+- Status: Committed
 - Release: (after gh release)
 
 ### Changes
