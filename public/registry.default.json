@@ -1,18 +1,20 @@
 [
   {
     "id": "gpm-automation-console",
-    "code": "LOCAL-001",
-    "name": "P0001-GPM-Automation-Console",
+    "code": "P0001",
+    "name": "GPM Automation Console",
     "repo": "tuanhoangfx/GPM-Automation-Console",
     "branch": "main",
     "category": "Desktop",
     "audience": "GPM operators",
-    "status": "Needs review",
-    "summary": "Desktop console for managing and automating GPM Login profiles.",
+    "status": "Ready",
+    "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
     "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
     "tags": [
-      "Local",
-      "Workspace"
+      "Electron",
+      "React",
+      "Vite",
+      "Playwright CDP"
     ],
     "localUrl": "http://127.0.0.1:5173",
     "deployTarget": "github-release",
@@ -35,23 +37,25 @@
       "scripts/sync-metadata-version.mjs",
       "scripts/bump-patch-version.mjs"
     ],
-    "localVersion": "0.2.36",
+    "localVersion": "0.2.37",
     "remoteEnabled": true
   },
   {
     "id": "yt-multistream-console",
-    "code": "LOCAL-002",
-    "name": "P0002-YT-Multistream-Console",
+    "code": "P0002",
+    "name": "YT Multistream Console",
     "repo": "tuanhoangfx/YT-Multistream-Console",
     "branch": "main",
     "category": "Desktop",
     "audience": "Livestream operators",
-    "status": "Needs review",
-    "summary": "Desktop console for multi-channel YouTube livestream from local or Google Drive source.",
+    "status": "Ready",
+    "summary": "Local desktop console for running multi-channel YouTube livestream jobs from local video files or Google Drive links.",
     "localPath": "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
     "tags": [
-      "Local",
-      "Workspace"
+      "Electron",
+      "React",
+      "Vite",
+      "FFmpeg"
     ],
     "localUrl": "http://127.0.0.1:5174",
     "deployTarget": "github-release",
@@ -74,7 +78,7 @@
       "scripts/sync-metadata-version.mjs",
       "scripts/smoke-test.cjs"
     ],
-    "localVersion": "0.1.29",
+    "localVersion": "0.1.30",
     "remoteEnabled": true
   },
   {
@@ -94,15 +98,15 @@
       "Vite",
       "GitHub public raw API"
     ],
-    "appUrl": "https://infix1.io.vn",
+    "appUrl": "https://infi.io.vn",
     "localUrl": "http://127.0.0.1:5176",
     "deployTarget": "vercel",
     "usage": [
       "Dev: corepack pnpm dev",
       "Build: corepack pnpm build",
-      "App: https://infix1.io.vn (Vercel — git push main)"
+      "App: https://infi.io.vn (Vercel — git push main)"
     ],
-    "downloadHint": "Use https://infix1.io.vn or clone the repository.",
+    "downloadHint": "Use https://infi.io.vn or clone the repository.",
     "manifestPath": "tool.manifest.json",
     "trackedFiles": [
       "tool.manifest.json",
@@ -115,7 +119,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.4.8",
+    "localVersion": "0.4.11",
     "remoteEnabled": true
   },
   {
@@ -135,14 +139,14 @@
       "9Router",
       "Admin UI"
     ],
-    "appUrl": "https://zaloai.infix1.io.vn/p0005",
+    "appUrl": "https://zaloai.infi.io.vn/p0005",
     "localUrl": "http://127.0.0.1:3920",
     "deployTarget": "vps",
     "usage": [
       "Local: admin.bat or pnpm run admin → http://127.0.0.1:3920/p0005/",
       "Login: pnpm run login (Zalo QR)",
       "Bot: pnpm run bot",
-      "Production: https://zaloai.infix1.io.vn/p0005"
+      "Production: https://zaloai.infi.io.vn/p0005"
     ],
     "downloadHint": "Clone the repo — runtime data stays local, not in the repo.",
     "manifestPath": "tool.manifest.json",
@@ -168,7 +172,7 @@
     "repo": "tuanhoangfx/aichathub",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.1.4",
+    "localVersion": "0.1.5",
     "category": "Local",
     "audience": "Tool maintainers",
     "status": "Draft",
@@ -218,12 +222,12 @@
       "Node.js",
       "ssh2"
     ],
-    "appUrl": "https://9router.infix1.io.vn/dashboard",
+    "appUrl": "https://9router.infi.io.vn/dashboard",
     "deployTarget": "vps",
     "usage": [
       "Deploy: deploy.bat",
       "SSL: deploy-ssl.bat",
-      "Dashboard: https://9router.infix1.io.vn/dashboard"
+      "Dashboard: https://9router.infi.io.vn/dashboard"
     ],
     "downloadHint": "Clone the repo — secrets and config stay local.",
     "manifestPath": "tool.manifest.json",
@@ -535,13 +539,13 @@
       "Inter",
       "Chrome extension E0001-cookie-bridge"
     ],
-    "appUrl": "https://databox.infix1.io.vn",
+    "appUrl": "https://databox.infi.io.vn",
     "localUrl": "http://127.0.0.1:5177",
     "deployTarget": "vercel",
     "usage": [
       "Dev: corepack pnpm dev",
       "Build: corepack pnpm build",
-      "App: https://databox.infix1.io.vn"
+      "App: https://databox.infi.io.vn"
     ],
     "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
     "manifestPath": "tool.manifest.json",
@@ -630,7 +634,7 @@
     "usage": [
       "Dev: corepack pnpm dev",
       "Build: corepack pnpm build",
-      "App: https://infi.infix1.io.vn"
+      "App: https://store.infi.io.vn"
     ],
     "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
     "manifestPath": "tool.manifest.json",
@@ -642,7 +646,7 @@
       "RELEASE.md"
     ],
     "scriptFiles": [],
-    "appUrl": "https://infi.infix1.io.vn"
+    "appUrl": "https://store.infi.io.vn"
   },
   {
     "id": "fanpage-dashboard",
@@ -680,7 +684,7 @@
       "RELEASE.md"
     ],
     "scriptFiles": [],
-    "appUrl": "https://fanpage.infix1.io.vn"
+    "appUrl": "https://fanpage.infi.io.vn"
   },
   {
     "id": "cookie-bridge",
@@ -702,7 +706,7 @@
       "Supabase",
       "AES-GCM"
     ],
-    "appUrl": "https://databox.infix1.io.vn/cookie",
+    "appUrl": "https://databox.infi.io.vn/cookie",
     "localUrl": "chrome://extensions",
     "deployTarget": "local",
     "usage": [

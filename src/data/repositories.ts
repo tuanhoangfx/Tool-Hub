@@ -17,7 +17,7 @@ export const FALLBACK_REPOSITORIES: ToolRepository[] = [
     summary: "Library catalog for the workspace: accurate GitHub info, usage links, local paths, and versions of every running project.",
     localPath: "E:\\Dev\\Tool\\P0004-Tool-Hub",
     tags: ["React", "TypeScript", "Vite", "GitHub Pages"],
-    appUrl: "https://infix1.io.vn",
+    appUrl: "https://infi.io.vn",
     localUrl: "http://127.0.0.1:5176",
     deployTarget: "github-pages",
     usage: [
@@ -25,7 +25,7 @@ export const FALLBACK_REPOSITORIES: ToolRepository[] = [
       "Build: corepack pnpm build",
       "Production deploys via GitHub Actions on push to main",
     ],
-    downloadHint: "Use https://infix1.io.vn or clone the repository.",
+    downloadHint: "Use https://infi.io.vn or clone the repository.",
     manifestPath: "tool.manifest.json",
     trackedFiles: ["tool.manifest.json", "package.json", "README.md", "CHANGELOG.md", "RELEASE.md"],
     scriptFiles: ["scripts/scan-local-workspace.cjs", "scripts/publish-github-repo.cjs"],

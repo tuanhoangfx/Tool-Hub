@@ -39,7 +39,7 @@
                    "manifestPath":  "tool.manifest.json"
                },
     "release":  {
-                    "version":  "0.4.10",
+                    "version":  "0.4.11",
                     "readiness":  [
                                       "build",
                                       "lint",
@@ -54,7 +54,7 @@
                                         }
                 },
     "urls":  {
-                 "app":  "https://infix1.io.vn",
+                 "app":  "https://infi.io.vn",
                  "appSetupAt":  "2026-05-21T10:30:00.000Z",
                  "local":  "http://127.0.0.1:5176",
                  "localSetupAt":  "2026-04-29T17:00:00.000Z"
@@ -62,11 +62,11 @@
     "vercel":  {
                    "project":  "tool-hub",
                    "projectId":  "prj_tuOhhInjLzjWDrVYfeQanSqSqWMi",
-                   "productionUrl":  "https://infix1.io.vn",
+                   "productionUrl":  "https://infi.io.vn",
                    "previewUrl":  "https://tool-hub.vercel.app",
                    "productionBranch":  "main",
                    "team":  "tuanhoangfxs-projects",
-                   "notes":  "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infix1.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
+                   "notes":  "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infi.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
                },
     "supabase":  {
                      "projectRef":  "fmnrafpzctuhxjaaomzt",
@@ -82,7 +82,7 @@
     "manifestUpdatedAt":  "2026-06-03T01:05:56.855Z",
     "health":  {
                    "status":  "Ready",
-                   "note":  "Production on Vercel (infix1.io.vn). Library-only catalog."
+                   "note":  "Production on Vercel (infi.io.vn). Library-only catalog."
                },
     "nextActions":  [
                         "Run scan:local after manifest or port changes.",
@@ -120,7 +120,7 @@
                         "bullets":  [
                                         "System shell: Overview / Schema / Design Template",
                                         "Roadmap timeline from manifest.roadmap[]",
-                                        "Production on Vercel (infix1.io.vn)"
+                                        "Production on Vercel (infi.io.vn)"
                                     ]
                     },
                     {

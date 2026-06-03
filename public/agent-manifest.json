@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T00:25:51.125Z",
+  "generatedAt": "2026-06-03T01:16:57.130Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -57,8 +57,8 @@
       "agentRequestable": false,
       "summary": "\"HARD GATE: version bump + browser verify loop until task passes. Dev E:\\\\Dev.\"",
       "bodyPreview": "# Dev workspace — single rule file (agent)\n\n**Source of truth:** `E:\\Dev\\.cursor\\rules\\dev-workspace.mdc`  \n**Human review (Vietnamese):** `E:\\Dev\\.cursor\\RULES-HUMAN-VI.md` — keep in sync when policy changes.  \n**Release pipeline:** `E:\\Dev\\Rules\\RELEASE-STANDARD.md` · `Tool/scripts/ship-product.ps1`\n\n---\n\n## 0. VERSION BUMP — hard gate (read first, every task)\n\nWhen you change **meaningful code or UI** in `Tool/P00xx-*` or `Extension/E00xx-*`:\n\n1. **Before** final reply / commit / push: bump the correct tier; sync `package.json`, `tool.manifest.json`, `CHANGELOG.md`, extension manifests as applicable.\n2. **Last line of summary** (required): `Version: X.Y.Z → A.B.C` — or `Version: no bump (read-only / whitespace only)`.\n3. **Never** wait for the user to say “nhớ bump version”.\n4. A **`stop` hook** may follow up if git shows code changes without version files — treat as blocking.\n5. Product extras: `P0021-.../p0021-version-bump.mdc`, `E0001-.../e0001-auto-bump-version.mdc`.\n\n| Tier | When | Bump |\n|------|------|------|\n| **Patch** | Task done with meaningful code/UI change | `PATCH + 1` |\n| **Minor** | User requests **commit** (or you commit in-task) | `MINOR + 1`, `PATCH = 1` |\n|",
-      "lines": 116,
-      "updatedAt": "2026-06-02T22:04:03.057Z",
+      "lines": 141,
+      "updatedAt": "2026-06-03T00:58:51.723Z",
       "tags": [
         "rule",
         "rules"
@@ -73,8 +73,8 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# Browser verify until done\n\n## When this applies\n\n- Changed **UI**, routes, client logic, or styles in `Tool/P00xx-*` / `Extension/E00xx-*`\n- User reports a **bug** visible in the app or extension popup\n- **Deploy / release** smoke test (with production or local URL)\n- User says: *fix xong*, *test browser*, *loop đến khi được*, *smoke test*\n\n**Skip** only when: pure docs, read-only review, server-only change with no UI surface, or user says *skip browser*.\n\n## Browsers (priority)\n\n1. **Cursor IDE browser MCP** — default (`browser_navigate`, `browser_snapshot`, console/network tools)\n2. **Chrome profile 0010** — if user already logged in there and MCP cannot reach local host / extension-only flow\n\nDo not ask the user to log in again if a session is already authenticated.\n\n## Fix loop (mandatory)\n\nRepeat until **done** or **blocked**:\n\n```\nEDIT → RUN (dev/build if needed) → BROWSER VERIFY → pass?\n         ↑                                    |\n         └──────── no: diagnose, fix ─────────┘\n```\n\n### 1. Prepare\n\n- Know the **URL** (local port from `tool.manifest.json` / README, or production URL).\n- Know **acceptance**: what screen, button, or data proves the fix.\n\n### 2. Browser ver",
-      "lines": 73,
-      "updatedAt": "2026-06-02T21:07:36.131Z",
+      "lines": 90,
+      "updatedAt": "2026-06-03T00:40:50.942Z",
       "tags": [
         "skill",
         "workspace"
@@ -88,9 +88,9 @@
       "scope": "workspace",
       "trigger": "Runs release/deploy for Tool/P00xx. Triggers on Release/Push/Git + product code (e.g. Release P0004), deploy, push, publish, gh release. See p00xx-ship-keywords for Git vs Push vs Release.",
       "summary": "Runs release/deploy for Tool/P00xx. Triggers on Release/Push/Git + product code (e.g. Release P0004), deploy, push, publish, gh release. See p00xx-ship-keywords for Git vs Push vs Release.",
-      "bodyPreview": "# P00xx Release Workflow\n\n## Scope\n\nUse this for `Tool/P00xx-*` repositories. It standardizes release work while respecting each repo's own scripts and deployment target.\n\n## Safety Rules\n\n- Only commit, push, deploy, or create releases when the user explicitly asks.\n- Never commit secrets or local runtime data: `.env*`, credentials, Supabase service role keys, DB passwords, cookies, VPS env files, backups, private exports, or token-bearing config.\n- Preserve unrelated user changes. If the working tree has unrelated edits, leave them out of the commit or ask when separation is impossible.\n- Do not use destructive git commands, force-push, skip hooks, or change git config unless the user explicitly requests it.\n\n## Workflow\n\n1. Identify the repo:\n   - Confirm current tool path, branch, remote, package version, and deployment target.\n   - Read `package.json`, `tool.manifest.json` if present, `.vercel/project.json` if present, and relevant deploy docs/scripts.\n\n2. Inspect work to release:\n   - Run `git status --short --branch`, `git diff --stat`, `git diff`, and recent `git log`.\n   - Decide which files are relevant and safe to stage.\n   - Warn about secrets or unrelated files.\n\n3. Ve",
-      "lines": 77,
-      "updatedAt": "2026-06-02T21:29:49.005Z",
+      "bodyPreview": "# P00xx Release Workflow\n\n## Scope\n\nUse this for `Tool/P00xx-*` repositories. It standardizes release work while respecting each repo's own scripts and deployment target.\n\n## Autonomous Release command\n\nWhen the user says **`Release P00xx`** (or approves release proposals with ok 1 2 3), run the **full pipeline without per-step confirmation**:\n\n```powershell\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Release\n```\n\nScript handles: auto-commit WIP (default) → version check → build → push → production smoke → GitHub release → metadata. Agent still verifies prerequisites (triple sync, CHANGELOG, no secrets) and reports the final ship block.\n\n## Safety Rules\n\n- Only commit, push, deploy, or create releases when the user explicitly asks.\n- Never commit secrets or local runtime data: `.env*`, credentials, Supabase service role keys, DB passwords, cookies, VPS env files, backups, private exports, or token-bearing config.\n- Preserve unrelated user changes. If the working tree has unrelated edits, leave them out of the commit or ask when separation is impossible.\n- Do not use destructive git commands, force-push, skip hooks, or change git config unless the user",
+      "lines": 78,
+      "updatedAt": "2026-06-03T01:00:07.419Z",
       "tags": [
         "skill",
         "workspace"
@@ -104,9 +104,25 @@
       "scope": "workspace",
       "trigger": ">-",
       "summary": ">-",
-      "bodyPreview": "# P00xx ship keywords (Git · Push · Release)\n\n## Parse the command\n\nPattern: **`{Git|Push|Release} {CODE}`**\n\n| User says | CODE examples | Resolve path |\n|-----------|---------------|--------------|\n| `Git P0004` | P0004, P0020, E0001 | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | case-insensitive | Match folder by code prefix; read `tool.manifest.json` |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n**P0005** release/deploy: use `zalo-ai-bot-release` skill instead of generic deploy step 6.\n\n---\n\n## Keyword → pipeline (cumulative)\n\nEach level **includes all steps above it**:\n\n| Keyword | Steps | Version tier (§0) |\n|---------|--------|-------------------|\n| **Git** | 1 verify/build → 2 commit | **Minor** before commit (`MINOR+1`, `PATCH=1`) |\n| **Push** | Git + 3 push GitHub | Minor on commit; **no Major** unless user also said Release |\n| **Release** | Push + 4 deploy → 5 smoke → 6 tag + `gh release` | **Major** before official push to `main` (`MAJOR+1`, `MINOR=1`, `PATCH=1`) |\n\n**Patch** is separate: bump when **finishing a code task**, before any Git/Push/Release keyword.\n\n### Step detail\n\n1. **Verify / build**",
-      "lines": 74,
-      "updatedAt": "2026-06-02T21:29:00.790Z",
+      "bodyPreview": "# P00xx ship keywords (Git · Push · Release)\n\n## Parse the command\n\nPattern: **`{Git|Push|Release} {CODE}`**\n\n| User says | CODE examples | Resolve path |\n|-----------|---------------|--------------|\n| `Git P0004` | P0004, P0020, E0001 | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | case-insensitive | Match folder by code prefix; read `tool.manifest.json` |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n**P0005** release/deploy: use `zalo-ai-bot-release` skill instead of generic deploy step 6.\n\n---\n\n## Keyword → pipeline (cumulative)\n\nEach level **includes all steps above it**:\n\n| Keyword | Steps | Version tier (§0) |\n|---------|--------|-------------------|\n| **Git** | 1 verify/build → 2 commit | **Minor** before commit (`MINOR+1`, `PATCH=1`) |\n| **Push** | Git + 3 push GitHub | Minor on commit; **no Major** unless user also said Release |\n| **Release** | Push + 4 deploy → 5 smoke → 6 tag + `gh release` | **Major** before official push to `main` (`MAJOR+1`, `MINOR=1`, `PATCH=1`) |\n\n**Patch** is separate: bump when **finishing a code task**, before any Git/Push/Release keyword.\n\n### Release = run full pipeline autono",
+      "lines": 84,
+      "updatedAt": "2026-06-03T00:52:21.454Z",
+      "tags": [
+        "skill",
+        "workspace"
+      ]
+    },
+    {
+      "id": "cursor-skills-p00xx-tool-onboard-SKILL-md",
+      "kind": "skill",
+      "name": "p00xx-tool-onboard",
+      "path": ".cursor\\skills\\p00xx-tool-onboard\\SKILL.md",
+      "scope": "workspace",
+      "trigger": ">-",
+      "summary": ">-",
+      "bodyPreview": "# P00xx tool onboard (import + chuẩn hóa)\n\nBring an external repo into `E:\\Dev\\Tool` with workspace conventions, then hand off to ship skills for Git/Push/Release.\n\n**Not in scope:** ongoing release/deploy → `p00xx-ship-keywords` + `p00xx-release-workflow`.\n\n**User says “làm hết đề xuất” / “toàn bộ đề xuất” after onboard:** run Phase B (if listed) + Phase C **Release** in one flow.\n\n---\n\n## Parse intent\n\n| User says | Phase |\n|-----------|-------|\n| Pull / clone / sync repo về workspace | A (import) |\n| Gán P00xx, chuẩn hóa, onboard | A + catalog |\n| Rename folder/repo, domain, Tailwind, code-split | B (hardening) |\n| Git / Push / Release P00xx | **Stop** → ship skills |\n\nInputs to confirm (infer when obvious):\n\n- GitHub URL or `owner/repo`\n- Display name and slug (`id` kebab-case)\n- Stack type: Web / Desktop / Bot / …\n- Deploy target: vercel / vps / local-only\n\n---\n\n## Phase A — Import\n\n```\nOnboard progress:\n- [ ] A1 Assign P00xx code + folder name\n- [ ] A2 Preflight + clone\n- [ ] A3 Scaffold docs + manifest + workspace port registry\n- [ ] A4 Fix build (pnpm, vite-env, AI Studio cleanup)\n- [ ] A5 Validate manifest (no BOM)\n- [ ] A6 Hub catalog (scan:local)\n- [ ] A7 First commit (u",
+      "lines": 178,
+      "updatedAt": "2026-06-03T01:03:14.753Z",
       "tags": [
         "skill",
         "workspace"

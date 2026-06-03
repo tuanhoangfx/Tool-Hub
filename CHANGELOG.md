@@ -4,6 +4,32 @@
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Version sync:** `corepack pnpm run check:version` — package.json = manifest release.version = CHANGELOG top Version
 
+## 2026-06-03 - Local registry: P0001/P0002 manifest repair scan
+
+- Version: `0.4.11`
+- Type: Patch
+- Product: P0004
+- Prompt: ok — fix P0001/P0002 manifests, rescan workspace catalog
+- Commit: `4d14495`
+- Status: Committed
+
+### Changes
+
+- Refreshed `local-registry.json`, `workspace-catalog.json`, `registry.default.json` after P0001/P0002 `tool.manifest.json` BOM fix (Hub cards **P0001** / **P0002**, no duplicate **LOCAL-001** / **LOCAL-002**).
+- `workspace-scan.cjs`: `writeJsonFile` + `normalizeManifestFileEncoding` strip UTF-8 BOM on scan so manifests stay parseable (fixes recurring **LOCAL-00x** cards).
+- Registry schema: allow `Draft` status (P0006 catalog entry); workspace version triple repair (16/16 OK).
+
+### Verification
+
+- `corepack pnpm scan:local`
+- Hub at `http://127.0.0.1:5176/` — cards show P0001, P0002 with GitHub repo linked
+
+### Rollback
+
+- Revert public registry snapshots and prior manifest versions on P0001/P0002
+
+---
+
 ## 2026-06-03 - Workspace version sync standardization + release
 
 - Version: `0.4.10`
@@ -156,7 +182,7 @@
 ### Verification
 
 - `corepack pnpm build` — pass
-- Production: https://infix1.io.vn
+- Production: https://infi.io.vn
 
 ### Rollback
 
@@ -171,13 +197,13 @@ git checkout v0.2.7
 - Version: `0.4.1`
 - Type: Minor
 - Product: P0004
-- Prompt: Đổi tên P0022-Infi-Store, cập nhật Hub catalog sau rename repo, Tailwind, domain infi.infix1.io.vn.
+- Prompt: Đổi tên P0022-Infi-Store, cập nhật Hub catalog sau rename repo, Tailwind, domain store.infi.io.vn.
 - Commit: `c050ec4`
 - Status: Committed
 
 ### Changes
 
-- `registry.default.json`: **P0022 Infi Store** (`infi-store`, `tuanhoangfx/P0022-Infi-Store`, https://infi.infix1.io.vn).
+- `registry.default.json`: **P0022 Infi Store** (`infi-store`, `tuanhoangfx/P0022-Infi-Store`, https://store.infi.io.vn).
 - Refreshed `local-registry.json`, `workspace-catalog.json`, `supabase-workspace-map.json`.
 
 ### Verification
@@ -240,7 +266,7 @@ git checkout v0.2.7
 ### Verification
 
 - `corepack pnpm build` — pass
-- Production: https://infix1.io.vn
+- Production: https://infi.io.vn
 
 ### Rollback
 

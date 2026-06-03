@@ -17,7 +17,7 @@ git push origin main   # triggers Vercel deploy
 
 ## Custom domain
 
-- Production: https://infix1.io.vn (Vercel project `tool-hub`)
+- Production: https://infi.io.vn (Vercel project `tool-hub`)
 - DNS (Tino): apex **`A` → `76.76.21.21`** (Vercel). Không dùng GitHub Pages IPs.
 - Tắt GitHub Pages trên repo `tuanhoangfx/Tool-Hub` sau khi DNS live.
 

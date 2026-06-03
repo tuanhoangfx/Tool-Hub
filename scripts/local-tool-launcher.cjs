@@ -283,5 +283,5 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`\n  GTM Local Tool Launcher\n  -> http://${HOST}:${PORT}\n  -> Opened from https://infix1.io.vn via the Launch tool button\n`);
+  console.log(`\n  GTM Local Tool Launcher\n  -> http://${HOST}:${PORT}\n  -> Opened from https://infi.io.vn via the Launch tool button\n`);
 });

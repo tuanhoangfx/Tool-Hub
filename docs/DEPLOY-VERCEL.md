@@ -13,7 +13,7 @@ P0004 **Tool Hub** — production **Vercel-only** (không GitHub Pages).
 
 | URL | Vai trò |
 |-----|---------|
-| **https://infix1.io.vn** | Custom domain (sau khi DNS trỏ Vercel) |
+| **https://infi.io.vn** | Custom domain (sau khi DNS trỏ Vercel) |
 | **https://tool-hub.vercel.app** | Alias Vercel mặc định |
 
 ## Vercel project
@@ -29,15 +29,15 @@ P0004 **Tool Hub** — production **Vercel-only** (không GitHub Pages).
 
 Mỗi `git push` lên `main` → Vercel production deploy (Git integration đã bật).
 
-## DNS (bắt buộc để infix1.io.vn live)
+## DNS (bắt buộc để infi.io.vn live)
 
 Trên **Tino** (hoặc DNS hiện tại):
 
 1. Xóa / thay bản ghi **A** apex trỏ GitHub Pages (`185.199.x.x`).
-2. Thêm: **`A` `infix1.io.vn` → `76.76.21.21`** (theo Vercel Domains).
-3. Trên GitHub repo → **Settings → Pages** → tắt site / gỡ custom domain `infix1.io.vn` (tránh trùng).
+2. Thêm: **`A` `infi.io.vn` → `76.76.21.21`** (theo Vercel Domains).
+3. Trên GitHub repo → **Settings → Pages** → tắt site / gỡ custom domain `infi.io.vn` (tránh trùng).
 
-Sau propagate (~ vài phút–48h): `https://infix1.io.vn` serve bản Vercel.
+Sau propagate (~ vài phút–48h): `https://infi.io.vn` serve bản Vercel.
 
 ## Local
 
@@ -64,4 +64,4 @@ pnpm run push
 
 ## Catalog trên production
 
-`public/workspace-catalog.json` được copy vào `dist/` khi build — Sync Hub tại `https://infix1.io.vn/?tab=system` đọc file này.
+`public/workspace-catalog.json` được copy vào `dist/` khi build — Sync Hub tại `https://infi.io.vn/?tab=system` đọc file này.

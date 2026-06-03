@@ -66,6 +66,22 @@ function readJson(filePath) {
   }
 }
 
+/** Write JSON as UTF-8 without BOM (Windows editors sometimes re-add BOM on save). */
+function writeJsonFile(filePath, data) {
+  fs.writeFileSync(filePath, `${JSON.stringify(data, null, 2)}\n`, { encoding: "utf8" });
+}
+
+/** Strip UTF-8 BOM on disk so later tools (git hooks, sync:meta) can JSON.parse the file. */
+function normalizeManifestFileEncoding(manifestPath) {
+  if (!fs.existsSync(manifestPath)) return false;
+  const buf = fs.readFileSync(manifestPath);
+  if (buf.length < 3 || buf[0] !== 0xef || buf[1] !== 0xbb || buf[2] !== 0xbf) return false;
+  const manifest = readJson(manifestPath);
+  if (!manifest) return false;
+  writeJsonFile(manifestPath, manifest);
+  return true;
+}
+
 function readFile(filePath) {
   try {
     return fs.readFileSync(filePath, "utf8");
@@ -151,6 +167,7 @@ function resolveLocalUrl(dir, manifest, packageJson) {
 
 function syncToolManifestOnDisk(dir, { localUrl, appUrl, localVersion }) {
   const manifestPath = path.join(dir, "tool.manifest.json");
+  normalizeManifestFileEncoding(manifestPath);
   const manifest = readJson(manifestPath);
   if (!manifest) return false;
 
@@ -198,7 +215,7 @@ function syncToolManifestOnDisk(dir, { localUrl, appUrl, localVersion }) {
 
   if (changed) {
     manifest.manifestUpdatedAt = now;
-    fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+    writeJsonFile(manifestPath, manifest);
   }
 
   return changed;
@@ -207,6 +224,7 @@ function syncToolManifestOnDisk(dir, { localUrl, appUrl, localVersion }) {
 function toProjectEntry(dir, index, workspaceRootId, options = {}) {
   const { writeManifest = true } = options;
   const manifestPath = path.join(dir, "tool.manifest.json");
+  normalizeManifestFileEncoding(manifestPath);
   const packagePath = path.join(dir, "package.json");
   let manifest = readJson(manifestPath);
   const packageJson = readJson(packagePath);
@@ -401,6 +419,8 @@ module.exports = {
   scanProjectRoot,
   mergeRegistryDefault,
   readJson,
+  writeJsonFile,
+  normalizeManifestFileEncoding,
   syncToolManifestOnDisk,
   toProjectEntry,
   isProjectDir,

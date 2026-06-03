@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-03T01:05:11.516Z",
+  "generatedAt": "2026-06-03T01:14:51.382Z",
   "roots": [
     {
       "id": "tool",
@@ -32,26 +32,28 @@
   "entries": [
     {
       "id": "gpm-automation-console",
-      "code": "LOCAL-001",
-      "name": "P0001-GPM-Automation-Console",
+      "code": "P0001",
+      "name": "GPM Automation Console",
       "repo": "tuanhoangfx/GPM-Automation-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.2.36",
-      "category": "Local",
+      "localVersion": "0.2.37",
+      "category": "Desktop",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Desktop console for managing and automating GPM Login profiles.",
+      "status": "Ready",
+      "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
       "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
       "tags": [
-        "Local",
-        "Workspace"
+        "Electron",
+        "React",
+        "Vite",
+        "Playwright CDP"
       ],
       "localUrl": "http://127.0.0.1:5173",
       "deployTarget": "github-release",
       "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -75,26 +77,28 @@
     },
     {
       "id": "yt-multistream-console",
-      "code": "LOCAL-002",
-      "name": "P0002-YT-Multistream-Console",
+      "code": "P0002",
+      "name": "YT Multistream Console",
       "repo": "tuanhoangfx/YT-Multistream-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.29",
-      "category": "Local",
+      "localVersion": "0.1.30",
+      "category": "Desktop",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Desktop console for multi-channel YouTube livestream from local or Google Drive source.",
+      "status": "Ready",
+      "summary": "Local desktop console for running multi-channel YouTube livestream jobs from local video files or Google Drive links.",
       "localPath": "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
       "tags": [
-        "Local",
-        "Workspace"
+        "Electron",
+        "React",
+        "Vite",
+        "FFmpeg"
       ],
       "localUrl": "http://127.0.0.1:5174",
       "deployTarget": "github-release",
       "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -123,7 +127,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.4.8",
+      "localVersion": "0.4.11",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -135,13 +139,13 @@
         "Vite",
         "GitHub public raw API"
       ],
-      "appUrl": "https://infix1.io.vn",
+      "appUrl": "https://infi.io.vn",
       "localUrl": "http://127.0.0.1:5176",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm open",
         "Build: corepack pnpm build",
-        "App: https://infix1.io.vn"
+        "App: https://infi.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -182,13 +186,13 @@
         "9Router",
         "Admin UI"
       ],
-      "appUrl": "https://zaloai.infix1.io.vn/p0005",
+      "appUrl": "https://zaloai.infi.io.vn/p0005",
       "localUrl": "http://127.0.0.1:3920",
       "deployTarget": "vps",
       "usage": [
         "Dev: pnpm run admin",
         "Run the configured build command from package.json.",
-        "App: https://zaloai.infix1.io.vn/p0005"
+        "App: https://zaloai.infi.io.vn/p0005"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -217,7 +221,7 @@
       "repo": "tuanhoangfx/aichathub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.4",
+      "localVersion": "0.1.5",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Draft",
@@ -234,7 +238,7 @@
       "localUrl": "http://127.0.0.1:5178",
       "deployTarget": "local",
       "usage": [
-        "Dev: node ../../scripts/ensure-dev-product.cjs P0006",
+        "Dev: node ../scripts/ensure-dev-product.cjs P0006",
         "Build: pnpm build"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
@@ -275,12 +279,12 @@
         "Node.js",
         "ssh2"
       ],
-      "appUrl": "https://9router.infix1.io.vn/dashboard",
+      "appUrl": "https://9router.infi.io.vn/dashboard",
       "deployTarget": "vps",
       "usage": [
         "Run the configured dev command from package.json.",
         "Run the configured build command from package.json.",
-        "App: https://9router.infix1.io.vn/dashboard"
+        "App: https://9router.infi.io.vn/dashboard"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -607,13 +611,13 @@
         "Inter",
         "Chrome extension E0001-cookie-bridge"
       ],
-      "appUrl": "https://databox.infix1.io.vn",
+      "appUrl": "https://databox.infi.io.vn",
       "localUrl": "http://127.0.0.1:5177",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
-        "App: https://databox.infix1.io.vn"
+        "App: https://databox.infi.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -709,13 +713,13 @@
         "Tailwind CSS",
         "Supabase"
       ],
-      "appUrl": "https://infi.infix1.io.vn",
+      "appUrl": "https://store.infi.io.vn",
       "localUrl": "http://127.0.0.1:3022",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
-        "App: https://infi.infix1.io.vn"
+        "App: https://store.infi.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -750,13 +754,13 @@
         "Tailwind CSS",
         "Facebook Graph API"
       ],
-      "appUrl": "https://fanpage.infix1.io.vn",
+      "appUrl": "https://fanpage.infi.io.vn",
       "localUrl": "http://127.0.0.1:3023",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm open",
         "Build: corepack pnpm build",
-        "App: https://fanpage.infix1.io.vn"
+        "App: https://fanpage.infi.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -791,13 +795,13 @@
         "Supabase",
         "AES-GCM"
       ],
-      "appUrl": "https://databox.infix1.io.vn/cookie",
+      "appUrl": "https://databox.infi.io.vn/cookie",
       "localUrl": "chrome://extensions",
       "deployTarget": "local",
       "usage": [
         "Run the configured dev command from package.json.",
         "Run the configured build command from package.json.",
-        "App: https://databox.infix1.io.vn/cookie"
+        "App: https://databox.infi.io.vn/cookie"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

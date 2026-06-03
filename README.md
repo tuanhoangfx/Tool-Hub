@@ -2,7 +2,7 @@
 
 Workspace **Tool Hub** (P0004): catalog mọi project đang chạy — GitHub health, drift, local registry.
 
-Production: **https://infix1.io.vn** (Vercel). Dev: `http://127.0.0.1:5176`.
+Production: **https://infi.io.vn** (Vercel). Dev: `http://127.0.0.1:5176`.
 
 ## Commands
 
@@ -21,7 +21,7 @@ pnpm run push                  # git push main (gh auth)
 
 ## Deploy (Vercel)
 
-Push `main` triggers build. Custom domain: `infix1.io.vn`.
+Push `main` triggers build. Custom domain: `infi.io.vn`.
 
 Setup: [docs/DEPLOY-VERCEL.md](docs/DEPLOY-VERCEL.md). Workspace overview: [../DEPLOY.md](../DEPLOY.md).
 
