@@ -3,7 +3,7 @@
  * Build static Supabase Quota catalog snapshot for instant first paint (no dev API).
  * Output: public/supabase-quota-catalog.snapshot.json
  */
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
@@ -29,5 +29,23 @@ const require = createRequire(import.meta.url);
 const { fetchSupabaseQuotaCatalogPayload } = require(libPath);
 const payload = fetchSupabaseQuotaCatalogPayload({ cwd: hubRoot });
 
+let previousCount = 0;
+if (existsSync(outPath)) {
+  try {
+    const prev = JSON.parse(readFileSync(outPath, "utf8"));
+    previousCount = prev.projects?.length ?? 0;
+  } catch {
+    previousCount = 0;
+  }
+}
+
+const nextCount = payload.projects?.length ?? 0;
+if (previousCount > 0 && nextCount < previousCount) {
+  console.log(
+    `Keeping committed snapshot (${previousCount} projects); regenerated payload had ${nextCount} projects`,
+  );
+  process.exit(0);
+}
+
 writeFileSync(outPath, `${JSON.stringify(payload)}\n`, "utf8");
-console.log(`Wrote ${outPath} (${payload.projects?.length ?? 0} projects, phase=${payload.metricsPhase})`);
+console.log(`Wrote ${outPath} (${nextCount} projects, phase=${payload.metricsPhase})`);

@@ -10,11 +10,11 @@ import { createRequire } from "node:module";
 import { scanSupabaseWorkspace } from "./lib/supabase-workspace-scan.cjs";
 
 const require = createRequire(import.meta.url);
-const { fetchSupabaseQuotaPayload, loadCatalog } = require("../../scripts/lib/supabase-quota-fetch.cjs");
+const { fetchSupabaseQuotaPayload, loadCatalog } = require("./lib/supabase-quota-fetch.cjs");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const mapPath = path.join(__dirname, "../public/supabase-workspace-map.json");
-const devRoot = path.resolve(__dirname, "../../..");
+const devRoot = path.resolve(__dirname, "..");
 
 const workspace =
   fs.existsSync(mapPath) && !process.argv.includes("--rescan")
@@ -23,7 +23,7 @@ const workspace =
 
 const workspaceRefs = new Set(workspace.projects.map((p) => p.ref));
 const payload = await fetchSupabaseQuotaPayload({ cwd: path.join(__dirname, "..") });
-const catalog = loadCatalog(devRoot);
+const catalog = loadCatalog(path.resolve(__dirname, ".."), path.resolve(__dirname, ".."));
 
 const apiRefs = new Set(
   (payload.projects ?? []).filter((p) => p.quotaSource !== "catalog" && p.projectRef).map((p) => p.projectRef),

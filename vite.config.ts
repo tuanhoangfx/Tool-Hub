@@ -25,7 +25,7 @@ function loadDevMiddleware(): {
   try {
     return {
       createSupabaseApiProxy: require("./scripts/lib/supabase-api-proxy.cjs").createSupabaseApiProxy,
-      createQuotaMiddleware: require("../scripts/lib/supabase-quota-fetch.cjs").createQuotaMiddleware,
+      createQuotaMiddleware: require("./scripts/lib/supabase-quota-fetch.cjs").createQuotaMiddleware,
       createWorkspaceRefreshMiddleware: require("./scripts/lib/workspace-refresh.cjs").createWorkspaceRefreshMiddleware,
     };
   } catch {
