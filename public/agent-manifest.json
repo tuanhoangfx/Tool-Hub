@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T07:22:41.079Z",
+  "generatedAt": "2026-06-03T08:17:35.286Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -26,7 +26,7 @@
       "summary": "Hub load / catalog reference: hub-background-prefetch.ts",
       "bodyPreview": "import { prefetchJson } from \"@dev/hub-load\";\nimport { normalizeAgentManifest } from \"../features/system-hub/agent-context/normalize-agent-manifest\";\nimport { hydrateHubCatalogFromLocalRegistry } from \"./hub-catalog-hydrate\";\nimport { agentManifestCache } from \"./agent-manifest-cache\";\nimport { QuotaPayloadSchema } from \"../features/system-hub/supabase-quota-schema\";\nimport {\n  readSupabaseQuotaStaleCache,\n  writeSupabaseQuotaClientCache,\n} from \"../features/system-hub/supabase-quota-client-cache\";\nimport { mergeQuotaPayloadPatches } from \"../features/system-hub/supabase-quota-merge\";\n\nconst AGENT_MANIFEST_URL = \"/agent-manifest.json\";\n\nfunction applyAgentManifest(json: unknown): void {\n  try {\n    const data = normalizeAgentManifest(json);\n    if (data) agentManifestCache.write(data);\n  } catch {\n    /* invalid manifest */\n  }\n}\n\nconst SNAPSHOT_URL = \"/supabase-quota-catalog.snapshot.json\";\n\nfunction applyQuotaPayload(json: unknown): void {\n  try {\n    const data = QuotaPayloadSchema.parse(json);\n    if (!data.ok) return;\n    const prev = readSupabaseQuotaStaleCache();\n    if (\n      prev &&\n      data.projects?.length &&\n      (data.projects.length < (prev.projects?.length ?? 0) ",
       "lines": 81,
-      "updatedAt": "2026-06-02T21:09:25.437Z",
+      "updatedAt": "2026-06-03T08:12:23.025Z",
       "tags": [
         "hub-load",
         "p0004"
@@ -53,12 +53,29 @@
       "name": "dev-workspace",
       "path": ".cursor\\rules\\dev-workspace.mdc",
       "scope": "workspace",
+      "alwaysApply": false,
+      "agentRequestable": true,
+      "summary": "\"Full reference: version tiers, ship pipeline, CHANGELOG, env, Hub UI (read when needed).\"",
+      "bodyPreview": "# Dev workspace — full reference (agent)\n\n**Compact gate (Always Apply):** `.cursor/rules/dev-workspace-compact.mdc`  \n**Source of truth (detail):** this file  \n**Human review (Vietnamese):** `E:\\Dev\\.cursor\\RULES-HUMAN-VI.md` — keep in sync when policy changes.  \n**Release pipeline:** `E:\\Dev\\Rules\\RELEASE-STANDARD.md` · `Tool/scripts/ship-product.ps1`\n\n---\n\n## 0. VERSION BUMP — hard gate (read first, every task)\n\nWhen you change **meaningful code or UI** in `Tool/P00xx-*` or `Extension/E00xx-*`:\n\n1. **Before** final reply / commit / push: bump the correct tier; sync `package.json`, `tool.manifest.json`, `CHANGELOG.md`, extension manifests as applicable.\n2. **Last line of summary** (required): `Version: X.Y.Z → A.B.C` — or `Version: no bump (read-only / whitespace only)`.\n3. **Never** wait for the user to say “nhớ bump version”.\n4. A **`stop` hook** may follow up if git shows code changes without version files — treat as blocking.\n5. Product extras: `P0021-.../p0021-version-bump.mdc`, `E0001-.../e0001-auto-bump-version.mdc`.\n\n| Tier | When | Bump |\n|------|------|------|\n| **Patch** | Task done with meaningful code/UI change | `PATCH + 1` |\n| **Minor** | User requests **commit** (",
+      "lines": 142,
+      "updatedAt": "2026-06-03T08:05:02.241Z",
+      "tags": [
+        "rule",
+        "rules"
+      ]
+    },
+    {
+      "id": "cursor-rules-dev-workspace-compact-mdc",
+      "kind": "rule",
+      "name": "dev-workspace-compact",
+      "path": ".cursor\\rules\\dev-workspace-compact.mdc",
+      "scope": "workspace",
       "alwaysApply": true,
       "agentRequestable": false,
-      "summary": "\"HARD GATE: version bump + browser verify loop until task passes. Dev E:\\\\Dev.\"",
-      "bodyPreview": "# Dev workspace — single rule file (agent)\n\n**Source of truth:** `E:\\Dev\\.cursor\\rules\\dev-workspace.mdc`  \n**Human review (Vietnamese):** `E:\\Dev\\.cursor\\RULES-HUMAN-VI.md` — keep in sync when policy changes.  \n**Release pipeline:** `E:\\Dev\\Rules\\RELEASE-STANDARD.md` · `Tool/scripts/ship-product.ps1`\n\n---\n\n## 0. VERSION BUMP — hard gate (read first, every task)\n\nWhen you change **meaningful code or UI** in `Tool/P00xx-*` or `Extension/E00xx-*`:\n\n1. **Before** final reply / commit / push: bump the correct tier; sync `package.json`, `tool.manifest.json`, `CHANGELOG.md`, extension manifests as applicable.\n2. **Last line of summary** (required): `Version: X.Y.Z → A.B.C` — or `Version: no bump (read-only / whitespace only)`.\n3. **Never** wait for the user to say “nhớ bump version”.\n4. A **`stop` hook** may follow up if git shows code changes without version files — treat as blocking.\n5. Product extras: `P0021-.../p0021-version-bump.mdc`, `E0001-.../e0001-auto-bump-version.mdc`.\n\n| Tier | When | Bump |\n|------|------|------|\n| **Patch** | Task done with meaningful code/UI change | `PATCH + 1` |\n| **Minor** | User requests **commit** (or you commit in-task) | `MINOR + 1`, `PATCH = 1` |\n|",
-      "lines": 141,
-      "updatedAt": "2026-06-03T06:53:08.959Z",
+      "summary": "\"Always-on: Vietnamese + 3 proposals + Version line + browser verify (compact gate).\"",
+      "bodyPreview": "# Dev workspace — compact gate (always on)\n\nFull policy: `.cursor/rules/dev-workspace.mdc` · Human (VI): `.cursor/RULES-HUMAN-VI.md`\n\n## Every reply (§1)\n\n- Reply to the user in **Vietnamese**; Tool/Extension **UI strings** in **English**.\n- End with **3 numbered proposals** (`1.` `2.` `3.`) — concrete next steps (perf, feature, or structure).\n- Execute proposals only when user says **ok 1**, **ok 1 2**, **ok 1 2 3**, **làm 1**, **tự làm**, etc.\n- **Last line** of summary: `Version: X.Y.Z → A.B.C` or `Version: no bump (reason)`.\n- **Commit / push / deploy / release** only when user explicitly asks.\n\n## Version (§0 — when editing product code)\n\nMeaningful changes in `Tool/P00xx-*` or `Extension/E00xx-*` → bump + CHANGELOG block before task end.  \n**Stop hook** may auto-follow-up if version files missing. Ship: skill `p00xx-ship-keywords`.\n\n## Browser verify (§3 — UI / bug / deploy)\n\nFor UI changes, bugs, extension+web flows, deploy smoke: read skill **`browser-verify-until-done`** — **edit → browser MCP verify → fix** until pass (~5 rounds max).  \nDo not ask user to test while browser MCP is available. Slash: `/verify-browser`.  \nSkip only for docs/read-only/no-UI, or user says **sk",
+      "lines": 30,
+      "updatedAt": "2026-06-03T08:13:44.980Z",
       "tags": [
         "rule",
         "rules"
@@ -73,8 +90,8 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# Browser verify until done\n\n## When this applies\n\n- Changed **UI**, routes, client logic, or styles in `Tool/P00xx-*` / `Extension/E00xx-*`\n- User reports a **bug** visible in the app or extension popup\n- **Deploy / release** smoke test (with production or local URL)\n- User says: *fix xong*, *test browser*, *loop đến khi được*, *smoke test*\n\n**Skip** only when: pure docs, read-only review, server-only change with no UI surface, or user says *skip browser*.\n\n## Browsers (priority)\n\n1. **Cursor IDE browser MCP** — default (`browser_navigate`, `browser_snapshot`, console/network tools)\n2. **Chrome profile 0010** — if user already logged in there and MCP cannot reach local host / extension-only flow\n\nDo not ask the user to log in again if a session is already authenticated.\n\n## Fix loop (mandatory)\n\nRepeat until **done** or **blocked**:\n\n```\nEDIT → RUN (dev/build if needed) → BROWSER VERIFY → pass?\n         ↑                                    |\n         └──────── no: diagnose, fix ─────────┘\n```\n\n### 1. Prepare\n\n- Know the **URL** (local port from `tool.manifest.json` / README, or production URL).\n- Know **acceptance**: what screen, button, or data proves the fix.\n\n### 2. Browser ver",
-      "lines": 90,
-      "updatedAt": "2026-06-03T00:40:50.942Z",
+      "lines": 92,
+      "updatedAt": "2026-06-03T07:58:38.782Z",
       "tags": [
         "skill",
         "workspace"

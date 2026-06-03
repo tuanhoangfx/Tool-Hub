@@ -53,7 +53,7 @@ export function hydrateSupabaseQuotaFromBuildSnapshot(): void {
 }
 
 /** Warm Supabase Quota catalog via dev API (tool bindings may be newer than snapshot). */
-const PRIORITY_REFS = "bklxcjrkhrevdcqjscku,zvdxznbbwbqvdaxliujs";
+const PRIORITY_REFS = "bklxcjrkhrevdcqjscku,fmnrafpzctuhxjaaomzt";
 
 export function prefetchSupabaseQuotaCatalog(): void {
   hydrateSupabaseQuotaFromBuildSnapshot();

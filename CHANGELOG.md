@@ -1,10 +1,37 @@
 # Changelog
 
+## 2026-06-03 - Supabase Quota catalog sync + legacy prune
+
+- Version: `2.0.0`
+- Type: Major
+- Product: P0004
+- Prompt: Release P0004 — Supabase Quota data complete, legacy projects removed
+- Commit: `93dcef1`
+- Status: Committed
+
+### Changes
+
+- Catalog: 14 projects (11 account P01 + P0009/P0013/P0022); removed 5 dead legacy refs.
+- `public/supabase-quota-catalog.snapshot.json` rebuilt; PAT nguyenluongthaimkt live.
+- `hub-background-prefetch`: priority hub ref `fmnrafpzctuhxjaaomzt`.
+
+### Verification
+
+- `node scripts/verify-supabase-quota.mjs` — 14 catalog, 11 API
+- `corepack pnpm build` — pass
+- Browser: System → Supabase Quota @ :5176
+
+### Rollback
+
+- `git checkout v1.1.3` or redeploy prior Vercel production
+
+---
+
 ## 2026-06-03 - Git commit version stamp
 
 - Version: `1.1.3`
 - Timestamp: 2026-06-03 15:23 (UTC+7)
-- Commit: pending
+- Commit: `6f38644`
 - Type: Patch
 - Status: Draft
 
@@ -25,7 +52,7 @@
 - Type: Patch
 - Product: P0004
 - Prompt: Hoàn thiện tab Supabase Quota; PAT nguyenluongthaimkt; rà soát xóa project không còn thực tế
-- Commit: pending
+- Commit: `6f38644`
 - Status: Draft
 
 ### Changes
