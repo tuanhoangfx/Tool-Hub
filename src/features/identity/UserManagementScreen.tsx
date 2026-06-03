@@ -10,10 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import {
-  AppTabHeader,
-  FilterBar,
   HubResultCount,
-  KpiStrip,
   MiniBarChart,
   MiniDonut,
   ViewToggle,
@@ -26,7 +23,8 @@ import {
   type KpiTileData,
   type TabHeaderStatItem,
 } from "../../components/sales-shell";
-import { useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import { AppTabHeader, HubDirectoryScreen, useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import { UserListChromeHeader } from "./UserListChromeHeader";
 import { APP_VERSION } from "../../lib/app-meta";
 import { HubAuthGate } from "./HubAuthGate";
 import { HubRoleBadge } from "./HubRoleBadge";
@@ -114,24 +112,6 @@ function StatusBadge({ status }: { status: UserManagementRow["status"] }) {
       <span className={`h-2 w-2 rounded-full ${cls} shadow-[0_0_10px_currentColor]`} />
       {status}
     </span>
-  );
-}
-
-function DataSectionRule() {
-  return (
-    <div role="separator" className="relative py-5" aria-label="Users list">
-      <div
-        className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-emerald-400/45 to-transparent shadow-[0_0_10px_rgba(52,211,153,0.2)]"
-        aria-hidden
-      />
-      <div className="relative flex justify-center" aria-hidden>
-        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/25 bg-[var(--bg)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-emerald-300/90 shadow-[0_0_16px_rgba(52,211,153,0.12)]">
-          <span className="h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
-          Users
-          <span className="h-1 w-1 shrink-0 rounded-full bg-emerald-400" />
-        </span>
-      </div>
-    </div>
   );
 }
 
@@ -596,24 +576,14 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
 
   if (authLoading && rows.length === 0 && !readUserManagementStaleCache()) {
     return (
-      <div className="anim-fade space-y-0">
-        <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
-          <AppTabHeader
-            ariaLabel="Users header"
-            titleIcon={Users}
-            titleIconClass="text-emerald-300"
-            title="Users"
-            metaItems={[{ icon: Users, title: "Build", value: `v${APP_VERSION}` }]}
-            centerStats={[]}
-            actions={headerActions}
-            embedded
-            dividerBelow={false}
-          />
-        </div>
-        <div className="relative mt-6 min-h-[320px]">
+      <HubDirectoryScreen
+        header={<UserListChromeHeader centerStats={[]} actions={headerActions} />}
+        sectionRuleLabel="Users"
+      >
+        <div className="relative min-h-[320px]">
           <UsersLoadingView variant="overlay" />
         </div>
-      </div>
+      </HubDirectoryScreen>
     );
   }
 
@@ -641,128 +611,111 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     }
   }
 
+  const chartsBand = (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <MiniBarChart title="By Role" items={charts.roleItems} />
+      <MiniBarChart title="By Activity" items={charts.statusItems} />
+      <MiniBarChart title="Tool access" items={charts.toolItems} />
+      <MiniDonut title="Activity Distribution" items={charts.activityItems} />
+    </div>
+  );
+
   return (
-    <div className="anim-fade space-y-0">
-      <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
-        <AppTabHeader
-          ariaLabel="Users header"
-          titleIcon={Users}
-          titleIconClass="text-emerald-300"
-          title="Users"
-          metaItems={[
-            { icon: Users, title: "Build", value: `v${APP_VERSION}` },
-            { icon: ShieldCheck, title: "Project", value: "x1z10 P01" },
-          ]}
-          centerStats={centerStats}
-          actions={headerActions}
-          embedded
-          dividerBelow={false}
-        />
-        <FilterBar
-          shortcutScope="users"
-          layout="hub"
-          pinSticky
-          headerPinned
-          embedded
-          placeholder="Search users…"
-          filters={userFilters}
-          query={query}
-          onQueryChange={setQuery}
-          values={filterValues}
-          onValuesChange={setFilterValues}
-          toolbar={
-            <>
-              <ViewToggle value={viewMode} onChange={setViewMode} />
-              <HubResultCount icon={Users} shown={filteredRows.length} total={rows.length} />
-              <button
-                type="button"
-                onClick={() => void refresh({ silent: true })}
-                disabled={refreshing && !session}
-                className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-200 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                <RefreshCw size={14} className={loading || refreshing ? "animate-spin" : ""} />
-                {refreshing && rows.length > 0 ? "Updating…" : "Refresh"}
-              </button>
-            </>
-          }
-          row2Actions={
-            session ? (
-              <UserBulkActionBar
-                hasSelection={hasSelection}
-                selectedCount={selectedIds.size}
-                loading={loading}
-                isAdmin={isAdmin}
-                isManager={isManager}
-                roleLoading={roleLoading}
-                onAdd={handleAddUserOpen}
-                onSyncTools={() => void handleSyncToolsClick()}
-                onEdit={handleBulkEdit}
-                onDelete={() => void handleBulkDelete()}
+    <>
+      <HubDirectoryScreen
+        header={<UserListChromeHeader centerStats={centerStats} actions={headerActions} />}
+        filters={userFilters}
+        query={query}
+        onQueryChange={setQuery}
+        filterValues={filterValues}
+        onFilterValuesChange={setFilterValues}
+        filterPlaceholder="Search users…"
+        filterShortcutScope="users"
+        filterToolbar={
+          <>
+            <ViewToggle value={viewMode} onChange={setViewMode} />
+            <HubResultCount icon={Users} shown={filteredRows.length} total={rows.length} />
+            <button
+              type="button"
+              onClick={() => void refresh({ silent: true })}
+              disabled={refreshing && !session}
+              className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-200 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <RefreshCw size={14} className={loading || refreshing ? "animate-spin" : ""} />
+              {refreshing && rows.length > 0 ? "Updating…" : "Refresh"}
+            </button>
+          </>
+        }
+        filterRowActions={
+          session ? (
+            <UserBulkActionBar
+              hasSelection={hasSelection}
+              selectedCount={selectedIds.size}
+              loading={loading}
+              isAdmin={isAdmin}
+              isManager={isManager}
+              roleLoading={roleLoading}
+              onAdd={handleAddUserOpen}
+              onSyncTools={() => void handleSyncToolsClick()}
+              onEdit={handleBulkEdit}
+              onDelete={() => void handleBulkDelete()}
+            />
+          ) : null
+        }
+        kpis={kpis}
+        charts={chartsBand}
+        sectionRuleLabel="Users"
+      >
+        {!session && authLoading ? (
+          <div className="mb-3 rounded-xl border border-white/10 bg-white/[.03] px-3 py-2 text-xs text-[var(--muted)]">
+            Checking sign-in… showing cached users. Data will refresh when connected.
+          </div>
+        ) : null}
+
+        <div className={`transition-opacity ${refreshing ? "opacity-80" : ""}`}>
+          {dataWarning ? (
+            <div className="mb-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+              User data source warning: {dataWarning}
+            </div>
+          ) : null}
+
+          {roleMessage ? (
+            <div className="mb-3 rounded-xl border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">
+              {roleMessage}
+            </div>
+          ) : null}
+
+          <div className="relative mt-3 min-h-[200px]">
+            {rows.length === 0 && (loading || refreshing) ? (
+              <p className="py-10 text-center text-sm text-[var(--muted)]">Loading users in background…</p>
+            ) : null}
+            {rows.length > 0 && viewMode === "card" ? (
+              <UserCards
+                users={sortedRows}
+                selectedIds={selectedIds}
+                onToggleSelect={toggleSelect}
+                detailUserId={accessUser?.id ?? null}
+                onOpenUser={setAccessUser}
               />
-            ) : null
-          }
-        />
-      </div>
-
-      {!session && authLoading ? (
-        <div className="mx-6 mt-3 rounded-xl border border-white/10 bg-white/[.03] px-3 py-2 text-xs text-[var(--muted)]">
-          Checking sign-in… showing cached users. Data will refresh when connected.
+            ) : null}
+            {rows.length > 0 && viewMode === "table" ? (
+              <UserDirectoryTable
+                users={sortedRows}
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={handleSort}
+                selectedIds={selectedIds}
+                onToggleSelect={toggleSelect}
+                onToggleSelectAll={toggleSelectAll}
+                allVisibleSelected={allVisibleSelected}
+                detailUserId={accessUser?.id ?? null}
+                onOpenUser={setAccessUser}
+                visibleColumns={visibleColumns}
+              />
+            ) : null}
+          </div>
         </div>
-      ) : null}
-
-      <div className={`space-y-5 pt-5 transition-opacity ${refreshing ? "opacity-80" : ""}`}>
-        <KpiStrip items={kpis} />
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          <MiniBarChart title="By Role" items={charts.roleItems} />
-          <MiniBarChart title="By Activity" items={charts.statusItems} />
-          <MiniBarChart title="Tool access" items={charts.toolItems} />
-          <MiniDonut title="Activity Distribution" items={charts.activityItems} />
-        </div>
-      </div>
-
-      <DataSectionRule />
-
-      {dataWarning ? (
-        <div className="mb-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-          User data source warning: {dataWarning}
-        </div>
-      ) : null}
-
-      {roleMessage ? (
-        <div className="mb-3 rounded-xl border border-indigo-400/20 bg-indigo-500/10 px-3 py-2 text-xs text-indigo-100">
-          {roleMessage}
-        </div>
-      ) : null}
-
-      <div className="relative mt-3 min-h-[200px]">
-        {rows.length === 0 && (loading || refreshing) ? (
-          <p className="py-10 text-center text-sm text-[var(--muted)]">Loading users in background…</p>
-        ) : null}
-        {rows.length > 0 && viewMode === "card" ? (
-          <UserCards
-            users={sortedRows}
-            selectedIds={selectedIds}
-            onToggleSelect={toggleSelect}
-            detailUserId={accessUser?.id ?? null}
-            onOpenUser={setAccessUser}
-          />
-        ) : null}
-        {rows.length > 0 && viewMode === "table" ? (
-          <UserDirectoryTable
-            users={sortedRows}
-            sortKey={sortKey}
-            sortDir={sortDir}
-            onSort={handleSort}
-            selectedIds={selectedIds}
-            onToggleSelect={toggleSelect}
-            onToggleSelectAll={toggleSelectAll}
-            allVisibleSelected={allVisibleSelected}
-            detailUserId={accessUser?.id ?? null}
-            onOpenUser={setAccessUser}
-            visibleColumns={visibleColumns}
-          />
-        ) : null}
-      </div>
+      </HubDirectoryScreen>
 
       {accessUser && session ? (
         <UserAccessModal
@@ -783,6 +736,6 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
         onCreateSingle={handleCreateSingleUser}
         onCreateMany={handleCreateUsers}
       />
-    </div>
+    </>
   );
 }

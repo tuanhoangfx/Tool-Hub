@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-06-03 - Fix Users screen JSX (missing closing div)
+
+- Version: `2.1.17`
+- Type: Patch
+- Product: P0004
+- Prompt: ok 1 2 3; Vite Expected corresponding JSX closing tag
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `UserManagementScreen.tsx`: close `transition-opacity` wrapper before `</HubDirectoryScreen>`.
+
+Version: 2.1.16 → 2.1.17
+
 ## 2026-06-03 - User modal header/profile one row align
 
 - Version: `2.1.16`

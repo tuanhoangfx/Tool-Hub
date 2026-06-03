@@ -61,7 +61,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "2.1.16",
+    "version": "2.1.17",
     "readiness": [
       "build",
       "lint",
