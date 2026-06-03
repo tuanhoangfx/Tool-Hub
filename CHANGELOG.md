@@ -11,8 +11,8 @@
 - Product: P0004
 - Prompt: Release P0004 v0.2.7 — commit WIP, vendor deps for Vercel, gh release
 - Commit: `dd0feb9`
-- Status: Committed
-- Release: (after gh release)
+- Status: Verified
+- Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v0.2.7
 
 ### Changes
 
