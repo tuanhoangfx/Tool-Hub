@@ -1,7 +1,7 @@
 {
   "name": "tool-hub",
   "private": true,
-  "version": "2.1.21",
+  "version": "2.1.22",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
@@ -45,7 +45,8 @@
     "identity:import": "node scripts/identity-migration/import-hub-identity.mjs",
     "identity:merge-users": "node scripts/identity-migration/merge-duplicate-hub-users.mjs",
     "identity:merge-users:dry": "node scripts/identity-migration/merge-duplicate-hub-users.mjs --dry-run",
-    "identity:tool-access": "powershell -ExecutionPolicy Bypass -File scripts/apply-hub-tool-access.ps1"
+    "identity:tool-access": "powershell -ExecutionPolicy Bypass -File scripts/apply-hub-tool-access.ps1",
+    "identity:login-id": "node scripts/apply-hub-login-id.mjs"
   },
   "dependencies": {
     "@dev/hub-load": "file:./vendor/hub-load",

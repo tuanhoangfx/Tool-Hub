@@ -22,7 +22,9 @@ powershell -ExecutionPolicy Bypass -File scripts/apply-hub-identity-migration.ps
 
 Or paste migrations in [SQL Editor](https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new), including `20260603120000_hub_login_id.sql` for User ID + contact email columns.
 
-**Status (2026-05-29):** Migration applied on `fmnrafpzctuhxjaaomzt` via Management API.
+**Status (2026-05-29):** Base identity migration applied on `fmnrafpzctuhxjaaomzt` via Management API.
+
+**Status (2026-06-04):** `20260603120000_hub_login_id.sql` applied (`login_id`, `contact_email`, `handle_new_user`). Re-apply: `node scripts/apply-hub-login-id.mjs`.
 
 3. `pnpm dev` → open **Users** tab or footer **User** (account / sign out).
 
