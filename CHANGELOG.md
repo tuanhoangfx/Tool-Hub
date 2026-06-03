@@ -7,7 +7,8 @@
 - Product: P0004
 - Prompt: header + form thẳng 1 hàng; Working Rules §1
 - Commit: `3a65947`
-- Status: Committed
+- Status: Verified
+- Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v2.1.16
 
 ### Changes
 

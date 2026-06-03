@@ -18,10 +18,26 @@
     "GitHub public raw API"
   ],
   "uiScreens": [
-    { "screen": "users", "template": "directory", "golden": "P0004/users" },
-    { "screen": "hub", "template": "directory", "golden": "P0004/hub-list" },
-    { "screen": "overview", "template": "document-toc", "golden": "P0004/overview-toc" },
-    { "screen": "system", "template": "system-panels", "golden": "P0004/system" }
+    {
+      "screen": "users",
+      "template": "directory",
+      "golden": "P0004/users"
+    },
+    {
+      "screen": "hub",
+      "template": "directory",
+      "golden": "P0004/hub-list"
+    },
+    {
+      "screen": "overview",
+      "template": "document-toc",
+      "golden": "P0004/overview-toc"
+    },
+    {
+      "screen": "system",
+      "template": "system-panels",
+      "golden": "P0004/system"
+    }
   ],
   "commands": {
     "dev": "corepack pnpm open",
@@ -54,9 +70,9 @@
       "local-registry"
     ],
     "latestPublished": {
-      "tag": "v2.0.0",
-      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v2.0.0",
-      "publishedAt": "2026-06-03T09:11:04.149Z"
+      "tag": "v2.1.16",
+      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v2.1.16",
+      "publishedAt": "2026-06-03T15:30:44.733Z"
     }
   },
   "urls": {
@@ -85,7 +101,7 @@
       "migrateDoc": "docs/IDENTITY.md"
     }
   },
-  "manifestUpdatedAt": "2026-06-03T13:23:23.086Z",
+  "manifestUpdatedAt": "2026-06-03T15:30:44.734Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infi.io.vn). Library-only catalog."

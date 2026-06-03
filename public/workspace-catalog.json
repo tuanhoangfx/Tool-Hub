@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-03T09:11:04.907Z",
+  "generatedAt": "2026-06-03T15:30:45.514Z",
   "roots": [
     {
       "id": "tool",
@@ -25,8 +25,8 @@
     }
   ],
   "summary": {
-    "total": 19,
-    "projects": 17,
+    "total": 18,
+    "projects": 16,
     "n8n": 2
   },
   "entries": [
@@ -123,7 +123,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "2.0.0",
+      "localVersion": "2.1.16",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -164,64 +164,17 @@
       "assetKind": "project"
     },
     {
-      "id": "zalo-ai-bot",
-      "code": "P0005",
-      "name": "Zalo AI Bot",
-      "repo": "tuanhoangfx/zalo-ai-bot",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "1.4.0",
-      "category": "Bot",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
-      "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
-      "tags": [
-        "Node.js",
-        "zca-js",
-        "9Router",
-        "Admin UI"
-      ],
-      "appUrl": "https://zaloai.infi.io.vn",
-      "localUrl": "http://127.0.0.1:3920",
-      "deployTarget": "vps",
-      "usage": [
-        "Dev: pnpm run admin",
-        "Run the configured build command from package.json.",
-        "App: https://zaloai.infi.io.vn"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/apply-storage-v2-remote.mjs",
-        "scripts/apply-suggestions-remote.mjs",
-        "scripts/apply-zalo-admin-apex.mjs",
-        "scripts/assign-test-label-remote.mjs",
-        "scripts/backfill-sqlite-remote.mjs",
-        "scripts/change-admin-pass-remote.mjs"
-      ],
-      "workspaceRoot": "tool",
-      "assetKind": "project"
-    },
-    {
       "id": "aichathub",
       "code": "P0006",
       "name": "AIChatHub",
       "repo": "tuanhoangfx/aichathub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.2.1",
+      "localVersion": "0.3.4",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Draft",
-      "summary": "Multi-channel chatbot platform — Zalo engine from P0005, Hub-style console, Messenger/Telegram planned.",
+      "summary": "Multi-channel chatbot platform — native Hub console (QR, groups, inbox), Zalo engine in packages/engine.",
       "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
       "tags": [
         "React",
@@ -248,11 +201,11 @@
       ],
       "scriptFiles": [
         "scripts/apply-hub-seed.ps1",
+        "scripts/chathub-nginx-blocks.mjs",
+        "scripts/deploy-console-remote.mjs",
         "scripts/deploy-remote.mjs",
         "scripts/ensure-dev.cjs",
-        "scripts/load-vps-env.mjs",
-        "scripts/migrate-data-from-p0005.mjs",
-        "scripts/ssh-utils.mjs"
+        "scripts/load-vps-env.mjs"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"
@@ -551,7 +504,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.2.2",
+      "localVersion": "2.1.2",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
@@ -600,7 +553,7 @@
       "repo": "tuanhoangfx/AutoVideo-Studio",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.2.1",
+      "localVersion": "1.2.3",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",

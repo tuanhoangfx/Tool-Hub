@@ -1,10 +1,10 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-03T09:11:05.047Z",
+  "generatedAt": "2026-06-03T15:30:45.661Z",
   "summary": {
-    "projectCount": 6,
-    "toolBindingCount": 23,
-    "toolsScanned": 17,
+    "projectCount": 7,
+    "toolBindingCount": 24,
+    "toolsScanned": 16,
     "toolsWithSupabase": 8
   },
   "projects": [
@@ -342,6 +342,27 @@
           "envLabel": "Manifest/docs",
           "url": "https://xrnzsmjjbtclmkmrlfxj.supabase.co",
           "ref": "xrnzsmjjbtclmkmrlfxj"
+        }
+      ]
+    },
+    {
+      "ref": "zurfouqanjcubgneuctp",
+      "url": "https://zurfouqanjcubgneuctp.supabase.co",
+      "labels": [
+        "Manifest/docs"
+      ],
+      "bindings": [
+        {
+          "toolId": "p0020-data-box",
+          "toolCode": "P0020",
+          "toolName": "P0020-Data-Box",
+          "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
+          "workspaceRoot": "tool",
+          "envFile": "tool.manifest.json",
+          "envKey": "tool.manifest.json",
+          "envLabel": "Manifest/docs",
+          "url": "https://zurfouqanjcubgneuctp.supabase.co",
+          "ref": "zurfouqanjcubgneuctp"
         }
       ]
     }

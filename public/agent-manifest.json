@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T13:22:09.625Z",
+  "generatedAt": "2026-06-03T15:30:03.510Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -180,9 +180,9 @@
       "scope": "package",
       "agentRequestable": true,
       "summary": "@tool-workspace/hub-ui — install, CSS, exports, tab pattern",
-      "bodyPreview": "# @tool-workspace/hub-ui\n\nShared Hub UI for P0004, P0006, P0020, P0008. **Design source:** `Tool/P0004-Tool-Hub`.\n\nRefresh from P0004: `node E:\\Dev\\Tool\\scripts\\sync-hub-ui-vendor.cjs`\n\n---\n\n## 1. Cài vào app\n\n### P0006 (pnpm workspace — khuyến nghị cho tool mới)\n\n`pnpm-workspace.yaml` include `packages/hub-ui`. Trong app:\n\n```json\n\"@tool-workspace/hub-ui\": \"workspace:*\"\n```\n\n```ts\n// vite.config.ts\n\"@tool-workspace/hub-ui\": path.resolve(__dirname, \"../../../../packages/hub-ui/src\"),\n```\n\n### P0004 / P0020 (vendor copy)\n\n```json\n\"@tool-workspace/hub-ui\": \"file:./vendor/hub-ui\"\n```\n\nChạy sync script sau mỗi lần sửa P0004 shell.\n\n---\n\n## 2. CSS bắt buộc (`styles.css`)\n\n```css\n@import \"@tool-workspace/hub-ui/styles/hub-check-indicator.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-shell-layout.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-app-tab-header.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-fields.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-users-table.css\";\n```\n\nTheme tokens: copy từ P0004 qua `sync-hub-theme-from-p0004.cjs --target <app>/src`.\n\n---\n\n## 3. Bootstrap (một lần trong `main.tsx`)\n\n```ts\nimport { HubLoaderRoot } from \"@tool-workspace/hub-ui\";\nimport {",
-      "lines": 162,
-      "updatedAt": "2026-06-03T12:57:29.149Z",
+      "bodyPreview": "# @tool-workspace/hub-ui\n\nShared Hub UI for P0004, P0006, P0020, P0008. **Design source:** `Tool/P0004-Tool-Hub`.\n\n**Screen templates:** see [UI_TEMPLATES.md](./UI_TEMPLATES.md) (`HubDirectoryScreen`, `uiScreens` in `tool.manifest.json`).\n\nRefresh from P0004: `node E:\\Dev\\Tool\\scripts\\sync-hub-ui-vendor.cjs`\n\n---\n\n## 1. Cài vào app\n\n### P0006 (pnpm workspace — khuyến nghị cho tool mới)\n\n`pnpm-workspace.yaml` include `packages/hub-ui`. Trong app:\n\n```json\n\"@tool-workspace/hub-ui\": \"workspace:*\"\n```\n\n```ts\n// vite.config.ts\n\"@tool-workspace/hub-ui\": path.resolve(__dirname, \"../../../../packages/hub-ui/src\"),\n```\n\n### P0004 / P0020 (vendor copy)\n\n```json\n\"@tool-workspace/hub-ui\": \"file:./vendor/hub-ui\"\n```\n\nChạy sync script sau mỗi lần sửa P0004 shell.\n\n---\n\n## 2. CSS bắt buộc (`styles.css`)\n\n```css\n@import \"@tool-workspace/hub-ui/styles/hub-check-indicator.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-shell-layout.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-app-tab-header.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-fields.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-users-table.css\";\n```\n\nTheme tokens: copy từ P0004 qua `sync-hub-theme-from-p0004.cjs --target <app>/s",
+      "lines": 164,
+      "updatedAt": "2026-06-03T15:02:16.661Z",
       "tags": [
         "hub-ui",
         "package"
@@ -258,10 +258,10 @@
       "scope": "workspace",
       "alwaysApply": true,
       "agentRequestable": false,
-      "summary": "\"Always-on: Vietnamese + 3 proposals + Version line + browser verify (compact gate).\"",
+      "summary": "# Dev workspace — compact gate (always on)",
       "bodyPreview": "# Dev workspace — compact gate (always on)\n\nFull policy: `.cursor/rules/dev-workspace.mdc` · Human (VI): `.cursor/RULES-HUMAN-VI.md`\n\n## Every reply (§1) — no exceptions\n\n- Reply to the user in **Vietnamese**; Tool/Extension **UI strings** in **English**.\n- **Always** end with **3 numbered proposals** (`1.` `2.` `3.`) — even for “done”, “removed X”, or one-line answers. Short task ≠ skip footer.\n- Execute proposals only when user says **ok 1**, **ok 1 2**, **ok 1 2 3**, **làm 1**, **tự làm**, etc.\n- **Last line** of summary: `Version: X.Y.Z → A.B.C` or `Version: no bump (reason)`.\n- **Commit / push / deploy / release** only when user explicitly asks.\n- **Hooks:** `afterAgentResponse` audits format; `stop` → `verify-working-rules-on-stop.ps1` may auto follow-up (max 2). Check Cursor → Settings → Hooks → Execution Log if agent “forgets”.\n\n## Version (§0 — when editing product code)\n\nMeaningful changes in `Tool/P00xx-*` or `Extension/E00xx-*` → bump + CHANGELOG block before task end.  \n**Stop hook** may auto-follow-up if version files missing. Ship: skill `p00xx-ship-keywords`.\n\n## Browser verify (§3 — UI / bug / deploy)\n\nFor UI changes, bugs, extension+web flows, deploy smoke: read s",
       "lines": 31,
-      "updatedAt": "2026-06-03T12:45:20.764Z",
+      "updatedAt": "2026-06-03T14:12:14.675Z",
       "tags": [
         "rule",
         "rules"
@@ -358,8 +358,8 @@
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst defaultVendor = path.join(hubRoot, \"vendor\", \"hub-ui\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubPanel.tsx\", \"src/content/HubPanel.tsx\"],\n  [\"src/content/HubDirectoryCard.tsx\", \"src/content/HubDirectoryCard.tsx\"],\n  [\"src/content/HubTabScreenBody.tsx\", \"src/content/HubTabScreenBody.tsx\"],\n  [\"src/shell/HubTabChrome.tsx\", \"src/shell/HubTabChrome.tsx\"],\n  [\"src/shell/HubTabSectionRule.tsx\", \"src/shell/HubTabSectionRule.tsx\"],\n  [\"src/styles/hub-shell-layout.css\", \"src/styles/hub",
-      "lines": 141,
-      "updatedAt": "2026-06-03T13:18:00.047Z",
+      "lines": 144,
+      "updatedAt": "2026-06-03T15:01:22.007Z",
       "tags": [
         "hub-ui",
         "script"
@@ -454,8 +454,8 @@
       "trigger": "Hub UI file manifest + Clone 100%",
       "summary": "P0004 UI clone checklist and path manifest",
       "bodyPreview": "# P0004 UI contract — file manifest\n\nCanonical source: `Tool/P0004-Tool-Hub`. Copy or adapt presentation only; never replace target business logic.\n\n## Layer map\n\n| Layer | Purpose | P0004 paths |\n|-------|---------|-------------|\n| Tokens & scale | Colors, compact 90%, control heights | `src/theme/p0008-globals.css`, `src/styles.css` |\n| Icon scale | Lucide sizes at 0.9× | `src/lib/ui-scale.ts` (`compactIconSize`) |\n| App shell | Sidebar, top chrome, screen routing | `src/App.tsx`, `src/components/sales-shell/Sidebar.tsx` |\n| Tab header | Sticky title, refresh, settings, display prefs | `src/components/sales-shell/AppTabHeader.tsx` |\n| Loading UI | Orb via portal `#hub-tab-loader-root`; one viewport center | `HubLoaderRoot.tsx`, `HubLoadingView.tsx`, `SystemTabLoadingView.tsx` |\n| Tab perf | Eager routes, keep-mounted, boot prefetch | `App.tsx` (`visitedScreens`), `hub-background-prefetch.ts`, `SystemHubScreen.tsx` |\n| Data loading | SWR cache, snapshots, priority API | See § Data loading contract below |\n| Source badges | Catalog vs Live (phased metrics) | `SupabaseMetricsSourceBadge.tsx`, `supabase-project-metrics-source.ts` |\n| System sub-tabs | Overview / Schema / Quota / Temp",
-      "lines": 254,
-      "updatedAt": "2026-06-03T10:49:35.822Z",
+      "lines": 272,
+      "updatedAt": "2026-06-03T15:01:58.979Z",
       "tags": [
         "hub-ui",
         "reference"
