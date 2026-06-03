@@ -23,12 +23,14 @@ export function toolCodeBadgeClass(category: string): string {
 }
 
 export function healthDotColor(
-  tool: Pick<ResolvedTool, "driftAlerts">,
+  tool: Pick<ResolvedTool, "driftAlerts" | "localUrl">,
   healthState: HealthState | undefined,
   linkGapCount: number,
 ): string {
   if (tool.driftAlerts.length > 0) return "#f43f5e";
   if (linkGapCount > 0) return "#f59e0b";
+  if (tool.localUrl && healthState === "offline") return "#ef4444";
   if (healthState === "online") return "#22c55e";
+  if (tool.localUrl && healthState === "checking") return "#38bdf8";
   return "#64748b";
 }

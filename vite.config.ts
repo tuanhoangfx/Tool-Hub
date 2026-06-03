@@ -51,6 +51,12 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use(createWorkspaceRefreshMiddleware({ cwd: process.cwd() }));
           server.middlewares.use(createSupabaseApiProxy({ mode, cwd: process.cwd(), loadEnv }));
           server.middlewares.use(createQuotaMiddleware({ cwd: process.cwd() }));
+          server.middlewares.use(require("./scripts/lib/local-health-proxy.cjs").createLocalHealthMiddleware());
+          server.middlewares.use(
+            require("./scripts/lib/legacy-public-gone.cjs").createLegacyPublicGoneMiddleware(
+              path.join(toolRoot, "public"),
+            ),
+          );
         },
       },
     ],

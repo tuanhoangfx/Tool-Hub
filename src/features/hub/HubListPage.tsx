@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle, Boxes } from "lucide-react";
+import { AlertTriangle, Boxes, Radio } from "lucide-react";
 import { resolveHubKpiIcon } from "../../lib/badge-registry";
 import {
   FilterBar,
@@ -213,7 +213,8 @@ export function HubListPage({
   );
 
   const localUrls = useMemo(() => filtered.map((t) => t.localUrl).filter((u): u is string => Boolean(u)), [filtered]);
-  const { state: healthState } = useLocalHealth(localUrls);
+  const { state: healthState, check: recheckLocal } = useLocalHealth(localUrls);
+  const checkingLocal = localUrls.some((u) => healthState[u] === "checking");
 
   const modalTool = modalOpen ? filtered.find((t) => t.id === selectedId) ?? allTools.find((t) => t.id === selectedId) ?? null : null;
 
@@ -255,13 +256,25 @@ export function HubListPage({
         </>
       }
       row2Actions={
-        <HubToolBulkActionBar
-          hasSelection={selectedIds.size > 0}
-          selectedCount={selectedIds.size}
-          busy={hubBusy}
-          onRefreshSelected={handleRefreshSelected}
-          onSyncWorkspace={onRefresh}
-        />
+        <>
+          <button
+            type="button"
+            disabled={checkingLocal || localUrls.length === 0}
+            onClick={() => void recheckLocal()}
+            title="Recheck local dev servers (live / down)"
+            className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-100 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <Radio size={14} className={checkingLocal ? "animate-pulse" : ""} aria-hidden />
+            Local health
+          </button>
+          <HubToolBulkActionBar
+            hasSelection={selectedIds.size > 0}
+            selectedCount={selectedIds.size}
+            busy={hubBusy}
+            onRefreshSelected={handleRefreshSelected}
+            onSyncWorkspace={onRefresh}
+          />
+        </>
       }
     />
   );

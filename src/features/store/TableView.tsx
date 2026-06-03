@@ -165,13 +165,28 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                     ) : null}
                     {tool.localUrl ? (
                       <a
-                        className="icon-link tone-local"
+                        className={`icon-link tone-local ${
+                          localHealth === "online"
+                            ? "health-online"
+                            : localHealth === "offline"
+                              ? "health-offline"
+                              : localHealth === "checking"
+                                ? "health-checking"
+                                : "health-unknown"
+                        }`}
                         href={tool.localUrl}
                         target="_blank"
                         rel="noreferrer"
-                        title={`Local: ${tool.localUrl}`}
+                        title={
+                          localHealth === "online"
+                            ? `Local live: ${tool.localUrl}`
+                            : localHealth === "offline"
+                              ? `Local down: ${tool.localUrl}`
+                              : `Local: ${tool.localUrl}`
+                        }
                       >
                         <MaterialIcon name="dns" size={compactIconSize(16)} />
+                        <span className="health-dot" aria-hidden="true" />
                       </a>
                     ) : null}
                     {tool.repo ? (

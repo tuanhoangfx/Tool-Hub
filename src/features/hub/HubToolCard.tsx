@@ -120,8 +120,16 @@ export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
           />
           {port ? (
             <QuietChip
-              label={healthState === "online" ? `:${port} online` : `:${port}`}
-              tone={healthState === "online" ? "ok" : "neutral"}
+              label={
+                healthState === "online"
+                  ? `:${port} live`
+                  : healthState === "offline"
+                    ? `:${port} down`
+                    : healthState === "checking"
+                      ? `:${port} …`
+                      : `:${port}`
+              }
+              tone={healthState === "online" ? "ok" : healthState === "offline" ? "bad" : "neutral"}
               iconMeta={resolveLocalPortIcon(healthState === "online")}
             />
           ) : null}

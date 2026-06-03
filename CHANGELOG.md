@@ -1,22 +1,3 @@
-# Changelog
-
-## 2026-06-03 - Git commit version stamp
-
-- Version: `0.4.10`
-- Timestamp: 2026-06-03 08:05 (UTC+7)
-- Commit: pending
-- Type: Patch
-- Status: Draft
-
-### Changes
-
-- Version stamp for git commit.
-
-### Verification
-
-- pending
-
----
 ﻿# Changelog - P0004-Tool-Hub
 
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
@@ -25,22 +6,22 @@
 
 ## 2026-06-03 - Workspace version sync standardization + release
 
-- Version: `0.4.9`
+- Version: `0.4.10`
 - Type: Patch
 - Product: P0004
 - Prompt: ok 1 2 3 — repair version triple workspace-wide, migrate P0001/P0002, Release P0004
-- Commit: pending
-- Status: Draft
+- Commit: `dddf079`
+- Status: Committed
 
 ### Changes
 
 - Workspace scripts: `check-version-sync --all`, `install-product-git-hooks --all`, `repair-version-triple.mjs` (single source, no per-tool copy).
 - P0001/P0002 check/hook scripts delegate to `Tool/scripts/`.
-- Hub local health badge, port migration, scanner authoritative fields (0.4.4–0.4.8).
+- Hub local health badge, port migration, scanner authoritative fields, legacy icon gallery removed.
 
 ### Verification
 
-- `node E:\Dev\Tool\scripts\check-version-sync.mjs --code P0004`
+- `node E:\Dev\Tool\scripts\check-version-sync.mjs --all` — 16/16 OK
 - `corepack pnpm build`
 - Production smoke via `ship-product.ps1 -Keyword Release`
 

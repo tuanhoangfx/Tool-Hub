@@ -1,3 +1,10 @@
 {
+  "redirects": [
+    {
+      "source": "/icons/tools/gallery.html",
+      "destination": "/?screen=library",
+      "permanent": true
+    }
+  ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

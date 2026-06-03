@@ -1,16 +1,16 @@
 {
   "tool-hub": {
     "cwd": "E:\\Dev\\Tool\\P0004-Tool-Hub",
-    "command": "corepack pnpm dev",
+    "command": "corepack pnpm open",
     "devUrl": "http://127.0.0.1:5176"
   },
   "gpm-automation-console": {
-    "cwd": "E:\\Dev\\Tool\\GPM-Automation-Console",
+    "cwd": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
     "command": "corepack pnpm dev",
     "devUrl": "http://127.0.0.1:5173"
   },
   "yt-multistream-console": {
-    "cwd": "E:\\Dev\\Tool\\YT-Multistream-Console",
+    "cwd": "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
     "command": "corepack pnpm dev",
     "devUrl": "http://127.0.0.1:5174"
   },
@@ -18,5 +18,20 @@
     "cwd": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
     "command": "admin.bat",
     "devUrl": "http://127.0.0.1:3920/p0005/"
+  },
+  "data-box": {
+    "cwd": "E:\\Dev\\Tool\\P0020-Data-Box",
+    "command": "corepack pnpm open",
+    "devUrl": "http://127.0.0.1:5177/notes"
+  },
+  "sales-console": {
+    "cwd": "E:\\Dev\\Tool\\P0008-Sales-Console",
+    "command": "node scripts/ensure-dev.cjs --open",
+    "devUrl": "http://127.0.0.1:3000"
+  },
+  "aichathub": {
+    "cwd": "E:\\Dev\\Tool\\P0006-AIChatHub",
+    "command": "corepack pnpm open",
+    "devUrl": "http://127.0.0.1:5178"
   }
 }
