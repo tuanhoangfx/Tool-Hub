@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-03T01:20:06.310Z",
+  "generatedAt": "2026-06-03T07:17:26.004Z",
   "roots": [
     {
       "id": "tool",
@@ -25,35 +25,33 @@
     }
   ],
   "summary": {
-    "total": 20,
-    "projects": 18,
+    "total": 19,
+    "projects": 17,
     "n8n": 2
   },
   "entries": [
     {
       "id": "gpm-automation-console",
-      "code": "P0001",
-      "name": "GPM Automation Console",
+      "code": "LOCAL-001",
+      "name": "P0001-GPM-Automation-Console",
       "repo": "tuanhoangfx/GPM-Automation-Console",
       "branch": "main",
       "remoteEnabled": true,
       "localVersion": "0.2.37",
-      "category": "Desktop",
+      "category": "Local",
       "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
+      "status": "Needs review",
+      "summary": "Desktop console for managing and automating GPM Login profiles.",
       "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
       "tags": [
-        "Electron",
-        "React",
-        "Vite",
-        "Playwright CDP"
+        "Local",
+        "Workspace"
       ],
       "localUrl": "http://127.0.0.1:5173",
       "deployTarget": "github-release",
       "usage": [
-        "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build"
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -127,7 +125,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.4.11",
+      "localVersion": "0.4.14",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -221,7 +219,7 @@
       "repo": "tuanhoangfx/aichathub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.1.5",
+      "localVersion": "0.2.0",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Draft",
@@ -236,7 +234,7 @@
         "9Router"
       ],
       "localUrl": "http://127.0.0.1:5178",
-      "deployTarget": "local",
+      "deployTarget": "vps",
       "usage": [
         "Dev: node ../scripts/ensure-dev-product.cjs P0006",
         "Build: pnpm build"
@@ -252,8 +250,11 @@
       ],
       "scriptFiles": [
         "scripts/apply-hub-seed.ps1",
+        "scripts/deploy-remote.mjs",
         "scripts/ensure-dev.cjs",
-        "scripts/migrate-data-from-p0005.mjs"
+        "scripts/load-vps-env.mjs",
+        "scripts/migrate-data-from-p0005.mjs",
+        "scripts/ssh-utils.mjs"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"
@@ -474,69 +475,27 @@
       "assetKind": "project"
     },
     {
-      "id": "czp-youtube-tda-team",
-      "code": "P0013",
-      "name": "CzP YouTube TDA Team",
-      "repo": "tuanhoangfx/P0001-czp-youtube-tda-team",
+      "id": "youtube-channel-dashboard",
+      "code": "LOCAL-011",
+      "name": "P0013-czp-youtube-tda-team",
+      "repo": "",
       "branch": "main",
-      "remoteEnabled": true,
+      "remoteEnabled": false,
       "localVersion": "0.0.0",
-      "category": "Web",
+      "category": "Local",
       "audience": "Tool maintainers",
       "status": "Needs review",
-      "summary": "YouTube channel performance dashboard with team metrics (AI Studio / Gemini app).",
+      "summary": "Local workspace asset discovered by scanner.",
       "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
       "tags": [
-        "React",
-        "Vite",
-        "Supabase",
-        "Gemini"
+        "Local",
+        "Workspace"
       ],
-      "appUrl": "https://p0001-youtube-tda-team.vercel.app",
       "localUrl": "http://127.0.0.1:3013",
       "deployTarget": "vercel",
       "usage": [
-        "Dev: npm run dev",
-        "Build: npm run build",
-        "App: https://p0001-youtube-tda-team.vercel.app"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "workspaceRoot": "tool",
-      "assetKind": "project"
-    },
-    {
-      "id": "student-id-generator-v2",
-      "code": "P0015",
-      "name": "Student ID Generator V2",
-      "repo": "tuanhoangfx/P0005-student-id-generator-v2",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.0.0",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Static student ID card generator with canvas rendering and barcode.",
-      "localPath": "E:\\Dev\\Tool\\P0015-student-id-generator-v2",
-      "tags": [
-        "HTML",
-        "Canvas",
-        "JavaScript"
-      ],
-      "appUrl": "https://p0005-student-id-generator-v2.vercel.app",
-      "deployTarget": "vercel",
-      "usage": [
         "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json.",
-        "App: https://p0005-student-id-generator-v2.vercel.app"
+        "Run the configured build command from package.json."
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -552,30 +511,27 @@
       "assetKind": "project"
     },
     {
-      "id": "infi-work-performance",
-      "code": "P0019",
-      "name": "Infi Work Performance",
-      "repo": "tuanhoangfx/-Work-Performance",
+      "id": "infi-project-performance-tracker",
+      "code": "LOCAL-013",
+      "name": "P0019-Work-Performance",
+      "repo": "",
       "branch": "main",
-      "remoteEnabled": true,
+      "remoteEnabled": false,
       "localVersion": "0.0.0",
-      "category": "Web",
+      "category": "Local",
       "audience": "Tool maintainers",
       "status": "Needs review",
-      "summary": "Internal Kanban task manager with Supabase auth, comments, and manager dashboard.",
+      "summary": "Local workspace asset discovered by scanner.",
       "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
       "tags": [
-        "React",
-        "Vite",
-        "Supabase"
+        "Local",
+        "Workspace"
       ],
-      "appUrl": "https://inptracker.vercel.app",
       "localUrl": "http://127.0.0.1:5179",
       "deployTarget": "vercel",
       "usage": [
-        "Dev: npm run dev",
-        "Build: npm run build",
-        "App: https://inptracker.vercel.app"
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -640,38 +596,27 @@
       "assetKind": "project"
     },
     {
-      "id": "autovideo-studio",
-      "code": "P0021",
-      "name": "AutoVideo Studio",
-      "repo": "tuanhoangfx/AutoVideo-Studio",
+      "id": "autovideo-studio-workspace",
+      "code": "LOCAL-016",
+      "name": "P0021-AutoVideo-Studio",
+      "repo": "",
       "branch": "main",
-      "remoteEnabled": true,
+      "remoteEnabled": false,
       "localVersion": "1.1.1",
-      "category": "Web",
+      "category": "Local",
       "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Auto-gen video: LLM script → ảnh (gen SD/DALL-E hoặc upload) → TTS (edge-tts VN) → subtitle (whisper) → Ken Burns + transition → MP4. Next.js UI + Python FastAPI worker.",
+      "status": "Needs review",
+      "summary": "Local workspace asset discovered by scanner.",
       "localPath": "E:\\Dev\\Tool\\P0021-AutoVideo-Studio",
       "tags": [
-        "Next.js 14",
-        "React 18",
-        "TypeScript",
-        "Tailwind",
-        "Python 3.11",
-        "FastAPI",
-        "FFmpeg",
-        "MoviePy",
-        "edge-tts",
-        "Whisper",
-        "Stable Diffusion"
+        "Local",
+        "Workspace"
       ],
-      "appUrl": "https://p0021-autovideo-studio.vercel.app",
-      "localUrl": "http://127.0.0.1:3021",
-      "deployTarget": "vercel",
+      "localUrl": "http://127.0.0.1:3000",
+      "deployTarget": "local",
       "usage": [
-        "Dev: cd app && pnpm dev",
-        "Build: cd app && pnpm build",
-        "App: https://p0021-autovideo-studio.vercel.app"
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -782,7 +727,7 @@
       "repo": "tuanhoangfx/E0001-cookie-bridge",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.5.69",
+      "localVersion": "0.5.71",
       "category": "Extension",
       "audience": "Tool maintainers",
       "status": "Active",

@@ -1,10 +1,35 @@
-# Changelog
+﻿# Changelog
+
+## 2026-06-03 - Release infi.io.vn Hub production
+
+- Version: `1.1.1`
+- Timestamp: 2026-06-03 (UTC+7)
+- Commit: `daa6bdf`
+- Type: Major
+- Status: Committed
+- Prompt: Release P0004 after infix1→infi.io.vn migration — fix build and deploy Hub
+
+### Changes
+
+- Fix `supabase-quota-client-cache.ts` timer type for `tsc --noEmit` (unblocks production build).
+- Hub catalog URLs on `infi.io.vn`; Vercel custom domain production deploy.
+
+### Verification
+
+- `corepack pnpm build` pass
+- Browser smoke https://infi.io.vn
+
+### Rollback
+
+- Revert version bump; promote prior Vercel deployment
+
+---
 
 ## 2026-06-03 - Git commit version stamp
 
 - Version: `0.4.14`
 - Timestamp: 2026-06-03 08:28 (UTC+7)
-- Commit: pending
+- Commit: `ec324c0`
 - Type: Patch
 - Status: Draft
 
@@ -23,13 +48,63 @@
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Version sync:** `corepack pnpm run check:version` — package.json = manifest release.version = CHANGELOG top Version
 
+## 2026-06-03 - Supabase Quota catalog: 11 accounts + 3 new projects
+
+- Version: `0.4.15`
+- Type: Patch
+- Product: P0004
+- Prompt: Hoàn thiện dữ liệu tab Supabase Quota (11 tài khoản user cung cấp)
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `supabase-projects.catalog.json`: thêm accounts `namduongvn7`, `gopremium159`; projects `ynlslntczthxwdvlrhyi`, `cwbxgzuqlvvrogmcxbkv`, `rqomtgvcnglfgfcdieby`; đổi tên `yhnqwxejjkfgmjmiquhb` → tuanhoangfx P01.
+- `.env.shared`: PAT + ref keys cho czpro8, tuanhoangfx, x1z10, thanhnamworld, namduongvn7, gopremium159; bổ sung anon/publishable/secret còn thiếu.
+- Sync catalog → `public/supabase-projects.catalog.json`; rebuild `supabase-quota-catalog.snapshot.json` (18 projects).
+- `.env.shared.example`: placeholder cho PAT accounts mới.
+
+### Verification
+
+- `node scripts/sync-supabase-catalog.cjs` — OK
+- `node scripts/build-supabase-quota-snapshot.mjs` — 18 projects
+- `node scripts/verify-supabase-quota.mjs` — 11 tokens, 10 live API metrics (nguyenluongthaimkt PAT 401)
+
+---
+
+## 2026-06-03 - Local health poll: compact 6h–1w + default Off
+
+- Version: `0.4.14`
+- Type: Patch
+- Product: P0004
+- Prompt: Compact poll options 6h/12h/1d/3d/1w; default manual-only (Off)
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Settings chips: **Off · 6h · 12h · 1d · 3d · 1w** (replaces 30s–2m).
+- Default **Off** — no background port probe until user picks an interval or clicks **Local health**.
+- Legacy URL `lhpoll=30|60|90|120` maps to Off.
+
+### Verification
+
+- `corepack pnpm test`
+- Fresh Hub load: no auto poll until Settings or Local health
+
+### Rollback
+
+- Restore second-based intervals and prior default if needed
+
+---
+
 ## 2026-06-03 - Settings: Local health poll off / auto interval
 
 - Version: `0.4.13`
 - Type: Patch
 - Product: P0004
 - Prompt: Add Settings toggle — auto poll by interval or off (manual Local health only)
-- Commit: pending
+- Commit: `ec324c0`
 - Status: Draft
 
 ### Changes

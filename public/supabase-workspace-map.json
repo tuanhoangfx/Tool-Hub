@@ -1,10 +1,10 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-03T01:20:06.456Z",
+  "generatedAt": "2026-06-03T07:17:26.141Z",
   "summary": {
     "projectCount": 6,
     "toolBindingCount": 23,
-    "toolsScanned": 18,
+    "toolsScanned": 17,
     "toolsWithSupabase": 8
   },
   "projects": [
@@ -182,9 +182,9 @@
       ],
       "bindings": [
         {
-          "toolId": "czp-youtube-tda-team",
-          "toolCode": "P0013",
-          "toolName": "CzP YouTube TDA Team",
+          "toolId": "youtube-channel-dashboard",
+          "toolCode": "LOCAL-011",
+          "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -194,9 +194,9 @@
           "ref": "ibwnrwxrzqrctqjiikzi"
         },
         {
-          "toolId": "czp-youtube-tda-team",
-          "toolCode": "P0013",
-          "toolName": "CzP YouTube TDA Team",
+          "toolId": "youtube-channel-dashboard",
+          "toolCode": "LOCAL-011",
+          "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -206,9 +206,9 @@
           "ref": "ibwnrwxrzqrctqjiikzi"
         },
         {
-          "toolId": "czp-youtube-tda-team",
-          "toolCode": "P0013",
-          "toolName": "CzP YouTube TDA Team",
+          "toolId": "youtube-channel-dashboard",
+          "toolCode": "LOCAL-011",
+          "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -262,9 +262,9 @@
       ],
       "bindings": [
         {
-          "toolId": "infi-work-performance",
-          "toolCode": "P0019",
-          "toolName": "Infi Work Performance",
+          "toolId": "infi-project-performance-tracker",
+          "toolCode": "LOCAL-013",
+          "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -274,9 +274,9 @@
           "ref": "ncsbudhkfwppdcmdrxhh"
         },
         {
-          "toolId": "infi-work-performance",
-          "toolCode": "P0019",
-          "toolName": "Infi Work Performance",
+          "toolId": "infi-project-performance-tracker",
+          "toolCode": "LOCAL-013",
+          "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -286,9 +286,9 @@
           "ref": "ncsbudhkfwppdcmdrxhh"
         },
         {
-          "toolId": "infi-work-performance",
-          "toolCode": "P0019",
-          "toolName": "Infi Work Performance",
+          "toolId": "infi-project-performance-tracker",
+          "toolCode": "LOCAL-013",
+          "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",

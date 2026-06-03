@@ -17,7 +17,7 @@ import {
 } from "../../components/sales-shell";
 import { useLocalHealth, useSupabaseQuotaVersion } from "../../hooks";
 import { compactIconSize } from "../../lib/ui-scale";
-import { resolveLocalHealthPollMs } from "../../lib/local-health-prefs";
+import { formatLocalHealthPollInterval, resolveLocalHealthPollMs } from "../../lib/local-health-prefs";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailModal } from "../overview/ToolDetailModal";
@@ -273,8 +273,8 @@ export function HubListPage({
             }}
             title={
               localHealthPollMs === null
-                ? "Recheck local dev servers (polling off — Settings → Local health poll)"
-                : `Recheck local dev servers (auto every ${localHealthPollMs / 1000}s)`
+                ? "Check local dev servers now (background poll off — Settings)"
+                : `Check now · background poll ${formatLocalHealthPollInterval(prefs.localHealthPoll)}`
             }
             className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-100 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
           >

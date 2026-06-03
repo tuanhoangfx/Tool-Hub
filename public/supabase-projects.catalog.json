@@ -1,13 +1,15 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-31",
+  "updatedAt": "2026-06-03",
   "accounts": [
     { "id": "enzobyczp", "owner": "enzobyczp@gmail.com", "patEnv": "SUPABASE_PAT_enzobyczp" },
     { "id": "czprofess", "owner": "czprofess@gmail.com", "patEnv": "SUPABASE_PAT_czprofess" },
     { "id": "nguyenluongthaimkt", "owner": "nguyenluongthaimkt@gmail.com", "patEnv": "SUPABASE_PAT_nguyenluongthaimkt" },
     { "id": "1vmotool", "owner": "1vmotool@gmail.com", "patEnv": "SUPABASE_PAT_1vmotool" },
     { "id": "noworneveryc01", "owner": "noworneveryc01@gmail.com", "patEnv": "SUPABASE_PAT_noworneveryc01" },
+    { "id": "namduongvn7", "owner": "namduongvn7@gmail.com", "patEnv": "SUPABASE_PAT_namduongvn7" },
     { "id": "czpro8", "owner": "czpro8@gmail.com", "patEnv": "SUPABASE_PAT_czpro8" },
+    { "id": "gopremium159", "owner": "gopremium159@gmail.com", "patEnv": "SUPABASE_PAT_gopremium159" },
     { "id": "tuanhoangfx", "owner": "tuanhoangfx@gmail.com", "patEnv": "SUPABASE_PAT_tuanhoangfx" },
     { "id": "hanguyennn0106", "owner": "hanguyennn0106@gmail.com", "patEnv": "SUPABASE_PAT_hanguyennn0106" },
     { "id": "thanhnamworld", "owner": "thanhnamworld@gmail.com", "patEnv": "SUPABASE_PAT_thanhnamworld" },
@@ -60,6 +62,33 @@
       "tools": []
     },
     {
+      "ref": "ynlslntczthxwdvlrhyi",
+      "name": "namduongvn7 P01",
+      "accountId": "namduongvn7",
+      "owner": "namduongvn7@gmail.com",
+      "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
+      "roles": [],
+      "tools": []
+    },
+    {
+      "ref": "cwbxgzuqlvvrogmcxbkv",
+      "name": "czpro8 P01",
+      "accountId": "czpro8",
+      "owner": "czpro8@gmail.com",
+      "url": "https://cwbxgzuqlvvrogmcxbkv.supabase.co",
+      "roles": [],
+      "tools": []
+    },
+    {
+      "ref": "rqomtgvcnglfgfcdieby",
+      "name": "gopremium159 P01",
+      "accountId": "gopremium159",
+      "owner": "gopremium159@gmail.com",
+      "url": "https://rqomtgvcnglfgfcdieby.supabase.co",
+      "roles": [],
+      "tools": []
+    },
+    {
       "ref": "zvdxznbbwbqvdaxliujs",
       "name": "Supa0002",
       "accountId": "czpro8",
@@ -88,7 +117,7 @@
     },
     {
       "ref": "yhnqwxejjkfgmjmiquhb",
-      "name": "Task List 2",
+      "name": "tuanhoangfx P01",
       "accountId": "tuanhoangfx",
       "owner": "tuanhoangfx@gmail.com",
       "url": "https://yhnqwxejjkfgmjmiquhb.supabase.co",

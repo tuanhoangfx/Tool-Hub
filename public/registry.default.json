@@ -1,20 +1,18 @@
 [
   {
     "id": "gpm-automation-console",
-    "code": "P0001",
-    "name": "GPM Automation Console",
+    "code": "LOCAL-001",
+    "name": "P0001-GPM-Automation-Console",
     "repo": "tuanhoangfx/GPM-Automation-Console",
     "branch": "main",
     "category": "Desktop",
     "audience": "GPM operators",
-    "status": "Ready",
-    "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
+    "status": "Needs review",
+    "summary": "Desktop console for managing and automating GPM Login profiles.",
     "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
     "tags": [
-      "Electron",
-      "React",
-      "Vite",
-      "Playwright CDP"
+      "Local",
+      "Workspace"
     ],
     "localUrl": "http://127.0.0.1:5173",
     "deployTarget": "github-release",
@@ -119,7 +117,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.4.11",
+    "localVersion": "0.4.14",
     "remoteEnabled": true
   },
   {
@@ -172,7 +170,7 @@
     "repo": "tuanhoangfx/aichathub",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.1.5",
+    "localVersion": "0.2.0",
     "category": "Local",
     "audience": "Tool maintainers",
     "status": "Draft",
@@ -187,7 +185,7 @@
       "9Router"
     ],
     "localUrl": "http://127.0.0.1:5178",
-    "deployTarget": "local",
+    "deployTarget": "vps",
     "usage": [
       "Run the configured dev command from package.json.",
       "Run the configured build command from package.json."
@@ -411,6 +409,280 @@
     "versionDrift": "match"
   },
   {
+    "id": "youtube-channel-dashboard",
+    "code": "LOCAL-011",
+    "name": "P0013-czp-youtube-tda-team",
+    "repo": "",
+    "branch": "main",
+    "remoteEnabled": false,
+    "localVersion": "0.0.0",
+    "category": "Local",
+    "audience": "Tool maintainers",
+    "status": "Needs review",
+    "summary": "Local workspace asset discovered by scanner.",
+    "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
+    "tags": [
+      "Local",
+      "Workspace"
+    ],
+    "localUrl": "http://127.0.0.1:3013",
+    "deployTarget": "vercel",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json."
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": []
+  },
+  {
+    "id": "infi-project-performance-tracker",
+    "code": "LOCAL-013",
+    "name": "P0019-Work-Performance",
+    "repo": "",
+    "branch": "main",
+    "remoteEnabled": false,
+    "localVersion": "0.0.0",
+    "category": "Local",
+    "audience": "Tool maintainers",
+    "status": "Needs review",
+    "summary": "Local workspace asset discovered by scanner.",
+    "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
+    "tags": [
+      "Local",
+      "Workspace"
+    ],
+    "localUrl": "http://127.0.0.1:5179",
+    "deployTarget": "vercel",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json."
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": []
+  },
+  {
+    "id": "p0020-data-box",
+    "code": "P0020",
+    "name": "P0020-Data-Box",
+    "repo": "tuanhoangfx/Tool-Manager",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "0.2.1",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Beta",
+    "summary": "Unified data workspace for notes, 2FA, secure cookie vault, and browser agents. Skin P0008.",
+    "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Supabase",
+      "Inter",
+      "Chrome extension E0001-cookie-bridge"
+    ],
+    "appUrl": "https://databox.infi.io.vn",
+    "localUrl": "http://127.0.0.1:5177",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: corepack pnpm dev",
+      "Build: corepack pnpm build",
+      "App: https://databox.infi.io.vn"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/apply-all-p0020.mjs",
+      "scripts/apply-fix-v-note.mjs",
+      "scripts/apply-vault-v4.mjs",
+      "scripts/dev-with-launcher.cjs",
+      "scripts/ensure-dev.cjs",
+      "scripts/find-dead-css.cjs"
+    ]
+  },
+  {
+    "id": "autovideo-studio-workspace",
+    "code": "LOCAL-016",
+    "name": "P0021-AutoVideo-Studio",
+    "repo": "",
+    "branch": "main",
+    "remoteEnabled": false,
+    "localVersion": "1.1.1",
+    "category": "Local",
+    "audience": "Tool maintainers",
+    "status": "Needs review",
+    "summary": "Local workspace asset discovered by scanner.",
+    "localPath": "E:\\Dev\\Tool\\P0021-AutoVideo-Studio",
+    "tags": [
+      "Local",
+      "Workspace"
+    ],
+    "localUrl": "http://127.0.0.1:3000",
+    "deployTarget": "local",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json."
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/build-worker-exe.ps1",
+      "scripts/diagnose-desktop-installed.ps1",
+      "scripts/kill-desktop-workers.ps1",
+      "scripts/prepare-desktop-build.ps1",
+      "scripts/release-desktop.ps1",
+      "scripts/start-desktop-dev.ps1"
+    ]
+  },
+  {
+    "id": "infi-store",
+    "code": "P0022",
+    "name": "Infi Store",
+    "repo": "tuanhoangfx/P0022-Infi-Store",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "2.1.1",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Ready",
+    "summary": "E-commerce product showcase — React + Vite + Tailwind + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
+    "localPath": "E:\\Dev\\Tool\\P0022-Infi-Store",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "Supabase"
+    ],
+    "localUrl": "http://127.0.0.1:3022",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: corepack pnpm dev",
+      "Build: corepack pnpm build",
+      "App: https://store.infi.io.vn"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [],
+    "appUrl": "https://store.infi.io.vn"
+  },
+  {
+    "id": "fanpage-dashboard",
+    "code": "P0023",
+    "name": "Fanpage Dashboard",
+    "repo": "tuanhoangfx/P0023-Fanpage-Dashboard",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "2.1.1",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Ready",
+    "summary": "Facebook Fanpage metrics, posts, and page management via Graph API (React + Vite + Tailwind).",
+    "localPath": "E:\\Dev\\Tool\\P0023-Fanpage-Dashboard",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "Facebook Graph API"
+    ],
+    "localUrl": "http://127.0.0.1:3023",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: corepack pnpm open",
+      "Build: corepack pnpm build"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [],
+    "appUrl": "https://fanpage.infi.io.vn"
+  },
+  {
+    "id": "cookie-bridge",
+    "code": "E0001",
+    "name": "E0001 Cookie Bridge",
+    "repo": "tuanhoangfx/E0001-cookie-bridge",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "0.5.71",
+    "category": "Extension",
+    "audience": "Tool maintainers",
+    "status": "Active",
+    "summary": "Chrome MV3 extension for masked cookie snapshots, AES-GCM vault sync, and cross-browser cookie apply.",
+    "localPath": "E:\\Dev\\Extension\\E0001-cookie-bridge",
+    "tags": [
+      "Chrome Extension",
+      "Manifest V3",
+      "JavaScript",
+      "Supabase",
+      "AES-GCM"
+    ],
+    "appUrl": "https://databox.infi.io.vn/cookie",
+    "localUrl": "chrome://extensions",
+    "deployTarget": "local",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json.",
+      "App: http://127.0.0.1:5177/?screen=cookie"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/test-bindings-pull-logic.mjs"
+    ]
+  },
+  {
     "id": "czp-youtube-tda-team",
     "code": "P0013",
     "name": "CzP YouTube TDA Team",
@@ -519,53 +791,6 @@
     "appUrl": "https://inptracker.vercel.app"
   },
   {
-    "id": "p0020-data-box",
-    "code": "P0020",
-    "name": "P0020-Data-Box",
-    "repo": "tuanhoangfx/Tool-Manager",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "0.2.1",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Beta",
-    "summary": "Unified data workspace for notes, 2FA, secure cookie vault, and browser agents. Skin P0008.",
-    "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
-    "tags": [
-      "React",
-      "TypeScript",
-      "Vite",
-      "Supabase",
-      "Inter",
-      "Chrome extension E0001-cookie-bridge"
-    ],
-    "appUrl": "https://databox.infi.io.vn",
-    "localUrl": "http://127.0.0.1:5177",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: corepack pnpm dev",
-      "Build: corepack pnpm build",
-      "App: https://databox.infi.io.vn"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [
-      "scripts/apply-all-p0020.mjs",
-      "scripts/apply-fix-v-note.mjs",
-      "scripts/apply-vault-v4.mjs",
-      "scripts/dev-with-launcher.cjs",
-      "scripts/ensure-dev.cjs",
-      "scripts/find-dead-css.cjs"
-    ]
-  },
-  {
     "id": "autovideo-studio",
     "code": "P0021",
     "name": "AutoVideo Studio",
@@ -608,124 +833,6 @@
     ],
     "scriptFiles": [],
     "appUrl": "https://p0021-autovideo-studio.vercel.app"
-  },
-  {
-    "id": "infi-store",
-    "code": "P0022",
-    "name": "Infi Store",
-    "repo": "tuanhoangfx/P0022-Infi-Store",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "2.1.1",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Ready",
-    "summary": "E-commerce product showcase — React + Vite + Tailwind + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
-    "localPath": "E:\\Dev\\Tool\\P0022-Infi-Store",
-    "tags": [
-      "React",
-      "TypeScript",
-      "Vite",
-      "Tailwind CSS",
-      "Supabase"
-    ],
-    "localUrl": "http://127.0.0.1:3022",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: corepack pnpm dev",
-      "Build: corepack pnpm build",
-      "App: https://store.infi.io.vn"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [],
-    "appUrl": "https://store.infi.io.vn"
-  },
-  {
-    "id": "fanpage-dashboard",
-    "code": "P0023",
-    "name": "Fanpage Dashboard",
-    "repo": "tuanhoangfx/P0023-Fanpage-Dashboard",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "2.1.1",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Ready",
-    "summary": "Facebook Fanpage metrics, posts, and page management via Graph API (React + Vite + Tailwind).",
-    "localPath": "E:\\Dev\\Tool\\P0023-Fanpage-Dashboard",
-    "tags": [
-      "React",
-      "TypeScript",
-      "Vite",
-      "Tailwind CSS",
-      "Facebook Graph API"
-    ],
-    "localUrl": "http://127.0.0.1:3023",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: corepack pnpm open",
-      "Build: corepack pnpm build"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [],
-    "appUrl": "https://fanpage.infi.io.vn"
-  },
-  {
-    "id": "cookie-bridge",
-    "code": "E0001",
-    "name": "E0001 Cookie Bridge",
-    "repo": "tuanhoangfx/E0001-cookie-bridge",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "0.5.69",
-    "category": "Extension",
-    "audience": "Tool maintainers",
-    "status": "Active",
-    "summary": "Chrome MV3 extension for masked cookie snapshots, AES-GCM vault sync, and cross-browser cookie apply.",
-    "localPath": "E:\\Dev\\Extension\\E0001-cookie-bridge",
-    "tags": [
-      "Chrome Extension",
-      "Manifest V3",
-      "JavaScript",
-      "Supabase",
-      "AES-GCM"
-    ],
-    "appUrl": "https://databox.infi.io.vn/cookie",
-    "localUrl": "chrome://extensions",
-    "deployTarget": "local",
-    "usage": [
-      "Run the configured dev command from package.json.",
-      "Run the configured build command from package.json.",
-      "App: http://127.0.0.1:5177/?screen=cookie"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [
-      "scripts/test-bindings-pull-logic.mjs"
-    ]
   },
   {
     "id": "workspace-vault-hub",

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Radio } from "lucide-react";
 import {
+  isDefaultLocalHealthPoll,
   LOCAL_HEALTH_POLL_OPTIONS,
   type LocalHealthPollValue,
 } from "../../lib/local-health-prefs";
@@ -19,12 +20,12 @@ export function LocalHealthPollSettings() {
   function select(next: LocalHealthPollValue) {
     if (next === value) return;
     setValue(next);
-    patchHubListPrefs({ lhpoll: next === "90" ? null : next });
+    patchHubListPrefs({ lhpoll: isDefaultLocalHealthPoll(next) ? null : next });
     window.dispatchEvent(
       new CustomEvent("tool-hub-log", {
         detail: {
           scope: "Hub",
-          message: `Local health poll: ${LOCAL_HEALTH_POLL_OPTIONS.find((o) => o.value === next)?.label ?? next}`,
+          message: `Local health poll: ${next === "off" ? "Off (manual)" : `Auto ${next}`}`,
         },
       }),
     );
@@ -37,10 +38,10 @@ export function LocalHealthPollSettings() {
         <span>Local health poll</span>
       </div>
       <p className="mb-2 text-[10px] leading-snug text-[var(--muted)]">
-        Controls background checks for <code className="text-[var(--text)]/80">:port live</code> badges on Hub cards. Use{" "}
-        <span className="text-[var(--text)]/90">Local health</span> on the filter bar for an immediate recheck.
+        Auto-check <code className="text-[var(--text)]/80">:port live</code> on cards.{" "}
+        <span className="text-[var(--text)]/90">Local health</span> on the filter bar = check now.
       </p>
-      <div className="space-y-0.5">
+      <div className="flex flex-wrap gap-1">
         {LOCAL_HEALTH_POLL_OPTIONS.map((opt) => {
           const on = value === opt.value;
           return (
@@ -48,17 +49,18 @@ export function LocalHealthPollSettings() {
               key={opt.value}
               type="button"
               onClick={() => select(opt.value)}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1 text-left text-[11px] transition-colors hover:bg-white/[.04]"
+              title={
+                opt.value === "off"
+                  ? "No background checks"
+                  : `Background check every ${opt.value}`
+              }
+              className={`min-w-[2.25rem] rounded-md border px-2 py-1 text-[11px] font-medium tabular-nums transition-colors ${
+                on
+                  ? "border-emerald-400/50 bg-emerald-500/20 text-emerald-100"
+                  : "border-white/10 bg-white/[.03] text-[var(--muted)] hover:border-white/20 hover:text-[var(--text)]"
+              }`}
             >
-              <span
-                className={`flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full border ${
-                  on ? "border-emerald-400 bg-emerald-500/25" : "border-white/20"
-                }`}
-                aria-hidden
-              >
-                {on ? <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" /> : null}
-              </span>
-              <span className={on ? "text-[var(--text)]" : "text-[var(--muted)]"}>{opt.label}</span>
+              {opt.label}
             </button>
           );
         })}

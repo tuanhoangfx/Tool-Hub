@@ -19,7 +19,7 @@ export function readSupabaseQuotaClientCache(): QuotaPayload | null {
   return cache.readFresh();
 }
 
-let quotaDispatchTimer: ReturnType<typeof setTimeout> | null = null;
+let quotaDispatchTimer: number | null = null;
 
 export function writeSupabaseQuotaClientCache(payload: QuotaPayload) {
   if (!payload.ok) return;
