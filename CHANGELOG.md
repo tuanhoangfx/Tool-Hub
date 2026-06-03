@@ -1,8 +1,106 @@
+# Changelog
+
+## 2026-06-03 - Git commit version stamp
+
+- Version: `0.4.10`
+- Timestamp: 2026-06-03 08:05 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
 ﻿# Changelog - P0004-Tool-Hub
 
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Version sync:** `corepack pnpm run check:version` — package.json = manifest release.version = CHANGELOG top Version
+
+## 2026-06-03 - Workspace version sync standardization + release
+
+- Version: `0.4.9`
+- Type: Patch
+- Product: P0004
+- Prompt: ok 1 2 3 — repair version triple workspace-wide, migrate P0001/P0002, Release P0004
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Workspace scripts: `check-version-sync --all`, `install-product-git-hooks --all`, `repair-version-triple.mjs` (single source, no per-tool copy).
+- P0001/P0002 check/hook scripts delegate to `Tool/scripts/`.
+- Hub local health badge, port migration, scanner authoritative fields (0.4.4–0.4.8).
+
+### Verification
+
+- `node E:\Dev\Tool\scripts\check-version-sync.mjs --code P0004`
+- `corepack pnpm build`
+- Production smoke via `ship-product.ps1 -Keyword Release`
+
+### Rollback
+
+- `git checkout v0.4.3`
+
+---
+
+## 2026-06-03 - Scanner sync repo/status/tags from manifest
+
+- Version: `0.4.8`
+- Type: Patch
+- Product: P0004
+- Prompt: Bổ sung skill onboard P0023 — scanner merge github.repo sau rename.
+- Commit: pending
+- Status: Draft
+- Release:
+
+### Changes
+
+- `workspace-scan.cjs`: expand `SCANNER_AUTHORITATIVE` (repo, status, summary, tags, code, name, branch).
+- Strip UTF-8 BOM when reading JSON manifests.
+- Array-aware merge for `tags` / stack.
+
+### Verification
+
+- `corepack pnpm scan:local` — P0023 registry shows `tuanhoangfx/P0023-Fanpage-Dashboard`, status Ready
+
+### Rollback
+
+- `git checkout v0.4.7`
+
+---
+
+## 2026-06-03 - Remove icon gallery; fix legacy URL and P0020 dev
+
+- Version: `0.4.6`
+- Type: Patch
+- Product: P0004
+- Prompt: 5176/5177 lỗi; xóa `/icons/tools/gallery.html` còn sót sau icon review.
+- Commit: `2d9450e`
+- Status: Draft
+
+### Changes
+
+- Xóa `public/icons/tools/gallery.html` và `v2`–`v6` (mock so sánh 6 phong cách icon).
+- Middleware `legacy-public-gone.cjs` → 410/404; `vercel.json` redirect gallery về Hub.
+- P0020 `ensure-dev` dùng `ensure-dev-product` (daemon).
+
+### Verification
+
+- `http://127.0.0.1:5176/` — 200; `/icons/tools/gallery.html` — 410
+- `http://127.0.0.1:5177/notes` — `corepack pnpm open` trong P0020
+
+### Rollback
+
+- `git checkout v0.4.5`
+
+---
 
 ## 2026-06-03 - Port migration, local health badge, pnpm open workspace-wide
 

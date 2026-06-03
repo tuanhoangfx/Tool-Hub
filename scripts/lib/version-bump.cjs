@@ -21,7 +21,8 @@ function bumpPatch(version) {
 
 function readJson(filePath) {
   if (!fs.existsSync(filePath)) return null;
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  const raw = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, "");
+  return JSON.parse(raw);
 }
 
 function writeJson(filePath, data) {

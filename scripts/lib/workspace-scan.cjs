@@ -1,6 +1,26 @@
 const fs = require("node:fs");
 const path = require("node:path");
 
+const WORKSPACE_PORTS_PATH = path.resolve(__dirname, "..", "..", "..", "scripts", "lib", "workspace-ports.json");
+
+function loadWorkspacePorts() {
+  try {
+    return JSON.parse(fs.readFileSync(WORKSPACE_PORTS_PATH, "utf8"));
+  } catch {
+    return { products: {} };
+  }
+}
+
+function canonicalLocalUrl(manifest) {
+  const code = manifest?.code;
+  if (!code) return undefined;
+  const registry = loadWorkspacePorts();
+  const product = registry.products[String(code).toUpperCase()];
+  if (!product?.port) return undefined;
+  const host = registry.host || "127.0.0.1";
+  return normalizeLocalHost(`http://${host}:${product.port}`);
+}
+
 const APP_SETUP_AT_BACKFILL = {
   "tool-hub": "2026-04-29T17:00:00.000Z",
   "zalo-ai-bot": "2026-05-19T11:55:00.000Z",
@@ -9,6 +29,13 @@ const APP_SETUP_AT_BACKFILL = {
 };
 
 const SCANNER_AUTHORITATIVE = [
+  "code",
+  "name",
+  "repo",
+  "branch",
+  "status",
+  "summary",
+  "tags",
   "localPath",
   "localVersion",
   "localUrl",
@@ -32,7 +59,8 @@ const SKIP_DIR_NAMES = new Set([
 
 function readJson(filePath) {
   try {
-    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+    const raw = fs.readFileSync(filePath, "utf8").replace(/^\uFEFF/, "");
+    return JSON.parse(raw);
   } catch {
     return undefined;
   }
@@ -111,9 +139,11 @@ function detectDeployTarget(dir, manifest, packageJson) {
 }
 
 function resolveLocalUrl(dir, manifest, packageJson) {
+  const canonical = canonicalLocalUrl(manifest);
   const port = detectLocalPort(dir, packageJson);
   const detected = port ? `http://127.0.0.1:${port}` : undefined;
   const explicit = manifest?.urls?.local || manifest?.urls?.admin;
+  if (canonical) return canonical;
   if (detected) return detected;
   if (explicit) return normalizeLocalHost(explicit);
   return undefined;
@@ -327,8 +357,14 @@ function mergeRegistryDefault(existingDefault, scannedEntries) {
     if (curated) {
       const next = { ...curated };
       for (const key of SCANNER_AUTHORITATIVE) {
-        if (scanned[key] !== undefined && scanned[key] !== "" && scanned[key] !== next[key]) {
-          next[key] = scanned[key];
+        const scannedVal = scanned[key];
+        if (scannedVal === undefined || scannedVal === "") continue;
+        const same =
+          Array.isArray(scannedVal) && Array.isArray(next[key])
+            ? JSON.stringify(scannedVal) === JSON.stringify(next[key])
+            : scannedVal === next[key];
+        if (!same) {
+          next[key] = scannedVal;
           updatedExisting++;
         }
       }

@@ -1,10 +1,10 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-03T00:51:03.940Z",
+  "generatedAt": "2026-06-03T01:05:11.705Z",
   "summary": {
     "projectCount": 6,
     "toolBindingCount": 23,
-    "toolsScanned": 17,
+    "toolsScanned": 18,
     "toolsWithSupabase": 8
   },
   "projects": [
@@ -18,7 +18,7 @@
       "bindings": [
         {
           "toolId": "p0020-data-box",
-          "toolCode": "LOCAL-014",
+          "toolCode": "P0020",
           "toolName": "P0020-Data-Box",
           "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
@@ -30,7 +30,7 @@
         },
         {
           "toolId": "p0020-data-box",
-          "toolCode": "LOCAL-014",
+          "toolCode": "P0020",
           "toolName": "P0020-Data-Box",
           "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
@@ -53,8 +53,8 @@
       "bindings": [
         {
           "toolId": "tool-hub",
-          "toolCode": "LOCAL-003",
-          "toolName": "P0004-Tool-Hub",
+          "toolCode": "P0004",
+          "toolName": "Tool Hub",
           "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -65,8 +65,8 @@
         },
         {
           "toolId": "tool-hub",
-          "toolCode": "LOCAL-003",
-          "toolName": "P0004-Tool-Hub",
+          "toolCode": "P0004",
+          "toolName": "Tool Hub",
           "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -77,8 +77,8 @@
         },
         {
           "toolId": "tool-hub",
-          "toolCode": "LOCAL-003",
-          "toolName": "P0004-Tool-Hub",
+          "toolCode": "P0004",
+          "toolName": "Tool Hub",
           "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -89,8 +89,8 @@
         },
         {
           "toolId": "aichathub",
-          "toolCode": "LOCAL-005",
-          "toolName": "P0006-AIChatHub",
+          "toolCode": "P0006",
+          "toolName": "AIChatHub",
           "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
           "workspaceRoot": "tool",
           "envFile": "apps/console/.env.example",
@@ -101,8 +101,8 @@
         },
         {
           "toolId": "aichathub",
-          "toolCode": "LOCAL-005",
-          "toolName": "P0006-AIChatHub",
+          "toolCode": "P0006",
+          "toolName": "AIChatHub",
           "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
           "workspaceRoot": "tool",
           "envFile": "apps/console/.env.local",
@@ -113,8 +113,8 @@
         },
         {
           "toolId": "sales-console",
-          "toolCode": "LOCAL-007",
-          "toolName": "P0008-Sales-Console",
+          "toolCode": "P0008",
+          "toolName": "Seller Center",
           "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
           "workspaceRoot": "tool",
           "envFile": "app/.env.local",
@@ -125,8 +125,8 @@
         },
         {
           "toolId": "sales-console",
-          "toolCode": "LOCAL-007",
-          "toolName": "P0008-Sales-Console",
+          "toolCode": "P0008",
+          "toolName": "Seller Center",
           "localPath": "E:\\Dev\\Tool\\P0008-Sales-Console",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -137,7 +137,7 @@
         },
         {
           "toolId": "p0020-data-box",
-          "toolCode": "LOCAL-014",
+          "toolCode": "P0020",
           "toolName": "P0020-Data-Box",
           "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
@@ -149,7 +149,7 @@
         },
         {
           "toolId": "p0020-data-box",
-          "toolCode": "LOCAL-014",
+          "toolCode": "P0020",
           "toolName": "P0020-Data-Box",
           "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
@@ -161,7 +161,7 @@
         },
         {
           "toolId": "p0020-data-box",
-          "toolCode": "LOCAL-014",
+          "toolCode": "P0020",
           "toolName": "P0020-Data-Box",
           "localPath": "E:\\Dev\\Tool\\P0020-Data-Box",
           "workspaceRoot": "tool",
@@ -182,9 +182,9 @@
       ],
       "bindings": [
         {
-          "toolId": "youtube-channel-dashboard",
-          "toolCode": "LOCAL-011",
-          "toolName": "P0013-czp-youtube-tda-team",
+          "toolId": "czp-youtube-tda-team",
+          "toolCode": "P0013",
+          "toolName": "CzP YouTube TDA Team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -194,9 +194,9 @@
           "ref": "ibwnrwxrzqrctqjiikzi"
         },
         {
-          "toolId": "youtube-channel-dashboard",
-          "toolCode": "LOCAL-011",
-          "toolName": "P0013-czp-youtube-tda-team",
+          "toolId": "czp-youtube-tda-team",
+          "toolCode": "P0013",
+          "toolName": "CzP YouTube TDA Team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -206,9 +206,9 @@
           "ref": "ibwnrwxrzqrctqjiikzi"
         },
         {
-          "toolId": "youtube-channel-dashboard",
-          "toolCode": "LOCAL-011",
-          "toolName": "P0013-czp-youtube-tda-team",
+          "toolId": "czp-youtube-tda-team",
+          "toolCode": "P0013",
+          "toolName": "CzP YouTube TDA Team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -229,8 +229,8 @@
       "bindings": [
         {
           "toolId": "infi-store",
-          "toolCode": "LOCAL-017",
-          "toolName": "P0022-Infi-Store",
+          "toolCode": "P0022",
+          "toolName": "Infi Store",
           "localPath": "E:\\Dev\\Tool\\P0022-Infi-Store",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -241,8 +241,8 @@
         },
         {
           "toolId": "infi-store",
-          "toolCode": "LOCAL-017",
-          "toolName": "P0022-Infi-Store",
+          "toolCode": "P0022",
+          "toolName": "Infi Store",
           "localPath": "E:\\Dev\\Tool\\P0022-Infi-Store",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -262,9 +262,9 @@
       ],
       "bindings": [
         {
-          "toolId": "infi-project-performance-tracker",
-          "toolCode": "LOCAL-013",
-          "toolName": "P0019-Work-Performance",
+          "toolId": "infi-work-performance",
+          "toolCode": "P0019",
+          "toolName": "Infi Work Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -274,9 +274,9 @@
           "ref": "ncsbudhkfwppdcmdrxhh"
         },
         {
-          "toolId": "infi-project-performance-tracker",
-          "toolCode": "LOCAL-013",
-          "toolName": "P0019-Work-Performance",
+          "toolId": "infi-work-performance",
+          "toolCode": "P0019",
+          "toolName": "Infi Work Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -286,9 +286,9 @@
           "ref": "ncsbudhkfwppdcmdrxhh"
         },
         {
-          "toolId": "infi-project-performance-tracker",
-          "toolCode": "LOCAL-013",
-          "toolName": "P0019-Work-Performance",
+          "toolId": "infi-work-performance",
+          "toolCode": "P0019",
+          "toolName": "Infi Work Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
@@ -308,9 +308,9 @@
       ],
       "bindings": [
         {
-          "toolId": "p0009-mie-hair-performance",
-          "toolCode": "LOCAL-008",
-          "toolName": "P0009-Mie-Hair-Performance",
+          "toolId": "mie-hair-performance",
+          "toolCode": "P0009",
+          "toolName": "Mie Hair Performance",
           "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.example",
@@ -320,9 +320,9 @@
           "ref": "xrnzsmjjbtclmkmrlfxj"
         },
         {
-          "toolId": "p0009-mie-hair-performance",
-          "toolCode": "LOCAL-008",
-          "toolName": "P0009-Mie-Hair-Performance",
+          "toolId": "mie-hair-performance",
+          "toolCode": "P0009",
+          "toolName": "Mie Hair Performance",
           "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
           "workspaceRoot": "tool",
           "envFile": ".env.local",
@@ -332,9 +332,9 @@
           "ref": "xrnzsmjjbtclmkmrlfxj"
         },
         {
-          "toolId": "p0009-mie-hair-performance",
-          "toolCode": "LOCAL-008",
-          "toolName": "P0009-Mie-Hair-Performance",
+          "toolId": "mie-hair-performance",
+          "toolCode": "P0009",
+          "toolName": "Mie Hair Performance",
           "localPath": "E:\\Dev\\Tool\\P0009-Mie-Hair-Performance",
           "workspaceRoot": "tool",
           "envFile": "tool.manifest.json",
