@@ -1,4 +1,50 @@
+# Changelog
+
+## 2026-06-03 - Git commit version stamp
+
+- Version: `1.1.3`
+- Timestamp: 2026-06-03 15:23 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
 ﻿# Changelog
+
+## 2026-06-03 - Supabase Quota catalog sync + legacy prune
+
+- Version: `1.1.2`
+- Type: Patch
+- Product: P0004
+- Prompt: Hoàn thiện tab Supabase Quota; PAT nguyenluongthaimkt; rà soát xóa project không còn thực tế
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Catalog workspace: 11 account P01 + 3 tool-bound (`P0009`, `P0013`, `P0022`); xóa 5 legacy dead refs.
+- Sync `public/supabase-projects.catalog.json` + snapshot 14 projects; PAT nguyenluongthaimkt mới (11/11 tokens live).
+- `hub-background-prefetch`: priority refs `fmnrafpz` (hub) thay `zvdxznbb`.
+
+### Verification
+
+- `node scripts/verify-supabase-quota.mjs` — 14 catalog, 11 API, exit 0
+- `corepack pnpm build` — pass
+- Browser: System → Supabase Quota @ :5176 — 14 projects, live metrics OK
+
+### Rollback
+
+- `git checkout v1.1.1 -- public/supabase-projects.catalog.json public/supabase-quota-catalog.snapshot.json src/lib/hub-background-prefetch.ts`
+
+---
 
 ## 2026-06-03 - Release infi.io.vn Hub production
 
@@ -48,7 +94,7 @@
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Version sync:** `corepack pnpm run check:version` — package.json = manifest release.version = CHANGELOG top Version
 
-## 2026-06-03 - Supabase Quota catalog: 11 accounts + 3 new projects
+## 2026-06-03 - Supabase Quota catalog: 11 accounts (superseded by 1.1.2)
 
 - Version: `0.4.15`
 - Type: Patch

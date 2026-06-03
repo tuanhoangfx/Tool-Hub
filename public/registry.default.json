@@ -117,7 +117,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.4.14",
+    "localVersion": "1.1.1",
     "remoteEnabled": true
   },
   {
@@ -137,14 +137,14 @@
       "9Router",
       "Admin UI"
     ],
-    "appUrl": "https://zaloai.infi.io.vn/p0005",
+    "appUrl": "https://zaloai.infi.io.vn",
     "localUrl": "http://127.0.0.1:3920",
     "deployTarget": "vps",
     "usage": [
       "Local: admin.bat or pnpm run admin → http://127.0.0.1:3920/p0005/",
       "Login: pnpm run login (Zalo QR)",
       "Bot: pnpm run bot",
-      "Production: https://zaloai.infi.io.vn/p0005"
+      "Production: https://zaloai.infi.io.vn"
     ],
     "downloadHint": "Clone the repo — runtime data stays local, not in the repo.",
     "manifestPath": "tool.manifest.json",
@@ -239,7 +239,7 @@
       "scripts/deploy-remote.mjs",
       "scripts/deploy-subdomain.mjs"
     ],
-    "localVersion": "1.0.0",
+    "localVersion": "1.1.0",
     "remoteEnabled": true
   },
   {
@@ -524,27 +524,36 @@
     ]
   },
   {
-    "id": "autovideo-studio-workspace",
-    "code": "LOCAL-016",
-    "name": "P0021-AutoVideo-Studio",
-    "repo": "",
+    "id": "autovideo-studio",
+    "code": "P0021",
+    "name": "AutoVideo Studio",
+    "repo": "tuanhoangfx/AutoVideo-Studio",
     "branch": "main",
-    "remoteEnabled": false,
-    "localVersion": "1.1.1",
-    "category": "Local",
+    "remoteEnabled": true,
+    "localVersion": "1.2.1",
+    "category": "Web",
     "audience": "Tool maintainers",
-    "status": "Needs review",
-    "summary": "Local workspace asset discovered by scanner.",
+    "status": "Ready",
+    "summary": "Auto-gen video: LLM script → ảnh (gen SD/DALL-E hoặc upload) → TTS (edge-tts VN) → subtitle (whisper) → Ken Burns + transition → MP4. Next.js UI + Python FastAPI worker.",
     "localPath": "E:\\Dev\\Tool\\P0021-AutoVideo-Studio",
     "tags": [
-      "Local",
-      "Workspace"
+      "Next.js 14",
+      "React 18",
+      "TypeScript",
+      "Tailwind",
+      "Python 3.11",
+      "FastAPI",
+      "FFmpeg",
+      "MoviePy",
+      "edge-tts",
+      "Whisper",
+      "Stable Diffusion"
     ],
-    "localUrl": "http://127.0.0.1:3000",
-    "deployTarget": "local",
+    "localUrl": "http://127.0.0.1:3021",
+    "deployTarget": "vercel",
     "usage": [
-      "Run the configured dev command from package.json.",
-      "Run the configured build command from package.json."
+      "Dev: cd app && pnpm dev",
+      "Build: cd app && pnpm build"
     ],
     "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
     "manifestPath": "tool.manifest.json",
@@ -555,14 +564,8 @@
       "CHANGELOG.md",
       "RELEASE.md"
     ],
-    "scriptFiles": [
-      "scripts/build-worker-exe.ps1",
-      "scripts/diagnose-desktop-installed.ps1",
-      "scripts/kill-desktop-workers.ps1",
-      "scripts/prepare-desktop-build.ps1",
-      "scripts/release-desktop.ps1",
-      "scripts/start-desktop-dev.ps1"
-    ]
+    "scriptFiles": [],
+    "appUrl": "https://p0021-autovideo-studio.vercel.app"
   },
   {
     "id": "infi-store",
@@ -789,50 +792,6 @@
     "scriptFiles": [],
     "localUrl": "http://127.0.0.1:5179",
     "appUrl": "https://inptracker.vercel.app"
-  },
-  {
-    "id": "autovideo-studio",
-    "code": "P0021",
-    "name": "AutoVideo Studio",
-    "repo": "tuanhoangfx/AutoVideo-Studio",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "1.1.1",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Ready",
-    "summary": "Auto-gen video: LLM script → ảnh (gen SD/DALL-E hoặc upload) → TTS (edge-tts VN) → subtitle (whisper) → Ken Burns + transition → MP4. Next.js UI + Python FastAPI worker.",
-    "localPath": "E:\\Dev\\Tool\\P0021-AutoVideo-Studio",
-    "tags": [
-      "Next.js 14",
-      "React 18",
-      "TypeScript",
-      "Tailwind",
-      "Python 3.11",
-      "FastAPI",
-      "FFmpeg",
-      "MoviePy",
-      "edge-tts",
-      "Whisper",
-      "Stable Diffusion"
-    ],
-    "localUrl": "http://127.0.0.1:3021",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: cd app && pnpm dev",
-      "Build: cd app && pnpm build"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [],
-    "appUrl": "https://p0021-autovideo-studio.vercel.app"
   },
   {
     "id": "workspace-vault-hub",
