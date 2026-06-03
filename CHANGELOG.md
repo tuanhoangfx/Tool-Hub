@@ -11,7 +11,8 @@
 - Product: P0004
 - Prompt: ok — fix P0001/P0002 manifests, rescan workspace catalog
 - Commit: `4d14495`
-- Status: Committed
+- Status: Verified
+- Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v0.4.11
 
 ### Changes
 

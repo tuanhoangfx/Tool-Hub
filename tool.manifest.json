@@ -1,148 +1,148 @@
-﻿{
-    "schemaVersion":  1,
-    "code":  "P0004",
-    "id":  "tool-hub",
-    "aliases":  [
-                    "P0004",
-                    "Tool Hub"
-                ],
-    "name":  "Tool Hub",
-    "type":  "Web",
-    "owner":  "Tool",
-    "status":  "Ready",
-    "summary":  "Tool Hub — workspace catalog with GitHub health, drift alerts, and local registry.",
-    "stack":  [
-                  "React",
-                  "TypeScript",
-                  "Vite",
-                  "GitHub public raw API"
-              ],
-    "commands":  {
-                     "dev":  "corepack pnpm open",
-                     "dev:foreground":  "corepack pnpm dev",
-                     "dev:restart":  "corepack pnpm dev:restart",
-                     "build":  "corepack pnpm build",
-                     "preview":  "corepack pnpm preview",
-                     "scan":  "corepack pnpm scan:local",
-                     "push":  "corepack pnpm push",
-                     "publish":  "corepack pnpm publish:github:init"
-                 },
-    "deployTarget":  "vercel",
-    "docs":  {
-                 "readme":  "README.md",
-                 "changelog":  "CHANGELOG.md",
-                 "deploy":  "docs/DEPLOY-VERCEL.md"
-             },
-    "github":  {
-                   "repo":  "tuanhoangfx/Tool-Hub",
-                   "branch":  "main",
-                   "manifestPath":  "tool.manifest.json"
-               },
-    "release":  {
-                    "version":  "0.4.11",
-                    "readiness":  [
-                                      "build",
-                                      "lint",
-                                      "public-catalog",
-                                      "vercel-production",
-                                      "local-registry"
-                                  ],
-                    "latestPublished":  {
-                                            "tag":  "v0.4.3",
-                                            "url":  "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v0.4.3",
-                                            "publishedAt":  "2026-06-03T07:30:00Z"
-                                        }
-                },
-    "urls":  {
-                 "app":  "https://infi.io.vn",
-                 "appSetupAt":  "2026-05-21T10:30:00.000Z",
-                 "local":  "http://127.0.0.1:5176",
-                 "localSetupAt":  "2026-04-29T17:00:00.000Z"
-             },
-    "vercel":  {
-                   "project":  "tool-hub",
-                   "projectId":  "prj_tuOhhInjLzjWDrVYfeQanSqSqWMi",
-                   "productionUrl":  "https://infi.io.vn",
-                   "previewUrl":  "https://tool-hub.vercel.app",
-                   "productionBranch":  "main",
-                   "team":  "tuanhoangfxs-projects",
-                   "notes":  "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infi.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
-               },
-    "supabase":  {
-                     "projectRef":  "fmnrafpzctuhxjaaomzt",
-                     "name":  "Hub identity (x1z10 P01)",
-                     "url":  "https://fmnrafpzctuhxjaaomzt.supabase.co",
-                     "dashboard":  "https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt",
-                     "sqlEditor":  "https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new",
-                     "identity":  {
-                                      "migrationsDir":  "supabase/migrations",
-                                      "migrateDoc":  "docs/IDENTITY.md"
-                                  }
-                 },
-    "manifestUpdatedAt":  "2026-06-03T01:05:56.855Z",
-    "health":  {
-                   "status":  "Ready",
-                   "note":  "Production on Vercel (infi.io.vn). Library-only catalog."
-               },
-    "nextActions":  [
-                        "Run scan:local after manifest or port changes.",
-                        "Run sync:workspace when updating cross-root manifests.",
-                        "Add browser push manifest via VITE_GITHUB_TOKEN without CLI."
-                    ],
-    "roadmap":  [
-                    {
-                        "id":  "foundation",
-                        "period":  "Q4 2025",
-                        "title":  "Catalog foundation",
-                        "status":  "done",
-                        "bullets":  [
-                                        "Workspace registry + local scan",
-                                        "GitHub health + drift signals",
-                                        "Hub card / table views"
-                                    ]
-                    },
-                    {
-                        "id":  "versions-panel",
-                        "period":  "Q1 2026",
-                        "title":  "Version pipeline",
-                        "status":  "done",
-                        "bullets":  [
-                                        "Versions panel + auto-bump on commit",
-                                        "CHANGELOG sync in version history",
-                                        "Push + tag from Hub launcher"
-                                    ]
-                    },
-                    {
-                        "id":  "current-release",
-                        "period":  "Now",
-                        "title":  "Current System Hub release",
-                        "status":  "current",
-                        "bullets":  [
-                                        "System shell: Overview / Schema / Design Template",
-                                        "Roadmap timeline from manifest.roadmap[]",
-                                        "Production on Vercel (infi.io.vn)"
-                                    ]
-                    },
-                    {
-                        "id":  "table-skin",
-                        "period":  "Next",
-                        "title":  "OrdersTable skin",
-                        "status":  "planned",
-                        "bullets":  [
-                                        "Table view skin aligned with P0008 Sales Console",
-                                        "Unified filter bar patterns across tools"
-                                    ]
-                    },
-                    {
-                        "id":  "workspace-sync",
-                        "period":  "Next",
-                        "title":  "Workspace automation",
-                        "status":  "planned",
-                        "bullets":  [
-                                        "scan:local after manifest or port changes",
-                                        "sync:workspace for cross-root manifests",
-                                        "Browser push without CLI (VITE_GITHUB_TOKEN)"
-                                    ]
-                    }
-                ]
+{
+  "schemaVersion": 1,
+  "code": "P0004",
+  "id": "tool-hub",
+  "aliases": [
+    "P0004",
+    "Tool Hub"
+  ],
+  "name": "Tool Hub",
+  "type": "Web",
+  "owner": "Tool",
+  "status": "Ready",
+  "summary": "Tool Hub — workspace catalog with GitHub health, drift alerts, and local registry.",
+  "stack": [
+    "React",
+    "TypeScript",
+    "Vite",
+    "GitHub public raw API"
+  ],
+  "commands": {
+    "dev": "corepack pnpm open",
+    "dev:foreground": "corepack pnpm dev",
+    "dev:restart": "corepack pnpm dev:restart",
+    "build": "corepack pnpm build",
+    "preview": "corepack pnpm preview",
+    "scan": "corepack pnpm scan:local",
+    "push": "corepack pnpm push",
+    "publish": "corepack pnpm publish:github:init"
+  },
+  "deployTarget": "vercel",
+  "docs": {
+    "readme": "README.md",
+    "changelog": "CHANGELOG.md",
+    "deploy": "docs/DEPLOY-VERCEL.md"
+  },
+  "github": {
+    "repo": "tuanhoangfx/Tool-Hub",
+    "branch": "main",
+    "manifestPath": "tool.manifest.json"
+  },
+  "release": {
+    "version": "0.4.11",
+    "readiness": [
+      "build",
+      "lint",
+      "public-catalog",
+      "vercel-production",
+      "local-registry"
+    ],
+    "latestPublished": {
+      "tag": "v0.4.11",
+      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v0.4.11",
+      "publishedAt": "2026-06-03T01:20:05.445Z"
+    }
+  },
+  "urls": {
+    "app": "https://infi.io.vn",
+    "appSetupAt": "2026-05-21T10:30:00.000Z",
+    "local": "http://127.0.0.1:5176",
+    "localSetupAt": "2026-04-29T17:00:00.000Z"
+  },
+  "vercel": {
+    "project": "tool-hub",
+    "projectId": "prj_tuOhhInjLzjWDrVYfeQanSqSqWMi",
+    "productionUrl": "https://infi.io.vn",
+    "previewUrl": "https://tool-hub.vercel.app",
+    "productionBranch": "main",
+    "team": "tuanhoangfxs-projects",
+    "notes": "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infi.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
+  },
+  "supabase": {
+    "projectRef": "fmnrafpzctuhxjaaomzt",
+    "name": "Hub identity (x1z10 P01)",
+    "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+    "dashboard": "https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt",
+    "sqlEditor": "https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new",
+    "identity": {
+      "migrationsDir": "supabase/migrations",
+      "migrateDoc": "docs/IDENTITY.md"
+    }
+  },
+  "manifestUpdatedAt": "2026-06-03T01:20:05.446Z",
+  "health": {
+    "status": "Ready",
+    "note": "Production on Vercel (infi.io.vn). Library-only catalog."
+  },
+  "nextActions": [
+    "Run scan:local after manifest or port changes.",
+    "Run sync:workspace when updating cross-root manifests.",
+    "Add browser push manifest via VITE_GITHUB_TOKEN without CLI."
+  ],
+  "roadmap": [
+    {
+      "id": "foundation",
+      "period": "Q4 2025",
+      "title": "Catalog foundation",
+      "status": "done",
+      "bullets": [
+        "Workspace registry + local scan",
+        "GitHub health + drift signals",
+        "Hub card / table views"
+      ]
+    },
+    {
+      "id": "versions-panel",
+      "period": "Q1 2026",
+      "title": "Version pipeline",
+      "status": "done",
+      "bullets": [
+        "Versions panel + auto-bump on commit",
+        "CHANGELOG sync in version history",
+        "Push + tag from Hub launcher"
+      ]
+    },
+    {
+      "id": "current-release",
+      "period": "Now",
+      "title": "Current System Hub release",
+      "status": "current",
+      "bullets": [
+        "System shell: Overview / Schema / Design Template",
+        "Roadmap timeline from manifest.roadmap[]",
+        "Production on Vercel (infi.io.vn)"
+      ]
+    },
+    {
+      "id": "table-skin",
+      "period": "Next",
+      "title": "OrdersTable skin",
+      "status": "planned",
+      "bullets": [
+        "Table view skin aligned with P0008 Sales Console",
+        "Unified filter bar patterns across tools"
+      ]
+    },
+    {
+      "id": "workspace-sync",
+      "period": "Next",
+      "title": "Workspace automation",
+      "status": "planned",
+      "bullets": [
+        "scan:local after manifest or port changes",
+        "sync:workspace for cross-root manifests",
+        "Browser push without CLI (VITE_GITHUB_TOKEN)"
+      ]
+    }
+  ]
 }
