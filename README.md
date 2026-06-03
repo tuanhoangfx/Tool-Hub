@@ -12,7 +12,9 @@ corepack pnpm scan:local       # quét workspace → local-registry + workspace-
 corepack pnpm sync:workspace   # đồng bộ manifest 2 chiều (gh auth / GITHUB_TOKEN)
 corepack pnpm sync:workspace:dry
 corepack pnpm sync:workspace --clone-missing
-corepack pnpm dev              # Tool Hub local
+corepack pnpm open             # start/reuse Vite daemon (agents: prefer this — never kills healthy server)
+corepack pnpm dev              # foreground dev + launcher (human interactive)
+corepack pnpm dev:restart      # kill port 5176 + fresh Vite (only when stuck)
 corepack pnpm build
 pnpm run push                  # git push main (gh auth)
 ```

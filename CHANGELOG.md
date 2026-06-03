@@ -1,27 +1,42 @@
-﻿# Changelog
+﻿# Changelog - P0004-Tool-Hub
 
-## 2026-06-03 - Git commit version stamp
+> **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
+> **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
+> **Script:** `powershell -File E:\Dev\Tool\scripts\ship-product.ps1 -Code P0004 -Keyword Push`
+
+## 2026-06-03 - Release v0.4.3: Dev daemon, P0022 catalog, quota vendor
 
 - Version: `0.4.3`
-- Timestamp: 2026-06-03 07:19 (UTC+7)
-- Commit: `9170e18`
-- Type: Patch
-- Status: Committed
+- Type: Minor
+- Product: P0004
+- Prompt: Release P0004 v0.4.3 — dev daemon stable, P0022 Infi Store, vendor quota lib
+- Commit: pending
+- Status: Draft
+- Release: (after gh release)
 
 ### Changes
 
-- Version stamp for git commit.
+- Stable dev server daemon (`ensure-dev.cjs`): reuse :5176, no kill-port on every start.
+- P0022 Infi Store in workspace catalog; P0022 Infi Website registration (v0.3.1 / v0.4.1).
+- Vendor `supabase-quota-fetch.cjs` + `sync:supabase-catalog` for standalone Vercel builds.
+- Hub UI shell import fixes (`ui-scale` paths in vendor hub-ui).
 
 ### Verification
 
-- pending
+- `corepack pnpm build` — pass
+- Production: https://infix1.io.vn
+
+### Rollback
+
+```powershell
+git checkout v0.2.7
+```
 
 ---
-﻿# Changelog
 
 ## 2026-06-03 - Stable dev server daemon (no kill-port on every start)
 
-- Version: `0.4.2`
+- Version: `0.4.3`
 - Type: Patch
 - Product: P0004
 - Prompt: Xử lý triệt để lỗi ERR_CONNECTION_REFUSED sau 2-3 prompt — dev server bị kill/restart liên tục.
@@ -46,27 +61,6 @@
 - `git checkout v0.4.1`
 
 ---
-
-- Version: `0.3.2`
-- Timestamp: 2026-06-03 07:09 (UTC+7)
-- Commit: `572c55d`
-- Type: Patch
-- Status: Committed
-
-### Changes
-
-- Version stamp for git commit.
-
-### Verification
-
-- pending
-
----
-﻿# Changelog - P0004-Tool-Hub
-
-> **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
-> **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
-> **Script:** `powershell -File E:\Dev\Tool\scripts\ship-product.ps1 -Code P0004 -Keyword Push`
 
 ## 2026-06-03 - P0022 Infi Store rename and catalog refresh
 

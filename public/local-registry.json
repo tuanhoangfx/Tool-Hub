@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T00:18:24.461Z",
+  "generatedAt": "2026-06-03T00:20:04.122Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -86,26 +86,30 @@
     },
     {
       "id": "tool-hub",
-      "code": "LOCAL-003",
-      "name": "P0004-Tool-Hub",
-      "repo": "",
+      "code": "P0004",
+      "name": "Tool Hub",
+      "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "0.3.2",
-      "category": "Local",
+      "remoteEnabled": true,
+      "localVersion": "0.4.3",
+      "category": "Web",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
+      "status": "Ready",
+      "summary": "Tool Hub — workspace catalog with GitHub health, drift alerts, and local registry.",
       "localPath": "E:\\Dev\\Tool\\P0004-Tool-Hub",
       "tags": [
-        "Local",
-        "Workspace"
+        "React",
+        "TypeScript",
+        "Vite",
+        "GitHub public raw API"
       ],
+      "appUrl": "https://infix1.io.vn",
       "localUrl": "http://127.0.0.1:5176",
       "deployTarget": "vercel",
       "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Dev: corepack pnpm open",
+        "Build: corepack pnpm build",
+        "App: https://infix1.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -495,31 +499,26 @@
     },
     {
       "id": "infi-store",
-      "code": "P0022",
-      "name": "Infi Store",
+      "code": "LOCAL-017",
+      "name": "P0022-Infi-Store",
       "repo": "tuanhoangfx/P0022-Infi-Store",
       "branch": "main",
       "remoteEnabled": true,
       "localVersion": "1.1.1",
-      "category": "Web",
+      "category": "Local",
       "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "E-commerce product showcase — React + Vite + Tailwind + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
+      "status": "Needs review",
+      "summary": "P0022 Infi Store — e-commerce product showcase (React + Vite + Supabase).",
       "localPath": "E:\\Dev\\Tool\\P0022-Infi-Store",
       "tags": [
-        "React",
-        "TypeScript",
-        "Vite",
-        "Tailwind CSS",
-        "Supabase"
+        "Local",
+        "Workspace"
       ],
-      "appUrl": "https://infi.infix1.io.vn",
       "localUrl": "http://127.0.0.1:3022",
       "deployTarget": "vercel",
       "usage": [
-        "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build",
-        "App: https://infi.infix1.io.vn"
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

@@ -38,13 +38,18 @@ function openBrowser(url) {
 }
 
 async function main() {
-  try {
-    require("node:child_process").execSync("node scripts/kill-port.cjs 5176", {
-      cwd: root,
-      stdio: "inherit",
-    });
-  } catch {
-    /* ignore */
+  const viteAlreadyUp = await waitForHttp(VITE_PORT, "/", 1200);
+  if (viteAlreadyUp) {
+    console.log(`\n  Vite already running → ${DEV_URL}\n`);
+  } else if (process.argv.includes("--force")) {
+    try {
+      require("node:child_process").execSync("node scripts/kill-port.cjs 5176", {
+        cwd: root,
+        stdio: "inherit",
+      });
+    } catch {
+      /* ignore */
+    }
   }
 
   console.log("\n  Tool Hub dev — starting launcher + Vite\n");
@@ -67,25 +72,33 @@ async function main() {
     console.warn("  Launcher chưa phản hồi — vẫn chạy Vite.\n");
   }
 
-  const vite = spawn("corepack", ["pnpm", "exec", "vite", "--host", "127.0.0.1", "--port", String(VITE_PORT)], {
-    cwd: root,
-    stdio: "inherit",
-    shell: process.platform === "win32",
-    env: process.env,
-  });
+  let vite = null;
+  if (!viteAlreadyUp) {
+    vite = spawn(
+      process.execPath,
+      [path.join(root, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", String(VITE_PORT)],
+      {
+        cwd: root,
+        stdio: "inherit",
+        env: process.env,
+      },
+    );
 
-  void waitForHttp(VITE_PORT, "/", 30000).then((viteReady) => {
-    if (viteReady) {
-      console.log(`\n  Vite ready → ${DEV_URL}\n`);
-      openBrowser(DEV_URL);
-    } else {
-      console.warn("\n  Vite chưa phản hồi trong 30s — mở tay URL trên khi sẵn sàng.\n");
-    }
-  });
+    void waitForHttp(VITE_PORT, "/", 30000).then((viteReady) => {
+      if (viteReady) {
+        console.log(`\n  Vite ready → ${DEV_URL}\n`);
+        openBrowser(DEV_URL);
+      } else {
+        console.warn("\n  Vite chưa phản hồi trong 30s — mở tay URL trên khi sẵn sàng.\n");
+      }
+    });
+  } else {
+    openBrowser(DEV_URL);
+  }
 
   const shutdown = () => {
     try {
-      vite.kill();
+      vite?.kill();
     } catch {
       // ignore
     }
@@ -100,14 +113,18 @@ async function main() {
   process.on("SIGINT", shutdown);
   process.on("SIGTERM", shutdown);
 
-  vite.on("exit", (code) => {
-    try {
-      launcher.kill();
-    } catch {
-      // ignore
-    }
-    process.exit(code ?? 0);
-  });
+  if (vite) {
+    vite.on("exit", (code) => {
+      try {
+        launcher.kill();
+      } catch {
+        // ignore
+      }
+      process.exit(code ?? 0);
+    });
+  } else {
+    launcher.on("exit", () => process.exit(0));
+  }
 }
 
 main().catch((error) => {

@@ -1,5 +1,5 @@
 import type { ElementType } from "react";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "../ui-scale";
 
 type Tone = "indigo" | "emerald" | "amber" | "rose" | "blue" | "purple";
 

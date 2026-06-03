@@ -119,8 +119,8 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.3.2",
-    "remoteEnabled": false
+    "localVersion": "0.4.3",
+    "remoteEnabled": true
   },
   {
     "id": "zalo-ai-bot",

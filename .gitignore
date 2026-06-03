@@ -1,6 +1,7 @@
 node_modules/
 dist/
 dev-server.log
+.dev-vite.pid
 *.log
 .env
 .env.*

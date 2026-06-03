@@ -1,5 +1,5 @@
 import type { FilterIconMeta } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "../ui-scale";
 
 export type BarItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };
 

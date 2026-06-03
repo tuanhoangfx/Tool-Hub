@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import type { FilterIconMeta } from "../../lib/badge-registry";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "../ui-scale";
 
 export type FilterOption = { value: string; label: string; color?: string; count?: number };
 export type FilterDef = {

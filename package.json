@@ -26,6 +26,7 @@
     "supabase:bundle-hub": "node scripts/bundle-hub-migrations.mjs",
     "supabase:verify-quota": "node scripts/verify-supabase-quota.mjs",
     "supabase:quota-snapshot": "node scripts/build-supabase-quota-snapshot.mjs",
+    "sync:supabase-catalog": "node scripts/sync-supabase-catalog.cjs",
     "sync:workspace": "node scripts/sync-workspace-bidirectional.cjs",
     "sync:workspace:dry": "node scripts/sync-workspace-bidirectional.cjs --dry-run",
     "sync:workspace:clone": "node scripts/sync-workspace-bidirectional.cjs --clone-missing",
