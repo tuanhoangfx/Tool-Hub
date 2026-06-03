@@ -39,7 +39,7 @@
                    "manifestPath":  "tool.manifest.json"
                },
     "release":  {
-                    "version":  "0.4.3",
+                    "version":  "0.4.4",
                     "readiness":  [
                                       "build",
                                       "lint",
@@ -50,7 +50,7 @@
                     "latestPublished":  {
                                             "tag":  "v0.4.3",
                                             "url":  "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v0.4.3",
-                                            "publishedAt":  "(after gh release)"
+                                            "publishedAt":  "2026-06-03T07:30:00Z"
                                         }
                 },
     "urls":  {
