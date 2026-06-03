@@ -3,7 +3,8 @@ import { dispatchSupabaseQuotaUpdated } from "./supabase-quota-events";
 import type { QuotaPayload } from "./supabase-quota-schema";
 
 const cache = createClientCache<QuotaPayload>({
-  key: "system:supabase-quota:v1",
+  // v2: catalog prune 18→14 projects (2026-06-03) — bump invalidates stale localStorage payloads
+  key: "system:supabase-quota:v2",
   ttlMs: 15 * 60_000,
   validate: (data): data is QuotaPayload =>
     typeof data === "object" && data !== null && (data as QuotaPayload).ok === true,

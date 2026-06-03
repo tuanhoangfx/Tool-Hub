@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-06-03 - Release pipeline fix + Supabase quota cache v2
+
+- Version: `2.1.0`
+- Type: Minor
+- Product: P0004
+- Prompt: ok 1 2 — Git + Push: quota cache v2 (invalidate stale localStorage)
+- Commit: `8fc47af`
+- Status: Committed
+
+### Changes
+
+- `Tool/scripts/ship-product.ps1`: `gh release view` không còn fail pipeline khi release chưa tồn tại (PowerShell `$ErrorActionPreference`).
+- `supabase-quota-client-cache.ts`: cache key `system:supabase-quota:v2` — xóa payload cũ 15 legacy projects sau catalog prune.
+
+### Verification
+
+- `corepack pnpm build` — pass
+- Browser: hard load `/system/supabase-quota` — 14 projects (no stale v1 cache)
+
+### Rollback
+
+- `git checkout v2.0.0 -- src/features/system-hub/supabase-quota-client-cache.ts`
+
+---
+
 ## 2026-06-03 - Supabase Quota catalog sync + legacy prune
 
 - Version: `2.0.0`
