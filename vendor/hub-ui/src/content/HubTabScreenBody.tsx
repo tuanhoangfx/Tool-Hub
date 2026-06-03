@@ -28,8 +28,8 @@ export function HubTabScreenBody({
   return (
     <div className="hub-tab-content-zone">
       {hasAnalytics ? (
-        <div className="hub-tab-kpi-zone space-y-5">
-          {kpis?.length ? <KpiStrip items={kpis} /> : null}
+        <div className="hub-tab-kpi-zone flex flex-col gap-3">
+          {kpis?.length ? <KpiStrip items={kpis} className="hub-kpi-strip" /> : null}
           {charts}
         </div>
       ) : null}

@@ -531,11 +531,32 @@ body.hub-modal-open {
 .user-access-modal__header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.65rem;
   flex-shrink: 0;
   padding: 0.65rem 0.85rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.02);
+}
+
+.user-access-modal__header-main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-access-modal__header-main .hub-users-role-badge,
+.user-access-modal__header-main .user-access-modal__avatar {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.user-access-modal__header-name {
+  flex-shrink: 1;
+  min-width: 4rem;
+  line-height: var(--hub-control-h);
 }
 
 .user-access-modal__header-actions {
@@ -543,6 +564,38 @@ body.hub-modal-open {
   align-items: center;
   gap: 0.5rem;
   flex-shrink: 0;
+  margin-left: auto;
+}
+
+.user-access-modal__profile-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
+.user-access-modal__profile-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.user-access-modal__profile-field--role {
+  min-width: 9rem;
+}
+
+.user-access-modal__profile-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--muted);
+}
+
+.user-access-modal__profile-field .field,
+.user-access-modal__profile-field .hub-filter-select-trigger,
+.user-access-modal__profile-field button[class*="inline-flex"][class*="hub-control-h"] {
+  min-height: var(--hub-control-h);
 }
 
 .modal-close--tool-detail-inline {
@@ -552,5 +605,10 @@ body.hub-modal-open {
 
 .modal-shell__scroll--user-access {
   padding-top: 1rem;
+}
+
+/* Filter dropdowns inside user modal — above table/search (Role uses portal z-index 2500) */
+.modal-shell--tool-detail .anim-pop {
+  z-index: 120;
 }
 

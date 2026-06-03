@@ -43,7 +43,7 @@ export function UserBulkActionBar({
           roleLoading
             ? "Loading your role…"
             : isAdmin
-              ? "New users sign in via Supabase; sync workspace catalog"
+              ? "Add one user or bulk import (email|name|role)"
               : "Admin only"
         }
         onClick={onAdd}

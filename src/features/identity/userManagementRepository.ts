@@ -119,6 +119,68 @@ export async function fetchCurrentProfileRole(userId: string): Promise<UserManag
 
 export const TOOL_NONE = "__no_tools__";
 
+export type HubUserCreatePayload = {
+  email: string;
+  fullName: string;
+  role: UserManagementRow["role"];
+  password?: string;
+};
+
+export type HubUserCreateResult = {
+  email: string;
+  ok: boolean;
+  id?: string;
+  error?: string;
+};
+
+export async function createHubUsers(
+  accessToken: string,
+  users: HubUserCreatePayload[],
+): Promise<{
+  ok: boolean;
+  created: number;
+  results: HubUserCreateResult[];
+  error: string | null;
+}> {
+  try {
+    const res = await fetch("/api/hub/users/create", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ users }),
+    });
+    const data = (await res.json()) as {
+      ok?: boolean;
+      created?: number;
+      results?: HubUserCreateResult[];
+      error?: string;
+    };
+    if (!res.ok) {
+      return {
+        ok: false,
+        created: 0,
+        results: [],
+        error: data.error ?? `HTTP ${res.status}`,
+      };
+    }
+    return {
+      ok: Boolean(data.ok),
+      created: data.created ?? 0,
+      results: Array.isArray(data.results) ? data.results : [],
+      error: data.error ?? null,
+    };
+  } catch (e) {
+    return {
+      ok: false,
+      created: 0,
+      results: [],
+      error: e instanceof Error ? e.message : "Network error",
+    };
+  }
+}
+
 export async function fetchUserManagementRows(session: Session): Promise<{
   rows: UserManagementRow[];
   warning: string | null;

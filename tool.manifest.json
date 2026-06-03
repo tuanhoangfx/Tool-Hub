@@ -17,6 +17,12 @@
     "Vite",
     "GitHub public raw API"
   ],
+  "uiScreens": [
+    { "screen": "users", "template": "directory", "golden": "P0004/users" },
+    { "screen": "hub", "template": "directory", "golden": "P0004/hub-list" },
+    { "screen": "overview", "template": "document-toc", "golden": "P0004/overview-toc" },
+    { "screen": "system", "template": "system-panels", "golden": "P0004/system" }
+  ],
   "commands": {
     "dev": "corepack pnpm open",
     "dev:foreground": "corepack pnpm dev",
@@ -39,7 +45,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "2.1.10",
+    "version": "2.1.16",
     "readiness": [
       "build",
       "lint",

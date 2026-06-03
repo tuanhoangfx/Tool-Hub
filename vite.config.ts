@@ -53,6 +53,13 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use(createQuotaMiddleware({ cwd: process.cwd() }));
           server.middlewares.use(require("./scripts/lib/local-health-proxy.cjs").createLocalHealthMiddleware());
           server.middlewares.use(
+            require("./scripts/lib/hub-create-users-proxy.cjs").createHubCreateUsersMiddleware({
+              cwd: process.cwd(),
+              mode,
+              loadEnv,
+            }),
+          );
+          server.middlewares.use(
             require("./scripts/lib/legacy-public-gone.cjs").createLegacyPublicGoneMiddleware(
               path.join(toolRoot, "public"),
             ),

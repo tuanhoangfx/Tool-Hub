@@ -36,10 +36,13 @@ import { UserDirectoryTable, type UserTableSortKey } from "./UserDirectoryTable"
 import { readUserTableColumns, type UserTableColumnKey } from "./user-table-prefs";
 import { UserBulkActionBar } from "./UserBulkActionBar";
 import { UserAccessModal } from "./UserAccessModal";
+import { UserAddModal } from "./UserAddModal";
 import { useHubAuth } from "./useHubAuth";
 import {
+  createHubUsers,
   fetchCurrentProfileRole,
   fetchUserManagementRows,
+  type HubUserCreatePayload,
   type UserManagementRow,
 } from "./userManagementRepository";
 import {
@@ -234,6 +237,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   const [viewMode, setViewMode] = useState<HubViewMode>("table");
   const [hubTools, setHubTools] = useState<HubToolRow[]>(() => initialCache?.hubTools ?? []);
   const [accessUser, setAccessUser] = useState<UserManagementRow | null>(null);
+  const [addUserOpen, setAddUserOpen] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
   const [visibleColumns, setVisibleColumns] = useState<Set<UserTableColumnKey>>(() => readUserTableColumns());
   const [sortKey, setSortKey] = useState<UserTableSortKey>("lastActiveAt");
@@ -378,10 +382,38 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     setRoleMessage(`Synced ${sync.count} tools and extensions from workspace.`);
   }, [canManageTools, refresh, syncWorkspaceTools]);
 
-  const handleAddUserInfo = useCallback(() => {
-    setRoleMessage("New users appear after Supabase sign-in. Syncing workspace tools and extensions…");
-    void handleSyncToolsClick();
-  }, [handleSyncToolsClick]);
+  const handleAddUserOpen = useCallback(() => {
+    setRoleMessage(null);
+    setAddUserOpen(true);
+  }, []);
+
+  const handleCreateUsers = useCallback(
+    async (users: HubUserCreatePayload[]) => {
+      if (!session?.access_token) {
+        return { ok: false, created: 0, error: "Sign in required" };
+      }
+      const result = await createHubUsers(session.access_token, users);
+      if (result.created > 0) {
+        await refresh();
+        setRoleMessage(`Created ${result.created} user(s).`);
+      }
+      const firstFail = result.results.find((r) => !r.ok);
+      return {
+        ok: result.ok,
+        created: result.created,
+        error: result.error ?? firstFail?.error ?? null,
+      };
+    },
+    [refresh, session?.access_token],
+  );
+
+  const handleCreateSingleUser = useCallback(
+    async (draft: HubUserCreatePayload) => {
+      const result = await handleCreateUsers([draft]);
+      return { ok: result.created > 0, error: result.error };
+    },
+    [handleCreateUsers],
+  );
 
   const handleSyncCatalogForModal = useCallback(async () => {
     const sync = await syncWorkspaceTools();
@@ -457,7 +489,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   }, [selectedUsers]);
 
   useHubPageShortcuts("users", {
-    onNew: handleAddUserInfo,
+    onNew: handleAddUserOpen,
     onEdit: handleBulkEdit,
     canNew: () => isAdmin && !roleLoading,
     canEdit: () => (isAdmin || isManager) && hasSelection && !roleLoading,
@@ -662,7 +694,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
                 isAdmin={isAdmin}
                 isManager={isManager}
                 roleLoading={roleLoading}
-                onAdd={handleAddUserInfo}
+                onAdd={handleAddUserOpen}
                 onSyncTools={() => void handleSyncToolsClick()}
                 onEdit={handleBulkEdit}
                 onDelete={() => void handleBulkDelete()}
@@ -744,6 +776,13 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
           onSyncCatalog={canManageTools ? handleSyncCatalogForModal : undefined}
         />
       ) : null}
+
+      <UserAddModal
+        open={addUserOpen && isAdmin}
+        onClose={() => setAddUserOpen(false)}
+        onCreateSingle={handleCreateSingleUser}
+        onCreateMany={handleCreateUsers}
+      />
     </div>
   );
 }

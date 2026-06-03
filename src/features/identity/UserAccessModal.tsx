@@ -2,11 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, Package, UserRound, X } from "lucide-react";
 import { FilterBar } from "../../components/sales-shell";
-import { HubFilterSelect } from "@tool-workspace/hub-ui";
+import { HubSingleFilterDropdown } from "../../components/sales-shell/FilterBar";
+import { HubEmailBadge } from "./HubEmailBadge";
+import { HubUserAvatar } from "./HubUserAvatar";
 import { resolveCategoryDisplayIcon } from "../../lib/badge-registry";
 import { compactIconSize } from "../../lib/ui-scale";
 import { HubRoleBadge } from "./HubRoleBadge";
-import { HubUserAvatar } from "./HubUserAvatar";
 import { countRegistryOnlyTools, fetchUserToolCodes, setUserToolAccess, type HubToolRow } from "./toolAccessRepository";
 import { hubRoleLabel } from "./hubUserDisplay";
 import { updateUserProfile, type UserManagementRow } from "./userManagementRepository";
@@ -18,7 +19,7 @@ import {
 } from "./tool-access-filters";
 import { useToolAccessFilterPrefs } from "./use-tool-access-filter-prefs";
 import { TocHighlightContent, TocSectionHighlightProvider } from "../overview/toc-section-highlight-context";
-import { USER_ACCESS_TOC } from "./user-access-toc";
+import { USER_ACCESS_TOC, userAccessSectionTitle } from "./user-access-toc";
 import { UserAccessTocNav } from "./UserAccessTocNav";
 
 export type UserAccessSavePayload = {
@@ -54,8 +55,8 @@ function fmtDate(value: string | null): string {
 
 function DetailSection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-4 rounded-xl border border-white/5 bg-white/[.02] p-3">
-      <h3 className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--muted)]">{title}</h3>
+    <section id={id} className="scroll-mt-4 space-y-3 rounded-xl border border-white/5 bg-white/[.02] p-3">
+      <h3 className="border-b border-white/5 pb-2 text-[15px] font-semibold leading-snug text-[var(--text)]">{title}</h3>
       {children}
     </section>
   );
@@ -243,11 +244,16 @@ export function UserAccessModal({
         onClick={(e) => e.stopPropagation()}
       >
         <header className="user-access-modal__header">
-          <div className="min-w-0 flex-1">
-            <h2 id="user-access-modal-title" className="truncate text-sm font-semibold leading-tight">
-              {user.fullName}
+          <div className="user-access-modal__header-main min-w-0 flex-1">
+            <HubRoleBadge role={canEditProfile ? role : user.role} />
+            <HubUserAvatar user={user} size="sm" className="user-access-modal__avatar" />
+            <h2
+              id="user-access-modal-title"
+              className="user-access-modal__header-name min-w-0 truncate text-sm font-semibold text-[var(--text)]"
+            >
+              {canEditProfile ? fullName || user.fullName : user.fullName}
             </h2>
-            <p className="truncate text-[10px] text-[var(--muted)]">{user.email}</p>
+            <HubEmailBadge email={canEditProfile ? email || user.email : user.email} className="min-w-0 shrink" />
           </div>
           <div className="user-access-modal__header-actions">
             {canEdit || canEditProfile ? (
@@ -274,61 +280,41 @@ export function UserAccessModal({
               </aside>
 
               <TocHighlightContent className="min-w-0 space-y-4 p-1 sm:p-2">
-              <div className="flex items-center gap-3 pb-1">
-                <HubUserAvatar user={user} size="md" />
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <HubRoleBadge role={user.role} />
-                    <span className="text-[10px] text-[var(--muted)]">
-                      {hubRoleLabel(user.role)}
-                      {isAdminUser ? " · all tools (implicit)" : ""}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <DetailSection id={`${idPrefix}user`} title="User">
+              <DetailSection id={`${idPrefix}user`} title={userAccessSectionTitle("user")}>
                 {canEditProfile ? (
-                  <div className="space-y-2">
-                    <label className="block text-[10px] font-medium text-[var(--muted)]">
-                      Display name
+                  <div className="user-access-modal__profile-row">
+                    <label className="user-access-modal__profile-field min-w-0 flex-1">
+                      <span className="user-access-modal__profile-label">Display name</span>
                       <input
-                        className="field mt-1 w-full text-xs"
+                        className="field w-full text-xs"
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
                         autoComplete="name"
                       />
                     </label>
-                    <label className="block text-[10px] font-medium text-[var(--muted)]">
-                      Email (profile)
+                    <label className="user-access-modal__profile-field min-w-0 flex-1">
+                      <span className="user-access-modal__profile-label">Email (profile)</span>
                       <input
                         type="email"
-                        className="field mt-1 w-full text-xs"
+                        className="field w-full text-xs"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="email"
                       />
                     </label>
-                    <label className="block text-[10px] font-medium text-[var(--muted)]">
-                      Role
-                      <HubFilterSelect
-                        className="mt-1"
+                    <label className="user-access-modal__profile-field user-access-modal__profile-field--role shrink-0">
+                      <span className="user-access-modal__profile-label">Role</span>
+                      <HubSingleFilterDropdown
+                        filterKey="role"
                         label="Role"
                         value={role}
-                        onChange={setRole}
+                        onChange={(v) => setRole(v as UserManagementRow["role"])}
                         options={ROLE_OPTIONS.map((r) => ({
                           value: r,
                           label: hubRoleLabel(r),
                         }))}
-                        renderValue={(r) => <HubRoleBadge role={r} />}
-                        renderOption={(opt) => (
-                          <HubRoleBadge role={opt.value as UserManagementRow["role"]} />
-                        )}
                       />
                     </label>
-                    <p className="text-[10px] text-[var(--muted)]">
-                      Auth login email is managed in Supabase; this updates the Hub profile directory.
-                    </p>
                   </div>
                 ) : (
                   <table className="w-full text-left text-xs">
@@ -355,7 +341,7 @@ export function UserAccessModal({
                 )}
               </DetailSection>
 
-              <DetailSection id={`${idPrefix}tools`} title="Tool access (Hub tools & extensions)">
+              <DetailSection id={`${idPrefix}tools`} title={userAccessSectionTitle("tools")}>
                 {registryOnlyCount > 0 ? (
                   <p className="mb-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-[10px] text-amber-100">
                     {registryOnlyCount} item(s) from workspace scan are not in Hub DB yet. Use{" "}
@@ -370,7 +356,7 @@ export function UserAccessModal({
                 ) : (
                   <div className="space-y-2">
                     <FilterBar
-                      layout="hub"
+                      layout="inline"
                       placeholder="Search tools by code, name, category…"
                       filters={filters}
                       query={query}
@@ -403,7 +389,7 @@ export function UserAccessModal({
                       <div className="overflow-x-auto rounded-lg border border-white/5 bg-black/10">
                         <table className="w-full min-w-[480px] border-collapse text-left text-[12px]">
                           <thead>
-                            <tr className="border-b border-white/5 bg-white/[.02] text-[10px] uppercase tracking-wider text-[var(--muted)]">
+                            <tr className="border-b border-white/5 bg-white/[.02] text-[10px] font-medium text-[var(--muted)]">
                               {canEdit && !isAdminUser ? <th className="w-10 px-2 py-2" /> : null}
                               <th className="px-3 py-2 font-medium">Tool</th>
                               <th className="px-3 py-2 font-medium">Name</th>
@@ -468,13 +454,13 @@ export function UserAccessModal({
                 )}
               </DetailSection>
 
-              <DetailSection id={`${idPrefix}legacy`} title="Projects (legacy Todo)">
+              <DetailSection id={`${idPrefix}legacy`} title={userAccessSectionTitle("legacy")}>
                 {user.projectNames.length === 0 ? (
                   <p className="text-xs text-[var(--muted)]">No legacy Todo projects linked.</p>
                 ) : (
                   <div className="overflow-x-auto rounded-lg border border-white/5">
                     <table className="w-full text-left text-xs">
-                      <thead className="bg-white/[.03] text-[10px] uppercase text-[var(--muted)]">
+                      <thead className="bg-white/[.03] text-[10px] font-medium text-[var(--muted)]">
                         <tr>
                           <th className="px-3 py-2 font-medium">Project name</th>
                           <th className="px-3 py-2 font-medium">Source</th>
@@ -493,24 +479,24 @@ export function UserAccessModal({
                 )}
               </DetailSection>
 
-              <DetailSection id={`${idPrefix}summary`} title="Summary">
+              <DetailSection id={`${idPrefix}summary`} title={userAccessSectionTitle("summary")}>
                 <dl className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
                   <div className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-2">
-                    <dt className="text-[10px] uppercase text-[var(--muted)]">Tools granted</dt>
+                    <dt className="text-[10px] text-[var(--muted)]">Tools granted</dt>
                     <dd className="mt-1 text-lg font-semibold tabular-nums text-indigo-200">
                       {isAdminUser ? tools.length : selected.size}
                     </dd>
                   </div>
                   <div className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-2">
-                    <dt className="text-[10px] uppercase text-[var(--muted)]">Catalog</dt>
+                    <dt className="text-[10px] text-[var(--muted)]">Catalog</dt>
                     <dd className="mt-1 text-lg font-semibold tabular-nums">{tools.length}</dd>
                   </div>
                   <div className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-2">
-                    <dt className="text-[10px] uppercase text-[var(--muted)]">Legacy projects</dt>
+                    <dt className="text-[10px] text-[var(--muted)]">Legacy projects</dt>
                     <dd className="mt-1 text-lg font-semibold tabular-nums">{user.projectCount}</dd>
                   </div>
                   <div className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-2">
-                    <dt className="text-[10px] uppercase text-[var(--muted)]">Activity events</dt>
+                    <dt className="text-[10px] text-[var(--muted)]">Activity events</dt>
                     <dd className="mt-1 text-lg font-semibold tabular-nums">{user.activityCount}</dd>
                   </div>
                 </dl>

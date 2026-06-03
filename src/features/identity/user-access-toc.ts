@@ -4,3 +4,8 @@ export const USER_ACCESS_TOC = [
   { id: "legacy", label: "Projects (legacy)", emoji: "📁", chipClass: "border-amber-400/30 bg-amber-500/15" },
   { id: "summary", label: "Summary", emoji: "📋", chipClass: "border-slate-400/30 bg-slate-500/15" },
 ] as const;
+
+export function userAccessSectionTitle(id: (typeof USER_ACCESS_TOC)[number]["id"]): string {
+  const item = USER_ACCESS_TOC.find((t) => t.id === id);
+  return item ? `${item.emoji} ${item.label}` : id;
+}

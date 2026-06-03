@@ -1,6 +1,13 @@
 export { AppTabHeader, type TabHeaderMetaItem, type TabHeaderStatItem } from "./AppTabHeader";
 export { DisplayPrefs, type PrefItem } from "./DisplayPrefs";
-export { FilterBar, type FilterDef, type FilterValues } from "./FilterBar";
+export {
+  FilterBar,
+  HubSingleFilterDropdown,
+  type FilterDef,
+  type FilterOption,
+  type FilterValues,
+  type HubSingleFilterDropdownProps,
+} from "./FilterBar";
 export { MetricBadge, RegistryMetricBadge, type MetricBadgeProps, type MetricBadgeTone } from "./MetricBadge";
 export { KpiStrip, type KpiTileData } from "./KpiStrip";
 export { MiniBarChart, type BarItem } from "./MiniBarChart";

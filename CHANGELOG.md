@@ -1,5 +1,106 @@
 # Changelog
 
+## 2026-06-03 - User modal header/profile one row align
+
+- Version: `2.1.16`
+- Type: Patch
+- Product: P0004
+- Prompt: header + form thẳng 1 hàng; Working Rules §1
+- Commit: `3a65947`
+- Status: Committed
+
+### Changes
+
+- Header: role badge · avatar · name · email badge — `align-items: center` một hàng.
+- Profile row: Display name / Email / Role — `items-end`, control height `var(--hub-control-h)`.
+
+Version: 2.1.15 → 2.1.16
+
+## 2026-06-03 - HubEmailBadge = P0020 2FA mail chip (copy)
+
+- Version: `2.1.15`
+- Type: Patch
+- Product: P0004
+- Prompt: badge mail giống 100% 2FA, copy được
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `CopyMetaChip` + `HUB_EMAIL_COPY_CHIP_CLASS` (sync P0020 Account column).
+- `HubEmailBadge`: Mail 11px, sky pill, click copy + check feedback.
+
+Version: 2.1.14 → 2.1.15
+
+## 2026-06-03 - Email badge + filter icons bootstrap
+
+- Version: `2.1.14`
+- Type: Patch
+- Product: P0004
+- Prompt: Mail badge (2FA style); Filter Row icons missing
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `HubEmailBadge` on modal header (cyan Mail pill, like P0020 2FA account chip).
+- `configureFilterIcons` in `main.tsx` → `badge-registry` (fixes hub-ui FilterBar/Role dropdown icons).
+- Modal Role filter imports `HubSingleFilterDropdown` from `sales-shell` (same as Users tab).
+
+Version: 2.1.13 → 2.1.14
+
+## 2026-06-03 - User modal header + HubSingleFilterDropdown
+
+- Version: `2.1.13`
+- Type: Patch
+- Product: P0004
+- Prompt: Avatar header; role badge left; Role filter 100% FilterBar
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Header: role badge (left) + avatar + name/email stacked.
+- `HubSingleFilterDropdown` — same component chrome as Users searchbar Role filter.
+- `HubFilterSelect` delegates to `HubSingleFilterDropdown`.
+
+Version: 2.1.12 → 2.1.13
+
+## 2026-06-03 - User modal: Filter layer, TOC section titles
+
+- Version: `2.1.12`
+- Type: Patch
+- Product: P0004
+- Prompt: Layer Filter; TOC labels; remove header duplicate block
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `HubFilterSelect`: portal menu (z 2500), FilterBar trigger `Role: User` + icons.
+- Section titles from TOC (`👤 User`, `🧰 Tool access`) — no uppercase.
+- Removed avatar/role strip under modal header; tools FilterBar `layout="inline"`.
+
+Version: 2.1.11 → 2.1.12
+
+## 2026-06-03 - Users: modal layout, Filter Role, Add user modal
+
+- Version: `2.1.11`
+- Type: Patch
+- Product: P0004
+- Prompt: User modal 1 dòng; Filter Role; Add tạo user (2FA modal pattern)
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Import `hub-fields.css`; `HubFilterSelect` matches FilterBar (icon + label).
+- `UserAccessModal`: Display name / Email / Role one row; remove Supabase hint.
+- `UserAddModal` + bulk `email|name|role`; dev `/api/hub/users/create`.
+- **Add** opens create modal; **Sync tools** unchanged.
+
+Version: 2.1.10 → 2.1.11
+
 ## 2026-06-03 - Git commit version stamp
 
 - Version: `2.1.10`

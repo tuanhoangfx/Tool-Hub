@@ -2,11 +2,9 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { AlertTriangle, Boxes, Radio } from "lucide-react";
 import { resolveHubKpiIcon } from "../../lib/badge-registry";
 import {
-  FilterBar,
   HubResultCount,
   HubRowLimitSelect,
   HubTimeRangeSelect,
-  KpiStrip,
   MiniBarChart,
   MiniDonut,
   ViewToggle,
@@ -15,7 +13,7 @@ import {
   type HubViewMode,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import { HubDirectoryScreen, useHubPageShortcuts } from "@tool-workspace/hub-ui";
 import { useLocalHealth, useSupabaseQuotaVersion } from "../../hooks";
 import { compactIconSize } from "../../lib/ui-scale";
 import { formatLocalHealthPollInterval, resolveLocalHealthPollMs } from "../../lib/local-health-prefs";
@@ -35,30 +33,11 @@ import {
   DEFAULT_HUB_HEADER_STAT_KEYS,
   DEFAULT_HUB_KPI_KEYS,
 } from "./hub-prefs";
-import { HubStickyHeader } from "./HubStickyHeader";
+import { HubListChromeHeader } from "./HubListChromeHeader";
 import { HubToolCard } from "./HubToolCard";
 
 function visibleSet(set: Set<string> | null, defaults: Set<string>) {
   return set ?? defaults;
-}
-
-/** Accent divider before card/table registry — easier to scan than a flat border. */
-function HubDataSectionRule() {
-  return (
-    <div role="separator" className="relative py-5" aria-label="Tools list">
-      <div
-        className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-indigo-400/45 to-transparent shadow-[0_0_10px_rgba(99,102,241,0.2)]"
-        aria-hidden
-      />
-      <div className="relative flex justify-center" aria-hidden>
-        <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/25 bg-[var(--bg)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-indigo-300/90 shadow-[0_0_16px_rgba(99,102,241,0.12)]">
-          <span className="h-1 w-1 shrink-0 rounded-full bg-indigo-400" />
-          Tools
-          <span className="h-1 w-1 shrink-0 rounded-full bg-indigo-400" />
-        </span>
-      </div>
-    </div>
-  );
 }
 
 type HubListPageProps = {
@@ -231,10 +210,15 @@ export function HubListPage({
     visCharts.has("category_bar") ||
     visCharts.has("deploy_donut") ||
     visCharts.has("status_donut");
-  const hasAnalytics = kpiItems.length > 0 || hasCharts;
 
-  const searchPin = prefs.searchPin;
-  const stackChrome = searchPin && prefs.headerPin;
+  const chartsBand = hasCharts ? (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      {visCharts.has("health_bar") ? <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} /> : null}
+      {visCharts.has("category_bar") ? <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} /> : null}
+      {visCharts.has("deploy_donut") ? <MiniDonut title="Deploy distribution" items={charts.deploy} /> : null}
+      {visCharts.has("status_donut") ? <MiniDonut title="Status distribution" items={charts.status} /> : null}
+    </div>
+  ) : undefined;
 
   const hubBusy = loadingAll || scanningWorkspace;
 
@@ -250,67 +234,11 @@ export function HubListPage({
     canEdit: () => hasSelection && Boolean(onRefreshTool),
   });
 
-  const filterBar = (
-    <FilterBar
-      shortcutScope="library"
-      layout="hub"
-      pinSticky={searchPin && !stackChrome}
-      headerPinned={prefs.headerPin}
-      embedded={stackChrome}
-      placeholder="Search Hub by name, code, repo, tag..."
-      filters={hubFilters}
-      query={query}
-      onQueryChange={setQuery}
-      values={filterValues}
-      onValuesChange={setFilterValues}
-      toolbar={
-        <>
-          <HubTimeRangeSelect value={prefs.range} />
-          <HubRowLimitSelect value={prefs.limit} />
-          <ViewToggle value={viewMode} onChange={(v) => onViewModeChange(v)} />
-          <HubResultCount icon={Boxes} shown={filtered.length} total={allTools.length} />
-        </>
-      }
-      row2Actions={
-        <>
-          <button
-            type="button"
-            disabled={checkingLocal || localUrls.length === 0}
-            onClick={() => {
-              setLocalHealthBusy(true);
-              void recheckLocal().finally(() => setLocalHealthBusy(false));
-            }}
-            title={
-              localHealthPollMs === null
-                ? "Check local dev servers now (background poll off — Settings)"
-                : `Check now · background poll ${formatLocalHealthPollInterval(prefs.localHealthPoll)}`
-            }
-            className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-100 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            <Radio size={14} className={checkingLocal ? "animate-pulse" : ""} aria-hidden />
-            Local health
-          </button>
-          <HubToolBulkActionBar
-            hasSelection={selectedIds.size > 0}
-            selectedCount={selectedIds.size}
-            busy={hubBusy}
-            onRefreshSelected={handleRefreshSelected}
-            onSyncWorkspace={onRefresh}
-          />
-        </>
-      }
-    />
-  );
-
   return (
-    <div
-      className="anim-fade relative"
-      {...(searchPin ? { "data-search-pin": true } : {})}
-      {...(prefs.headerPin ? { "data-header-pin": true } : {})}
-    >
-      {stackChrome ? (
-        <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
-          <HubStickyHeader
+    <>
+      <HubDirectoryScreen
+        header={
+          <HubListChromeHeader
             registryLive={registryLive}
             registryLabel={registryLabel}
             versionReleaseDate={versionReleaseDate}
@@ -322,60 +250,63 @@ export function HubListPage({
               releases: kpis.releases,
               linkGaps: kpis.linkGaps,
             }}
-            pinSticky={false}
-            dividerBelow={false}
-            embedded
             actions={headerActions}
           />
-          {filterBar}
-        </div>
-      ) : (
-        <>
-          <HubStickyHeader
-            registryLive={registryLive}
-            registryLabel={registryLabel}
-            versionReleaseDate={versionReleaseDate}
-            versionReleaseLive={versionReleaseLive}
-            visibleHeaderStats={visHeaderStats}
-            kpi={{
-              ready: kpis.ready,
-              drift: kpis.drift,
-              releases: kpis.releases,
-              linkGaps: kpis.linkGaps,
-            }}
-            pinSticky={prefs.headerPin}
-            dividerBelow={!searchPin}
-            actions={headerActions}
-          />
-          {filterBar}
-        </>
-      )}
+        }
+        filters={hubFilters}
+        query={query}
+        onQueryChange={setQuery}
+        filterValues={filterValues}
+        onFilterValuesChange={setFilterValues}
+        filterPlaceholder="Search Hub by name, code, repo, tag..."
+        filterShortcutScope="library"
+        filterToolbar={
+          <>
+            <HubTimeRangeSelect value={prefs.range} />
+            <HubRowLimitSelect value={prefs.limit} />
+            <ViewToggle value={viewMode} onChange={(v) => onViewModeChange(v)} />
+            <HubResultCount icon={Boxes} shown={filtered.length} total={allTools.length} />
+          </>
+        }
+        filterRowActions={
+          <>
+            <button
+              type="button"
+              disabled={checkingLocal || localUrls.length === 0}
+              onClick={() => {
+                setLocalHealthBusy(true);
+                void recheckLocal().finally(() => setLocalHealthBusy(false));
+              }}
+              title={
+                localHealthPollMs === null
+                  ? "Check local dev servers now (background poll off — Settings)"
+                  : `Check now · background poll ${formatLocalHealthPollInterval(prefs.localHealthPoll)}`
+              }
+              className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-100 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <Radio size={14} className={checkingLocal ? "animate-pulse" : ""} aria-hidden />
+              Local health
+            </button>
+            <HubToolBulkActionBar
+              hasSelection={selectedIds.size > 0}
+              selectedCount={selectedIds.size}
+              busy={hubBusy}
+              onRefreshSelected={handleRefreshSelected}
+              onSyncWorkspace={onRefresh}
+            />
+          </>
+        }
+        kpis={kpiItems.length > 0 ? kpiItems : undefined}
+        charts={chartsBand}
+        sectionRuleLabel="Tools"
+      >
+        {registryError ? (
+          <div className="mb-4 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+            <AlertTriangle size={compactIconSize(16)} />
+            {registryError}
+          </div>
+        ) : null}
 
-      {registryError ? (
-        <div className="mb-4 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
-          <AlertTriangle size={compactIconSize(16)} />
-          {registryError}
-        </div>
-      ) : null}
-
-      <div className="relative z-0">
-      {hasAnalytics ? (
-        <div className="mt-5 space-y-5">
-          {kpiItems.length > 0 ? <KpiStrip items={kpiItems} /> : null}
-          {hasCharts ? (
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {visCharts.has("health_bar") ? <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} /> : null}
-              {visCharts.has("category_bar") ? <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} /> : null}
-              {visCharts.has("deploy_donut") ? <MiniDonut title="Deploy distribution" items={charts.deploy} /> : null}
-              {visCharts.has("status_donut") ? <MiniDonut title="Status distribution" items={charts.status} /> : null}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      <HubDataSectionRule />
-
-      <div className="space-y-3">
         {viewMode === "card" ? (
           filtered.length === 0 ? null : (
             <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -413,10 +344,9 @@ export function HubListPage({
             healthState={healthState}
           />
         )}
-      </div>
-      </div>
+      </HubDirectoryScreen>
 
       <ToolDetailModal tool={modalTool} onClose={onCloseModal} onRefreshTool={onRefreshTool} />
-    </div>
+    </>
   );
 }

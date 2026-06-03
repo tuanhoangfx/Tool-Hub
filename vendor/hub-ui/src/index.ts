@@ -19,9 +19,11 @@ export { HubLoaderRoot } from "./shell/HubLoaderRoot";
 export { HubLoadingView, type HubLoadingViewProps } from "./shell/HubLoadingView";
 export {
   FilterBar,
+  HubSingleFilterDropdown,
   type FilterDef,
   type FilterOption,
   type FilterValues,
+  type HubSingleFilterDropdownProps,
 } from "./shell/FilterBar";
 export { HubFilterSelect, type HubFilterSelectOption } from "./shell/HubFilterSelect";
 export {
@@ -35,6 +37,7 @@ export { MiniBarChart, type BarItem } from "./shell/MiniBarChart";
 export { MiniDonut, type DonutItem } from "./shell/MiniDonut";
 export { MetricBadge, RegistryMetricBadge, type MetricBadgeProps, type MetricBadgeTone } from "./shell/MetricBadge";
 export { HubResultCount } from "./shell/HubResultCount";
+export { ViewToggle, type HubViewMode } from "./shell/ViewToggle";
 export {
   HubTabChrome,
   HubTabBody,
@@ -48,6 +51,14 @@ export { HubDataTable, HubTableEmptyRow, type HubTableColumn } from "./content/H
 export { HubPanel } from "./content/HubPanel";
 export { HubDirectoryCard } from "./content/HubDirectoryCard";
 export { HubTabScreenBody } from "./content/HubTabScreenBody";
+export { HubDirectoryScreen, type HubDirectoryScreenProps } from "./templates/HubDirectoryScreen";
+export {
+  HUB_UI_TEMPLATES,
+  GOLDEN_SOURCES,
+  isHubUiTemplate,
+  type HubUiTemplate,
+  type UiScreenEntry,
+} from "./ui-template-types";
 export {
   configureFilterIcons,
   resolveFilterAllIcon,
