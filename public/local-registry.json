@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T00:06:07.849Z",
+  "generatedAt": "2026-06-03T00:18:24.461Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -91,7 +91,7 @@
       "repo": "",
       "branch": "main",
       "remoteEnabled": false,
-      "localVersion": "0.2.7",
+      "localVersion": "0.3.2",
       "category": "Local",
       "audience": "Tool maintainers",
       "status": "Needs review",
@@ -167,8 +167,42 @@
       ]
     },
     {
-      "id": "9router-infra",
+      "id": "aichathub",
       "code": "LOCAL-005",
+      "name": "P0006-AIChatHub",
+      "repo": "",
+      "branch": "main",
+      "remoteEnabled": false,
+      "localVersion": "0.1.0",
+      "category": "Local",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "P0006 AIChatHub — multi-channel chatbot platform (Zalo, Messenger, Telegram)",
+      "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
+      "tags": [
+        "Local",
+        "Workspace"
+      ],
+      "localUrl": "http://127.0.0.1:3921",
+      "deployTarget": "local",
+      "usage": [
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": []
+    },
+    {
+      "id": "9router-infra",
+      "code": "LOCAL-006",
       "name": "P0007-9router-infra",
       "repo": "",
       "branch": "main",
@@ -208,7 +242,7 @@
     },
     {
       "id": "sales-console",
-      "code": "LOCAL-006",
+      "code": "LOCAL-007",
       "name": "P0008-Sales-Console",
       "repo": "",
       "branch": "main",
@@ -247,7 +281,7 @@
     },
     {
       "id": "p0009-mie-hair-performance",
-      "code": "LOCAL-007",
+      "code": "LOCAL-008",
       "name": "P0009-Mie-Hair-Performance",
       "repo": "",
       "branch": "main",
@@ -284,7 +318,7 @@
     },
     {
       "id": "p0010-cursor-telegram",
-      "code": "LOCAL-008",
+      "code": "LOCAL-009",
       "name": "P0010-Cursor-Telegram",
       "repo": "",
       "branch": "main",
@@ -320,7 +354,7 @@
     },
     {
       "id": "apps-script-sync",
-      "code": "LOCAL-009",
+      "code": "LOCAL-010",
       "name": "P0012-Apps-Script-Sync",
       "repo": "",
       "branch": "main",
@@ -353,7 +387,7 @@
     },
     {
       "id": "youtube-channel-dashboard",
-      "code": "LOCAL-010",
+      "code": "LOCAL-011",
       "name": "P0013-czp-youtube-tda-team",
       "repo": "",
       "branch": "main",
@@ -387,7 +421,7 @@
     },
     {
       "id": "infi-project-performance-tracker",
-      "code": "LOCAL-012",
+      "code": "LOCAL-013",
       "name": "P0019-Work-Performance",
       "repo": "",
       "branch": "main",
@@ -420,7 +454,7 @@
     },
     {
       "id": "p0020-data-box",
-      "code": "LOCAL-013",
+      "code": "LOCAL-014",
       "name": "P0020-Data-Box",
       "repo": "",
       "branch": "main",
@@ -460,32 +494,32 @@
       ]
     },
     {
-      "id": "infi-website",
+      "id": "infi-store",
       "code": "P0022",
-      "name": "Infi Website",
-      "repo": "tuanhoangfx/Infi-Website",
+      "name": "Infi Store",
+      "repo": "tuanhoangfx/P0022-Infi-Store",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.0.0",
+      "localVersion": "1.1.1",
       "category": "Web",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "E-commerce product showcase — React + Vite + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
-      "localPath": "E:\\Dev\\Tool\\P0022-Infi-Website",
+      "status": "Ready",
+      "summary": "E-commerce product showcase — React + Vite + Tailwind + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
+      "localPath": "E:\\Dev\\Tool\\P0022-Infi-Store",
       "tags": [
         "React",
         "TypeScript",
         "Vite",
-        "Tailwind CDN",
+        "Tailwind CSS",
         "Supabase"
       ],
-      "appUrl": "https://p0022-infi-website.vercel.app",
+      "appUrl": "https://infi.infix1.io.vn",
       "localUrl": "http://127.0.0.1:3022",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
-        "App: https://p0022-infi-website.vercel.app"
+        "App: https://infi.infix1.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

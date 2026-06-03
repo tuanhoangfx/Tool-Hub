@@ -2,6 +2,51 @@
 
 ## 2026-06-03 - Git commit version stamp
 
+- Version: `0.4.3`
+- Timestamp: 2026-06-03 07:19 (UTC+7)
+- Commit: `9170e18`
+- Type: Patch
+- Status: Committed
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+﻿# Changelog
+
+## 2026-06-03 - Stable dev server daemon (no kill-port on every start)
+
+- Version: `0.4.2`
+- Type: Patch
+- Product: P0004
+- Prompt: Xử lý triệt để lỗi ERR_CONNECTION_REFUSED sau 2-3 prompt — dev server bị kill/restart liên tục.
+- Commit: `c050ec4`
+- Status: Committed
+
+### Changes
+
+- `scripts/ensure-dev.cjs`: detached background Vite daemon; reuse healthy server on :5176; `--force` only when explicit restart needed.
+- `package.json`: `dev:vite` no longer runs `kill-port`; new `dev:restart` for manual reset; `open`/`daemon:start` use ensure-dev.
+- `dev-with-launcher.cjs`: skip Vite spawn when port already up; kill only with `--force`.
+- `vendor/hub-ui` + `packages/hub-ui`: fix broken `ui-scale` import paths in shell components.
+- `P0020 ensure-dev`: start Hub via `ensure-dev.cjs` instead of `dev:vite` (avoids killing running Hub).
+
+### Verification
+
+- `node scripts/ensure-dev.cjs --open` → http://127.0.0.1:5176/
+- Second run reuses server without `[kill-port] Freed :5176`
+
+### Rollback
+
+- `git checkout v0.4.1`
+
+---
+
 - Version: `0.3.2`
 - Timestamp: 2026-06-03 07:09 (UTC+7)
 - Commit: `572c55d`
@@ -22,6 +67,33 @@
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Script:** `powershell -File E:\Dev\Tool\scripts\ship-product.ps1 -Code P0004 -Keyword Push`
+
+## 2026-06-03 - P0022 Infi Store rename and catalog refresh
+
+- Version: `0.4.1`
+- Type: Minor
+- Product: P0004
+- Prompt: Đổi tên P0022-Infi-Store, cập nhật Hub catalog sau rename repo, Tailwind, domain infi.infix1.io.vn.
+- Commit: `c050ec4`
+- Status: Committed
+
+### Changes
+
+- `registry.default.json`: **P0022 Infi Store** (`infi-store`, `tuanhoangfx/P0022-Infi-Store`, https://infi.infix1.io.vn).
+- Refreshed `local-registry.json`, `workspace-catalog.json`, `supabase-workspace-map.json`.
+
+### Verification
+
+- `corepack pnpm scan:local` — 15 projects
+- P0022 production: https://p0022-infi-website.vercel.app
+
+### Rollback
+
+```powershell
+git checkout v0.3.2
+```
+
+---
 
 ## 2026-06-03 - Register P0022 Infi Website in workspace catalog
 
