@@ -119,8 +119,8 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.4.3",
-    "remoteEnabled": true
+    "localVersion": "0.4.7",
+    "remoteEnabled": false
   },
   {
     "id": "zalo-ai-bot",
@@ -172,7 +172,7 @@
     "repo": "",
     "branch": "main",
     "remoteEnabled": false,
-    "localVersion": "0.1.0",
+    "localVersion": "0.1.3",
     "category": "Local",
     "audience": "Tool maintainers",
     "status": "Needs review",
@@ -299,7 +299,7 @@
       "Local",
       "Workspace"
     ],
-    "localUrl": "http://127.0.0.1:3000",
+    "localUrl": "http://127.0.0.1:3009",
     "deployTarget": "vercel",
     "usage": [
       "Run the configured dev command from package.json.",
@@ -414,7 +414,7 @@
       "Local",
       "Workspace"
     ],
-    "localUrl": "http://127.0.0.1:3000",
+    "localUrl": "http://127.0.0.1:3013",
     "deployTarget": "vercel",
     "usage": [
       "Run the configured dev command from package.json.",
@@ -462,7 +462,8 @@
       "CHANGELOG.md",
       "RELEASE.md"
     ],
-    "scriptFiles": []
+    "scriptFiles": [],
+    "localUrl": "http://127.0.0.1:5179"
   },
   {
     "id": "p0020-data-box",
@@ -512,13 +513,54 @@
     ]
   },
   {
+    "id": "autovideo-studio-workspace",
+    "code": "LOCAL-016",
+    "name": "P0021-AutoVideo-Studio",
+    "repo": "",
+    "branch": "main",
+    "remoteEnabled": false,
+    "localVersion": "local",
+    "category": "Local",
+    "audience": "Tool maintainers",
+    "status": "Needs review",
+    "summary": "Local workspace asset discovered by scanner.",
+    "localPath": "E:\\Dev\\Tool\\P0021-AutoVideo-Studio",
+    "tags": [
+      "Local",
+      "Workspace"
+    ],
+    "localUrl": "http://127.0.0.1:3000",
+    "deployTarget": "local",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json."
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/build-worker-exe.ps1",
+      "scripts/diagnose-desktop-installed.ps1",
+      "scripts/kill-desktop-workers.ps1",
+      "scripts/prepare-desktop-build.ps1",
+      "scripts/release-desktop.ps1",
+      "scripts/start-desktop-dev.ps1"
+    ]
+  },
+  {
     "id": "infi-store",
     "code": "P0022",
     "name": "Infi Store",
     "repo": "tuanhoangfx/P0022-Infi-Store",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "1.1.1",
+    "localVersion": "2.1.1",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Ready",
@@ -549,6 +591,43 @@
     ],
     "scriptFiles": [],
     "appUrl": "https://infi.infix1.io.vn"
+  },
+  {
+    "id": "fanpage-dashboard",
+    "code": "P0023",
+    "name": "Fanpage Dashboard",
+    "repo": "tuanhoangfx/P0023-Fanpage-Dashboard",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "2.1.1",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Ready",
+    "summary": "Facebook Fanpage metrics, posts, and page management via Graph API (React + Vite + Tailwind).",
+    "localPath": "E:\\Dev\\Tool\\P0023-Fanpage-Dashboard",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "Facebook Graph API"
+    ],
+    "localUrl": "http://127.0.0.1:3023",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: corepack pnpm open",
+      "Build: corepack pnpm build"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": []
   },
   {
     "id": "cookie-bridge",
