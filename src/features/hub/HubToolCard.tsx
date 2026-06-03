@@ -27,7 +27,6 @@ import {
 } from "./hub-tool-ui";
 import { healthDotColor } from "./hub-tool-ui-utils";
 import { HubSupabaseQuotaChip } from "./HubSupabaseQuotaChip";
-import { HubSupabaseQuotaHint } from "./HubSupabaseQuotaHint";
 import { compactIconSize } from "../../lib/ui-scale";
 
 const META: Record<string, { Icon: LucideIcon; tint: string }> = {
@@ -41,10 +40,11 @@ const META: Record<string, { Icon: LucideIcon; tint: string }> = {
 type HubToolCardProps = {
   tool: ResolvedTool;
   healthState?: HealthState;
+  quotaVersion: number;
   onOpen: (id: string) => void;
 };
 
-export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
+export function HubToolCard({ tool, healthState, quotaVersion, onOpen }: HubToolCardProps) {
   const fresh = freshnessLevel(tool.updatedAt);
   const port = tool.localUrl ? tryPort(tool.localUrl) : null;
   const linkGaps = auditManifestLinks(tool);
@@ -148,9 +148,8 @@ export function HubToolCard({ tool, healthState, onOpen }: HubToolCardProps) {
               iconMeta={resolveLinkGapChipIcon()}
             />
           ) : null}
-          <HubSupabaseQuotaChip toolCode={tool.code} />
+          <HubSupabaseQuotaChip toolCode={tool.code} quotaVersion={quotaVersion} />
         </div>
-        <HubSupabaseQuotaHint toolCode={tool.code} />
         <LinkManifestFooter linkGaps={linkGaps} />
       </div>
     </button>

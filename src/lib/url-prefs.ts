@@ -1,3 +1,9 @@
+import {
+  DEFAULT_LOCAL_HEALTH_POLL,
+  parseLocalHealthPoll,
+  type LocalHealthPollValue,
+} from "./local-health-prefs";
+
 export type TimeRange = "all" | "today" | "yesterday" | "7d" | "30d" | "90d" | "1y";
 
 export const TIME_RANGES: { value: TimeRange; label: string }[] = [
@@ -29,6 +35,8 @@ export type HubListPrefs = {
   searchPin: boolean;
   /** Show the sidebar submenu expand/collapse icon (default on). */
   navToggleIcon: boolean;
+  /** Local dev server probe: off or auto interval (seconds) via URL `lhpoll`. */
+  localHealthPoll: LocalHealthPollValue;
 };
 
 function parseSet(raw: string | null): Set<string> | null {
@@ -49,6 +57,7 @@ export function readHubListPrefs(): HubListPrefs {
       headerPin: true,
       searchPin: true,
       navToggleIcon: true,
+      localHealthPoll: DEFAULT_LOCAL_HEALTH_POLL,
     };
   }
   const sp = new URLSearchParams(window.location.search);
@@ -69,6 +78,7 @@ export function readHubListPrefs(): HubListPrefs {
     headerPin: hpin !== "0",
     searchPin: spin !== "0",
     navToggleIcon: navicon !== "0",
+    localHealthPoll: parseLocalHealthPoll(sp.get("lhpoll")),
   };
 }
 

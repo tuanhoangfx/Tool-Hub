@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, RefreshCcw } from "lucide-react";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
 import {
@@ -102,7 +102,14 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
     () => [...new Set(links.map(linkPingUrl).filter((u): u is string => Boolean(u)))],
     [links],
   );
-  const { state: healthState, check } = useLocalHealth(pingTargets);
+  const { state: healthState, check } = useLocalHealth(pingTargets, null);
+
+  useEffect(() => {
+    if (pingTargets.length === 0) return;
+    void check({ silent: true });
+    // One probe when link targets change; Hub list polling is controlled in Settings.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pingTargets.join("|")]);
   const checking = pingTargets.some((u) => healthState[u] === "checking");
 
   const linkFilters = useMemo(

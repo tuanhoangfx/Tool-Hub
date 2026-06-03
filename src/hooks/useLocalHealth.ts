@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 export type HealthState = "unknown" | "checking" | "online" | "offline";
 
 const TIMEOUT_MS = 2500;
-const REFRESH_MS = 30_000;
 
 async function pingViaProxy(urls: string[]): Promise<Record<string, HealthState>> {
   const q = encodeURIComponent(urls.join(","));
@@ -39,19 +38,21 @@ async function pingAll(urls: string[]): Promise<Record<string, HealthState>> {
   }
 }
 
-export function useLocalHealth(urls: string[]) {
+export function useLocalHealth(urls: string[], pollIntervalMs: number | null) {
   const [state, setState] = useState<Record<string, HealthState>>({});
   const stableUrls = useRef<string>("");
   const key = urls.filter(Boolean).sort().join("|");
 
-  const check = useCallback(async () => {
+  const check = useCallback(async (opts?: { silent?: boolean }) => {
     const targets = urls.filter(Boolean);
     if (targets.length === 0) return;
-    setState((s) => {
-      const next = { ...s };
-      for (const u of targets) next[u] = "checking";
-      return next;
-    });
+    if (!opts?.silent) {
+      setState((s) => {
+        const next = { ...s };
+        for (const u of targets) next[u] = "checking";
+        return next;
+      });
+    }
     const results = await pingAll(targets);
     setState((s) => ({ ...s, ...results }));
   }, [urls]);
@@ -59,15 +60,15 @@ export function useLocalHealth(urls: string[]) {
   useEffect(() => {
     if (stableUrls.current === key) return;
     stableUrls.current = key;
-    void check();
+    if (pollIntervalMs !== null) void check({ silent: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  }, [key, pollIntervalMs]);
 
   useEffect(() => {
-    if (!key) return;
-    const id = window.setInterval(() => void check(), REFRESH_MS);
+    if (!key || pollIntervalMs === null) return;
+    const id = window.setInterval(() => void check({ silent: true }), pollIntervalMs);
     return () => window.clearInterval(id);
-  }, [key, check]);
+  }, [key, check, pollIntervalMs]);
 
   return { state, check };
 }

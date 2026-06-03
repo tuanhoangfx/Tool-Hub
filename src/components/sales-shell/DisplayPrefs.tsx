@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   countHiddenUserTableColumns,
   UserTableColumnsSettings,
@@ -31,6 +31,7 @@ type DisplayPrefsProps = Omit<
   | "onLog"
 > & {
   showUsersTableColumns?: boolean;
+  generalExtras?: ReactNode;
 };
 
 /** Match P0020 Cookie Auto header Settings panel (width, tabs, max height). */
@@ -39,6 +40,7 @@ const P0020_SETTINGS_MAX_PANEL_HEIGHT = "min(80vh, 42rem)";
 
 export function DisplayPrefs({
   showUsersTableColumns = false,
+  generalExtras,
   panelWidth = P0020_SETTINGS_PANEL_WIDTH,
   maxPanelHeight = P0020_SETTINGS_MAX_PANEL_HEIGHT,
   ...props
@@ -59,6 +61,7 @@ export function DisplayPrefs({
       panelWidth={panelWidth}
       maxPanelHeight={maxPanelHeight}
       {...props}
+      generalExtras={generalExtras}
       readPrefs={readHubListPrefs}
       patchPrefs={(patch) => patchHubListPrefs(patch)}
       getScreen={() => readAppScreen()}

@@ -1,8 +1,80 @@
+# Changelog
+
+## 2026-06-03 - Git commit version stamp
+
+- Version: `0.4.14`
+- Timestamp: 2026-06-03 08:28 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
 ﻿# Changelog - P0004-Tool-Hub
 
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Version sync:** `corepack pnpm run check:version` — package.json = manifest release.version = CHANGELOG top Version
+
+## 2026-06-03 - Settings: Local health poll off / auto interval
+
+- Version: `0.4.13`
+- Type: Patch
+- Product: P0004
+- Prompt: Add Settings toggle — auto poll by interval or off (manual Local health only)
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- **Settings → General → Local health poll:** Off, 30s, 60s, 90s (default), 2m — stored in URL `lhpoll`.
+- `useLocalHealth` respects poll interval; no background probe when Off.
+- Hub filter bar **Local health** still runs an immediate recheck anytime.
+
+### Verification
+
+- `corepack pnpm test`
+- Settings → Off → Hub cards stop auto `:port` updates until Local health clicked
+
+### Rollback
+
+- Remove `lhpoll` pref and restore fixed 90s interval in `useLocalHealth`
+
+---
+
+## 2026-06-03 - Hub cards: quieter local health + Supabase alerts only
+
+- Version: `0.4.12`
+- Type: Patch
+- Product: P0004
+- Prompt: Why Supabase on Hub cards; fix Hub / Local health flicker
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Remove verbose Supabase quota lines from Hub **card** view (metrics stay in **System → Supabase Quota**).
+- Show Supabase chip on cards only for warn / critical / restricted (not “Quota OK”).
+- Local health: background poll is silent (no `checking` flash); pulse only on manual recheck; interval 90s.
+- Debounce quota cache UI events (300ms) and one Hub-level quota listener instead of per-card.
+
+### Verification
+
+- Hub cards at `http://127.0.0.1:5176/` — P0020 no DB/API footer; Local health button stable between polls
+- `corepack pnpm test`
+
+### Rollback
+
+- Restore `HubSupabaseQuotaHint` on `HubToolCard` and prior `useLocalHealth` / quota dispatch behavior
+
+---
 
 ## 2026-06-03 - Local registry: P0001/P0002 manifest repair scan
 

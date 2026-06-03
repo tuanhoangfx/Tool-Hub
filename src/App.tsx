@@ -24,7 +24,7 @@ import {
   HUB_FILTER_DEFS,
   HUB_KPI_DEFS,
 } from "./features/hub/hub-prefs";
-import { HubListPage } from "./features/hub";
+import { HubListPage, LocalHealthPollSettings } from "./features/hub";
 
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
 import { migrateAppUrl, readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
@@ -78,6 +78,7 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
       showLimit={false}
       showHeaderPin={isGlobal}
       showUsersTableColumns={!isGlobal && screen === "users"}
+      generalExtras={isGlobal || screen === "library" ? <LocalHealthPollSettings /> : undefined}
       sidebarRow={sidebarRow}
       scope={scope}
     />

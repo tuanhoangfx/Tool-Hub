@@ -15,8 +15,9 @@ import {
   type HubViewMode,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { useLocalHealth } from "../../hooks";
+import { useLocalHealth, useSupabaseQuotaVersion } from "../../hooks";
 import { compactIconSize } from "../../lib/ui-scale";
+import { resolveLocalHealthPollMs } from "../../lib/local-health-prefs";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailModal } from "../overview/ToolDetailModal";
@@ -213,8 +214,14 @@ export function HubListPage({
   );
 
   const localUrls = useMemo(() => filtered.map((t) => t.localUrl).filter((u): u is string => Boolean(u)), [filtered]);
-  const { state: healthState, check: recheckLocal } = useLocalHealth(localUrls);
-  const checkingLocal = localUrls.some((u) => healthState[u] === "checking");
+  const localHealthPollMs = useMemo(
+    () => resolveLocalHealthPollMs(prefs.localHealthPoll),
+    [prefs.localHealthPoll],
+  );
+  const { state: healthState, check: recheckLocal } = useLocalHealth(localUrls, localHealthPollMs);
+  const quotaVersion = useSupabaseQuotaVersion();
+  const [localHealthBusy, setLocalHealthBusy] = useState(false);
+  const checkingLocal = localHealthBusy;
 
   const modalTool = modalOpen ? filtered.find((t) => t.id === selectedId) ?? allTools.find((t) => t.id === selectedId) ?? null : null;
 
@@ -260,8 +267,15 @@ export function HubListPage({
           <button
             type="button"
             disabled={checkingLocal || localUrls.length === 0}
-            onClick={() => void recheckLocal()}
-            title="Recheck local dev servers (live / down)"
+            onClick={() => {
+              setLocalHealthBusy(true);
+              void recheckLocal().finally(() => setLocalHealthBusy(false));
+            }}
+            title={
+              localHealthPollMs === null
+                ? "Recheck local dev servers (polling off — Settings → Local health poll)"
+                : `Recheck local dev servers (auto every ${localHealthPollMs / 1000}s)`
+            }
             className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-100 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Radio size={14} className={checkingLocal ? "animate-pulse" : ""} aria-hidden />
@@ -361,6 +375,7 @@ export function HubListPage({
                   key={tool.id}
                   tool={tool}
                   healthState={tool.localUrl ? healthState[tool.localUrl] : undefined}
+                  quotaVersion={quotaVersion}
                   onOpen={onSelect}
                 />
               ))}
