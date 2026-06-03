@@ -119,7 +119,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "0.2.8",
+    "localVersion": "0.2.7",
     "remoteEnabled": false
   },
   {
@@ -162,7 +162,7 @@
       "scripts/install-autostart.ps1",
       "scripts/patch-admin-botlist.mjs"
     ],
-    "localVersion": "1.2.1",
+    "localVersion": "1.3.1",
     "remoteEnabled": true
   },
   {
@@ -437,7 +437,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": false,
-    "localVersion": "0.1.1",
+    "localVersion": "0.2.1",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",
@@ -476,6 +476,45 @@
       "scripts/ensure-dev.cjs",
       "scripts/find-dead-css.cjs"
     ]
+  },
+  {
+    "id": "infi-website",
+    "code": "P0022",
+    "name": "Infi Website",
+    "repo": "tuanhoangfx/Infi-Website",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "1.0.0",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Needs review",
+    "summary": "E-commerce product showcase — React + Vite + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
+    "localPath": "E:\\Dev\\Tool\\P0022-Infi-Website",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Tailwind CDN",
+      "Supabase"
+    ],
+    "localUrl": "http://127.0.0.1:3022",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: corepack pnpm dev",
+      "Build: corepack pnpm build",
+      "App: https://p0022-infi-website.vercel.app"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [],
+    "appUrl": "https://p0022-infi-website.vercel.app"
   },
   {
     "id": "cookie-bridge",

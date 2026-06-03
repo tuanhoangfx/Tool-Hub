@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-02T20:53:17.967Z",
+  "generatedAt": "2026-06-03T00:06:07.861Z",
   "roots": [
     {
       "id": "tool",
@@ -25,8 +25,8 @@
     }
   ],
   "summary": {
-    "total": 15,
-    "projects": 13,
+    "total": 16,
+    "projects": 14,
     "n8n": 2
   },
   "entries": [
@@ -123,7 +123,7 @@
       "repo": "",
       "branch": "main",
       "remoteEnabled": false,
-      "localVersion": "0.2.8",
+      "localVersion": "0.2.7",
       "category": "Local",
       "audience": "Tool maintainers",
       "status": "Needs review",
@@ -166,11 +166,11 @@
       "repo": "tuanhoangfx/zalo-ai-bot",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.2.1",
+      "localVersion": "1.3.1",
       "category": "Local",
       "audience": "Tool maintainers",
       "status": "Needs review",
-      "summary": "Multi-channel AI bot: Zalo (zca-js) + Facebook Page (Messenger webhooks) + 9Router AI",
+      "summary": "Zalo personal account bot: zca-js listener + 9Router AI + local history",
       "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
       "tags": [
         "Local",
@@ -475,7 +475,7 @@
       "repo": "",
       "branch": "main",
       "remoteEnabled": false,
-      "localVersion": "0.1.1",
+      "localVersion": "0.2.1",
       "category": "Local",
       "audience": "Tool maintainers",
       "status": "Needs review",
@@ -508,6 +508,47 @@
         "scripts/apply-fix-v-note.mjs",
         "scripts/apply-migrations.mjs"
       ],
+      "workspaceRoot": "tool",
+      "assetKind": "project"
+    },
+    {
+      "id": "infi-website",
+      "code": "P0022",
+      "name": "Infi Website",
+      "repo": "tuanhoangfx/Infi-Website",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "1.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "E-commerce product showcase — React + Vite + Supabase (cart, auth, checkout, i18n EN/VI/TH).",
+      "localPath": "E:\\Dev\\Tool\\P0022-Infi-Website",
+      "tags": [
+        "React",
+        "TypeScript",
+        "Vite",
+        "Tailwind CDN",
+        "Supabase"
+      ],
+      "appUrl": "https://p0022-infi-website.vercel.app",
+      "localUrl": "http://127.0.0.1:3022",
+      "deployTarget": "vercel",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build",
+        "App: https://p0022-infi-website.vercel.app"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [],
       "workspaceRoot": "tool",
       "assetKind": "project"
     },

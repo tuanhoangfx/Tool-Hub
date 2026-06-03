@@ -1,8 +1,54 @@
+﻿# Changelog
+
+## 2026-06-03 - Git commit version stamp
+
+- Version: `0.3.2`
+- Timestamp: 2026-06-03 07:09 (UTC+7)
+- Commit: `572c55d`
+- Type: Patch
+- Status: Committed
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
 ﻿# Changelog - P0004-Tool-Hub
 
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
 > **Script:** `powershell -File E:\Dev\Tool\scripts\ship-product.ps1 -Code P0004 -Keyword Push`
+
+## 2026-06-03 - Register P0022 Infi Website in workspace catalog
+
+- Version: `0.3.1`
+- Type: Minor
+- Product: P0004
+- Prompt: Đồng bộ tuanhoangfx/Infi-Website → P0022, chuẩn hóa registry Tool Hub sau clone và release.
+- Commit: `572c55d`
+- Status: Committed
+
+### Changes
+
+- `scan:local` + `registry.default.json`: thêm **P0022 Infi Website** (`infi-website`, Vercel, Supabase `lmwcvulazahaweyikkjq`).
+- Cập nhật `local-registry.json`, `workspace-catalog.json`, `supabase-workspace-map.json`, `agent-manifest.json`.
+
+### Verification
+
+- `corepack pnpm scan:local` — 14 projects, +1 catalog entry
+- Production P0022: https://p0022-infi-website.vercel.app
+
+### Rollback
+
+```powershell
+git checkout v0.2.7
+```
+
+---
 
 ## 2026-06-03 - Release v0.2.7: Agent context, Supabase quota, Hub shell
 
@@ -370,7 +416,7 @@ git checkout v0.2.6
 - Type: Patch
 - Product: P0004
 - Prompt: Roadmap UI crypto-style timeline
-- Status: Draft
+- Status: Committed
 
 ### Changes
 
@@ -421,7 +467,7 @@ git checkout v0.2.6
 
 - Version: `0.1.0`
 - Timestamp: 2026-04-30 00:00 (UTC+7)
-- Commit: pending
+- Commit: `572c55d`
 - Type: Feature
 - Product: P0004
 - Prompt: Rebrand Tool Hub
