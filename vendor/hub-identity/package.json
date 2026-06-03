@@ -1,0 +1,10 @@
+{
+  "name": "@tool-workspace/hub-identity",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared Tool Hub identity login helpers (User ID ↔ Supabase auth email on x1z10 P01).",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

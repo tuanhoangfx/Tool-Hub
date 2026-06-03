@@ -1,6 +1,8 @@
 # Tool Hub identity (P0004)
 
-Workspace login and user directory live on **Supabase Hub identity** (`fmnrafpzctuhxjaaomzt`, x1z10 P01) — shared with P0020 hub auth and E0001 identity plane.
+Workspace login and user directory live on **Supabase Hub identity** (`fmnrafpzctuhxjaaomzt`, x1z10 P01) — shared with P0020 (`signInWorkspaceDual`), P0006, and E0001 identity plane.
+
+Login resolution is shared via **`@tool-workspace/hub-identity`** (vendor copy: `node Tool/scripts/sync-hub-identity-vendor.cjs`).
 
 ## Setup
 

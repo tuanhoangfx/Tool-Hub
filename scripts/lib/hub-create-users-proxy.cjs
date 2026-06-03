@@ -2,7 +2,7 @@
 
 const { createClient } = require("@supabase/supabase-js");
 const { readSharedEnv, workspaceDevRoot } = require("./read-env-file.cjs");
-const { hubAuthEmailFromLoginOrEmail, isHubSyntheticEmail } = require("./hub-login.cjs");
+const { hubAuthEmailFromLoginOrEmail, isHubSyntheticEmail } = require("../../vendor/hub-identity/src/hub-login.cjs");
 
 function readBody(req) {
   return new Promise((resolve, reject) => {

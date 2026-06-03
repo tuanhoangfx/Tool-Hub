@@ -1,4 +1,4 @@
-import { looksLikeEmail, normalizeLoginId } from "./hub-login";
+import { looksLikeEmail, normalizeLoginId } from "@tool-workspace/hub-identity";
 import type { UserManagementRow } from "./userManagementRepository";
 
 export type UserCreateDraft = {

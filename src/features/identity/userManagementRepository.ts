@@ -1,7 +1,7 @@
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase";
 import { deduplicateUserRows } from "./hubUserDisplay";
-import { hubDisplayEmail, hubDisplayLoginId, isHubSyntheticEmail, loginIdFromSyntheticEmail } from "./hub-login";
+import { hubDisplayEmail, hubDisplayLoginId, isHubSyntheticEmail, loginIdFromSyntheticEmail } from "@tool-workspace/hub-identity";
 
 export type UserManagementRow = {
   id: string;

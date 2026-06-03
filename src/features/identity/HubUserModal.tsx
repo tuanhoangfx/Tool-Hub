@@ -6,7 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { hubRoleLabel, hubUserInitials, parseHubRole } from "./hubUserDisplay";
 import { fetchCurrentProfileRole } from "./userManagementRepository";
 import { hubSessionLabels } from "./HubAuthGate";
-import { canUseEmailPasswordRecovery } from "./hub-login";
+import { canUseEmailPasswordRecovery } from "@tool-workspace/hub-identity";
 
 type Props = {
   open: boolean;

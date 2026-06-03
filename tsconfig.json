@@ -18,6 +18,8 @@
     "baseUrl": ".",
     "paths": {
       "@dev/hub-load": ["vendor/hub-load/src/index.ts"],
+      "@tool-workspace/hub-identity": ["vendor/hub-identity/src/index.ts"],
+      "@tool-workspace/hub-identity/*": ["vendor/hub-identity/src/*"],
       "@tool-workspace/hub-ui": ["vendor/hub-ui/src/index.ts"],
       "@tool-workspace/hub-ui/*": ["vendor/hub-ui/src/*"]
     }

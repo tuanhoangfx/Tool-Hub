@@ -7,6 +7,7 @@ import { loadEnv } from "vite";
 
 const toolRoot = path.dirname(fileURLToPath(import.meta.url));
 const hubUiRoot = path.resolve(toolRoot, "vendor/hub-ui/src");
+const hubIdentityRoot = path.resolve(toolRoot, "vendor/hub-identity/src");
 const hubLoadRoot = path.resolve(toolRoot, "vendor/hub-load/src");
 
 const require = createRequire(import.meta.url);
@@ -76,6 +77,7 @@ export default defineConfig(({ mode }) => {
       alias: {
         "@dev/hub-load": hubLoadRoot,
         "@tool-workspace/hub-ui": hubUiRoot,
+        "@tool-workspace/hub-identity": hubIdentityRoot,
       },
     },
     test: {

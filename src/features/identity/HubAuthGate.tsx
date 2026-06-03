@@ -10,7 +10,7 @@ import {
   hubDisplayLoginId,
   isHubSyntheticEmail,
   resolveHubLogin,
-} from "./hub-login";
+} from "@tool-workspace/hub-identity";
 
 type Props = {
   onAuthed?: () => void;
