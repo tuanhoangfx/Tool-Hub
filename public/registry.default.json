@@ -40,20 +40,18 @@
   },
   {
     "id": "yt-multistream-console",
-    "code": "P0002",
-    "name": "YT Multistream Console",
+    "code": "LOCAL-002",
+    "name": "P0002-YT-Multistream-Console",
     "repo": "tuanhoangfx/YT-Multistream-Console",
     "branch": "main",
     "category": "Desktop",
     "audience": "Livestream operators",
-    "status": "Ready",
-    "summary": "Local desktop console for running multi-channel YouTube livestream jobs from local video files or Google Drive links.",
+    "status": "Needs review",
+    "summary": "Desktop console for multi-channel YouTube livestream from local or Google Drive source.",
     "localPath": "E:\\Dev\\Tool\\P0002-YT-Multistream-Console",
     "tags": [
-      "Electron",
-      "React",
-      "Vite",
-      "FFmpeg"
+      "Local",
+      "Workspace"
     ],
     "localUrl": "http://127.0.0.1:5174",
     "deployTarget": "github-release",
@@ -117,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "1.1.1",
+    "localVersion": "2.0.0",
     "remoteEnabled": true
   },
   {
@@ -160,7 +158,7 @@
       "scripts/install-autostart.ps1",
       "scripts/patch-admin-botlist.mjs"
     ],
-    "localVersion": "1.3.1",
+    "localVersion": "1.4.0",
     "remoteEnabled": true
   },
   {
@@ -170,7 +168,7 @@
     "repo": "tuanhoangfx/aichathub",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.2.0",
+    "localVersion": "0.2.1",
     "category": "Local",
     "audience": "Tool maintainers",
     "status": "Draft",
@@ -483,7 +481,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.2.1",
+    "localVersion": "0.2.2",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",

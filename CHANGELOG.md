@@ -7,7 +7,8 @@
 - Product: P0004
 - Prompt: Release P0004 — Supabase Quota data complete, legacy projects removed
 - Commit: `93dcef1`
-- Status: Committed
+- Status: Verified
+- Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v2.0.0
 
 ### Changes
 
