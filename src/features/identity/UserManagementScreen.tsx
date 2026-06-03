@@ -26,6 +26,7 @@ import {
   type KpiTileData,
   type TabHeaderStatItem,
 } from "../../components/sales-shell";
+import { useHubPageShortcuts } from "@tool-workspace/hub-ui";
 import { APP_VERSION } from "../../lib/app-meta";
 import { HubAuthGate } from "./HubAuthGate";
 import { HubRoleBadge } from "./HubRoleBadge";
@@ -455,6 +456,13 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     if (target) setAccessUser(target);
   }, [selectedUsers]);
 
+  useHubPageShortcuts("users", {
+    onNew: handleAddUserInfo,
+    onEdit: handleBulkEdit,
+    canNew: () => isAdmin && !roleLoading,
+    canEdit: () => (isAdmin || isManager) && hasSelection && !roleLoading,
+  });
+
   const handleBulkDelete = useCallback(async () => {
     if (!canManageTools || selectedUsers.length === 0) return;
     const nonAdmins = selectedUsers.filter((u) => u.role !== "admin");
@@ -619,6 +627,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
           dividerBelow={false}
         />
         <FilterBar
+          shortcutScope="users"
           layout="hub"
           pinSticky
           headerPinned

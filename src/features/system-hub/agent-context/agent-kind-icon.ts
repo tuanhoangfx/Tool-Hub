@@ -1,4 +1,4 @@
-import { BookOpen, Bot, FileCode, ScrollText, Sparkles, type LucideIcon } from "lucide-react";
+import { BookOpen, Bot, FileCode, ScrollText, Sparkles, Terminal, Wrench, type LucideIcon } from "lucide-react";
 import type { AgentContextItem, AgentContextKind } from "./types";
 
 export function agentKindIcon(kind: AgentContextKind): LucideIcon {
@@ -9,6 +9,10 @@ export function agentKindIcon(kind: AgentContextKind): LucideIcon {
       return Sparkles;
     case "contract":
       return BookOpen;
+    case "command":
+      return Terminal;
+    case "script":
+      return Wrench;
     case "file":
       return FileCode;
     default:

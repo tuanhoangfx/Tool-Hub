@@ -9,6 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { FileText } from "lucide-react";
+import { setHubActiveScreen } from "@tool-workspace/hub-ui";
 import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
@@ -206,6 +207,10 @@ function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
 function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
   const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
+
+  useEffect(() => {
+    setHubActiveScreen(screen);
+  }, [screen]);
   /** Eager keep-mounted — avoids blank main when URL is /system/* before visited effect runs. */
   const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set(ALL_APP_SCREENS));
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");

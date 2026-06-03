@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
 import { ChevronDown, Clock } from "lucide-react";
-import { usePageSessionSeconds } from "../../hooks/usePageSessionSeconds";
+import { usePageSessionSeconds } from "../hooks/usePageSessionSeconds";
 import { compactIconSize } from "../ui-scale";
 import "./app-tab-header.css";
 

@@ -1,5 +1,5 @@
 import type { PrefItem } from "../../components/sales-shell/DisplayPrefs";
-import { HUB_CHART_DEFS, HUB_KPI_DEFS } from "../hub/hub-prefs";
+import { DEFAULT_HUB_CHART_KEYS, HUB_CHART_DEFS, HUB_KPI_DEFS } from "../hub/hub-prefs";
 import type { SystemTab } from "./components/SystemTabs";
 import { readSystemTab } from "./components/SystemTabs";
 
@@ -85,6 +85,15 @@ export const DEFAULT_SYSTEM_AGENT_CHART_KEYS = new Set([
 export const DEFAULT_SYSTEM_OVERVIEW_KPI_KEYS = new Set<string>();
 export const DEFAULT_SYSTEM_OVERVIEW_CHART_KEYS = new Set<string>();
 
+export const SYSTEM_SERVER_KPI_DEFS: PrefItem[] = [
+  { key: "host", label: "VPS host" },
+  { key: "ready", label: "Ready" },
+  { key: "releases", label: "With release" },
+  { key: "drift", label: "Drift alerts" },
+];
+
+export const DEFAULT_SYSTEM_SERVER_KPI_KEYS = new Set(SYSTEM_SERVER_KPI_DEFS.map((d) => d.key));
+
 function loadStored(): StoredMap {
   if (typeof window === "undefined") return {};
   try {
@@ -114,6 +123,13 @@ export function systemDisplayDefs(stab: SystemTab = readSystemTab()) {
         charts: SYSTEM_SUPABASE_QUOTA_CHART_DEFS,
         defaultKpiKeys: DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS,
         defaultChartKeys: DEFAULT_SYSTEM_SUPABASE_QUOTA_CHART_KEYS,
+      };
+    case "server":
+      return {
+        kpis: SYSTEM_SERVER_KPI_DEFS,
+        charts: HUB_CHART_DEFS,
+        defaultKpiKeys: DEFAULT_SYSTEM_SERVER_KPI_KEYS,
+        defaultChartKeys: DEFAULT_HUB_CHART_KEYS,
       };
     case "agent":
       return {

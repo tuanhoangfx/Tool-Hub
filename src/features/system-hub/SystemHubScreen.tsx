@@ -10,6 +10,7 @@ import { SystemOverviewPanel } from "./SystemOverviewPanel";
 import { SystemSchemaPanel } from "./SystemSchemaPanel";
 import { SystemSupabaseQuotaPanel } from "./SystemSupabaseQuotaPanel";
 import { SystemAgentContextPanel } from "./SystemAgentContextPanel";
+import { SystemServerPanel } from "./SystemServerPanel";
 
 type SystemHubScreenProps = {
   tools: ResolvedTool[];
@@ -120,6 +121,9 @@ export function SystemHubScreen({
           </TabPanel>
           <TabPanel tabId="supabase-quota" activeTab={tab} visited={visited}>
             <SystemSupabaseQuotaPanel />
+          </TabPanel>
+          <TabPanel tabId="server" activeTab={tab} visited={visited}>
+            <SystemServerPanel tools={tools} />
           </TabPanel>
           <TabPanel tabId="agent" activeTab={tab} visited={visited}>
             <SystemAgentContextPanel />

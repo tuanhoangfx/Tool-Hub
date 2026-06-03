@@ -1,0 +1,106 @@
+/* Hub app shell — P0004 p0008-globals parity */
+:root,
+.theme-hub {
+  --hub-compact-scale: 0.9;
+  --hub-control-h: 31px;
+  --hub-sidebar-width: 15rem;
+  --app-tab-header-py: 0.75rem;
+  --app-tab-header-px: 1.5rem;
+  --app-tab-header-min-h: 2.75rem;
+  --app-tab-header-gap-below: 0.75rem;
+  --app-tab-header-sticky-h: var(--app-tab-header-min-h);
+  --hub-filter-pin-est-h: 6.75rem;
+  --hub-chrome-sticky-est-h: calc(var(--app-tab-header-min-h) + var(--hub-filter-pin-est-h));
+}
+
+.hub-app {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  max-height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.hub-app > aside {
+  position: relative;
+  z-index: 50;
+  width: var(--hub-sidebar-width);
+  flex-shrink: 0;
+  min-height: 0;
+  overflow: visible;
+}
+
+.hub-app > main,
+.hub-main {
+  position: relative;
+  z-index: 0;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding: 0 1.5rem 1.5rem;
+  scroll-padding-top: var(--hub-chrome-sticky-est-h);
+}
+
+.hub-main:has([data-search-pin][data-header-pin]) {
+  scroll-padding-top: var(--hub-chrome-sticky-est-h);
+}
+
+.hub-main:has([data-search-pin]):not(:has([data-header-pin])) {
+  scroll-padding-top: var(--hub-filter-pin-est-h);
+}
+
+.hub-main {
+  -webkit-overflow-scrolling: touch;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.hub-chrome-sticky {
+  isolation: isolate;
+}
+
+/* Flush header + search panel when stacked (no double gap between header and filter) */
+.hub-chrome-sticky > .app-tab-header {
+  padding-bottom: 0;
+  min-height: calc(var(--app-tab-header-min-h) - var(--app-tab-header-py));
+}
+
+.hub-filter-sticky {
+  isolation: isolate;
+}
+
+/* Tab content below chrome — P0004 HubListPage `relative z-0` + mt-5 bands */
+.hub-tab-content-zone {
+  position: relative;
+  z-index: 0;
+}
+
+.hub-tab-kpi-zone {
+  margin-top: 1.25rem;
+}
+
+.hub-tab-body-zone {
+  /* spacing between children: use Tailwind space-y-3 on the element */
+}
+
+.hub-tab-body-zone--split {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.hub-screen-body {
+  min-height: 0;
+}
+
+.hub-kpi-block {
+  margin-top: 1.25rem;
+}

@@ -1,5 +1,173 @@
 # Changelog
 
+## 2026-06-03 - Git commit version stamp
+
+- Version: `2.1.10`
+- Timestamp: 2026-06-03 20:23 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-03 - User modal Role dropdown (Filter style)
+
+- Version: `2.1.9`
+- Type: Patch
+- Product: P0004
+- Prompt: Modal User Role select unreadable; chuẩn hóa Filter style
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `@tool-workspace/hub-ui`: `HubFilterSelect` single-select dropdown (FilterBar chrome).
+- `UserAccessModal`: Role field uses `HubFilterSelect` + `HubRoleBadge` instead of native `<select>`.
+- `hub-fields.css`: filter-select + native `select` dark option fallback.
+
+Version: 2.1.8 → 2.1.9
+
+## 2026-06-03 - Fix System → Server tab crash
+
+- Version: `2.1.8`
+- Type: Patch
+- Product: P0004
+- Prompt: lỗi trang trống khi chọn Server; Working Rules
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `system-display-prefs.ts`: import `DEFAULT_HUB_CHART_KEYS` for Server tab display prefs (fixes `ReferenceError` in `AppDisplayPrefs`).
+
+Version: 2.1.7 → 2.1.8
+
+## 2026-06-03 - Fix keyboard shortcuts on Hub tab (scoped by active screen)
+
+- Version: `2.1.7`
+- Type: Patch
+- Product: P0004
+- Prompt: phím tắt không nhận trên tab Hub
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `setHubActiveScreen` + `shortcutScope` on FilterBar; `useHubPageShortcuts("library"|"users")`.
+
+Version: 2.1.6 → 2.1.7
+
+## 2026-06-03 - Server tab Overview clone + P0021 VPS worker off
+
+- Version: `2.1.6`
+- Type: Patch
+- Product: P0004
+- Prompt: P0021 local render only; clone Overview UI on Server tab
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- **System → Server:** Overview-style shell (`ToolOverviewContent`, filters, charts) + VPS host snapshot strip.
+- **VPS:** removed P0021 `autovideo-studio` docker; inventory snapshot updated.
+
+Version: 2.1.5 → 2.1.6
+
+## 2026-06-03 - Hub keyboard shortcuts F / N / E / Esc
+
+- Version: `2.1.5`
+- Type: Patch
+- Product: P0004
+- Prompt: đồng bộ phím tắt Hub; hiển thị trên tab Agent
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- **F** focus search (thay Ctrl+K) — `FilterBar` + `@tool-workspace/hub-ui` keyboard module.
+- **N** / **E** — `useHubPageShortcuts` (Users, Hub list); **Esc** modal giữ nguyên.
+- Agent tab: `HubKeyboardHints`; `docs/HUB-KEYBOARD-SHORTCUTS.md` + agent manifest.
+
+Version: 2.1.4 → 2.1.5
+
+## 2026-06-03 - System → Server tab (VPS inventory)
+
+- Version: `2.1.4`
+- Type: Patch
+- Product: P0004
+- Prompt: ok 1 2 — VPS cleanup + Server tab
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- **System → Server:** static CloudFly inventory (`public/vps-inventory.json`), VPS deploy tools, extras notes, ops script hints.
+- VPS (P0006 scripts): disabled `openclaw-gateway` user unit + haygheta timer; 4G swap; kept P0021 autovideo docker.
+
+Version: 2.1.3 → 2.1.4
+
+## 2026-06-03 - AGENTS.md: Working Rules enforcement table
+
+- Version: `2.1.3`
+- Type: Patch
+- Product: P0004
+- Prompt: đảm bảo không quên Rule; rà soát command/rule/skill Hub UI
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `AGENTS.md`: § Working rules — compact gate + hooks + README-RULES checklist.
+
+Version: 2.1.2 → 2.1.3
+
+## 2026-06-03 - Agent tab: remove Hub UI bundles panel
+
+- Version: `2.1.2`
+- Type: Patch
+- Product: P0004
+- Prompt: bỏ khối Hub UI command bundles trên UI; Command kind đủ
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Removed `HubUiBundlesPanel` and `hubUiBundles` from agent manifest.
+- Hub UI slash commands remain as manifest items with `kind: command` (filter Kind → Command).
+
+Version: 2.1.1 → 2.1.2
+
+## 2026-06-03 - Hub UI agent catalog + `/hub-ui` command bundle
+
+- Version: `2.1.1`
+- Type: Patch
+- Product: P0004
+- Prompt: Working_Rules — gom rule/skill/code Hub UI; list vào Agent tab; command gọi một lúc
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `AGENTS.md`: catalog đầy đủ rules/skills/scripts/package + command bundles.
+- Cursor command `/hub-ui` + script `Tool/scripts/hub-ui-stack.cjs`; `pnpm hub-ui:stack`.
+- `sync-agent-manifest.mjs`: quét commands, Hub scripts, AGENTS.md, hub-ui README; tag `hub-ui`; `hubUiBundles` JSON.
+- Agent tab kinds: `command`, `script`; filter Kind mở rộng.
+- `sync-hub-ui-vendor.cjs`: fan-out content/CSS từ `packages/hub-ui`.
+
+### Verification
+
+- `pnpm hub-ui:stack` — manifest rebuild
+- System → Agent — filter/tag hub-ui
+
+Version: 2.1.0 → 2.1.1
+
 ## 2026-06-03 - Release pipeline fix + Supabase quota cache v2
 
 - Version: `2.1.0`

@@ -18,6 +18,7 @@ const TAB_SEGMENT: Record<SystemTab, string> = {
   overview: "overview",
   schema: "schema",
   "supabase-quota": "supabase-quota",
+  server: "server",
   agent: "agent",
   template: "template",
 };
@@ -26,6 +27,7 @@ const SEGMENT_TAB: Record<string, SystemTab> = {
   overview: "overview",
   schema: "schema",
   "supabase-quota": "supabase-quota",
+  server: "server",
   agent: "agent",
   template: "template",
 };

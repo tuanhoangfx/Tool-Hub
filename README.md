@@ -4,6 +4,8 @@ Workspace **Tool Hub** (P0004): catalog mọi project đang chạy — GitHub he
 
 Production: **https://infi.io.vn** (Vercel). Dev: `http://127.0.0.1:5176`.
 
+**Agent / Hub UI catalog:** [AGENTS.md](./AGENTS.md) · Cursor **`/hub-ui`** · System → Agent tab.
+
 ## Commands
 
 ```powershell
@@ -13,6 +15,8 @@ corepack pnpm sync:workspace   # đồng bộ manifest 2 chiều (gh auth / GITH
 corepack pnpm sync:workspace:dry
 corepack pnpm sync:workspace --clone-missing
 corepack pnpm open             # start/reuse Vite daemon (agents: prefer this — never kills healthy server)
+corepack pnpm hub-ui:stack     # refresh @tool-workspace/hub-ui + agent-manifest (Hub UI catalog)
+corepack pnpm agent:manifest   # rebuild public/agent-manifest.json only
 corepack pnpm dev              # foreground dev + launcher (human interactive)
 corepack pnpm dev:restart      # kill port 5176 + fresh Vite (only when stuck)
 corepack pnpm build

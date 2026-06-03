@@ -1,15 +1,16 @@
-import { Bot, Database, Gauge, LayoutGrid, Palette } from "lucide-react";
+import { Bot, Database, Gauge, LayoutGrid, Palette, Server } from "lucide-react";
 import { readAppScreen, setAppScreen } from "../../../lib/app-screen";
 import { buildSystemUrl, readSystemRoute } from "../../../lib/system-path";
 import { sanitizeQueryForScreen } from "../../../lib/hub-query";
 import type { SchemaEntity } from "../../../lib/system-path";
 
-export type SystemTab = "overview" | "schema" | "supabase-quota" | "agent" | "template";
+export type SystemTab = "overview" | "schema" | "supabase-quota" | "server" | "agent" | "template";
 
 const tabs: { id: SystemTab; label: string; icon: typeof LayoutGrid }[] = [
   { id: "overview", label: "Overview", icon: LayoutGrid },
   { id: "schema", label: "Schema", icon: Database },
   { id: "supabase-quota", label: "Supabase Quota", icon: Gauge },
+  { id: "server", label: "Server", icon: Server },
   { id: "agent", label: "Agent", icon: Bot },
   { id: "template", label: "Design Template", icon: Palette },
 ];

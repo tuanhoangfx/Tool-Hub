@@ -17,6 +17,7 @@ import {
 import type { FilterIconMeta } from "../../lib/badge-registry";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "../../lib/badge-registry";
 import { compactIconSize } from "../../lib/ui-scale";
+import { registerHubSearchFocus } from "@tool-workspace/hub-ui";
 
 export type FilterOption = { value: string; label: string; color?: string; count?: number };
 export type FilterDef = {
@@ -71,6 +72,7 @@ type FilterBarProps = {
   headerPinned?: boolean;
   /** Panel only (inside shared sticky chrome with header). */
   embedded?: boolean;
+  shortcutScope?: string;
 };
 
 export function FilterBar({
@@ -88,20 +90,16 @@ export function FilterBar({
   pinSticky = false,
   headerPinned = true,
   embedded = false,
+  shortcutScope = "default",
 }: FilterBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        inputRef.current?.focus();
-        inputRef.current?.select();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    return registerHubSearchFocus(shortcutScope, () => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [shortcutScope]);
 
   function setFilter(key: string, selected: string[]) {
     const next = { ...values };
@@ -128,12 +126,13 @@ export function FilterBar({
         onChange={(e) => onQueryChange(e.target.value)}
         placeholder={placeholder}
         className="field w-full"
-        style={{ paddingLeft: 31, paddingRight: query ? 25 : 50 }}
+        style={{ paddingLeft: 31, paddingRight: query ? 25 : 36 }}
       />
       {!query ? (
-        <span className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-0.5 sm:flex">
-          <kbd className="rounded border border-white/15 bg-white/5 px-1 py-0.5 font-mono text-[10px] text-[var(--muted)]">Ctrl</kbd>
-          <kbd className="rounded border border-white/15 bg-white/5 px-1 py-0.5 font-mono text-[10px] text-[var(--muted)]">K</kbd>
+        <span className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 sm:flex">
+          <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-indigo-200/90">
+            F
+          </kbd>
         </span>
       ) : null}
       {query ? (

@@ -85,6 +85,7 @@ export function SystemHubShell({
   const filterBar = useMemo(
     () => (
       <FilterBar
+        shortcutScope="system"
         layout="hub"
         pinSticky={chrome?.stackChrome ? false : prefs.searchPin}
         headerPinned={prefs.headerPin}

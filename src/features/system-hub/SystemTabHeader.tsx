@@ -21,9 +21,11 @@ export function SystemTabHeader({
   const metaItems =
     tab === "template"
       ? [{ icon: Icon, value: "5 layouts · pick V1–V5 below" }]
-      : tab === "agent"
-        ? [{ icon: Icon, value: "Read-only · workspace rules & skills" }]
-        : [];
+      : tab === "server"
+        ? [{ icon: Icon, value: "CloudFly VPS · P0006 / P0007 inventory" }]
+        : tab === "agent"
+          ? [{ icon: Icon, value: "Read-only · workspace rules & skills" }]
+          : [];
 
   return (
     <AppTabHeader

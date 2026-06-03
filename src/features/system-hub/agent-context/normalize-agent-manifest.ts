@@ -1,6 +1,6 @@
 import type { AgentContextItem, AgentContextKind, AgentManifest } from "./types";
 
-const VALID_KINDS = new Set<AgentContextKind>(["rule", "skill", "file", "contract"]);
+const VALID_KINDS = new Set<AgentContextKind>(["rule", "skill", "file", "contract", "command", "script"]);
 const VALID_SCOPES = new Set<AgentContextItem["scope"]>(["workspace", "user", "package"]);
 
 function asString(value: unknown, fallback = ""): string {
@@ -26,6 +26,7 @@ function normalizeItem(raw: unknown, index: number): AgentContextItem | null {
     alwaysApply: row.alwaysApply === true,
     agentRequestable: row.agentRequestable === true,
     trigger: typeof row.trigger === "string" ? row.trigger : undefined,
+    commandId: typeof row.commandId === "string" ? row.commandId : undefined,
     summary: asString(row.summary),
     bodyPreview: asString(row.bodyPreview),
     lines: typeof row.lines === "number" && Number.isFinite(row.lines) ? row.lines : 0,

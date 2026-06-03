@@ -3,8 +3,10 @@ import type { AgentContextItem, AgentContextKind } from "./types";
 const KIND_ORDER: Record<AgentContextKind, number> = {
   rule: 0,
   skill: 1,
-  file: 2,
-  contract: 3,
+  command: 2,
+  script: 3,
+  contract: 4,
+  file: 5,
 };
 
 /** Stable flat list: kind (Rule → Skill → File → Contract), then name. */

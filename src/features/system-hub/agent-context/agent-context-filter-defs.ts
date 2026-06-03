@@ -10,6 +10,8 @@ export const AGENT_KIND_FILTERS: FilterDef[] = [
       { value: "skill", label: "Skill" },
       { value: "file", label: "File" },
       { value: "contract", label: "Contract" },
+      { value: "command", label: "Command" },
+      { value: "script", label: "Script" },
     ],
   },
   {

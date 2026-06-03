@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Users, type LucideIcon } from "lucide-react";
+import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Server, Users, type LucideIcon } from "lucide-react";
 import { compactIconSize } from "../../lib/ui-scale";
 import { ensureHubTabLoaderRoot, HUB_TAB_LOADER_ROOT_ID } from "./HubLoaderRoot";
 
@@ -70,6 +70,7 @@ export const HUB_LOADING_PRESETS = {
   overview: { icon: LayoutGrid, ariaLabel: "Loading overview" },
   schema: { icon: Database, ariaLabel: "Loading schema" },
   supabaseQuota: { icon: Cloud, ariaLabel: "Loading Supabase quota" },
+  server: { icon: Server, ariaLabel: "Loading server inventory" },
   agent: { icon: Bot, ariaLabel: "Loading agent context" },
   template: { icon: Palette, ariaLabel: "Loading design template" },
 } as const;

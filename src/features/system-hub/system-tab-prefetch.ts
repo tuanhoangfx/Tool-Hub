@@ -12,6 +12,9 @@ export function prefetchSystemTab(tab: SystemTab): void {
     case "supabase-quota":
       void import("./SystemSupabaseQuotaPanel");
       break;
+    case "server":
+      void import("./SystemServerPanel");
+      break;
     case "agent":
       void import("./SystemAgentContextPanel");
       break;
@@ -27,6 +30,7 @@ export function prefetchAllSystemTabs(): void {
   prefetchSystemTab("overview");
   prefetchSystemTab("schema");
   prefetchSystemTab("supabase-quota");
+  prefetchSystemTab("server");
   prefetchSystemTab("agent");
   prefetchSystemTab("template");
 }

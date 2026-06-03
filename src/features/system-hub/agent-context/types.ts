@@ -1,4 +1,4 @@
-export type AgentContextKind = "rule" | "skill" | "file" | "contract";
+export type AgentContextKind = "rule" | "skill" | "file" | "contract" | "command" | "script";
 
 export type AgentContextItem = {
   id: string;
@@ -14,6 +14,8 @@ export type AgentContextItem = {
   lines: number;
   updatedAt: string;
   tags: string[];
+  /** Cursor slash command, e.g. hub-ui */
+  commandId?: string;
 };
 
 export type AgentManifest = {

@@ -14,9 +14,10 @@ import {
   BriefcaseBusiness,
   Package,
 } from "lucide-react";
-import type { FilterIconMeta } from "../../lib/badge-registry";
-import { resolveFilterAllIcon, resolveFilterOptionIcon } from "../../lib/badge-registry";
+import type { FilterIconMeta } from "./filter-icons";
+import { resolveFilterAllIcon, resolveFilterOptionIcon } from "./filter-icons";
 import { compactIconSize } from "../ui-scale";
+import { registerHubSearchFocus } from "@tool-workspace/hub-ui";
 
 export type FilterOption = { value: string; label: string; color?: string; count?: number };
 export type FilterDef = {
@@ -71,6 +72,7 @@ type FilterBarProps = {
   headerPinned?: boolean;
   /** Panel only (inside shared sticky chrome with header). */
   embedded?: boolean;
+  shortcutScope?: string;
 };
 
 export function FilterBar({
@@ -88,20 +90,16 @@ export function FilterBar({
   pinSticky = false,
   headerPinned = true,
   embedded = false,
+  shortcutScope = "default",
 }: FilterBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        inputRef.current?.focus();
-        inputRef.current?.select();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
+    return registerHubSearchFocus(shortcutScope, () => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+  }, [shortcutScope]);
 
   function setFilter(key: string, selected: string[]) {
     const next = { ...values };
@@ -128,12 +126,13 @@ export function FilterBar({
         onChange={(e) => onQueryChange(e.target.value)}
         placeholder={placeholder}
         className="field w-full"
-        style={{ paddingLeft: 31, paddingRight: query ? 25 : 50 }}
+        style={{ paddingLeft: 31, paddingRight: query ? 25 : 36 }}
       />
       {!query ? (
-        <span className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 items-center gap-0.5 sm:flex">
-          <kbd className="rounded border border-white/15 bg-white/5 px-1 py-0.5 font-mono text-[10px] text-[var(--muted)]">Ctrl</kbd>
-          <kbd className="rounded border border-white/15 bg-white/5 px-1 py-0.5 font-mono text-[10px] text-[var(--muted)]">K</kbd>
+        <span className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 sm:flex">
+          <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-indigo-200/90">
+            F
+          </kbd>
         </span>
       ) : null}
       {query ? (
@@ -183,12 +182,10 @@ export function FilterBar({
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
             {row2Leading ? <div className="flex shrink-0 flex-wrap items-center gap-2">{row2Leading}</div> : null}
             {filterDropdowns}
+            {clearFiltersBtn}
           </div>
-          {row2Actions || clearFiltersBtn ? (
-            <div className="ml-auto flex shrink-0 flex-wrap items-center gap-2">
-              {row2Actions}
-              {clearFiltersBtn}
-            </div>
+          {row2Actions ? (
+            <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">{row2Actions}</div>
           ) : null}
         </div>
       </div>
@@ -250,7 +247,7 @@ function FilterOptionCount({ value }: { value?: number }) {
 }
 
 function FilterOptionGlyph({ filterKey, option }: { filterKey: string; option: FilterOption }) {
-  const meta = resolveFilterOptionIcon(filterKey, option);
+  const meta = resolveFilterOptionIcon(filterKey, option.value);
   if (!meta) {
     return option.color ? (
       <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: option.color }} aria-hidden />
@@ -263,7 +260,7 @@ function resolveFilterTriggerIcon(filter: FilterDef, selected: string[]): Filter
   if (selected.length === 1) {
     const opt = filter.options.find((o) => o.value === selected[0]);
     if (opt) {
-      const icon = resolveFilterOptionIcon(filter.key, opt);
+      const icon = resolveFilterOptionIcon(filter.key, opt.value);
       if (icon) return icon;
     }
   }
@@ -449,7 +446,7 @@ function ActivePills({
         key: f.key,
         value: v,
         label: `${f.label}: ${opt?.label ?? v}`,
-        iconMeta: opt ? resolveFilterOptionIcon(f.key, opt) : null,
+        iconMeta: opt ? resolveFilterOptionIcon(f.key, opt.value) : null,
       });
     }
   }

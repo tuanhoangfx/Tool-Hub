@@ -10,6 +10,7 @@ import {
   type FilterValues,
   type KpiTileData,
 } from "../../components/sales-shell";
+import { HubKeyboardHints } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import { useSessionState } from "../../hooks/useSessionState";
 import { SystemHubShell } from "./SystemHubShell";
@@ -78,6 +79,7 @@ export function SystemAgentContextPanel() {
   const toolbar = useMemo(
     () => (
       <>
+        <HubKeyboardHints />
         <ViewToggle value={viewMode} onChange={setViewMode} />
         <HubResultCount icon={Bot} shown={filtered.length} total={items.length} />
         <button

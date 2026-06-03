@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "host": "103.82.25.231",
+  "hostname": "exinvest",
+  "provider": "CloudFly",
+  "spec": {
+    "cpus": 2,
+    "ramGb": 4,
+    "diskGb": 77
+  },
+  "lastSnapshotAt": "2026-06-03T12:52:00.000Z",
+  "snapshotNote": "P0021 render local-only; autovideo VPS worker removed.",
+  "metrics": {
+    "ramUsedGi": 1.1,
+    "ramAvailableGi": 2.7,
+    "swapGi": 4,
+    "diskUsedPct": 20,
+    "load1": 0.2
+  },
+  "services": [
+    {
+      "code": "P0007",
+      "name": "9Router",
+      "kind": "docker",
+      "path": "/opt/9router",
+      "unit": "docker:9router",
+      "internalPort": 20128,
+      "publicUrl": "https://9router.infi.io.vn",
+      "healthCheck": "GET /v1/models → 200"
+    },
+    {
+      "code": "P0006",
+      "name": "AIChatHub",
+      "kind": "systemd",
+      "path": "/opt/aichathub",
+      "unit": "aichathub",
+      "internalPort": 3921,
+      "publicUrl": "https://chathub.infi.io.vn",
+      "healthCheck": "GET /api/health → ok"
+    },
+    {
+      "code": "P0005",
+      "name": "Zalo AI Bot (legacy)",
+      "kind": "systemd",
+      "path": "/opt/zalo-ai-bot",
+      "unit": "zalo-ai-bot",
+      "status": "stopped",
+      "note": "Cutover → P0006; data dir still used for vps:sync-data"
+    }
+  ],
+  "extras": [
+    {
+      "id": "autovideo-studio",
+      "toolCode": "P0021",
+      "name": "AutoVideo worker (removed)",
+      "kind": "docker",
+      "path": "/opt/autovideo-studio",
+      "status": "removed",
+      "note": "P0021 uses local/desktop worker only — docker compose stopped on VPS."
+    },
+    {
+      "id": "openclaw-gateway",
+      "toolCode": null,
+      "name": "OpenClaw gateway",
+      "kind": "systemd-user",
+      "unit": "openclaw-gateway.service",
+      "status": "disabled",
+      "note": "Not a workspace Tool; freed ~1.1 GB RAM. haygheta-seo-runtime.timer disabled."
+    },
+    {
+      "id": "1panel",
+      "name": "1Panel",
+      "kind": "systemd",
+      "unit": "1panel.service",
+      "status": "running",
+      "note": "Server admin panel — optional if you use SSH only."
+    }
+  ],
+  "nginxSites": ["9router", "chathub", "infix1-legacy-redirect", "zaloai-admin"],
+  "firewallPorts": [22, 80, 443],
+  "localScripts": [
+    {
+      "label": "VPS status probe",
+      "path": "Tool/P0006-AIChatHub",
+      "command": "node scripts/vps-status-probe.mjs"
+    },
+    {
+      "label": "Cleanup extras (dry-run)",
+      "path": "Tool/P0006-AIChatHub",
+      "command": "node scripts/vps-cleanup-extra-services.mjs"
+    },
+    {
+      "label": "Enable 4G swap",
+      "path": "Tool/P0006-AIChatHub",
+      "command": "node scripts/vps-setup-swap.mjs"
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-import type { FilterIconMeta } from "../../lib/badge-registry";
+import type { FilterIconMeta } from "../types/filter-badge";
 import { compactIconSize } from "../ui-scale";
 
 export type DonutItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };

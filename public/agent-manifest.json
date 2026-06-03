@@ -1,7 +1,193 @@
 {
-  "generatedAt": "2026-06-03T09:15:45.349Z",
+  "generatedAt": "2026-06-03T13:22:09.625Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
+    {
+      "id": "cursor-commands-design-5-md",
+      "kind": "command",
+      "name": "/design-5",
+      "path": ".cursor\\commands\\design-5.md",
+      "scope": "workspace",
+      "commandId": "design-5",
+      "agentRequestable": true,
+      "summary": "Design — 5 variants (on-demand)",
+      "bodyPreview": "# Design — 5 variants (on-demand)\n\nScaffold design review **only because this command was invoked**.\n\n## Steps\n\n1. Read `.cursor/skills/workspace-design-preview-gate/SKILL.md`.\n2. Read `.cursor/rules/dev-workspace.mdc` §3.\n3. Add mockups under **System → Design Template** (P0004/P0020) or `/design-preview/<feature>` (P0008-style) if the user requested a route.\n4. Produce **≥5 distinct variants**; wait for `Design: V1`…`V5` before production lock-in.\n5. After lock: delete mocks, registry entries, preview CSS; tab shows **No active designs**.\n\nDo **not** use this command for bugfixes with no UX change.\n",
+      "lines": 14,
+      "updatedAt": "2026-06-02T21:02:10.338Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-git-md",
+      "kind": "command",
+      "name": "/git",
+      "path": ".cursor\\commands\\git.md",
+      "scope": "workspace",
+      "commandId": "git",
+      "agentRequestable": true,
+      "summary": "Git (commit) — P00xx / E00xx",
+      "bodyPreview": "# Git (commit) — P00xx / E00xx\n\nKeyword: **`Git P0004`** (replace code and product).\n\n## Run\n\n1. Read `.cursor/skills/p00xx-ship-keywords/SKILL.md` — keyword **Git**.\n2. Resolve `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev`.\n3. Verify/build → bump **minor** → commit only (no push).\n\nReport: version, SHA, files committed.\n",
+      "lines": 12,
+      "updatedAt": "2026-06-02T21:17:58.515Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-hub-ui-md",
+      "kind": "command",
+      "name": "/hub-ui",
+      "path": ".cursor\\commands\\hub-ui.md",
+      "scope": "workspace",
+      "commandId": "hub-ui",
+      "agentRequestable": true,
+      "summary": "/hub-ui — Hub UI stack (một lệnh, đủ rule/skill/package/script)",
+      "bodyPreview": "# /hub-ui — Hub UI stack (một lệnh, đủ rule/skill/package/script)\n\n**Mục tiêu:** Không cần @ từng file `.mdc` / skill / README — agent đọc **một bundle** rồi chạy script.\n\n## Cú pháp\n\n```\n/hub-ui\n/hub-ui P0006 overview\n/hub-ui P0020 notes\n/hub-ui catalog\n```\n\n| Lệnh | Ý nghĩa |\n|------|---------|\n| `/hub-ui` | Refresh package + agent manifest; đọc catalog AGENTS.md |\n| `/hub-ui P0006 overview` | Trên + clone screen (vendor, theme, tsc, checklist layer 3) |\n| `/hub-ui catalog` | Chỉ liệt kê stack (không sửa code) — trả bảng từ `AGENTS.md` |\n\n## Agent — làm ngay (theo thứ tự)\n\n### 1. Đọc bundle (một lượt, bắt buộc)\n\n| # | Path |\n|---|------|\n| 1 | `Tool/P0004-Tool-Hub/AGENTS.md` |\n| 2 | `.cursor/rules/p0004-hub-ui-standard.mdc` |\n| 3 | `.cursor/skills/sync-p0004-ui-shell/SKILL.md` |\n| 4 | `packages/hub-ui/README.md` |\n\nChỉ khi cần chi tiết migrate: `.cursor/skills/sync-p0004-ui-shell/reference.md` § Clone 100%.\n\n**Không** gọi riêng `p0004-ui-sync` agent — trùng skill trên.\n\n### 2. Chạy script (terminal)\n\n```powershell\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs\n# có tool + screen:\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0006 overview\n```\n\nTương đương: `sync-hub-ui-vendor` + `P0004 a",
+      "lines": 67,
+      "updatedAt": "2026-06-03T12:45:23.095Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-onboard-tool-md",
+      "kind": "command",
+      "name": "/onboard-tool",
+      "path": ".cursor\\commands\\onboard-tool.md",
+      "scope": "workspace",
+      "commandId": "onboard-tool",
+      "agentRequestable": true,
+      "summary": "Onboard tool (import external repo → P00xx)",
+      "bodyPreview": "# Onboard tool (import external repo → P00xx)\n\nImport a GitHub repo into `E:\\Dev\\Tool`, assign workspace code, scaffold manifest/docs, sync P0004 catalog.\n\n## When to use\n\n- Pull / clone repo về workspace\n- Gán mã P00xx, chuẩn hóa tool mới\n- Đồng bộ repo ngoài vào Tool Hub catalog\n\n**Not for:** Git / Push / Release → use `/release` or `Release P00xx`.\n\n**“Làm hết đề xuất” / “toàn bộ đề xuất”:** Phase B (Tailwind, rename, domain, …) + **Release** via `p00xx-ship-keywords`.\n\n## Steps\n\n1. Read `.cursor/skills/p00xx-tool-onboard/SKILL.md` (full checklist).\n2. Read `E:\\Dev\\Tool\\TOOL-CODES.md` for next code.\n3. **Preflight:** `E:\\Dev\\Tool\\scripts\\onboard-preflight.ps1 -Slug {Slug}`\n4. Phase A: clone → scaffold → build → validate manifest → `scan:local`.\n5. Phase B (if user asked): rename, domain, Tailwind, code-split — see skill.\n6. Phase C (if user asked ship): hand off to `p00xx-ship-keywords` + `p00xx-release-workflow`.\n\n## Validate before Hub scan\n\n```powershell\npowershell -NoProfile -File \"E:\\Dev\\.cursor\\skills\\p00xx-tool-onboard\\scripts\\validate-manifest.ps1\" `\n  -ManifestPath \"E:\\Dev\\Tool\\{CODE}-{Slug}\\tool.manifest.json\"\n```\n\n## Hub commit scope\n\nOnly stage scan outputs in P0004-",
+      "lines": 44,
+      "updatedAt": "2026-06-03T07:07:43.012Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-push-md",
+      "kind": "command",
+      "name": "/push",
+      "path": ".cursor\\commands\\push.md",
+      "scope": "workspace",
+      "commandId": "push",
+      "agentRequestable": true,
+      "summary": "Push — P00xx / E00xx",
+      "bodyPreview": "# Push — P00xx / E00xx\n\nKeyword: **`Push P0004`** (= Git + push).\n\n## Run\n\n1. Read `.cursor/skills/p00xx-ship-keywords/SKILL.md` — keyword **Push**.\n2. Verify/build → commit (**minor**) → push GitHub (`gh auth status`, Cursor browser OAuth if needed).\n\nNo deploy, no GitHub Release, no **major** bump unless user also said Release.\n\nReport: version, branch, remote, push result.\n",
+      "lines": 13,
+      "updatedAt": "2026-06-02T21:17:59.620Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-release-md",
+      "kind": "command",
+      "name": "/release",
+      "path": ".cursor\\commands\\release.md",
+      "scope": "workspace",
+      "commandId": "release",
+      "agentRequestable": true,
+      "summary": "Release (P00xx)",
+      "bodyPreview": "# Release (P00xx)\n\nKeyword: **`Release P0004`** (= full autonomous pipeline — no step-by-step prompts).\n\n## Run (autonomous)\n\n```powershell\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P0004 -Keyword Release\n```\n\nOrder: auto-commit WIP (default) → `check-version-sync` → build → push → Vercel READY + HTTP smoke → `gh release` → `post-gh-release` → `scan:local`.\n\n## Agent checklist\n\n1. Read `.cursor/skills/p00xx-ship-keywords/SKILL.md` — keyword **Release**.\n2. Ensure version triple + CHANGELOG top entry (real Changes) before script.\n3. **P0005:** `zalo-ai-bot-release` for VPS deploy/smoke after push.\n4. Report full ship block from `p00xx-ship-keywords` when done.\n",
+      "lines": 19,
+      "updatedAt": "2026-06-03T07:07:43.060Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-sync-hub-ui-md",
+      "kind": "command",
+      "name": "/sync-hub-ui",
+      "path": ".cursor\\commands\\sync-hub-ui.md",
+      "scope": "workspace",
+      "commandId": "sync-hub-ui",
+      "agentRequestable": true,
+      "summary": "/sync-hub-ui — Clone một screen (alias của `/hub-ui`)",
+      "bodyPreview": "# /sync-hub-ui — Clone một screen (alias của `/hub-ui`)\n\n**Khuyến nghị lần đầu / audit full stack:** dùng **`/hub-ui`** — đọc `AGENTS.md` + rule + skill + package README một lượt.\n\n## Usage\n\n```\n/sync-hub-ui P0006 overview\n/sync-hub-ui P0006 all\n```\n\n## Script\n\n```powershell\nnode E:\\Dev\\Tool\\scripts\\sync-hub-ui-screen.cjs P0006 overview\n```\n\nHoặc kèm refresh package + manifest:\n\n```powershell\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0006 overview\n```\n\nChi tiết layer 3 + exports: `.cursor/commands/hub-ui.md` và `packages/hub-ui/README.md`.\n\n",
+      "lines": 26,
+      "updatedAt": "2026-06-03T11:16:06.842Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "cursor-commands-verify-browser-md",
+      "kind": "command",
+      "name": "/verify-browser",
+      "path": ".cursor\\commands\\verify-browser.md",
+      "scope": "workspace",
+      "commandId": "verify-browser",
+      "agentRequestable": true,
+      "summary": "Verify in browser (fix until done)",
+      "bodyPreview": "# Verify in browser (fix until done)\n\nRun the **fix → browser verify → repeat** loop until the task passes or is blocked.\n\n## Steps\n\n1. Read `.cursor/skills/browser-verify-until-done/SKILL.md`.\n2. Read `.cursor/rules/dev-workspace.mdc` §3.\n3. Identify URL(s) and acceptance criteria for this task.\n4. Use **Cursor browser MCP** (Chrome 0010 only if MCP cannot cover the flow).\n5. Loop: edit code → verify in browser → fix again if failing (max ~5 rounds, then report blocker).\n6. End with: Verified URL, steps, pass/fail, and `Version: X.Y.Z → A.B.C` if product code changed.\n\nDo not mark the task complete after code-only changes without a successful browser check.\n",
+      "lines": 15,
+      "updatedAt": "2026-06-02T21:07:46.889Z",
+      "tags": [
+        "hub-ui",
+        "command"
+      ]
+    },
+    {
+      "id": "p0004-agents-md",
+      "kind": "contract",
+      "name": "AGENTS.md",
+      "path": "Tool\\P0004-Tool-Hub\\AGENTS.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "P0004 Hub UI + agent stack catalog; /hub-ui bundle entry",
+      "bodyPreview": "# P0004 Tool Hub — Agent catalog (Hub UI + workspace agent context)\n\n**Design source:** this repo (`src/components/sales-shell`, `features/hub`).  \n**UI trong app:** System → **Agent** (manifest build từ workspace rules/skills/commands).  \n**Một lệnh gộp:** Cursor **`/hub-ui`** — không cần @ từng file.\n\n---\n\n## Command bundles (gọi một lúc)\n\n| Cursor command | Script | Đọc gì (agent) | Chạy gì |\n|----------------|--------|----------------|---------|\n| **`/hub-ui`** | `node Tool/scripts/hub-ui-stack.cjs` | AGENTS.md + `p0004-hub-ui-standard.mdc` + `sync-p0004-ui-shell/SKILL.md` + `packages/hub-ui/README.md` | vendor sync + `agent:manifest` |\n| **`/hub-ui P0006 overview`** | `hub-ui-stack.cjs P0006 overview` | Cùng trên | + `sync-hub-ui-screen.cjs` + layer 3 checklist |\n| **`/sync-hub-ui P0006 overview`** | `sync-hub-ui-screen.cjs` only | `hub-ui.md` / AGENTS § Layer 3 | vendor + theme + tsc |\n| **`/hub-ui catalog`** | — | Chỉ bảng dưới | Không sửa code |\n\n```powershell\n# Terminal (không cần Cursor)\ncd E:\\Dev\\Tool\\P0004-Tool-Hub\npnpm hub-ui:stack\npnpm hub-ui:stack -- P0006 overview   # nếu thêm wrapper; hoặc:\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0006 overview\n```\n\n---\n\n## Rules",
+      "lines": 190,
+      "updatedAt": "2026-06-03T12:56:50.924Z",
+      "tags": [
+        "hub-ui",
+        "catalog",
+        "p0004"
+      ]
+    },
+    {
+      "id": "hub-keyboard-shortcuts",
+      "kind": "contract",
+      "name": "Hub keyboard shortcuts",
+      "path": "Tool\\P0004-Tool-Hub\\docs\\HUB-KEYBOARD-SHORTCUTS.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "F Search · N New · E Edit selection · Esc close modal",
+      "bodyPreview": "# Hub keyboard shortcuts (workspace standard)\n\nSynced across P0004 Hub UI via `@tool-workspace/hub-ui`.\n\n| Key | Action | Where |\n|-----|--------|--------|\n| **F** | Focus main tab search (FilterBar) | All Hub list tabs with FilterBar |\n| **N** | Add / create (primary row action) | Users → Add; screens with `onNew` handler |\n| **E** | Edit selection (when rows checked) | Users → Edit; Hub → Refresh selected tools |\n| **Esc** | Close open modal | Tool detail, user access, agent context, Supabase detail |\n\n## Implementation\n\n- Module: `packages/hub-ui/src/keyboard/hub-keyboard-shortcuts.ts`\n- App shell: `setHubActiveScreen(\"library\" | \"users\" | \"system\")` on sidebar change (`App.tsx`)\n- Search: `FilterBar` with `shortcutScope` matching active tab\n- N / E: `useHubPageShortcuts(\"library\", { … })` per screen (keep-mounted safe)\n- Esc: each modal `useEffect` on `Escape` (unchanged)\n\n## Tab Hub (`library`)\n\n| Key | Action |\n|-----|--------|\n| F | Focus Hub search |\n| E | Refresh **selected tools** (tick rows first; needs `onRefreshTool`) |\n| N | — (not wired on Hub catalog) |\n\n## Not global\n\n- Does not fire inside `<input>`, `<textarea>`, or `contenteditable`\n- **N** / **E** only when the",
+      "lines": 37,
+      "updatedAt": "2026-06-03T13:02:44.408Z",
+      "tags": [
+        "hub-ui",
+        "keyboard",
+        "p0004"
+      ]
+    },
+    {
+      "id": "packages-hub-ui-readme",
+      "kind": "contract",
+      "name": "hub-ui README",
+      "path": "packages\\hub-ui\\README.md",
+      "scope": "package",
+      "agentRequestable": true,
+      "summary": "@tool-workspace/hub-ui — install, CSS, exports, tab pattern",
+      "bodyPreview": "# @tool-workspace/hub-ui\n\nShared Hub UI for P0004, P0006, P0020, P0008. **Design source:** `Tool/P0004-Tool-Hub`.\n\nRefresh from P0004: `node E:\\Dev\\Tool\\scripts\\sync-hub-ui-vendor.cjs`\n\n---\n\n## 1. Cài vào app\n\n### P0006 (pnpm workspace — khuyến nghị cho tool mới)\n\n`pnpm-workspace.yaml` include `packages/hub-ui`. Trong app:\n\n```json\n\"@tool-workspace/hub-ui\": \"workspace:*\"\n```\n\n```ts\n// vite.config.ts\n\"@tool-workspace/hub-ui\": path.resolve(__dirname, \"../../../../packages/hub-ui/src\"),\n```\n\n### P0004 / P0020 (vendor copy)\n\n```json\n\"@tool-workspace/hub-ui\": \"file:./vendor/hub-ui\"\n```\n\nChạy sync script sau mỗi lần sửa P0004 shell.\n\n---\n\n## 2. CSS bắt buộc (`styles.css`)\n\n```css\n@import \"@tool-workspace/hub-ui/styles/hub-check-indicator.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-shell-layout.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-app-tab-header.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-fields.css\";\n@import \"@tool-workspace/hub-ui/styles/hub-users-table.css\";\n```\n\nTheme tokens: copy từ P0004 qua `sync-hub-theme-from-p0004.cjs --target <app>/src`.\n\n---\n\n## 3. Bootstrap (một lần trong `main.tsx`)\n\n```ts\nimport { HubLoaderRoot } from \"@tool-workspace/hub-ui\";\nimport {",
+      "lines": 162,
+      "updatedAt": "2026-06-03T12:57:29.149Z",
+      "tags": [
+        "hub-ui",
+        "package"
+      ]
+    },
     {
       "id": "Tool-packages-hub-load-src-index-ts",
       "kind": "contract",
@@ -13,8 +199,8 @@
       "lines": 10,
       "updatedAt": "2026-06-01T18:21:25.008Z",
       "tags": [
-        "hub-load",
-        "p0004"
+        "hub-ui",
+        "hub-load"
       ]
     },
     {
@@ -28,8 +214,8 @@
       "lines": 81,
       "updatedAt": "2026-06-03T08:12:23.025Z",
       "tags": [
-        "hub-load",
-        "p0004"
+        "hub-ui",
+        "hub-load"
       ]
     },
     {
@@ -43,8 +229,8 @@
       "lines": 44,
       "updatedAt": "2026-06-01T18:21:27.348Z",
       "tags": [
-        "hub-load",
-        "p0004"
+        "hub-ui",
+        "hub-load"
       ]
     },
     {
@@ -58,7 +244,7 @@
       "summary": "\"Full reference: version tiers, ship pipeline, CHANGELOG, env, Hub UI (read when needed).\"",
       "bodyPreview": "# Dev workspace — full reference (agent)\n\n**Compact gate (Always Apply):** `.cursor/rules/dev-workspace-compact.mdc`  \n**Source of truth (detail):** this file  \n**Human review (Vietnamese):** `E:\\Dev\\.cursor\\RULES-HUMAN-VI.md` — keep in sync when policy changes.  \n**Release pipeline:** `E:\\Dev\\Rules\\RELEASE-STANDARD.md` · `Tool/scripts/ship-product.ps1`\n\n---\n\n## 0. VERSION BUMP — hard gate (read first, every task)\n\nWhen you change **meaningful code or UI** in `Tool/P00xx-*` or `Extension/E00xx-*`:\n\n1. **Before** final reply / commit / push: bump the correct tier; sync `package.json`, `tool.manifest.json`, `CHANGELOG.md`, extension manifests as applicable.\n2. **Last line of summary** (required): `Version: X.Y.Z → A.B.C` — or `Version: no bump (read-only / whitespace only)`.\n3. **Never** wait for the user to say “nhớ bump version”.\n4. A **`stop` hook** may follow up if git shows code changes without version files — treat as blocking.\n5. Product extras: `P0021-.../p0021-version-bump.mdc`, `E0001-.../e0001-auto-bump-version.mdc`.\n\n| Tier | When | Bump |\n|------|------|------|\n| **Patch** | Task done with meaningful code/UI change | `PATCH + 1` |\n| **Minor** | User requests **commit** (",
       "lines": 142,
-      "updatedAt": "2026-06-03T08:05:02.241Z",
+      "updatedAt": "2026-06-03T10:49:49.469Z",
       "tags": [
         "rule",
         "rules"
@@ -73,12 +259,110 @@
       "alwaysApply": true,
       "agentRequestable": false,
       "summary": "\"Always-on: Vietnamese + 3 proposals + Version line + browser verify (compact gate).\"",
-      "bodyPreview": "# Dev workspace — compact gate (always on)\n\nFull policy: `.cursor/rules/dev-workspace.mdc` · Human (VI): `.cursor/RULES-HUMAN-VI.md`\n\n## Every reply (§1)\n\n- Reply to the user in **Vietnamese**; Tool/Extension **UI strings** in **English**.\n- End with **3 numbered proposals** (`1.` `2.` `3.`) — concrete next steps (perf, feature, or structure).\n- Execute proposals only when user says **ok 1**, **ok 1 2**, **ok 1 2 3**, **làm 1**, **tự làm**, etc.\n- **Last line** of summary: `Version: X.Y.Z → A.B.C` or `Version: no bump (reason)`.\n- **Commit / push / deploy / release** only when user explicitly asks.\n\n## Version (§0 — when editing product code)\n\nMeaningful changes in `Tool/P00xx-*` or `Extension/E00xx-*` → bump + CHANGELOG block before task end.  \n**Stop hook** may auto-follow-up if version files missing. Ship: skill `p00xx-ship-keywords`.\n\n## Browser verify (§3 — UI / bug / deploy)\n\nFor UI changes, bugs, extension+web flows, deploy smoke: read skill **`browser-verify-until-done`** — **edit → browser MCP verify → fix** until pass (~5 rounds max).  \nDo not ask user to test while browser MCP is available. Slash: `/verify-browser`.  \nSkip only for docs/read-only/no-UI, or user says **sk",
-      "lines": 30,
-      "updatedAt": "2026-06-03T08:13:44.980Z",
+      "bodyPreview": "# Dev workspace — compact gate (always on)\n\nFull policy: `.cursor/rules/dev-workspace.mdc` · Human (VI): `.cursor/RULES-HUMAN-VI.md`\n\n## Every reply (§1) — no exceptions\n\n- Reply to the user in **Vietnamese**; Tool/Extension **UI strings** in **English**.\n- **Always** end with **3 numbered proposals** (`1.` `2.` `3.`) — even for “done”, “removed X”, or one-line answers. Short task ≠ skip footer.\n- Execute proposals only when user says **ok 1**, **ok 1 2**, **ok 1 2 3**, **làm 1**, **tự làm**, etc.\n- **Last line** of summary: `Version: X.Y.Z → A.B.C` or `Version: no bump (reason)`.\n- **Commit / push / deploy / release** only when user explicitly asks.\n- **Hooks:** `afterAgentResponse` audits format; `stop` → `verify-working-rules-on-stop.ps1` may auto follow-up (max 2). Check Cursor → Settings → Hooks → Execution Log if agent “forgets”.\n\n## Version (§0 — when editing product code)\n\nMeaningful changes in `Tool/P00xx-*` or `Extension/E00xx-*` → bump + CHANGELOG block before task end.  \n**Stop hook** may auto-follow-up if version files missing. Ship: skill `p00xx-ship-keywords`.\n\n## Browser verify (§3 — UI / bug / deploy)\n\nFor UI changes, bugs, extension+web flows, deploy smoke: read s",
+      "lines": 31,
+      "updatedAt": "2026-06-03T12:45:20.764Z",
       "tags": [
         "rule",
         "rules"
+      ]
+    },
+    {
+      "id": "cursor-rules-p0004-hub-ui-standard-mdc",
+      "kind": "rule",
+      "name": "p0004-hub-ui-standard",
+      "path": ".cursor\\rules\\p0004-hub-ui-standard.mdc",
+      "scope": "workspace",
+      "alwaysApply": false,
+      "agentRequestable": true,
+      "summary": "\"P0004 Tool Hub = UI design source. ONE entry for clone Hub UI to any P00xx. Use when user asks làm giống Hub, sync shell, /sync-hub-ui.\"",
+      "bodyPreview": "# P0004 Hub UI — single entry point\n\n## Gọi agent (khuyến nghị)\n\n```\n/hub-ui P0006 overview\n/sync-hub-ui P0006 overview\n```\n\nHoặc chat: *\"Clone tab Overview P0006 giống P0004 Hub — layer 3 markup + pixel verify :5176 vs :5178\"*\n\nAgent đọc: **skill** `sync-p0004-ui-shell` → chạy script → sửa layer 3 → browser verify.\n\n## Chạy script (tay)\n\n```powershell\nnode E:\\Dev\\Tool\\scripts\\sync-hub-ui-screen.cjs P0006 overview\n```\n\nThứ tự: `sync-hub-ui-vendor.cjs` → `sync-hub-theme-from-p0004.cjs` → in checklist screen → `tsc`.\n\n## Code dùng chung — `@tool-workspace/hub-ui`\n\n| Cài đặt | P0006 (workspace) | P0004 / P0020 (vendor copy) |\n|---------|-------------------|-----------------------------|\n| package.json | `\"workspace:*\"` + pnpm-workspace | `\"file:./vendor/hub-ui\"` |\n| Vite alias | `../../../../packages/hub-ui/src` | `./vendor/hub-ui/src` |\n\n**API đầy đủ:** `packages/hub-ui/README.md`\n\n### 3 lớp — tại sao “sync CSS” ≠ 100% pixel\n\n| Lớp | Script tự làm? | Package / path |\n|-----|----------------|----------------|\n| **1 Shell** | Một phần (vendor sync) | `HubTabChrome`, `FilterBar`, `AppTabHeader`, `HubDisplayPrefs` |\n| **2 CSS/tokens** | Có (`sync-hub-theme-from-p0004.cjs`) | `theme/p0008",
+      "lines": 69,
+      "updatedAt": "2026-06-03T12:45:25.326Z",
+      "tags": [
+        "hub-ui",
+        "rule"
+      ]
+    },
+    {
+      "id": "cursor-rules-p0006-aichathub-mdc",
+      "kind": "rule",
+      "name": "p0006-aichathub",
+      "path": ".cursor\\rules\\p0006-aichathub.mdc",
+      "scope": "workspace",
+      "alwaysApply": false,
+      "agentRequestable": true,
+      "summary": "P0006 AIChatHub — standalone console, no P0005 iframe dependency",
+      "bodyPreview": "# P0006 AIChatHub\n\n## Console (native React — no P0005 iframe)\n\n| Tab | API / feature |\n|-----|----------------|\n| Bots | QR login `/api/login/*`, bot CRUD, config drawer |\n| Groups | `/api/groups`, `allowedGroupIds` |\n| Inbox | threads, labels filter, summarize |\n| Overview | `/api/charts` |\n| Logs | SSE `/api/events` |\n\nLegacy static admin at worker **`/zalo/`** only (bookmarks/VPS direct) — **not** embedded in console sidebar.\n\n## Autonomous ops\n\n- DNS `chathub.infi.io.vn` → `pnpm deploy:console`\n- Interim: `https://zaloai.infi.io.vn/`\n- Data: `pnpm vps:sync-data` (from `/opt/zalo-ai-bot/data` on VPS)\n\n## Ports\n\nConsole **5178** · Worker **3921**",
+      "lines": 23,
+      "updatedAt": "2026-06-03T11:17:15.185Z",
+      "tags": [
+        "rule",
+        "rules"
+      ]
+    },
+    {
+      "id": "Tool-scripts-hub-ui-stack-cjs",
+      "kind": "script",
+      "name": "hub-ui-stack.cjs",
+      "path": "Tool\\scripts\\hub-ui-stack.cjs",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Hub UI script: hub-ui-stack.cjs",
+      "bodyPreview": "#!/usr/bin/env node\n/**\n * One-shot Hub UI stack refresh (package + P0004 agent catalog).\n * Usage:\n *   node hub-ui-stack.cjs\n *   node hub-ui-stack.cjs P0006 overview   → also runs sync-hub-ui-screen\n */\nconst { execSync } = require(\"node:child_process\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst scripts = path.join(devRoot, \"Tool\", \"scripts\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\n\nfunction run(cmd, cwd = devRoot) {\n  console.log(`\\n$ ${cmd}`);\n  execSync(cmd, { cwd, stdio: \"inherit\" });\n}\n\nfunction main() {\n  const tool = (process.argv[2] || \"\").toUpperCase();\n  const screen = (process.argv[3] || \"\").toLowerCase();\n\n  console.log(\"\\n=== Hub UI stack refresh ===\\n\");\n\n  run(`node \"${path.join(scripts, \"sync-hub-ui-vendor.cjs\")}\"`);\n  run(`node \"${path.join(hubRoot, \"scripts\", \"sync-agent-manifest.mjs\")}\"`, hubRoot);\n\n  if (tool && screen) {\n    run(`node \"${path.join(scripts, \"sync-hub-ui-screen.cjs\")}\" ${tool} ${screen}`);\n  } else if (tool) {\n    run(`node \"${path.join(scripts, \"sync-hub-ui-screen.cjs\")}\" ${tool} all`);\n  }\n\n  console.log(\"\\n--- Agent catalog ---\");\n  console.log(\"  UI: P0004 → System",
+      "lines": 42,
+      "updatedAt": "2026-06-03T11:15:49.322Z",
+      "tags": [
+        "hub-ui",
+        "script"
+      ]
+    },
+    {
+      "id": "Tool-scripts-sync-hub-theme-from-p0004-cjs",
+      "kind": "script",
+      "name": "sync-hub-theme-from-p0004.cjs",
+      "path": "Tool\\scripts\\sync-hub-theme-from-p0004.cjs",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Hub UI script: sync-hub-theme-from-p0004.cjs",
+      "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy P0004 theme + global styles into a target app src/ tree.\n * Usage: node sync-hub-theme-from-p0004.cjs --target E:/Dev/Tool/P0006-AIChatHub/apps/console/src\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst hubSrc = path.join(path.resolve(__dirname, \"..\", \"..\"), \"Tool\", \"P0004-Tool-Hub\", \"src\");\n\nconst THEME_FILES = [\n  \"theme/p0008-globals.css\",\n  \"theme/hub-appearance.css\",\n  \"theme/hub-boot.css\",\n  \"theme/hub-auth.css\",\n  \"theme/p0020-align.css\",\n];\n\nconst STYLE_FILES = [\n  \"styles/base.css\",\n  \"styles/layout.css\",\n  \"styles/controls.css\",\n  \"styles/cards.css\",\n  \"styles/visual.css\",\n  \"styles/library.css\",\n  \"styles/modal.css\",\n  \"styles/running-badge.css\",\n];\n\nfunction parseTarget(argv) {\n  for (let i = 2; i < argv.length; i++) {\n    if (argv[i] === \"--target\" && argv[i + 1]) return path.resolve(argv[++i]);\n  }\n  console.error(\"Missing --target <app>/src\");\n  process.exit(1);\n}\n\nfunction copyOne(srcRel, destRoot) {\n  const src = path.join(hubSrc, srcRel);\n  const dest = path.join(destRoot, srcRel);\n  if (!fs.existsSync(src)) {\n    console.warn(`  skip: ${srcRel}`);\n    return;\n  }\n  fs.mkdirSync(path.dirname(dest), { re",
+      "lines": 59,
+      "updatedAt": "2026-06-03T10:06:18.160Z",
+      "tags": [
+        "hub-ui",
+        "script"
+      ]
+    },
+    {
+      "id": "Tool-scripts-sync-hub-ui-screen-cjs",
+      "kind": "script",
+      "name": "sync-hub-ui-screen.cjs",
+      "path": "Tool\\scripts\\sync-hub-ui-screen.cjs",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Hub UI script: sync-hub-ui-screen.cjs",
+      "bodyPreview": "#!/usr/bin/env node\n/**\n * Clone P0004 Hub UI for a tool + screen.\n * Usage: node sync-hub-ui-screen.cjs P0006 overview\n *        node sync-hub-ui-screen.cjs P0020 notes\n */\nconst { execSync } = require(\"node:child_process\");\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst scriptsDir = path.join(devRoot, \"Tool\", \"scripts\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\n\nconst TOOLS = {\n  P0004: {\n    label: \"Tool Hub\",\n    srcRoot: path.join(hubRoot, \"src\"),\n    tscCwd: hubRoot,\n  },\n  P0006: {\n    label: \"AIChatHub console\",\n    srcRoot: path.join(devRoot, \"Tool\", \"P0006-AIChatHub\", \"apps\", \"console\", \"src\"),\n    tscCwd: path.join(devRoot, \"Tool\", \"P0006-AIChatHub\", \"apps\", \"console\"),\n    localUrl: \"http://127.0.0.1:5178\",\n  },\n  P0020: {\n    label: \"Data Box\",\n    srcRoot: path.join(devRoot, \"Tool\", \"P0020-Data-Box\", \"src\"),\n    tscCwd: path.join(devRoot, \"Tool\", \"P0020-Data-Box\"),\n    localUrl: \"http://127.0.0.1:5177\",\n  },\n};\n\n/** P0006 screen → target file + P0004 reference for pixel parity */\nconst P0006_SCREENS = {\n  overview: {\n    target: \"features/overview/OverviewScreen.tsx\",\n ",
+      "lines": 147,
+      "updatedAt": "2026-06-03T10:35:28.328Z",
+      "tags": [
+        "hub-ui",
+        "script"
+      ]
+    },
+    {
+      "id": "Tool-scripts-sync-hub-ui-vendor-cjs",
+      "kind": "script",
+      "name": "sync-hub-ui-vendor.cjs",
+      "path": "Tool\\scripts\\sync-hub-ui-vendor.cjs",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
+      "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst defaultVendor = path.join(hubRoot, \"vendor\", \"hub-ui\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubPanel.tsx\", \"src/content/HubPanel.tsx\"],\n  [\"src/content/HubDirectoryCard.tsx\", \"src/content/HubDirectoryCard.tsx\"],\n  [\"src/content/HubTabScreenBody.tsx\", \"src/content/HubTabScreenBody.tsx\"],\n  [\"src/shell/HubTabChrome.tsx\", \"src/shell/HubTabChrome.tsx\"],\n  [\"src/shell/HubTabSectionRule.tsx\", \"src/shell/HubTabSectionRule.tsx\"],\n  [\"src/styles/hub-shell-layout.css\", \"src/styles/hub",
+      "lines": 141,
+      "updatedAt": "2026-06-03T13:18:00.047Z",
+      "tags": [
+        "hub-ui",
+        "script"
       ]
     },
     {
@@ -109,8 +393,8 @@
       "lines": 78,
       "updatedAt": "2026-06-03T07:07:43.121Z",
       "tags": [
-        "skill",
-        "workspace"
+        "hub-ui",
+        "skill"
       ]
     },
     {
@@ -153,12 +437,28 @@
       "scope": "workspace",
       "trigger": "Syncs the P0004 Tool Hub UI shell, design tokens, typography, spacing, effects, sidebar/header/tab patterns, Hub-like data loading (stale-while-revalidate, eager tabs, keep-mounted, build snapshots, background sync), HubLoadingView, FilterBar with faceted counts, badge-registry icons, Catalog/Live source badges, cards, tables, settings, logs, and compact 90% behavior into another P00xx tool while preserving that tool's data, APIs, auth, storage, and business logic. Use when the user asks to copy, đồng bộ, migrate, reuse, or apply P0004 UI/design/shell/loading/filter/Hub tab style to another tool.",
       "summary": "Syncs the P0004 Tool Hub UI shell, design tokens, typography, spacing, effects, sidebar/header/tab patterns, Hub-like data loading (stale-while-revalidate, eager tabs, keep-mounted, build snapshots, background sync), HubLoadingView, FilterB",
-      "bodyPreview": "# Sync P0004 UI Shell\n\n## Goal\n\nApply `Tool/P0004-Tool-Hub` as the visual and structural standard for a target tool **without** changing domain behavior, data, or backends.\n\n## When to use\n\n- New P00xx fork or “làm giống Hub / P0004”\n- Đồng bộ filter, tab header, font, sidebar, table style, **loading UI**\n- Audit tool đích so với Hub (Users, System, Hub list)\n\n## Architecture (what to copy vs share)\n\n| Approach | When |\n|----------|------|\n| **Copy + adapt** (current) | One-off migration; fastest |\n| **Extract `packages/hub-ui`** (future) | 3+ tools need identical shell; worth refactor later |\n| **Rule + skill only** | Agent remembers contract; manual copy per screen |\n\nStart with **copy + adapt** using the manifest in [reference.md](reference.md).\n\n## Workflow\n\n1. **Identify** source `Tool/P0004-Tool-Hub`, target `Tool/P00xx-*`.\n2. **Read** [reference.md](reference.md) manifest; open listed source files.\n3. **Read target**: `package.json`, entry, theme, layout, existing filters/tabs.\n4. **Plan** (short): shell → tokens → tabs → **Hub-like load** → filters → tables/cards → verify.\n5. **Migrate** in order (see reference.md “Migration order”).\n6. **Verify**: `pnpm exec tsc --noEmit`,",
+      "bodyPreview": "# Sync P0004 UI Shell\n\n## Goal\n\nApply `Tool/P0004-Tool-Hub` as the visual and structural standard for a target tool **without** changing domain behavior, data, or backends.\n\n## When to use\n\n- New P00xx fork or “làm giống Hub / P0004”\n- Đồng bộ filter, tab header, font, sidebar, table style, **loading UI**\n- Audit tool đích so với Hub (Users, System, Hub list)\n\n## Architecture (what to copy vs share)\n\n| Approach | When |\n|----------|------|\n| **`packages/hub-ui` + theme sync** (recommended) | P0006-style workspace; run `sync-hub-ui-vendor.cjs` + `sync-hub-theme-from-p0004.cjs` |\n| **`vendor/hub-ui` per repo** | P0004, P0020 — same package name, vendored copy |\n\nStart with **copy + adapt** using the manifest in [reference.md](reference.md).\n\n## Workflow\n\n0. **Refresh shared package** (if P0004 shell changed): `node E:\\Dev\\Tool\\scripts\\sync-hub-ui-vendor.cjs` (+ `--target` for other tools).\n1. **Identify** source `Tool/P0004-Tool-Hub`, target `Tool/P00xx-*`.\n2. **Read** [reference.md](reference.md) manifest; open listed source files.\n3. **Read target**: `package.json`, entry, theme, layout, existing filters/tabs.\n4. **Plan** (short): shell → tokens → tabs → **Hub-like load** → filters",
       "lines": 158,
-      "updatedAt": "2026-06-03T07:07:42.983Z",
+      "updatedAt": "2026-06-03T10:49:42.739Z",
       "tags": [
-        "skill",
-        "workspace"
+        "hub-ui",
+        "skill"
+      ]
+    },
+    {
+      "id": "cursor-skills-sync-p0004-ui-shell-reference-md",
+      "kind": "skill",
+      "name": "sync-p0004-ui-shell/reference",
+      "path": ".cursor\\skills\\sync-p0004-ui-shell\\reference.md",
+      "scope": "workspace",
+      "trigger": "Hub UI file manifest + Clone 100%",
+      "summary": "P0004 UI clone checklist and path manifest",
+      "bodyPreview": "# P0004 UI contract — file manifest\n\nCanonical source: `Tool/P0004-Tool-Hub`. Copy or adapt presentation only; never replace target business logic.\n\n## Layer map\n\n| Layer | Purpose | P0004 paths |\n|-------|---------|-------------|\n| Tokens & scale | Colors, compact 90%, control heights | `src/theme/p0008-globals.css`, `src/styles.css` |\n| Icon scale | Lucide sizes at 0.9× | `src/lib/ui-scale.ts` (`compactIconSize`) |\n| App shell | Sidebar, top chrome, screen routing | `src/App.tsx`, `src/components/sales-shell/Sidebar.tsx` |\n| Tab header | Sticky title, refresh, settings, display prefs | `src/components/sales-shell/AppTabHeader.tsx` |\n| Loading UI | Orb via portal `#hub-tab-loader-root`; one viewport center | `HubLoaderRoot.tsx`, `HubLoadingView.tsx`, `SystemTabLoadingView.tsx` |\n| Tab perf | Eager routes, keep-mounted, boot prefetch | `App.tsx` (`visitedScreens`), `hub-background-prefetch.ts`, `SystemHubScreen.tsx` |\n| Data loading | SWR cache, snapshots, priority API | See § Data loading contract below |\n| Source badges | Catalog vs Live (phased metrics) | `SupabaseMetricsSourceBadge.tsx`, `supabase-project-metrics-source.ts` |\n| System sub-tabs | Overview / Schema / Quota / Temp",
+      "lines": 254,
+      "updatedAt": "2026-06-03T10:49:35.822Z",
+      "tags": [
+        "hub-ui",
+        "reference"
       ]
     },
     {
@@ -173,8 +473,8 @@
       "lines": 66,
       "updatedAt": "2026-06-01T13:37:49.581Z",
       "tags": [
-        "skill",
-        "workspace"
+        "hub-ui",
+        "skill"
       ]
     },
     {

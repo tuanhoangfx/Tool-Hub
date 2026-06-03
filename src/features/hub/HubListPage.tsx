@@ -15,6 +15,7 @@ import {
   type HubViewMode,
   type KpiTileData,
 } from "../../components/sales-shell";
+import { useHubPageShortcuts } from "@tool-workspace/hub-ui";
 import { useLocalHealth, useSupabaseQuotaVersion } from "../../hooks";
 import { compactIconSize } from "../../lib/ui-scale";
 import { formatLocalHealthPollInterval, resolveLocalHealthPollMs } from "../../lib/local-health-prefs";
@@ -242,8 +243,16 @@ export function HubListPage({
     for (const id of selectedIds) onRefreshTool(id);
   };
 
+  const hasSelection = selectedIds.size > 0;
+
+  useHubPageShortcuts("library", {
+    onEdit: handleRefreshSelected,
+    canEdit: () => hasSelection && Boolean(onRefreshTool),
+  });
+
   const filterBar = (
     <FilterBar
+      shortcutScope="library"
       layout="hub"
       pinSticky={searchPin && !stackChrome}
       headerPinned={prefs.headerPin}

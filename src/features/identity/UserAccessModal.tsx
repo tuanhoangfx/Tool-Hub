@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { Check, Package, UserRound, X } from "lucide-react";
 import { FilterBar } from "../../components/sales-shell";
+import { HubFilterSelect } from "@tool-workspace/hub-ui";
 import { resolveCategoryDisplayIcon } from "../../lib/badge-registry";
 import { compactIconSize } from "../../lib/ui-scale";
 import { HubRoleBadge } from "./HubRoleBadge";
@@ -310,17 +311,20 @@ export function UserAccessModal({
                     </label>
                     <label className="block text-[10px] font-medium text-[var(--muted)]">
                       Role
-                      <select
-                        className="hub-users-role-select mt-1 w-full max-w-none"
+                      <HubFilterSelect
+                        className="mt-1"
+                        label="Role"
                         value={role}
-                        onChange={(e) => setRole(e.target.value as UserManagementRow["role"])}
-                      >
-                        {ROLE_OPTIONS.map((r) => (
-                          <option key={r} value={r}>
-                            {hubRoleLabel(r)}
-                          </option>
-                        ))}
-                      </select>
+                        onChange={setRole}
+                        options={ROLE_OPTIONS.map((r) => ({
+                          value: r,
+                          label: hubRoleLabel(r),
+                        }))}
+                        renderValue={(r) => <HubRoleBadge role={r} />}
+                        renderOption={(opt) => (
+                          <HubRoleBadge role={opt.value as UserManagementRow["role"]} />
+                        )}
+                      />
                     </label>
                     <p className="text-[10px] text-[var(--muted)]">
                       Auth login email is managed in Supabase; this updates the Hub profile directory.

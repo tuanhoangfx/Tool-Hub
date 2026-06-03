@@ -5,6 +5,7 @@ const TAB_PRESET: Record<SystemTab, keyof typeof HUB_LOADING_PRESETS> = {
   overview: "overview",
   schema: "schema",
   "supabase-quota": "supabaseQuota",
+  server: "server",
   agent: "agent",
   template: "template",
 };
