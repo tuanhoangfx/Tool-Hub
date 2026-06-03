@@ -1,4 +1,4 @@
-# Changelog - P0004-Tool-Hub
+﻿# Changelog - P0004-Tool-Hub
 
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
@@ -10,8 +10,8 @@
 - Type: Minor
 - Product: P0004
 - Prompt: Release P0004 v0.2.7 — commit WIP, vendor deps for Vercel, gh release
-- Commit: pending
-- Status: Draft
+- Commit: `dd0feb9`
+- Status: Committed
 - Release: (after gh release)
 
 ### Changes
