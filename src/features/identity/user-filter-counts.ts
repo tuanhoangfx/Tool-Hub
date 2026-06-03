@@ -20,7 +20,7 @@ export function matchesUserFilters(row: UserManagementRow, query: string, filter
     if (!match) return false;
   }
   if (!q) return true;
-  const haystack = [row.fullName, row.email, row.id, row.role, row.status, ...row.toolCodes]
+  const haystack = [row.fullName, row.loginId, row.email, row.id, row.role, row.status, ...row.toolCodes]
     .join(" ")
     .toLowerCase();
   return haystack.includes(q);

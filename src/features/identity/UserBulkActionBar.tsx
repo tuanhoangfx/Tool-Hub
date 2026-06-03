@@ -43,7 +43,7 @@ export function UserBulkActionBar({
           roleLoading
             ? "Loading your role…"
             : isAdmin
-              ? "Add one user or bulk import (email|name|role)"
+              ? "Add user (ID or email) or bulk import"
               : "Admin only"
         }
         onClick={onAdd}

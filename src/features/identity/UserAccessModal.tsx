@@ -10,7 +10,11 @@ import { compactIconSize } from "../../lib/ui-scale";
 import { HubRoleBadge } from "./HubRoleBadge";
 import { countRegistryOnlyTools, fetchUserToolCodes, setUserToolAccess, type HubToolRow } from "./toolAccessRepository";
 import { hubRoleLabel } from "./hubUserDisplay";
-import { updateUserProfile, type UserManagementRow } from "./userManagementRepository";
+import {
+  resetHubUserPassword,
+  updateUserProfile,
+  type UserManagementRow,
+} from "./userManagementRepository";
 import {
   buildToolCategoryFilterDef,
   matchesToolAccessFilters,
@@ -25,6 +29,7 @@ import { UserAccessTocNav } from "./UserAccessTocNav";
 export type UserAccessSavePayload = {
   fullName: string;
   email: string;
+  loginId: string;
   role: UserManagementRow["role"];
   toolCodes: string[];
 };
@@ -35,6 +40,7 @@ type UserAccessModalProps = {
   canEdit: boolean;
   canEditProfile: boolean;
   actorId: string;
+  accessToken: string | null;
   onClose: () => void;
   onSaved: (userId: string, payload: UserAccessSavePayload) => void;
   onSyncCatalog?: () => Promise<{ ok: boolean; error: string | null }>;
@@ -70,6 +76,7 @@ export function UserAccessModal({
   canEdit,
   canEditProfile,
   actorId,
+  accessToken,
   onClose,
   onSaved,
   onSyncCatalog,
@@ -81,6 +88,9 @@ export function UserAccessModal({
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
+  const [resetBusy, setResetBusy] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
 
   const isAdminUser = user?.role === "admin";
   const idPrefix = user ? `ua-${user.id}-` : "";
@@ -98,6 +108,8 @@ export function UserAccessModal({
     setEmail(user.email);
     setRole(user.role);
     setError(null);
+    setResetMsg(null);
+    setNewPassword("");
     if (isAdminUser) {
       setSelected(new Set(tools.map((t) => t.tool_code)));
       return;
@@ -210,6 +222,7 @@ export function UserAccessModal({
     onSaved(user.id, {
       fullName: fullName.trim(),
       email: email.trim(),
+      loginId: user.loginId,
       role,
       toolCodes: isAdminUser ? tools.map((t) => t.tool_code) : [...selected],
     });
@@ -229,6 +242,28 @@ export function UserAccessModal({
     tools,
     user,
   ]);
+
+  const onAdminResetPassword = useCallback(async () => {
+    if (!user || !accessToken) return;
+    const pwd = newPassword.trim();
+    const ok = window.confirm(
+      pwd
+        ? `Set a new password for ${user.fullName || user.loginId}?`
+        : `Generate a new temporary password for ${user.fullName || user.loginId}?`,
+    );
+    if (!ok) return;
+    setResetBusy(true);
+    setResetMsg(null);
+    const result = await resetHubUserPassword(accessToken, user.id, pwd || undefined);
+    setResetBusy(false);
+    if (!result.ok) {
+      setResetMsg(result.error ?? "Could not reset password");
+      return;
+    }
+    const shown = result.password ?? pwd;
+    setResetMsg(shown ? `New password: ${shown} — share securely with the user.` : "Password updated.");
+    setNewPassword("");
+  }, [accessToken, newPassword, user]);
 
   if (!user) return null;
 
@@ -322,7 +357,8 @@ export function UserAccessModal({
                       {(
                         [
                           ["Full name", user.fullName],
-                          ["Email", user.email],
+                          ["User ID", user.loginId || "—"],
+                          ["Email", user.email || "—"],
                           ["Role", null],
                           ["Activity", user.status],
                           ["Last active", fmtDate(user.lastActiveAt)],
@@ -339,6 +375,31 @@ export function UserAccessModal({
                     </tbody>
                   </table>
                 )}
+                {canEditProfile ? (
+                  <div className="mt-3 space-y-2 rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+                    <p className="text-[11px] font-medium text-amber-100">Reset password (admin)</p>
+                    <p className="text-[10px] text-[var(--muted)]">
+                      If the user forgot their password, set a new one here (auto-generated if left empty).
+                    </p>
+                    <input
+                      className="field w-full text-xs"
+                      type="password"
+                      placeholder="New password (optional)"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      disabled={resetBusy || !accessToken}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-semibold text-amber-100 hover:bg-amber-500/25 disabled:opacity-50"
+                      onClick={() => void onAdminResetPassword()}
+                    >
+                      {resetBusy ? "Resetting…" : "Reset password"}
+                    </button>
+                    {resetMsg ? <p className="text-[10px] text-amber-100">{resetMsg}</p> : null}
+                  </div>
+                ) : null}
               </DetailSection>
 
               <DetailSection id={`${idPrefix}tools`} title={userAccessSectionTitle("tools")}>

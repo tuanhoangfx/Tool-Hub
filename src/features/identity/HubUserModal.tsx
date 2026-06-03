@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { KeyRound, LogOut, Mail, RefreshCcw, ShieldCheck, User, X } from "lucide-react";
+import { KeyRound, Link2, LogOut, Mail, RefreshCcw, ShieldCheck, User, X } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import { hubRoleLabel, hubUserInitials, parseHubRole } from "./hubUserDisplay";
 import { fetchCurrentProfileRole } from "./userManagementRepository";
+import { hubSessionLabels } from "./HubAuthGate";
+import { canUseEmailPasswordRecovery } from "./hub-login";
 
 type Props = {
   open: boolean;
@@ -12,30 +14,43 @@ type Props = {
   session: Session | null;
 };
 
-function userDisplay(email: string | null | undefined) {
-  return email?.trim() || "Not signed in";
-}
-
 export function HubUserModal({ open, onClose, session }: Props) {
   const [signingOut, setSigningOut] = useState(false);
   const [profileRole, setProfileRole] = useState<string | null>(null);
+  const [linkEmail, setLinkEmail] = useState("");
+  const [linkBusy, setLinkBusy] = useState(false);
+  const [linkMsg, setLinkMsg] = useState<string | null>(null);
+  const [otpEmail, setOtpEmail] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [otpStep, setOtpStep] = useState<"idle" | "sent">("idle");
+  const [otpBusy, setOtpBusy] = useState(false);
+  const [otpMsg, setOtpMsg] = useState<string | null>(null);
+
   const user = session?.user ?? null;
-  const email = user?.email ?? null;
+  const labels = hubSessionLabels(session);
   const provider = String(user?.app_metadata?.provider ?? "email");
   const createdAt = user?.created_at ? new Date(user.created_at).toLocaleString("vi-VN") : "—";
   const lastSignIn = user?.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleString("vi-VN") : "—";
   const role =
     profileRole ??
     String(user?.app_metadata?.role ?? user?.user_metadata?.role ?? "authenticated");
+  const displayName = labels.loginId || labels.email || user?.id?.slice(0, 8) || "User";
   const initials = useMemo(
     () =>
       hubUserInitials({
-        email: email ?? "",
-        fullName: userDisplay(email),
+        email: labels.email || labels.authEmail,
+        fullName: displayName,
         id: user?.id ?? "",
       }),
-    [email, user?.id],
+    [displayName, labels.authEmail, labels.email, user?.id],
   );
+
+  const recoveryEmail = useMemo(() => {
+    if (labels.email) return labels.email;
+    if (canUseEmailPasswordRecovery(labels.authEmail)) return labels.authEmail;
+    return "";
+  }, [labels.authEmail, labels.email]);
 
   useEffect(() => {
     if (!open || !user?.id) {
@@ -50,6 +65,93 @@ export function HubUserModal({ open, onClose, session }: Props) {
       cancelled = true;
     };
   }, [open, user?.id]);
+
+  useEffect(() => {
+    if (!open) return;
+    setLinkEmail(labels.email);
+    setOtpEmail(recoveryEmail);
+    setLinkMsg(null);
+    setOtpMsg(null);
+    setOtpStep("idle");
+    setOtpCode("");
+    setNewPassword("");
+  }, [open, labels.email, recoveryEmail]);
+
+  const onLinkEmail = async () => {
+    const mail = linkEmail.trim().toLowerCase();
+    if (!mail || !mail.includes("@")) {
+      setLinkMsg("Enter a valid email address.");
+      return;
+    }
+    setLinkBusy(true);
+    setLinkMsg(null);
+    const { error } = await supabase.auth.updateUser({ email: mail });
+    if (!error) {
+      await supabase
+        .from("profiles")
+        .update({ contact_email: mail, email: mail, updated_at: new Date().toISOString() })
+        .eq("id", user?.id ?? "");
+    }
+    setLinkBusy(false);
+    if (error) setLinkMsg(error.message);
+    else
+      setLinkMsg(
+        labels.hasSyntheticAuth
+          ? "Confirmation sent to that address. Open the link, then sign in with email + password."
+          : "Confirmation sent. Check your inbox to confirm the new address.",
+      );
+  };
+
+  const onSendOtp = async () => {
+    const mail = otpEmail.trim().toLowerCase();
+    if (!canUseEmailPasswordRecovery(mail)) {
+      setOtpMsg("Link an email first, then use it here.");
+      return;
+    }
+    setOtpBusy(true);
+    setOtpMsg(null);
+    const { error } = await supabase.auth.signInWithOtp({
+      email: mail,
+      options: { shouldCreateUser: false },
+    });
+    setOtpBusy(false);
+    if (error) setOtpMsg(error.message);
+    else {
+      setOtpStep("sent");
+      setOtpMsg("Enter the 6-digit code from your email.");
+    }
+  };
+
+  const onConfirmPasswordChange = async () => {
+    const mail = otpEmail.trim().toLowerCase();
+    const token = otpCode.trim();
+    const pwd = newPassword;
+    if (!token || pwd.length < 6) {
+      setOtpMsg("Enter the email code and a password (min 6 characters).");
+      return;
+    }
+    setOtpBusy(true);
+    setOtpMsg(null);
+    const { error: verifyErr } = await supabase.auth.verifyOtp({
+      email: mail,
+      token,
+      type: "email",
+    });
+    if (verifyErr) {
+      setOtpBusy(false);
+      setOtpMsg(verifyErr.message);
+      return;
+    }
+    const { error: pwdErr } = await supabase.auth.updateUser({ password: pwd });
+    setOtpBusy(false);
+    if (pwdErr) setOtpMsg(pwdErr.message);
+    else {
+      setOtpMsg("Password updated.");
+      setOtpStep("idle");
+      setOtpCode("");
+      setNewPassword("");
+    }
+  };
 
   if (!open || typeof document === "undefined") return null;
 
@@ -81,14 +183,21 @@ export function HubUserModal({ open, onClose, session }: Props) {
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-indigo-200/80">
                 Workspace user
               </p>
-              <h2 className="mt-1 truncate text-lg font-semibold text-[var(--text)]">{userDisplay(email)}</h2>
-              <p className="mt-0.5 font-mono text-[10px] text-[var(--muted)]">{user?.id ?? "No active session"}</p>
+              <h2 className="mt-1 truncate text-lg font-semibold text-[var(--text)]">{displayName}</h2>
+              <p className="mt-0.5 font-mono text-[10px] text-[var(--muted)]">
+                {labels.loginId ? `ID: ${labels.loginId}` : user?.id ?? "No active session"}
+              </p>
             </div>
           </div>
         </div>
         <div className="grid gap-2 p-4 text-sm">
           {[
-            { label: "Email", value: userDisplay(email), icon: Mail },
+            { label: "User ID", value: labels.loginId || "—", icon: User },
+            {
+              label: "Email",
+              value: labels.email || (labels.hasSyntheticAuth ? "Not linked" : labels.authEmail) || "—",
+              icon: Mail,
+            },
             { label: "Role", value: hubRoleLabel(parseHubRole(profileRole ?? role)), icon: ShieldCheck },
             { label: "Provider", value: provider, icon: KeyRound },
             { label: "Created", value: createdAt, icon: User },
@@ -113,6 +222,98 @@ export function HubUserModal({ open, onClose, session }: Props) {
             );
           })}
         </div>
+
+        {session ? (
+          <div className="space-y-3 border-t border-white/10 px-4 py-3">
+            <div className="rounded-2xl border border-white/5 bg-white/[.02] p-3">
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-[var(--text)]">
+                <Link2 size={14} className="text-sky-300" />
+                Link email
+              </div>
+              <p className="mb-2 text-[10px] text-[var(--muted)]">
+                Add or change your contact email. A confirmation link is sent before it becomes active.
+              </p>
+              <input
+                className="field mb-2 w-full text-xs"
+                type="email"
+                placeholder="you@company.com"
+                value={linkEmail}
+                onChange={(e) => setLinkEmail(e.target.value)}
+                autoComplete="email"
+              />
+              <button
+                type="button"
+                className="btn w-full text-xs"
+                disabled={linkBusy}
+                onClick={() => void onLinkEmail()}
+              >
+                {linkBusy ? "Sending…" : labels.email ? "Update linked email" : "Link email"}
+              </button>
+              {linkMsg ? <p className="mt-2 text-[10px] text-indigo-200">{linkMsg}</p> : null}
+            </div>
+
+            <div className="rounded-2xl border border-white/5 bg-white/[.02] p-3">
+              <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-[var(--text)]">
+                <KeyRound size={14} className="text-amber-300" />
+                Change password (email code)
+              </div>
+              <p className="mb-2 text-[10px] text-[var(--muted)]">
+                We send a 6-digit code to your linked email. Works after email is confirmed.
+              </p>
+              <input
+                className="field mb-2 w-full text-xs"
+                type="email"
+                placeholder="Linked email"
+                value={otpEmail}
+                onChange={(e) => setOtpEmail(e.target.value)}
+                disabled={otpStep === "sent"}
+              />
+              {otpStep === "sent" ? (
+                <>
+                  <input
+                    className="field mb-2 w-full text-xs"
+                    placeholder="6-digit code"
+                    value={otpCode}
+                    onChange={(e) => setOtpCode(e.target.value)}
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                  />
+                  <input
+                    className="field mb-2 w-full text-xs"
+                    type="password"
+                    placeholder="New password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    autoComplete="new-password"
+                  />
+                </>
+              ) : null}
+              <div className="flex gap-2">
+                {otpStep === "idle" ? (
+                  <button
+                    type="button"
+                    className="btn flex-1 text-xs"
+                    disabled={otpBusy || !recoveryEmail}
+                    onClick={() => void onSendOtp()}
+                  >
+                    {otpBusy ? "Sending…" : "Send code"}
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn flex-1 text-xs"
+                    disabled={otpBusy}
+                    onClick={() => void onConfirmPasswordChange()}
+                  >
+                    {otpBusy ? "Saving…" : "Set new password"}
+                  </button>
+                )}
+              </div>
+              {otpMsg ? <p className="mt-2 text-[10px] text-amber-100">{otpMsg}</p> : null}
+            </div>
+          </div>
+        ) : null}
+
         <div className="border-t border-white/10 p-4">
           <button
             type="button"

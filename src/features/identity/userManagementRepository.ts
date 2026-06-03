@@ -1,11 +1,13 @@
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../../lib/supabase";
 import { deduplicateUserRows } from "./hubUserDisplay";
+import { hubDisplayEmail, hubDisplayLoginId, isHubSyntheticEmail, loginIdFromSyntheticEmail } from "./hub-login";
 
 export type UserManagementRow = {
   id: string;
   fullName: string;
   email: string;
+  loginId: string;
   role: "admin" | "manager" | "user";
   avatarUrl: string | null;
   createdAt: string | null;
@@ -23,6 +25,8 @@ type ProfileRow = {
   id?: string;
   user_id?: string;
   email?: string | null;
+  login_id?: string | null;
+  contact_email?: string | null;
   full_name?: string | null;
   role?: string | null;
   avatar_url?: string | null;
@@ -53,10 +57,19 @@ function statusFromLastActive(value: string | null): UserManagementRow["status"]
   return "offline";
 }
 
-function normalizeProfile(row: ProfileRow): UserManagementRow {
+function normalizeProfile(row: ProfileRow, authEmail?: string | null): UserManagementRow {
   const id = row.id ?? row.user_id ?? "";
-  const email = row.email?.trim() ?? "";
-  const fullName = row.full_name?.trim() || email || id;
+  const loginId =
+    row.login_id?.trim() ||
+    hubDisplayLoginId({ loginId: row.login_id, authEmail: authEmail ?? row.email }) ||
+    loginIdFromSyntheticEmail(authEmail ?? row.email) ||
+    "";
+  const email = hubDisplayEmail({
+    authEmail: authEmail ?? row.email,
+    contactEmail: row.contact_email,
+    profileEmail: row.email,
+  });
+  const fullName = row.full_name?.trim() || loginId || email || id;
   const lastActiveAt = row.last_activity_at ?? row.last_sign_in_at ?? null;
   const projectNames = Array.isArray(row.project_names) ? row.project_names.filter(Boolean) : [];
   const toolCodes = Array.isArray(row.tool_codes) ? row.tool_codes.filter(Boolean) : [];
@@ -64,6 +77,7 @@ function normalizeProfile(row: ProfileRow): UserManagementRow {
     id,
     fullName,
     email,
+    loginId,
     role: cleanRole(row.role),
     avatarUrl: null,
     createdAt: row.created_at ?? null,
@@ -94,6 +108,8 @@ export async function updateUserRole(
 export type UserProfilePatch = {
   fullName?: string;
   email?: string;
+  contactEmail?: string;
+  loginId?: string;
   role?: UserManagementRow["role"];
 };
 
@@ -103,7 +119,17 @@ export async function updateUserProfile(
 ): Promise<{ ok: boolean; error: string | null }> {
   const row: Record<string, string> = { updated_at: new Date().toISOString() };
   if (patch.fullName !== undefined) row.full_name = patch.fullName.trim();
-  if (patch.email !== undefined) row.email = patch.email.trim().toLowerCase();
+  if (patch.email !== undefined) {
+    const mail = patch.email.trim().toLowerCase();
+    row.email = mail;
+    if (mail && !isHubSyntheticEmail(mail)) row.contact_email = mail;
+  }
+  if (patch.contactEmail !== undefined) {
+    const mail = patch.contactEmail.trim().toLowerCase();
+    row.contact_email = mail;
+    if (mail) row.email = mail;
+  }
+  if (patch.loginId !== undefined) row.login_id = patch.loginId.trim().toLowerCase();
   if (patch.role !== undefined) row.role = patch.role;
 
   const { error } = await supabase.from("profiles").update(row).eq("id", targetUserId);
@@ -120,7 +146,8 @@ export async function fetchCurrentProfileRole(userId: string): Promise<UserManag
 export const TOOL_NONE = "__no_tools__";
 
 export type HubUserCreatePayload = {
-  email: string;
+  email?: string;
+  loginId?: string;
   fullName: string;
   role: UserManagementRow["role"];
   password?: string;
@@ -128,10 +155,39 @@ export type HubUserCreatePayload = {
 
 export type HubUserCreateResult = {
   email: string;
+  loginId?: string;
   ok: boolean;
   id?: string;
   error?: string;
 };
+
+export async function resetHubUserPassword(
+  accessToken: string,
+  userId: string,
+  password?: string,
+): Promise<{ ok: boolean; password?: string; error: string | null }> {
+  try {
+    const res = await fetch("/api/hub/users/reset-password", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId, password: password?.trim() || undefined }),
+    });
+    const data = (await res.json()) as { ok?: boolean; password?: string; error?: string };
+    if (!res.ok) {
+      return { ok: false, error: data.error ?? `HTTP ${res.status}` };
+    }
+    return {
+      ok: Boolean(data.ok),
+      password: data.password,
+      error: data.error ?? null,
+    };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Network error" };
+  }
+}
 
 export async function createHubUsers(
   accessToken: string,
@@ -189,7 +245,9 @@ export async function fetchUserManagementRows(session: Session): Promise<{
 
   if (!directory.error && Array.isArray(directory.data)) {
     const rows = deduplicateUserRows(
-      (directory.data as ProfileRow[]).map(normalizeProfile).filter((row) => row.id),
+      (directory.data as ProfileRow[])
+        .map((row) => normalizeProfile(row, row.email))
+        .filter((row) => row.id),
     );
     return { rows, warning: null };
   }
@@ -201,7 +259,7 @@ export async function fetchUserManagementRows(session: Session): Promise<{
 
   const profile = await supabase
     .from("profiles")
-    .select("id,full_name,email,role,avatar_url,created_at,updated_at,last_sign_in_at")
+    .select("id,full_name,email,login_id,contact_email,role,avatar_url,created_at,updated_at,last_sign_in_at")
     .eq("id", session.user.id)
     .maybeSingle();
 

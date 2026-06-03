@@ -35,6 +35,7 @@ export function UserAddForm({
 }: UserAddFormProps) {
   const [tab, setTab] = useState<Tab>("single");
   const [fullName, setFullName] = useState("");
+  const [loginId, setLoginId] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<UserManagementRow["role"]>("user");
   const [password, setPassword] = useState("");
@@ -47,6 +48,7 @@ export function UserAddForm({
     setError(null);
     setTab("single");
     setFullName("");
+    setLoginId("");
     setEmail("");
     setRole("user");
     setPassword("");
@@ -63,13 +65,14 @@ export function UserAddForm({
     setBusy(true);
     setError(null);
     const draft: UserCreateDraft = {
-      email: email.trim().toLowerCase(),
-      fullName: fullName.trim() || email.trim(),
+      loginId: loginId.trim().toLowerCase() || undefined,
+      email: email.trim().toLowerCase() || undefined,
+      fullName: fullName.trim() || loginId.trim() || email.trim(),
       role,
       password: password.trim() || undefined,
     };
-    if (!draft.email) {
-      setError("Email is required.");
+    if (!draft.loginId && !draft.email) {
+      setError("User ID or email is required.");
       setBusy(false);
       return;
     }
@@ -132,7 +135,7 @@ export function UserAddForm({
         Add users
       </h2>
       <p className="auth-gate-subtitle">
-        Create Hub accounts (Supabase Auth + profile). Admin only; requires service role on dev server.
+        User ID + password, or email. Optional contact email. Admin only (service role on dev server).
       </p>
 
       <div className="auth-gate-tabs" role="tablist" aria-label="Add mode">
@@ -167,8 +170,15 @@ export function UserAddForm({
             />
             <input
               className="field auth-gate-field w-full"
+              placeholder="User ID (required if no email)"
+              value={loginId}
+              onChange={(e) => setLoginId(e.target.value)}
+              autoComplete="off"
+            />
+            <input
+              className="field auth-gate-field w-full"
               type="email"
-              placeholder="Email"
+              placeholder="Email (optional — for recovery / notifications)"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="off"
@@ -195,8 +205,9 @@ export function UserAddForm({
         ) : (
           <>
             <p className="auth-gate-hint">
-              One line per user: <span className="auth-gate-mono">email|display_name|role</span> (role
-              optional, defaults to user).
+              One line per user:{" "}
+              <span className="auth-gate-mono">login_id|display_name|role</span> or{" "}
+              <span className="auth-gate-mono">email|display_name|role</span> (role optional).
             </p>
             <textarea
               className="field auth-gate-field w-full min-h-[120px] font-mono text-[11px] leading-relaxed"
@@ -206,11 +217,9 @@ export function UserAddForm({
             />
             <p className="auth-gate-hint">
               Example:{" "}
-              <span className="auth-gate-mono">{formatUserBulkLine({
-                email: "dev@example.com",
-                fullName: "Dev User",
-                role: "user",
-              })}</span>
+              <span className="auth-gate-mono">
+                {formatUserBulkLine({ loginId: "dev01", fullName: "Dev User", role: "user" })}
+              </span>
             </p>
             {previewCount > 0 ? (
               <p className="auth-gate-ok">{previewCount} valid row(s) ready to import.</p>

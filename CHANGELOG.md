@@ -1,5 +1,58 @@
 # Changelog
 
+## 2026-06-04 - Git commit version stamp
+
+- Version: `2.1.20`
+- Timestamp: 2026-06-04 00:38 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-03 - Hub identity: User ID login, link email, admin reset
+
+- Version: `2.1.19`
+- Type: Patch
+- Product: P0004
+- Prompt: Đăng ký ID|Pass, liên kết mail, đổi pass OTP; admin Add/reset user
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Sign in/up with **User ID** or email (`hub-login.ts`, `HubAuthGate`).
+- Account modal: link email, change password via 6-digit email OTP (`HubUserModal`).
+- Admin: create users by login_id and/or email; bulk `login_id|name|role`; reset password API.
+- Migration `20260603120000_hub_login_id.sql` — `profiles.login_id`, `contact_email`.
+
+Version: 2.1.18 → 2.1.19
+
+## 2026-06-03 - Agent tab: Hub table goldens (kind Table)
+
+- Version: `2.1.18`
+- Type: Patch
+- Product: P0004
+- Prompt: Liệt kê loại bảng vào tab Agent như command/skill
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `Tool/schemas/ui-tables.catalog.json` — 6 table goldens + Channels exception.
+- `packages/hub-ui/UI_TABLES.md` — human-readable table catalog.
+- `sync-agent-manifest.mjs` — kind `table` rows + `UI_TABLES.md` contract.
+- Agent UI: filter Kind **Table**, badges/icons, sort order.
+
+Version: 2.1.17 → 2.1.18
+
 ## 2026-06-03 - Fix Users screen JSX (missing closing div)
 
 - Version: `2.1.17`

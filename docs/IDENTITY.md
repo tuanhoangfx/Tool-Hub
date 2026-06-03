@@ -18,7 +18,7 @@ VITE_SUPABASE_ANON_KEY=<anon key from Dashboard → API>
 powershell -ExecutionPolicy Bypass -File scripts/apply-hub-identity-migration.ps1
 ```
 
-Or paste `supabase/migrations/20260529120000_hub_identity_profiles.sql` in [SQL Editor](https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new).
+Or paste migrations in [SQL Editor](https://supabase.com/dashboard/project/fmnrafpzctuhxjaaomzt/sql/new), including `20260603120000_hub_login_id.sql` for User ID + contact email columns.
 
 **Status (2026-05-29):** Migration applied on `fmnrafpzctuhxjaaomzt` via Management API.
 
@@ -28,7 +28,11 @@ Or paste `supabase/migrations/20260529120000_hub_identity_profiles.sql` in [SQL 
 
 | Feature | Route / control |
 |---------|-----------------|
-| Sign in / sign up | Users tab when logged out |
+| Sign in / sign up | **User ID** or email + password (Users tab / Login) |
+| Link email | Account modal → **Link email** (confirmation link) |
+| Change password | Account modal → code to linked email (6-digit OTP) |
+| Admin add user | Users → **Add** (User ID and/or email) |
+| Admin reset password | Users → open user → **Reset password** |
 | User directory | Users tab (admin/manager see all) |
 | Account modal | Sidebar footer **User** |
 | Sign out | Account modal |

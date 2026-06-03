@@ -169,7 +169,10 @@ function UserCards({
             <HubUserAvatar user={user} size="md" />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold">{user.fullName}</div>
-              <div className="truncate text-[11px] text-[var(--muted)]">{user.email || "N/A"}</div>
+              <div className="truncate text-[11px] text-[var(--muted)]">
+                {user.loginId ? `@${user.loginId}` : user.email || "N/A"}
+                {user.loginId && user.email ? ` · ${user.email}` : ""}
+              </div>
             </div>
             <HubRoleBadge role={user.role} />
           </div>
@@ -338,6 +341,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
               ...row,
               fullName: payload.fullName,
               email: payload.email,
+              loginId: payload.loginId,
               role: payload.role,
               toolCodes: payload.toolCodes,
               toolCount: payload.role === "admin" ? row.toolCount : payload.toolCodes.length,
@@ -724,6 +728,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
           canEdit={canManageTools}
           canEditProfile={canManageRoles}
           actorId={session.user.id}
+          accessToken={session.access_token}
           onClose={() => setAccessUser(null)}
           onSaved={handleUserSaved}
           onSyncCatalog={canManageTools ? handleSyncCatalogForModal : undefined}

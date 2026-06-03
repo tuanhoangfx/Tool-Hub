@@ -1,7 +1,9 @@
+import { looksLikeEmail, normalizeLoginId } from "./hub-login";
 import type { UserManagementRow } from "./userManagementRepository";
 
 export type UserCreateDraft = {
-  email: string;
+  email?: string;
+  loginId?: string;
   fullName: string;
   role: UserManagementRow["role"];
   password?: string;
@@ -14,7 +16,8 @@ export type UserBulkParseResult = {
   errors: { line: number; message: string }[];
 };
 
-const HEADER_RE = /^email\s*[|:]\s*(display\s*name|name|full\s*name)\s*([|:]\s*role)?\s*$/i;
+const HEADER_RE =
+  /^(email|login_id|user\s*id)\s*[|:]\s*(display\s*name|name|full\s*name)\s*([|:]\s*role)?\s*$/i;
 
 function splitFields(line: string): string[] {
   const sep = line.includes("|") ? "|" : line.includes(",") ? "," : line.includes(";") ? ";" : null;
@@ -34,11 +37,17 @@ function cleanRole(value: string | undefined): UserManagementRow["role"] {
 
 export function parseUserBulkLine(parts: string[]): UserCreateDraft | null {
   if (parts.length < 2) return null;
-  const email = (parts[0] ?? "").trim().toLowerCase();
+  const idOrEmail = (parts[0] ?? "").trim().toLowerCase();
   const fullName = (parts[1] ?? "").trim();
   const role = cleanRole(parts[2]);
-  if (!email || !fullName) return null;
-  return { email, fullName, role };
+  if (!idOrEmail || !fullName) return null;
+
+  if (looksLikeEmail(idOrEmail)) {
+    return { email: idOrEmail, fullName, role };
+  }
+  const loginId = normalizeLoginId(idOrEmail);
+  if (!loginId) return null;
+  return { loginId, fullName, role };
 }
 
 export function parseUserBulkText(text: string): UserBulkParseResult {
@@ -55,10 +64,13 @@ export function parseUserBulkText(text: string): UserBulkParseResult {
     const parts = splitFields(raw);
     const parsed = parseUserBulkLine(parts);
     if (!parsed) {
-      errors.push({ line: lineNo, message: "Expected email|display_name|role (role optional)" });
+      errors.push({
+        line: lineNo,
+        message: "Expected login_id|display_name|role or email|display_name|role",
+      });
       continue;
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed.email)) {
+    if (parsed.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parsed.email)) {
       errors.push({ line: lineNo, message: "Invalid email" });
       continue;
     }
@@ -77,14 +89,19 @@ export function validateUserBulkRows(rows: UserBulkRow[]): {
   const seen = new Set<string>();
 
   for (const row of rows) {
-    const key = row.email.toLowerCase();
+    const key = (row.loginId ?? row.email ?? "").toLowerCase();
+    if (!key) {
+      invalid.push({ line: row.line, message: "Missing login_id or email" });
+      continue;
+    }
     if (seen.has(key)) {
-      invalid.push({ line: row.line, message: `Duplicate email: ${row.email}` });
+      invalid.push({ line: row.line, message: `Duplicate: ${key}` });
       continue;
     }
     seen.add(key);
     valid.push({
       email: row.email,
+      loginId: row.loginId,
       fullName: row.fullName,
       role: row.role,
     });
@@ -94,5 +111,6 @@ export function validateUserBulkRows(rows: UserBulkRow[]): {
 }
 
 export function formatUserBulkLine(row: UserCreateDraft): string {
-  return `${row.email}|${row.fullName}|${row.role}`;
+  const id = row.loginId ?? row.email ?? "";
+  return `${id}|${row.fullName}|${row.role}`;
 }

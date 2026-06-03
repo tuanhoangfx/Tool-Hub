@@ -132,9 +132,18 @@ function renderBodyCell(key: UserTableSortKey, user: UserManagementRow) {
     case "email":
       return (
         <td key={key} className="hub-users-col--email">
-          <span className="hub-users-cell-email" title={user.email || undefined}>
+          <span
+            className="hub-users-cell-email"
+            title={[user.loginId ? `@${user.loginId}` : "", user.email].filter(Boolean).join(" · ") || undefined}
+          >
             <Mail size={12} className="hub-users-th-icon hub-users-th-icon--email shrink-0" aria-hidden />
-            <span className="line-clamp-1">{user.email || "—"}</span>
+            <span className="line-clamp-1">
+              {user.loginId ? (
+                <span className="text-indigo-200/90">@{user.loginId}</span>
+              ) : null}
+              {user.loginId && user.email ? " · " : null}
+              {user.email || (!user.loginId ? "—" : "")}
+            </span>
           </span>
         </td>
       );
