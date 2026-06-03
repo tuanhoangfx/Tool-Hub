@@ -4,7 +4,7 @@
 
 - Version: `2.1.20`
 - Timestamp: 2026-06-04 00:38 (UTC+7)
-- Commit: pending
+- Commit: `4685174`
 - Type: Patch
 - Status: Draft
 
@@ -23,7 +23,7 @@
 - Type: Patch
 - Product: P0004
 - Prompt: Đăng ký ID|Pass, liên kết mail, đổi pass OTP; admin Add/reset user
-- Commit: pending
+- Commit: `4685174`
 - Status: Draft
 
 ### Changes
