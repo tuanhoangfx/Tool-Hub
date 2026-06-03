@@ -2,7 +2,60 @@
 
 > **Ship keywords:** `Git P0004` | `Push P0004` | `Release P0004`  
 > **Template:** `E:\Dev\Rules\templates\tool-docs\CHANGELOG_ENTRY_TEMPLATE.md`  
-> **Script:** `powershell -File E:\Dev\Tool\scripts\ship-product.ps1 -Code P0004 -Keyword Push`
+> **Version sync:** `corepack pnpm run check:version` — package.json = manifest release.version = CHANGELOG top Version
+
+## 2026-06-03 - Port migration, local health badge, pnpm open workspace-wide
+
+- Version: `0.4.5`
+- Type: Patch
+- Product: P0004
+- Prompt: ok 1 2 3 — migrate port P0009/P0013/P0019, Hub live/dead badge, pnpm open all tools.
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Port migration: P0009 → 3009, P0013 → 3013, P0019 → 5179 (vite.config + manifest); P0021 manifest → 3021.
+- `/api/local-health` dev proxy + `useLocalHealth` batch probe every 30s; Hub cards/table show `:port live|down`.
+- `Tool/scripts/open-tool.cjs` + `pnpm open` on P0001/P0002/P0005/P0009/P0010/P0013/P0019/P0021/P0022.
+
+### Verification
+
+- `corepack pnpm scan:local` in P0004
+- Hub → Local health button; card chips `:5176 live` / `:port down`
+- `node Tool/scripts/probe-local-urls.cjs`
+
+### Rollback
+
+- `git checkout v0.4.4`
+
+---
+
+## 2026-06-03 - Workspace local dev registry + health probe
+
+- Version: `0.4.4`
+- Type: Patch
+- Product: P0004
+- Prompt: Xử lý triệt để local link lỗi trên nhiều tool — registry port + ensure-dev workspace-wide.
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `Tool/scripts/lib/workspace-ports.json` — bảng port chuẩn 13 tool (fix collision 3000/5173/3921).
+- `ensure-dev-product.cjs` + `probe-local-urls.cjs` — start/reuse daemon + health check workspace.
+- `workspace-scan.cjs` — ưu tiên URL từ registry; `tools-launch.json` path fix.
+
+### Verification
+
+- `node Tool/scripts/probe-local-urls.cjs`
+- `node Tool/scripts/ensure-dev-product.cjs P0004 P0020`
+
+### Rollback
+
+- `git checkout v0.4.3`
+
+---
 
 ## 2026-06-03 - Release v0.4.3: Dev daemon, P0022 catalog, quota vendor
 
@@ -31,34 +84,6 @@
 ```powershell
 git checkout v0.2.7
 ```
-
----
-
-## 2026-06-03 - Stable dev server daemon (no kill-port on every start)
-
-- Version: `0.4.3`
-- Type: Patch
-- Product: P0004
-- Prompt: Xử lý triệt để lỗi ERR_CONNECTION_REFUSED sau 2-3 prompt — dev server bị kill/restart liên tục.
-- Commit: `c050ec4`
-- Status: Committed
-
-### Changes
-
-- `scripts/ensure-dev.cjs`: detached background Vite daemon; reuse healthy server on :5176; `--force` only when explicit restart needed.
-- `package.json`: `dev:vite` no longer runs `kill-port`; new `dev:restart` for manual reset; `open`/`daemon:start` use ensure-dev.
-- `dev-with-launcher.cjs`: skip Vite spawn when port already up; kill only with `--force`.
-- `vendor/hub-ui` + `packages/hub-ui`: fix broken `ui-scale` import paths in shell components.
-- `P0020 ensure-dev`: start Hub via `ensure-dev.cjs` instead of `dev:vite` (avoids killing running Hub).
-
-### Verification
-
-- `node scripts/ensure-dev.cjs --open` → http://127.0.0.1:5176/
-- Second run reuses server without `[kill-port] Freed :5176`
-
-### Rollback
-
-- `git checkout v0.4.1`
 
 ---
 
