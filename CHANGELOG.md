@@ -4,9 +4,9 @@
 
 - Version: `2.1.10`
 - Timestamp: 2026-06-03 20:23 (UTC+7)
-- Commit: pending
+- Commit: `65a75ab`
 - Type: Patch
-- Status: Draft
+- Status: Committed
 
 ### Changes
 
@@ -23,7 +23,7 @@
 - Type: Patch
 - Product: P0004
 - Prompt: Modal User Role select unreadable; chuẩn hóa Filter style
-- Commit: pending
+- Commit: `65a75ab`
 - Status: Draft
 
 ### Changes
