@@ -4,7 +4,7 @@
 
 - Version: `2.1.22`
 - Timestamp: 2026-06-04 00:57 (UTC+7)
-- Commit: pending
+- Commit: `8cb47c0`
 - Type: Patch
 - Status: Draft
 
