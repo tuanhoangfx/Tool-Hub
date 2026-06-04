@@ -3,7 +3,14 @@ import type { ToolRepository } from "../types";
 
 const RepoStatusSchema = z.enum(["Ready", "Needs review", "Experimental", "Archived", "Active", "Beta", "Draft"]);
 
-const DeployTargetSchema = z.enum(["github-pages", "vercel", "vps", "github-release", "local"]);
+const DeployTargetSchema = z.enum([
+  "github-pages",
+  "vercel",
+  "vps",
+  "github-release",
+  "local",
+  "cloudflare",
+]);
 
 export const ToolRepositorySchema = z.object({
   id: z.string().min(1),

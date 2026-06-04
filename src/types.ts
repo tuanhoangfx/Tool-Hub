@@ -18,7 +18,7 @@ export type ToolRepository = {
   appUrl?: string;
   localUrl?: string;
   icon?: string;
-  deployTarget?: "github-pages" | "vercel" | "vps" | "github-release" | "local";
+  deployTarget?: "github-pages" | "vercel" | "vps" | "github-release" | "local" | "cloudflare";
   downloadHint: string;
   manifestPath: string;
   trackedFiles: string[];

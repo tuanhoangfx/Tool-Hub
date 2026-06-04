@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-03T15:30:45.514Z",
+  "generatedAt": "2026-06-03T19:20:43.837Z",
   "roots": [
     {
       "id": "tool",
@@ -25,8 +25,8 @@
     }
   ],
   "summary": {
-    "total": 18,
-    "projects": 16,
+    "total": 20,
+    "projects": 18,
     "n8n": 2
   },
   "entries": [
@@ -123,7 +123,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "2.1.16",
+      "localVersion": "2.1.23",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -155,10 +155,10 @@
       "scriptFiles": [
         "scripts/apply-fix-profiles-rls.ps1",
         "scripts/apply-hub-identity-migration.ps1",
+        "scripts/apply-hub-login-id.mjs",
         "scripts/apply-hub-migrations-all.mjs",
         "scripts/apply-hub-tool-access.ps1",
-        "scripts/apply-hub-user-directory-projects.ps1",
-        "scripts/build-supabase-quota-snapshot.mjs"
+        "scripts/apply-hub-user-directory-projects.ps1"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"
@@ -170,7 +170,7 @@
       "repo": "tuanhoangfx/aichathub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.3.4",
+      "localVersion": "0.3.9",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Draft",
@@ -265,7 +265,7 @@
       "repo": "tuanhoangfx/Sales-Console",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.3.1",
+      "localVersion": "0.3.5",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Active",
@@ -390,6 +390,52 @@
       "assetKind": "project"
     },
     {
+      "id": "infix1-mail",
+      "code": "P0011",
+      "name": "Infix1 Mail",
+      "repo": "tuanhoangfx/P0011-Infix1-Mail",
+      "branch": "main",
+      "remoteEnabled": true,
+      "localVersion": "1.2.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Needs review",
+      "summary": "Cloudflare Workers webmail for infix1.io.vn — Email Routing, D1 inbox, React UI (Plan 1).",
+      "localPath": "E:\\Dev\\Tool\\P0011-Infix1-Mail",
+      "tags": [
+        "Cloudflare Workers",
+        "Hono",
+        "D1",
+        "React",
+        "Vite",
+        "Tailwind"
+      ],
+      "appUrl": "https://p0011-infix1-mail.workers.dev",
+      "localUrl": "http://127.0.0.1:3011",
+      "deployTarget": "cloudflare",
+      "usage": [
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build",
+        "App: https://p0011-infix1-mail.workers.dev"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": [
+        "scripts/deploy-infix1.ps1",
+        "scripts/dev-api.cjs",
+        "scripts/ensure-dev.cjs"
+      ],
+      "workspaceRoot": "tool",
+      "assetKind": "project"
+    },
+    {
       "id": "apps-script-sync",
       "code": "P0012",
       "name": "Apps Script Sync",
@@ -427,7 +473,7 @@
     },
     {
       "id": "youtube-channel-dashboard",
-      "code": "LOCAL-011",
+      "code": "LOCAL-013",
       "name": "P0013-czp-youtube-tda-team",
       "repo": "",
       "branch": "main",
@@ -463,7 +509,7 @@
     },
     {
       "id": "infi-project-performance-tracker",
-      "code": "LOCAL-013",
+      "code": "LOCAL-015",
       "name": "P0019-Work-Performance",
       "repo": "",
       "branch": "main",
@@ -504,7 +550,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "2.1.2",
+      "localVersion": "2.2.3",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",

@@ -1,5 +1,244 @@
 # Changelog
 
+## 2026-06-05 - Git commit version stamp
+
+- Version: `2.2.2`
+- Timestamp: 2026-06-05 00:50 (UTC+7)
+- Commit: `eab7bd9`
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Remove P0003 ChatHubAI from workspace catalog
+
+- Version: `2.2.1`
+- Timestamp: 2026-06-05
+- Type: Minor
+- Product: P0004
+- Prompt: Xóa P0003-ChatHubAI; Git P0004 registry + rà Supabase orphan
+- Commit: `eab7bd9`
+- Status: Draft
+
+### Changes
+
+- Gỡ card **ChatHubAI** (`chathubai` / `P0003`) khỏi `workspace-catalog.json`, `registry.default.json`, `local-registry.json`.
+- Gỡ binding **chathubai** khỏi `supabase-workspace-map.json` (project `fmnrafpzctuhxjaaomzt`).
+- Cập nhật `agent-manifest.json` clone lists — bỏ tham chiếu P0003.
+
+### Verification
+
+- `node` service-role: `hub_tools` / `tool_access` không có row `P0003`.
+- `pnpm build`
+
+### Rollback
+
+- `git revert <sha>` hoặc khôi phục thư mục `Tool/P0003-ChatHubAI` từ git history.
+
+---
+
+## 2026-06-04 - Agent Kind cleanup; remove Dashboard/Inbox patterns
+
+- Version: `2.1.35`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Removed Agent patterns **Dashboard**, **Inbox** → `deferredPatterns` (chuẩn hóa sau).
+- Kind gộp: **doc** (`contract`+`file`), **command** (+ hub scripts); bỏ `script`, `contract`, `file`.
+- Layer filter: chỉ **Screen** / **Modal**.
+- Manifest: bỏ hub-ui README trùng UI_PATTERNS; bỏ skill/reference row trùng.
+
+### Verification
+
+- `pnpm agent:manifest` · Kind filter 5 mục · 6 pattern rows.
+
+---
+
+## 2026-06-04 - Dashboard + System: fewer Agent patterns (composed in-screen)
+
+- Version: `2.1.34`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- **Dashboard:** merged analytics + sales → one pattern **Dashboard**, golden **P0008/dashboard**; P0006/dashboard = clone. Template alias `analytics` → `dashboard`.
+- **System:** renamed **System**; Agent meta table + Supabase quota folded into `panels[]` / `composed[]` — no separate wide-metrics / meta-list Agent rows.
+- **Overview + TOC:** tool links table composed in-screen (no panel-links-table row).
+- Agent manifest ~**39** pattern rows (was ~43).
+
+### Verification
+
+- `pnpm agent:manifest` · Pattern Dashboard golden P0008 · one System row · no table-part patterns.
+
+---
+
+## 2026-06-04 - Directory: one pattern (card + table via ViewToggle)
+
+- Version: `2.1.33`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Pattern **`directory`** renamed **Directory** (not “card + table” / “card-only” split).
+- Removed `exceptions[]` / Agent row `directory-card-only`; P0006/channels → **directory clone** (card view today).
+- Docs + `ui-screens` registry: ViewToggle = card ↔ table, single golden `HubListPage`.
+
+### Verification
+
+- `pnpm agent:manifest` · one Directory pattern · Clone includes P0006/channels.
+
+---
+
+## 2026-06-04 - Agent Kind Pattern + Layer (unified ui-patterns catalog)
+
+- Version: `2.1.32`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Unified Hub UI catalog: `Tool/schemas/ui-patterns.catalog.json` replaces separate table/screen/component Agent rows.
+- Agent manifest: Kind **pattern** + field **layer** (screen | table-part | modal | exception); column **Layer** in Agent table.
+- Filters: Kind Pattern + Layer; removed Table / Screen / Component kinds.
+- Contract row: `UI_PATTERNS.md` only (no UI_TABLES / UI_COMPONENTS / clone-registry contract duplicates).
+- Deprecated: `ui-tables.catalog.json`, `ui-components.catalog.json` (pointer to ui-patterns); vendor sync fans out `UI_PATTERNS.md`.
+
+### Verification
+
+- `pnpm agent:manifest` · filter Kind Pattern · Layer Screen / Table part · directory golden + clones.
+
+---
+
+## 2026-06-04 - Agent Kind Screen (replace Template Contract)
+
+- Version: `2.1.31`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Screen templates: Kind **screen** (not contract) with Golden/Clone from `hubUiCloneRegistry`.
+- Path → golden screen file (e.g. `ToolOverviewContent.tsx`).
+- `document-toc` links table pattern **panel-links-table**; Overview TOC row Golden `P0004/overview-toc`.
+
+### Verification
+
+- `pnpm agent:manifest` · filter Kind Screen · Overview + TOC left.
+
+---
+
+## 2026-06-04 - Agent Lines column; manifest sync on Refresh
+
+- Version: `2.1.30`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Agent table: **Lines** sortable column (removed from Scope cell).
+- Dev: `POST /api/agent/manifest-sync` — toolbar **Refresh** + sidebar Refresh rebuild `agent-manifest.json` then reload.
+
+### Verification
+
+- Vite dev → System → Agent → Refresh; sidebar Refresh on Agent tab.
+
+---
+
+## 2026-06-04 - Auth golden P0004/auth; clone registry; drop redundant components
+
+- Version: `2.1.29`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Auth gate golden → **P0004/auth** (`HubAuthGate.tsx`); P0020 `NotesAuthGate` = clone.
+- `ui-screens.catalog.json` → `hubUiCloneRegistry` (audit P0003–P0008, P0020 + tools without Hub UI).
+- Removed component patterns **AppTabHeader**, **Agent detail modal** (composed in directory-table / meta-list-table).
+- Directory-table `composedChrome`; P0003 library/users added as clones.
+
+### Verification
+
+- `pnpm agent:manifest` · Kind Component → 6 rows; Auth gate Golden = P0004/auth.
+
+---
+
+## 2026-06-04 - Agent table: Golden + Clone columns; component patterns
+
+- Version: `2.1.28`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Agent context table: sortable **Golden** and **Clone** columns (from manifest).
+- `ui-components.catalog.json` → `patterns[]` (same model as tables).
+- `sync-agent-manifest.mjs` emits `golden`, `clone`, `cloneTooltip` on pattern rows.
+
+### Verification
+
+- `pnpm agent:manifest` · System → Agent → filter Kind Table/Component.
+
+---
+
+## 2026-06-04 - Table catalog: patterns + golden/clones (not per-screen names)
+
+- Version: `2.1.27`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- `ui-tables.catalog.json` — `patterns[]` (e.g. `directory-table`); Hub tools = golden; Bots/2FA/Users = `clones[]` only.
+- Agent manifest + `UI_TABLES.md` — 4 table patterns + 1 exception (not 12 named tables).
+
+### Verification
+
+- `pnpm agent:manifest` — Kind Table shows Directory table + clones in body.
+
+---
+
+## 2026-06-04 - UI catalogs: tables, components, screen templates
+
+- Version: `2.1.26`
+- Timestamp: 2026-06-04
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- `ui-tables.catalog.json` — 12 table goldens + `goldenScreenPath` (directory → `HubListPage`); P0020 cookie/2FA; P0008 legacy migrate rows.
+- `ui-components.catalog.json` + `UI_COMPONENTS.md` — FilterBar, modals, chrome; Agent kind **component**.
+- `ui-screens.catalog.json` — `templates[]` with golden screen paths; P0020 `cookie` screen.
+- Golden scaffolds: `GoldenSystemPanelsScreen`, `GoldenAuthGateScreen`; FilterBar canonical in `packages/hub-ui`.
+- `sync-agent-manifest.mjs` — component + screen template rows in Agent tab.
+
+### Verification
+
+- `pnpm agent:manifest` · `node Tool/scripts/sync-hub-ui-vendor.cjs` · `pnpm exec tsc --noEmit`
+
+---
+
 ## 2026-06-04 - Git commit version stamp
 
 - Version: `2.1.22`
