@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T17:49:05.830Z",
+  "generatedAt": "2026-06-04T17:52:10.161Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -130,8 +130,8 @@
       "agentRequestable": true,
       "summary": "P0004 Hub UI + agent stack catalog; /hub-ui bundle entry",
       "bodyPreview": "# P0004 Tool Hub — Agent catalog (Hub UI + workspace agent context)\n\n**Design source:** this repo (`src/components/sales-shell`, `features/hub`).  \n**UI trong app:** System → **Agent** (`pnpm agent:manifest` → `public/agent-manifest.json`).  \n**Hub UI doc:** `packages/hub-ui/README.md` — scripts only, no Cursor sync-ui skill/rule.\n\n---\n\n## Hub UI — one command\n\n```powershell\ncd E:\\Dev\\Tool\\P0004-Tool-Hub\npnpm hub-ui:stack                              # vendor + manifest\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0006 overview   # + screen scaffold\n```\n\nThen: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n\n---\n\n## Workspace agent stack (lean)\n\n| Layer | Path |\n|-------|------|\n| Workspace rule | `.cursor/rules/dev-workspace-compact.mdc` (§0–§5, Always Apply) |\n| Ship | skill `p00xx-ship-keywords` · `/ship` · `ship-product.ps1` |\n| Browser verify | skill `browser-verify-until-done` |\n| Onboard | skill `p00xx-tool-onboard` · `/onboard-tool` |\n| Rare | `Tool/docs/playbooks/` (design, icons) |\n| P0006 domain | `.cursor/rules/p0006-aichathub.mdc` (globs only) |\n\n---\n\n## Code dùng chung\n\n### Package `@tool-workspace/hub-ui`\n\n| Path | Vai trò |\n|------|-",
-      "lines": 169,
-      "updatedAt": "2026-06-04T17:38:59.727Z",
+      "lines": 160,
+      "updatedAt": "2026-06-04T17:52:01.466Z",
       "tags": [
         "hub-ui",
         "catalog",
@@ -368,10 +368,10 @@
       "scope": "workspace",
       "alwaysApply": true,
       "agentRequestable": false,
-      "summary": "Dev workspace — single rule (gate, version, ship, browser, env). Always on.",
-      "bodyPreview": "# Dev workspace (E:\\Dev)\n\nHuman (VI): `.cursor/RULES-HUMAN-VI.md` · Release: `Rules/RELEASE-STANDARD.md` · Ship script: `Tool/scripts/ship-product.ps1`\n\n---\n\n## §1 Every reply — no exceptions\n\n- Reply in **Vietnamese**; Tool/Extension **UI strings** in **English**.\n- **Always** end with **3 numbered proposals** (`1.` `2.` `3.`) — including short/done replies.\n- Execute proposals only on **ok 1**, **ok 1 2**, **làm 1**, **tự làm**, etc.\n- **Last line:** `Version: X.Y.Z → A.B.C` or `Version: no bump (reason)`.\n- **Commit / push / deploy / release** only when user explicitly asks.\n- **Hooks:** `audit-agent-response` + `verify-working-rules-on-stop` (max 2). Check Settings → Hooks → Execution Log if format missed.\n- Do not delete important data; commit secrets; `@` stub `Rules/rules/Working_Rules.md`.\n\n---\n\n## §0 Version bump (product code)\n\nMeaningful changes in `Tool/P00xx-*` or `Extension/E00xx-*`:\n\n1. Bump correct tier; sync `package.json`, `tool.manifest.json`, `CHANGELOG.md`, extension manifests.\n2. **Never** wait for user to say “nhớ bump version”. **Stop hook** may follow up if missing.\n3. Product extras: `p0021-version-bump.mdc`, `e0001-auto-bump-version.mdc`.\n\n| Tier | When |",
-      "lines": 82,
-      "updatedAt": "2026-06-04T17:38:34.541Z",
+      "summary": "Dev workspace E:\\Dev — policy duy nhất (Always Apply)",
+      "bodyPreview": "# Dev workspace (E:\\Dev)\n\n## Giao tiếp & mỗi câu trả lời\n\n- Trao đổi với user bằng **tiếng Việt**; mọi **chuỗi UI** Tool/Extension bằng **tiếng Anh**.\n- **Luôn** kết thúc bằng **3 đề xuất** đánh số `1.` `2.` `3.` (kể cả trả lời ngắn / xong việc).\n- **Tự động** thực hiện các đề xuất (setup, migration, verify browser, script…) — **không** chờ `ok 1` trừ khi user nói rõ chỉ tư vấn / không làm.\n- Dòng cuối: `Version: X.Y.Z → A.B.C` hoặc `Version: no bump (lý do)`.\n- **Không** xóa dữ liệu quan trọng; **không** commit secret; commit/push/release chỉ khi user yêu cầu rõ.\n- Hooks kiểm tra format — xem Settings → Hooks → Execution Log nếu thiếu 3 đề xuất / Version.\n\n## P0004 golden pattern (Hub · Users · Overview)\n\n- **P0004 Tool Hub** — tab **Hub / Users / Overview** là chuẩn layout & typography cho mọi P00xx.\n- Tuân thủ **format text/UI P004** (title case có chừng mực, không ALL CAPS lung tung; copy UI English).\n- Clone shell: `packages/hub-ui/README.md` · `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` · verify `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n- Design source: `Tool/P0004-Tool-Hub` (`HubListPage`, `UserDirectoryTable`, Overview TOC). Dùng `@tool-workspace/hub-ui`, ",
+      "lines": 41,
+      "updatedAt": "2026-06-04T17:49:09.506Z",
       "tags": [
         "rule",
         "rules"

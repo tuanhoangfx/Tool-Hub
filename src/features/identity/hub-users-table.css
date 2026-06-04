@@ -137,9 +137,39 @@ table.hub-users-table {
   text-align: left;
 }
 .hub-users-col--hub-project {
-  width: 26%;
+  width: 18%;
+  min-width: 9rem;
+  text-align: left;
+}
+.hub-users-col--agent-layer {
+  width: 8%;
+  min-width: 5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+.hub-users-col--agent-golden {
+  width: 11%;
+  min-width: 6.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+.hub-users-col--agent-clone {
+  width: 14%;
+  min-width: 7.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+.hub-users-col--agent-lines {
+  width: 5%;
+  min-width: 3.25rem;
+  text-align: center;
+  vertical-align: middle;
+}
+.hub-users-col--agent-path {
+  width: 22%;
   min-width: 11rem;
   text-align: left;
+  vertical-align: top;
 }
 .hub-users-col--hub-version {
   width: 5.5rem;
@@ -410,4 +440,15 @@ table.hub-users-table {
   text-align: center;
   color: var(--muted);
   font-size: 12px;
+}
+
+/* Wide metrics tables (e.g. Supabase quota) — same skin, auto layout + scroll */
+table.hub-users-table.hub-users-table--wide {
+  table-layout: auto;
+}
+
+table.hub-users-table.hub-users-table--wide th,
+table.hub-users-table.hub-users-table--wide td {
+  text-align: left;
+  white-space: nowrap;
 }

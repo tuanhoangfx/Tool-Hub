@@ -1,4 +1,6 @@
-export type AgentContextKind = "rule" | "skill" | "file" | "contract" | "command" | "script";
+export type AgentContextKind = "rule" | "skill" | "pattern" | "command" | "doc";
+
+export type AgentPatternLayer = "screen" | "modal";
 
 export type AgentContextItem = {
   id: string;
@@ -16,6 +18,14 @@ export type AgentContextItem = {
   tags: string[];
   /** Cursor slash command, e.g. hub-ui */
   commandId?: string;
+  /** Hub UI pattern layer (kind=pattern only) */
+  layer?: AgentPatternLayer;
+  /** Hub UI pattern golden ref, e.g. P0004/hub-list */
+  golden?: string;
+  /** Hub UI clone instances summary, e.g. P0006/bots, P0020/twofa */
+  clone?: string;
+  /** Full clone list for table tooltip */
+  cloneTooltip?: string;
 };
 
 export type AgentManifest = {

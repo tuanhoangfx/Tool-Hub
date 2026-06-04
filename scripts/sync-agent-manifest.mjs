@@ -12,12 +12,7 @@ const toolRoot = path.join(devRoot, "Tool");
 const cursorRoot = devRoot;
 const outFile = path.join(hubRoot, "public", "agent-manifest.json");
 
-const HUB_UI_COMMAND_FILES = new Set([
-  "hub-ui.md",
-  "sync-hub-ui.md",
-  "verify-browser.md",
-  "design-5.md",
-]);
+const HUB_UI_COMMAND_FILES = new Set(["design-5.md"]);
 
 const HUB_UI_SCRIPT_NAMES = new Set([
   "hub-ui-stack.cjs",
@@ -79,6 +74,24 @@ function hubUiTags(extra = []) {
   return ["hub-ui", ...extra];
 }
 
+function hubGoldenLabel(golden) {
+  if (!golden || typeof golden !== "object") return "—";
+  return golden.ref || golden.label || "—";
+}
+
+function hubCloneLabel(clones, { exception } = {}) {
+  if (exception) return String(exception);
+  if (!Array.isArray(clones) || clones.length === 0) return "—";
+  const parts = clones.map((c) => `${c.product}/${c.screen}${c.status === "migrate" ? "†" : ""}`);
+  if (parts.length <= 4) return parts.join(", ");
+  return `${parts.length}× ${parts.slice(0, 3).join(", ")}…`;
+}
+
+function hubCloneTooltip(clones) {
+  if (!Array.isArray(clones) || clones.length === 0) return undefined;
+  return clones.map((c) => `${c.product}/${c.screen}${c.notes ? ` — ${c.notes}` : ""}`).join("\n");
+}
+
 function scanRules(items) {
   const rulesDir = path.join(cursorRoot, ".cursor", "rules");
   for (const file of walkFiles(rulesDir, ".mdc")) {
@@ -115,10 +128,8 @@ function scanSkills(items, skillsDir, scope) {
     const folder = path.basename(path.dirname(file));
     const body = raw.replace(/^---[\s\S]*?---\r?\n?/, "").trim();
     const isHubUi =
-      folder.includes("sync-p0004") ||
-      folder.includes("p0004-ui") ||
-      String(fm.description || "").toLowerCase().includes("p0004") ||
-      String(fm.description || "").toLowerCase().includes("hub ui");
+      String(fm.description || "").toLowerCase().includes("hub ui") ||
+      String(fm.description || "").toLowerCase().includes("p0004 hub");
     addItem(items, {
       id: slugId(rel),
       kind: "skill",
@@ -131,23 +142,6 @@ function scanSkills(items, skillsDir, scope) {
       lines: body.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
       tags: isHubUi ? hubUiTags(["skill"]) : ["skill", scope],
-    });
-  }
-  const ref = path.join(skillsDir, "sync-p0004-ui-shell", "reference.md");
-  if (fs.existsSync(ref)) {
-    const raw = fs.readFileSync(ref, "utf8");
-    addItem(items, {
-      id: slugId(relWorkspace(ref)),
-      kind: "skill",
-      name: "sync-p0004-ui-shell/reference",
-      path: relWorkspace(ref),
-      scope,
-      trigger: "Hub UI file manifest + Clone 100%",
-      summary: "P0004 UI clone checklist and path manifest",
-      bodyPreview: raw.slice(0, 1200),
-      lines: raw.split(/\r?\n/).length,
-      updatedAt: fs.statSync(ref).mtime.toISOString(),
-      tags: hubUiTags(["reference"]),
     });
   }
 }
@@ -190,7 +184,7 @@ function scanHubScripts(items) {
     const rel = relWorkspace(file);
     addItem(items, {
       id: slugId(rel),
-      kind: "script",
+      kind: "command",
       name: ent.name,
       path: rel,
       scope: "workspace",
@@ -199,7 +193,7 @@ function scanHubScripts(items) {
       bodyPreview: raw.slice(0, 1200),
       lines: raw.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
-      tags: hubUiTags(["script"]),
+      tags: hubUiTags(["command", "script"]),
     });
   }
 }
@@ -210,7 +204,7 @@ function scanHubKeyboardDoc(items) {
   const raw = fs.readFileSync(doc, "utf8");
   addItem(items, {
     id: "hub-keyboard-shortcuts",
-    kind: "contract",
+    kind: "doc",
     name: "Hub keyboard shortcuts",
     path: relWorkspace(doc),
     scope: "workspace",
@@ -230,7 +224,7 @@ function scanAgentsCatalog(items) {
   const rel = relWorkspace(agentsMd);
   addItem(items, {
     id: "p0004-agents-md",
-    kind: "contract",
+    kind: "doc",
     name: "AGENTS.md",
     path: rel,
     scope: "workspace",
@@ -243,23 +237,165 @@ function scanAgentsCatalog(items) {
   });
 }
 
-function scanHubUiPackage(items) {
-  const readme = path.join(devRoot, "packages", "hub-ui", "README.md");
-  if (!fs.existsSync(readme)) return;
-  const raw = fs.readFileSync(readme, "utf8");
-  addItem(items, {
-    id: "packages-hub-ui-readme",
-    kind: "contract",
-    name: "hub-ui README",
-    path: relWorkspace(readme),
-    scope: "package",
-    agentRequestable: true,
-    summary: "@tool-workspace/hub-ui — install, CSS, exports, tab pattern",
-    bodyPreview: raw.slice(0, 1200),
-    lines: raw.split(/\r?\n/).length,
-    updatedAt: fs.statSync(readme).mtime.toISOString(),
-    tags: hubUiTags(["package"]),
+function scanHubUiPackage(_items) {
+  /* hub-ui README omitted — UI_PATTERNS.md covers package entry */
+}
+
+function formatCatalogBodyPreview(entry, extra = {}) {
+  const lines = [
+    `# ${entry.name}`,
+    "",
+    `Golden: ${entry.golden}`,
+    ...(entry.goldenScreenPath ? [`Golden screen: ${entry.goldenScreenPath}`] : []),
+    ...(extra.category ? [`Category: ${extra.category}`] : []),
+    ...(entry.product ? [`Product: ${entry.product}`] : []),
+    ...(entry.screenTemplate ? [`Screen template: ${entry.screenTemplate}`] : []),
+    ...(entry.skin ? [`Skin: ${entry.skin}`] : []),
+    ...(entry.component ? [`Component: ${entry.component}`] : []),
+    `Status: ${entry.status}`,
+    "",
+    entry.summary,
+    "",
+    entry.features?.length ? `Features: ${entry.features.join(", ")}` : "",
+    entry.verify ? `Verify: ${entry.verify}` : "",
+    entry.sourcePath ? `Source: ${entry.sourcePath}` : "",
+  ].filter(Boolean);
+  return lines.join("\n");
+}
+
+function formatUnifiedPatternBody(row) {
+  const g = row.golden ?? {};
+  const cloneLines = (row.clones ?? []).map((c) => {
+    const st = c.status ? ` [${c.status}]` : "";
+    return `- ${c.product}/${c.screen}${st}${c.notes ? ` — ${c.notes}` : ""}`;
   });
+  const lines = [
+    `# ${row.name}`,
+    "",
+    `Layer: ${row.layer ?? "screen"}`,
+    `Pattern ID: ${row.id}`,
+    row.screenTemplate ? `Screen template: ${row.screenTemplate}` : "",
+    row.parentPattern ? `Parent pattern: ${row.parentPattern}` : "",
+    row.tablePart ? `Table part: ${row.tablePart}` : "",
+    (row.panels ?? []).length
+      ? `Panels (in-screen): ${row.panels.map((p) => `${p.id}${p.skin ? ` (${p.skin})` : ""}`).join(", ")}`
+      : "",
+    `Status: ${row.status ?? "ready"}`,
+    "",
+    `Golden: ${g.ref ?? "—"}`,
+    `Screen: ${g.screenPath ?? "—"}`,
+    g.tablePath ? `Table: ${g.tablePath}` : "",
+    "",
+    row.summary ?? "",
+    (row.composed ?? []).length ? `Composed: ${row.composed.join(", ")}` : "",
+    row.verify ? `Verify: ${row.verify}` : "",
+    "",
+    cloneLines.length ? "## Clones\n" : "",
+    ...cloneLines,
+  ].filter(Boolean);
+  return lines.join("\n");
+}
+
+function patternPathMeta(row, catalogPath, catalogMtime) {
+  const g = row.golden ?? {};
+  const relPath = g.screenPath ?? g.tablePath ?? row.screenPath;
+  const abs = relPath ? path.join(devRoot, String(relPath).replace(/\//g, path.sep)) : null;
+  return {
+    displayPath: abs && fs.existsSync(abs) ? relWorkspace(abs) : relWorkspace(catalogPath),
+    updatedAt: abs && fs.existsSync(abs) ? fs.statSync(abs).mtime.toISOString() : catalogMtime,
+  };
+}
+
+function scanHubPatterns(items) {
+  const catalogPath = path.join(toolRoot, "schemas", "ui-patterns.catalog.json");
+  if (!fs.existsSync(catalogPath)) return;
+
+  const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
+  const catalogMtime = fs.statSync(catalogPath).mtime.toISOString();
+  const patterns = Array.isArray(catalog.patterns) ? catalog.patterns : [];
+
+  for (const row of patterns) {
+    if (!row?.id || !row?.name) continue;
+    const g = row.golden ?? {};
+    const body = formatUnifiedPatternBody(row);
+    const { displayPath, updatedAt } = patternPathMeta(row, catalogPath, catalogMtime);
+    const clones = row.clones ?? [];
+
+    addItem(items, {
+      id: `pattern-${row.id}`,
+      kind: "pattern",
+      name: row.name,
+      layer: row.layer ?? "screen",
+      path: displayPath,
+      scope: "workspace",
+      agentRequestable: true,
+      trigger: `${row.layer ?? "screen"} · ${g.ref ?? row.id}`,
+      summary: String(row.summary || `${row.layer} · ${g.ref}`).slice(0, 240),
+      golden: g.ref ?? "—",
+      clone: hubCloneLabel(clones),
+      cloneTooltip: hubCloneTooltip(clones),
+      bodyPreview: body.slice(0, 1200),
+      lines: body.split(/\r?\n/).length,
+      updatedAt,
+      tags: hubUiTags(["pattern", row.layer, row.id, row.status ?? "ready"]),
+    });
+  }
+
+  const exceptions = Array.isArray(catalog.exceptions) ? catalog.exceptions : [];
+  for (const row of exceptions) {
+    if (!row?.id) continue;
+    const body = formatUnifiedPatternBody({
+      ...row,
+      name: row.name,
+      layer: "exception",
+      golden: { ref: row.golden, screenPath: row.screenPath },
+      clones: [],
+    });
+    const { displayPath, updatedAt } = patternPathMeta(row, catalogPath, catalogMtime);
+    addItem(items, {
+      id: `pattern-${row.id}`,
+      kind: "pattern",
+      name: `${row.name} (exception)`,
+      layer: "exception",
+      path: displayPath,
+      scope: "workspace",
+      agentRequestable: true,
+      trigger: `exception · ${row.parentPattern ?? "directory"}`,
+      summary: String(row.summary || row.golden).slice(0, 240),
+      golden: row.golden ?? "—",
+      clone: hubCloneLabel([], { exception: row.status ?? "exception" }),
+      bodyPreview: body.slice(0, 1200),
+      lines: body.split(/\r?\n/).length,
+      updatedAt,
+      tags: hubUiTags(["pattern", "exception", row.parentPattern ?? "directory"]),
+    });
+  }
+
+  const uiPatternsMd = path.join(devRoot, "packages", "hub-ui", "UI_PATTERNS.md");
+  if (fs.existsSync(uiPatternsMd)) {
+    const raw = fs.readFileSync(uiPatternsMd, "utf8");
+    const tools = catalog.toolsWithHubUi ?? {};
+    const toolLines = Object.entries(tools).map(
+      ([code, t]) => `- **${code}** (${t.role}): ${(t.screens ?? []).join(", ")}`,
+    );
+    addItem(items, {
+      id: "packages-hub-ui-ui-patterns",
+      kind: "doc",
+      name: "UI_PATTERNS.md",
+      path: relWorkspace(uiPatternsMd),
+      scope: "package",
+      agentRequestable: true,
+      summary: `Hub UI unified patterns (${patterns.length}) — ui-patterns.catalog.json`,
+      golden: "P0004",
+      clone: Object.keys(tools)
+        .filter((c) => tools[c].role !== "golden-source")
+        .join(", "),
+      bodyPreview: `${raw.slice(0, 900)}\n\n## Tools\n${toolLines.join("\n")}`.slice(0, 1200),
+      lines: raw.split(/\r?\n/).length,
+      updatedAt: fs.statSync(uiPatternsMd).mtime.toISOString(),
+      tags: hubUiTags(["pattern", "catalog"]),
+    });
+  }
 }
 
 function scanHubContracts(items) {
@@ -275,11 +411,11 @@ function scanHubContracts(items) {
     const name = path.basename(file);
     addItem(items, {
       id: slugId(rel),
-      kind: rel.includes("hub-load") ? "contract" : "file",
+      kind: "doc",
       name,
       path: rel,
       scope: rel.includes("packages") ? "package" : "workspace",
-      summary: `Hub load / catalog reference: ${name}`,
+      summary: `Hub reference: ${name}`,
       bodyPreview: raw.slice(0, 1200),
       lines: raw.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
@@ -297,6 +433,7 @@ function main() {
   scanHubKeyboardDoc(items);
   scanAgentsCatalog(items);
   scanHubUiPackage(items);
+  scanHubPatterns(items);
   scanHubContracts(items);
 
   const manifest = {

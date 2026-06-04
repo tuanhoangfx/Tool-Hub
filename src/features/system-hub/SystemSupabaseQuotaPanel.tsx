@@ -135,30 +135,37 @@ function orgForProject(orgs: OrgRow[], p: ProjectRow) {
   return orgs.find((o) => o.slug === p.orgSlug) ?? null;
 }
 
+const PROJECT_TABLE_COLUMNS = [
+  "Org",
+  "Owner",
+  "Project",
+  "Tools",
+  "Region",
+  "Org plan",
+  "Project plan",
+  "Metrics",
+  "Health",
+  "API total",
+  "REST/min",
+  "Stor/min",
+  "DB disk",
+  "Notes",
+] as const;
+
 function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow[]; onOpen: (ref: string) => void }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)]">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-[12px]">
+    <div className="hub-users-table-wrap overflow-x-auto">
+      <table className="hub-users-table hub-users-table--wide min-w-[1100px]">
           <thead>
-            <tr className="border-b border-white/5 bg-white/[.02] text-[10px] uppercase tracking-wider text-[var(--muted)]">
-              <th className="w-36 px-3 py-2 font-medium">Org</th>
-              <th className="w-44 px-3 py-2 font-medium">Owner</th>
-              <th className="w-40 px-3 py-2 font-medium">Project</th>
-              <th className="w-32 px-3 py-2 font-medium">Tools</th>
-              <th className="w-24 px-3 py-2 font-medium">Region</th>
-              <th className="w-28 px-3 py-2 font-medium">Org plan</th>
-              <th className="w-28 px-3 py-2 font-medium">Project plan</th>
-              <th className="w-24 px-3 py-2 font-medium">Metrics</th>
-              <th className="w-24 px-3 py-2 font-medium">Health</th>
-              <th className="w-28 px-3 py-2 font-medium">API total</th>
-              <th className="w-24 px-3 py-2 font-medium">REST/min</th>
-              <th className="w-24 px-3 py-2 font-medium">Stor/min</th>
-              <th className="w-28 px-3 py-2 font-medium">DB disk</th>
-              <th className="px-3 py-2 font-medium">Notes</th>
+            <tr>
+              {PROJECT_TABLE_COLUMNS.map((label) => (
+                <th key={label} scope="col">
+                  <span className="hub-users-th-text">{label}</span>
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody>
             {rows.map((p) => {
               const org = orgForProject(orgs, p);
               const plans = resolvePlanDisplay(p, org);
@@ -175,19 +182,19 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
               return (
                 <tr
                   key={`${p.orgSlug}-${p.projectRef}-${p.projectName}`}
-                  className={`cursor-pointer hover:bg-white/[.04] ${restriction.restricted ? "bg-rose-500/[.03]" : ""}`}
+                  className={`hub-users-row ${restriction.restricted ? "bg-rose-500/[.03]" : ""}`}
                   onClick={() => p.projectRef && onOpen(p.projectRef)}
                 >
-                  <td className="px-3 py-2 align-top font-mono text-[11px] text-indigo-200/90">{p.orgSlug}</td>
-                  <td className="px-3 py-2 align-top text-[11px] text-[var(--muted)]">{normLabel(p.ownerEmail)}</td>
-                  <td className="px-3 py-2 align-top font-medium text-[var(--text)]">{p.projectName}</td>
-                  <td className="px-3 py-2 align-top" onClick={(e) => e.stopPropagation()}>
+                  <td className="align-top font-mono text-[11px] text-indigo-200/90">{p.orgSlug}</td>
+                  <td className="align-top text-[11px] text-[var(--muted)]">{normLabel(p.ownerEmail)}</td>
+                  <td className="align-top font-medium text-[var(--text)]">{p.projectName}</td>
+                  <td className="align-top" onClick={(e) => e.stopPropagation()}>
                     <SupabaseProjectToolBadges tools={tools} bindings={p.toolBindings} maxVisible={3} />
                   </td>
-                  <td className="px-3 py-2 align-top text-[11px] text-[var(--muted)]">
+                  <td className="align-top text-[11px] text-[var(--muted)]">
                     <RegionInline region={p.region} />
                   </td>
-                  <td className="px-3 py-2 align-top">
+                  <td className="align-top">
                     <span
                       className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
                         tone === "indigo"
@@ -200,15 +207,15 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
                       {orgPlanLabel}
                     </span>
                   </td>
-                  <td className="px-3 py-2 align-top">
+                  <td className="align-top">
                     <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-semibold text-[var(--muted)]">
                       {projectPlanLabel}
                     </span>
                   </td>
-                  <td className="px-3 py-2 align-top">
+                  <td className="align-top">
                     <SupabaseMetricsSourceBadge source={metricsSource} variant="pill" />
                   </td>
-                  <td className="px-3 py-2 align-top">
+                  <td className="align-top">
                     {metricsSource === "live" ? (
                       <span
                         className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${
@@ -225,19 +232,19 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
                       <span className="text-[11px] text-[var(--muted)]">—</span>
                     )}
                   </td>
-                  <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--text)]">
+                  <td className="align-top font-mono text-[11px] text-[var(--text)]">
                     {usage.apiRequestsTotal == null ? "—" : formatCompact(usage.apiRequestsTotal)}
                   </td>
-                  <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--muted)]">
+                  <td className="align-top font-mono text-[11px] text-[var(--muted)]">
                     {usage.restLatest ?? "—"}
                   </td>
-                  <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--muted)]">
+                  <td className="align-top font-mono text-[11px] text-[var(--muted)]">
                     {usage.storageLatest ?? "—"}
                   </td>
-                  <td className="px-3 py-2 align-top font-mono text-[11px] text-[var(--muted)]">
+                  <td className="align-top font-mono text-[11px] text-[var(--muted)]">
                     {infra.diskUsedBytes == null ? "—" : formatBytes(infra.diskUsedBytes)}
                   </td>
-                  <td className="px-3 py-2 align-top text-[11px] text-[var(--muted)]">
+                  <td className="align-top text-[11px] text-[var(--muted)]">
                     {p.error ? <span className="text-rose-200">{p.error}</span> : <span className="text-[var(--muted)]/60">—</span>}
                   </td>
                 </tr>
@@ -245,7 +252,6 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
             })}
           </tbody>
         </table>
-      </div>
     </div>
   );
 }

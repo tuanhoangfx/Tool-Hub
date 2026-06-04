@@ -29,7 +29,10 @@
   /* Total block height (padding is inside min-height via box-border on .app-tab-header) */
   --app-tab-header-sticky-h: var(--app-tab-header-min-h);
   --hub-filter-pin-est-h: 6.75rem;
-  --hub-chrome-sticky-est-h: calc(var(--app-tab-header-min-h) + var(--hub-filter-pin-est-h));
+  --hub-chrome-gap-below: calc(var(--app-tab-header-gap-below) * 2);
+  --hub-chrome-sticky-est-h: calc(
+    var(--app-tab-header-min-h) + var(--hub-filter-pin-est-h) + var(--hub-chrome-gap-below)
+  );
   --bg: #0b1020;
   --panel: #121830;
   --panel-2: #1a2140;

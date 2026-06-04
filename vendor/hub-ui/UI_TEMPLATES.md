@@ -3,6 +3,19 @@
 Pick **one template per screen** in `tool.manifest.json` → `uiScreens[]`.  
 Clone flow: sync shell (A) → apply template (B) → config only (C).
 
+## Vocabulary (agent / human)
+
+| You say | Template ID |
+|---------|-------------|
+| discovery, catalog, list, Hub, Users | `directory` |
+| dashboard, KPI, charts | `dashboard` (alias `analytics` → `dashboard`) |
+| overview, TOC left | `document-toc` |
+| System sub-tabs | `system-panels` |
+| Notes split editor | `workspace-composer` |
+| Inbox master-detail | `inbox-split` |
+
+**Checks:** `node Tool/scripts/hub-ui-css-check.mjs --code P00xx` · `hub-ui-parity-check.mjs --code P00xx --screen …`
+
 ## App shell (layer A — all templates)
 
 Always sync before any screen:
@@ -30,11 +43,8 @@ Bootstrap: `HubLoaderRoot` + `configureFilterIcons` / `configureHubChromePrefs` 
 
 | ID | Vietnamese | Golden source | Package entry |
 |----|------------|---------------|---------------|
-| `directory` | Danh mục (card/table) | P0004 Users, Hub list; P0006 Bots, Groups, Channels | `HubDirectoryScreen` |
-| `analytics` | Tổng quan KPI + chart (no TOC) | P0006 `OverviewScreen` | `HubDirectoryScreen` + `HubTabScreenBody` |
-| `document-toc` | Tài liệu + TOC trái | P0004 `features/overview/` + `overview-toc.css` | App layout (not packaged yet) |
-| `workspace-composer` | Soạn thảo (list \| editor) | P0020 `NotesWorkspaceScreen` | `FilterBar` + app rails |
-| `dashboard` | Dashboard (time + charts) | P0008 Dashboard **after Hub retrofit** | `HubDirectoryScreen` + charts |
+| `directory` | Directory | P0004 Users, Hub list; P0006 Bots, Groups, Channels | `HubDirectoryScreen` |
+| `dashboard` | Dashboard (KPI + charts) | **P0008** `dashboard/page.tsx`; P0006 clone | `HubDirectoryScreen` + KPI/charts |
 | `system-panels` | System sub-tabs + panels | P0004 `SystemHubScreen` | `HubTabChrome` + `HubPanel` |
 | `inbox-split` | Inbox master-detail | P0006 `InboxScreen` | `HubTabChrome` + `bodyFlex` |
 | `auth-gate` | Login / gate | P0020 `NotesAuthGate` | App-only |
@@ -44,6 +54,8 @@ Types: `src/ui-template-types.ts` → `HubUiTemplate`, `GOLDEN_SOURCES`.
 ---
 
 ## `directory` — golden checklist
+
+Card and table are **one screen** — switch with **ViewToggle** in the toolbar. Do not split into separate Agent patterns or templates.
 
 **Do**
 
@@ -73,7 +85,7 @@ Side-by-side: Hub :5176 Users vs target screen.
 ```json
 "uiScreens": [
   { "screen": "bots", "template": "directory", "golden": "P0006/bots" },
-  { "screen": "overview", "template": "analytics", "golden": "P0006/overview" },
+  { "screen": "dashboard", "template": "analytics", "golden": "P0006/dashboard" },
   { "screen": "notes", "template": "workspace-composer", "golden": "P0020/notes" }
 ]
 ```
@@ -108,6 +120,6 @@ Agent: read `template` before `sync-hub-ui-screen.cjs`.
 
 ## Related
 
-- `.cursor/skills/sync-p0004-ui-shell/SKILL.md`
-- `.cursor/rules/p0004-hub-ui-standard.mdc`
+- `packages/hub-ui/README.md`
+- `Tool/P0004-Tool-Hub/AGENTS.md`
 - `Tool/scripts/sync-hub-ui-screen.cjs`

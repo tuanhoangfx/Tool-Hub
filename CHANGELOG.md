@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-06-05 - Release: remove P0003, Agent catalog, hub-ui sync
+
+- Version: `3.1.1`
+- Timestamp: 2026-06-05
+- Type: Major
+- Product: P0004
+- Prompt: Release P0004 — xóa ChatHubAI, đồng bộ registry/Agent manifest, deploy infi.io.vn
+- Commit: `cd24c90`
+- Status: Committed
+- Release:
+
+### Changes
+
+- Gỡ **P0003 ChatHubAI** khỏi workspace catalog, Supabase map, agent-manifest clone lists.
+- Agent tab: Kind cleanup, pattern rows, manifest sync (`agent-manifest-sync`, `sync-agent-manifest.mjs`).
+- Hub UI vendor: FilterBar parity, confirm dialogs, system-hub agent context table.
+- Registry schema: `deployTarget` **cloudflare** (P0011 Infix1 Mail).
+
+### Verification
+
+- `pnpm build` · `verify-production-smoke.mjs` · https://infi.io.vn/
+
+### Rollback
+
+- `git checkout v2.2.2` hoặc `git revert <sha>`
+
+---
+
 ## 2026-06-05 - Git commit version stamp
 
 - Version: `2.2.2`

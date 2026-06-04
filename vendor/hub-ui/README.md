@@ -1,61 +1,169 @@
 # @tool-workspace/hub-ui
 
-Shared Hub shell UI extracted from **P0004 Tool Hub** (`src/components/sales-shell` + display-prefs).
+Shared Hub UI for P0004, P0006, P0020, P0008. **Design source:** `Tool/P0004-Tool-Hub`.
 
-## Install (per app)
+**Screen templates:** see [UI_TEMPLATES.md](./UI_TEMPLATES.md) (`HubDirectoryScreen`, `uiScreens` in `tool.manifest.json`).
+
+Refresh from P0004: `node E:\Dev\Tool\scripts\sync-hub-ui-vendor.cjs`
+
+**Clone one screen:** `node E:\Dev\Tool\scripts\hub-ui-stack.cjs P00xx <screen>`
+
+**Verify CSS imports:** `node E:\Dev\Tool\scripts\hub-ui-css-check.mjs --code P00xx`
+
+**Layer 3 scaffolds:** `examples/GoldenDirectoryScreen.tsx`, `examples/GoldenAnalyticsScreen.tsx` (marker `HUB_UI_SCAFFOLD`)
+
+---
+
+## 1. Cài vào app
+
+### P0006 (pnpm workspace — khuyến nghị cho tool mới)
+
+`pnpm-workspace.yaml` include `packages/hub-ui`. Trong app:
+
+```json
+"@tool-workspace/hub-ui": "workspace:*"
+```
+
+```ts
+// vite.config.ts
+"@tool-workspace/hub-ui": path.resolve(__dirname, "../../../../packages/hub-ui/src"),
+```
+
+### P0004 / P0020 (vendor copy)
 
 ```json
 "@tool-workspace/hub-ui": "file:./vendor/hub-ui"
 ```
 
-Vite / tsconfig:
+Chạy sync script sau mỗi lần sửa P0004 shell.
 
-```json
-"@tool-workspace/hub-ui": ["vendor/hub-ui/src/index.ts"],
-"@tool-workspace/hub-ui/*": ["vendor/hub-ui/src/*"]
-```
+---
 
-## CSS (required)
-
-In app `main` or global CSS:
+## 2. CSS bắt buộc (`styles.css`)
 
 ```css
-@import "./theme/p0008-globals.css";
 @import "@tool-workspace/hub-ui/styles/hub-check-indicator.css";
+@import "@tool-workspace/hub-ui/styles/hub-shell-layout.css";
+@import "@tool-workspace/hub-ui/styles/hub-app-tab-header.css";
+@import "@tool-workspace/hub-ui/styles/hub-fields.css";
+@import "@tool-workspace/hub-ui/styles/hub-users-table.css";
 ```
 
-Also copy P0004 `src/styles/base.css`, `layout.css`, `controls.css`, `cards.css`, `visual.css`, `library.css` (see `sync-p0004-ui-shell/reference.md` § Clone 100%).
+Theme tokens: copy từ P0004 qua `sync-hub-theme-from-p0004.cjs --target <app>/src`.
 
-## Keep in sync with P0004
+---
 
-After changing shell components in P0004:
+## 3. Bootstrap (một lần trong `main.tsx`)
 
-```bash
-node E:/Dev/Tool/scripts/sync-hub-ui-vendor.cjs
-node E:/Dev/Tool/scripts/sync-hub-ui-vendor.cjs --target E:/Dev/Tool/P0020-Data-Box/vendor/hub-ui
+```ts
+import { HubLoaderRoot } from "@tool-workspace/hub-ui";
+import { setupHubUi } from "./lib/hub-ui-setup";
+
+setupHubUi(); // configureFilterIcons + configureHubChromePrefs
+
+// trong React tree:
+<HubLoaderRoot />
 ```
 
-Canonical implementations live in **`P0004/src/components/sales-shell`** until a workspace-level `packages/hub-ui` exists.
+`hub-ui-setup.ts` — wire filter icons + URL prefs (xem P0006 `apps/console/src/lib/hub-ui-setup.ts`).
 
-## In this package (portable)
+---
 
-`AppTabHeader`, `WorkspaceTabHeader`, `HubDisplayPrefs`, `HubLoadingView`, KPI/charts (`KpiStrip`, `MiniBarChart`, `MiniDonut`), `MetricBadge`, `ViewToggle`, `HubResultCount`, `ui-scale`, loader DOM + CSS.
+## 4. Tab screen — pattern chuẩn (layer 1 + 3)
 
-Types only: `FilterIconMeta`, `BadgeSpec` (`types/filter-badge.ts`). Full icon maps stay in each app.
+```tsx
+import {
+  FilterBar,
+  HubTabChrome,
+  HubTabScreenBody,
+  HubDataTable,
+  HubPanel,
+  HubAlert,
+  type KpiTileData,
+} from "@tool-workspace/hub-ui";
 
-## App-specific (copy from P0004 `src`, not vendor)
+// Wrapper giống P0006 TabScreenChrome.tsx:
+<HubTabChrome header={<AppTabHeader … />} filterBar={<FilterBar layout="hub" … />}>
+  <HubTabScreenBody
+    kpis={kpis}
+    charts={charts}           // optional MiniBarChart grid
+    sectionRuleLabel="Tools"  // pill giữa KPI và nội dung
+  >
+    <HubDataTable columns={[…]}>{rows}</HubDataTable>
+    <HubPanel title="…">…</HubPanel>
+  </HubTabScreenBody>
+</HubTabChrome>
+```
 
-| Piece | P0004 | Other tools |
-|-------|-------|-------------|
-| Sidebar + footer | `SalesSidebar.tsx` | `WorkspaceSidebar.tsx` (see P0020) |
-| FilterBar + faceted counts | `FilterBar.tsx`, `filter-option-counts.ts` | copy + wire domain filters |
-| Filter / badge icons | `badge-registry.ts` | copy + extend per tool |
-| System sub-nav, time/limit | `SystemTabSubNav`, `HubTimeRangeSelect`, `HubRowLimitSelect` | Hub/System only |
-| Display prefs wiring | `DisplayPrefs.tsx` | thin adapter over `HubDisplayPrefs` |
-| Hub list / cards | `HubToolCard.tsx`, `hub-aggregates` | domain-specific |
+**P0004 reference:** `features/hub/HubListPage.tsx` (inline); package `HubTabScreenBody` = cùng layout (`mt-5` KPI → section pill → `space-y-3`).
 
-## Clone workflow
+---
 
-Skill: `.cursor/skills/sync-p0004-ui-shell`  
-Rule: `.cursor/rules/p0004-hub-ui-standard.mdc`  
-Agent: `p0004-ui-sync`
+## 5. Export map
+
+### Shell (sync từ P0004)
+
+| Export | Dùng khi |
+|--------|----------|
+| `AppTabHeader` | Title, meta, center stats, actions |
+| `FilterBar` | Search + faceted filters (`layout="hub"`) |
+| `HubTabChrome` | Sticky header + filter stack |
+| `KpiStrip`, `MiniBarChart`, `MiniDonut` | KPI / charts band |
+| `HubTabSectionRule` | Pill divider (thường qua `HubTabScreenBody`) |
+| `MetricBadge`, `ViewToggle`, `HubResultCount` | Header stats, table/card toggle, count |
+| `HubDisplayPrefs` | Settings menu (wrap với app `DisplayPrefs.tsx`) |
+| `HubLoadingView`, `HubLoaderRoot` | Zero-cache loading |
+| `configureFilterIcons`, `configureHubChromePrefs` | App setup |
+
+### Content (package-only — chưa có trong P0004 src)
+
+| Export | Dùng khi |
+|--------|----------|
+| `HubTabScreenBody` | KPI + section rule + body spacing |
+| `HubDataTable`, `HubTableEmptyRow` | `hub-users-table` |
+| `HubPanel` | Section card |
+| `HubDirectoryCard` | Grid tile (HubToolCard surface) |
+| `HubAlert` | Error/warn banner |
+
+### Vẫn copy từ P0004 src (Hub-coupled)
+
+| Concern | P0004 path |
+|---------|------------|
+| Filter icon map | `lib/badge-registry.ts` → app `*-filter-icons.ts` |
+| Faceted counts | `lib/filter-option-counts.ts`, `enrichFilterDefs` |
+| Hub list cards | `features/hub/HubToolCard.tsx` |
+| Hub time/limit prefs | `HubTimeRangeSelect`, `HubRowLimitSelect` |
+| Sidebar | `SalesSidebar` (Hub) · `WorkspaceSidebar` (P0020) |
+
+---
+
+## 6. Chưa có trong package (giới hạn 100% clone)
+
+- `HubToolCard` — copy `features/hub/` hoặc dùng `HubDirectoryCard`
+- `HubStickyHeader` — Hub-specific registry meta
+- Full theme — phải sync CSS riêng
+- Data loading (`hub-load`, `*-client-cache`) — skill § Hub-like data loading
+
+---
+
+## 7. Keyboard shortcuts
+
+| Key | Action |
+|-----|--------|
+| F | Focus FilterBar search |
+| N | Add / create (`useHubPageShortcuts.onNew`) |
+| E | Edit selection (`useHubPageShortcuts.onEdit`) |
+| Esc | Close modal (per modal) |
+
+`FilterBar` shows **F** hint. `HubKeyboardHints` for toolbar legend. See `Tool/P0004-Tool-Hub/docs/HUB-KEYBOARD-SHORTCUTS.md`.
+
+---
+
+## 8. Troubleshooting
+
+| Lỗi | Fix |
+|-----|-----|
+| `does not provide export named 'HubTabScreenBody'` | `pnpm run dev:force` hoặc xóa `node_modules/.vite` |
+| Spacing lệch Hub | Thiếu `hub-shell-layout.css` hoặc chưa dùng `HubTabScreenBody` |
+| Filter không icon | Gọi `configureFilterIcons` trong setup |
+| Table style khác | Import `hub-users-table.css` + dùng `HubDataTable` |

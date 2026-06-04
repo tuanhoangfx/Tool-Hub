@@ -61,21 +61,24 @@ async function runGitHubCheck(cwd = process.cwd()) {
 }
 
 async function runWorkspaceRefresh(cwd = process.cwd()) {
+  const { runAgentManifestSync } = require("./agent-manifest-sync.cjs");
   const scan = await runWorkspaceScan(cwd);
   const github = scan.ok
     ? await runGitHubCheck(cwd)
     : { ok: false, code: -1, stdout: "", stderr: "", message: "Skipped GitHub check because workspace scan failed" };
+  const manifest = await runAgentManifestSync(cwd);
+  const ok = scan.ok && github.ok && manifest.ok;
   return {
-    ok: scan.ok && github.ok,
-    code: scan.ok && github.ok ? 0 : scan.code || github.code || 1,
-    message:
-      scan.ok && github.ok
-        ? "Workspace refresh completed"
-        : `${scan.message}${github.message ? `; ${github.message}` : ""}`,
+    ok,
+    code: ok ? 0 : scan.code || github.code || manifest.code || 1,
+    message: ok
+      ? "Workspace refresh completed (incl. agent manifest)"
+      : [scan.message, github.message, manifest.message].filter(Boolean).join("; "),
     scan,
     github,
-    stdout: [scan.stdout, github.stdout].filter(Boolean).join("\n"),
-    stderr: [scan.stderr, github.stderr].filter(Boolean).join("\n"),
+    manifest,
+    stdout: [scan.stdout, github.stdout, manifest.stdout].filter(Boolean).join("\n"),
+    stderr: [scan.stderr, github.stderr, manifest.stderr].filter(Boolean).join("\n"),
   };
 }
 

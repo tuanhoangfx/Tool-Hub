@@ -1,5 +1,8 @@
 @import "../vendor/hub-ui/src/styles/hub-check-indicator.css";
 @import "../vendor/hub-ui/src/styles/hub-fields.css";
+@import "../vendor/hub-ui/src/styles/hub-shell-layout.css";
+@import "../vendor/hub-ui/src/styles/hub-app-tab-header.css";
+@import "../vendor/hub-ui/src/styles/hub-users-table.css";
 @import "./styles/base.css";
 @import "./theme/hub-appearance.css";
 @import "./styles/layout.css";

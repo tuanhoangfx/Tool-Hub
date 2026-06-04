@@ -6,12 +6,20 @@ export const AGENT_KIND_FILTERS: FilterDef[] = [
     label: "Kind",
     showAllLabel: true,
     options: [
+      { value: "pattern", label: "Pattern" },
       { value: "rule", label: "Rule" },
       { value: "skill", label: "Skill" },
-      { value: "file", label: "File" },
-      { value: "contract", label: "Contract" },
       { value: "command", label: "Command" },
-      { value: "script", label: "Script" },
+      { value: "doc", label: "Doc" },
+    ],
+  },
+  {
+    key: "agentLayer",
+    label: "Layer",
+    showAllLabel: true,
+    options: [
+      { value: "screen", label: "Screen" },
+      { value: "modal", label: "Modal" },
     ],
   },
   {

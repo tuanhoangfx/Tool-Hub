@@ -18,7 +18,7 @@ import {
 import type { FilterIconMeta } from "./filter-icons";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "./filter-icons";
 import { compactIconSize } from "../ui-scale";
-import { registerHubSearchFocus } from "@tool-workspace/hub-ui";
+import { registerHubSearchFocus } from "../keyboard/hub-keyboard-shortcuts";
 
 export type FilterOption = { value: string; label: string; color?: string; count?: number };
 export type FilterDef = {

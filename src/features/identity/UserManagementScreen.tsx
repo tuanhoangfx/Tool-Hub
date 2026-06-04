@@ -35,6 +35,7 @@ import { readUserTableColumns, type UserTableColumnKey } from "./user-table-pref
 import { UserBulkActionBar } from "./UserBulkActionBar";
 import { UserAccessModal } from "./UserAccessModal";
 import { UserAddModal } from "./UserAddModal";
+import { HubConfirmDialog } from "../../components/HubConfirmDialog";
 import { useHubAuth } from "./useHubAuth";
 import {
   createHubUsers,
@@ -227,6 +228,8 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
   const [myRole, setMyRole] = useState<UserManagementRow["role"] | null>(null);
   const [roleMessage, setRoleMessage] = useState<string | null>(null);
+  const [pendingClearUsers, setPendingClearUsers] = useState<UserManagementRow[] | null>(null);
+  const [clearBusy, setClearBusy] = useState(false);
 
   const actorRole = useMemo(
     () => resolveSessionActorRole(myRole, session?.user.id, rows),
@@ -479,20 +482,25 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     canEdit: () => (isAdmin || isManager) && hasSelection && !roleLoading,
   });
 
-  const handleBulkDelete = useCallback(async () => {
+  const handleBulkDelete = useCallback(() => {
     if (!canManageTools || selectedUsers.length === 0) return;
     const nonAdmins = selectedUsers.filter((u) => u.role !== "admin");
     if (!nonAdmins.length) {
       setRoleMessage("Admin accounts keep implicit tool access and cannot be bulk-cleared.");
       return;
     }
-    const ok = window.confirm(
-      `Clear Hub tool access for ${nonAdmins.length} user(s)? Profiles and auth accounts are kept.`,
-    );
-    if (!ok) return;
+    setPendingClearUsers(nonAdmins);
+  }, [canManageTools, selectedUsers]);
+
+  const confirmBulkClear = useCallback(async () => {
+    const nonAdmins = pendingClearUsers;
+    if (!nonAdmins?.length) return;
+    setClearBusy(true);
     setLoading(true);
     const result = await revokeAllToolAccessForUsers(nonAdmins.map((u) => u.id));
+    setClearBusy(false);
     setLoading(false);
+    setPendingClearUsers(null);
     if (!result.ok) {
       setRoleMessage(result.error ?? "Unable to clear tool access");
       return;
@@ -503,7 +511,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     );
     setSelectedIds(new Set());
     setRoleMessage(`Cleared tool access for ${nonAdmins.length} user(s).`);
-  }, [canManageTools, selectedUsers]);
+  }, [pendingClearUsers]);
 
   const stats = useMemo(() => {
     const total = filteredRows.length;
@@ -740,6 +748,28 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
         onClose={() => setAddUserOpen(false)}
         onCreateSingle={handleCreateSingleUser}
         onCreateMany={handleCreateUsers}
+      />
+
+      <HubConfirmDialog
+        open={pendingClearUsers !== null}
+        title="Clear tool access?"
+        message={
+          pendingClearUsers ? (
+            <>
+              Clear Hub tool access for <strong className="text-[var(--text)]">{pendingClearUsers.length}</strong>{" "}
+              user(s)? Profiles and auth accounts are kept.
+            </>
+          ) : null
+        }
+        confirmLabel={
+          pendingClearUsers?.length === 1 ? "Clear access" : `Clear ${pendingClearUsers?.length ?? 0} users`
+        }
+        tone="danger"
+        confirmBusy={clearBusy}
+        onClose={() => {
+          if (!clearBusy) setPendingClearUsers(null);
+        }}
+        onConfirm={() => void confirmBulkClear()}
       />
     </>
   );

@@ -13,6 +13,7 @@ import { setHubActiveScreen } from "@tool-workspace/hub-ui";
 import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
+import { dispatchAgentManifestRefresh } from "./features/system-hub/agent-manifest-events";
 import { dispatchSupabaseQuotaRefresh } from "./features/system-hub/supabase-quota-events";
 import { UserManagementScreen } from "./features/identity/UserManagementScreen";
 import { SystemHubScreen } from "./features/system-hub/SystemHubScreen";
@@ -337,17 +338,24 @@ function App() {
 
   const handleRefreshAll = async () => {
     if (scanningWorkspace) return;
-    if (screen === "system" && readSystemTab() === "supabase-quota") {
+    const systemTab = readSystemTab();
+    if (screen === "system" && systemTab === "supabase-quota") {
       dispatchSupabaseQuotaRefresh();
       addLog("System", "Supabase Quota refresh requested");
       return;
     }
+    if (screen === "system" && systemTab === "agent") {
+      dispatchAgentManifestRefresh();
+      addLog("System", "Agent manifest refresh requested");
+      return;
+    }
     dispatchSupabaseQuotaRefresh();
     setScanningWorkspace(true);
-    settleScanStatus("scanning", "Refreshing workspace + Supabase quota…");
-    addLog("Tool", "Workspace + quota refresh requested");
+    settleScanStatus("scanning", "Refreshing workspace + quota + agent manifest…");
+    addLog("Tool", "Workspace + quota + agent manifest refresh requested");
     try {
       const result = await runWorkspaceRefresh();
+      dispatchAgentManifestRefresh();
       if (!result.ok) {
         const message = `${result.message ?? "Workspace refresh failed"}; loaded existing registry if available`;
         settleScanStatus("error", message);
@@ -356,7 +364,7 @@ function App() {
         void refreshAll();
         return;
       }
-      const message = "Workspace refresh completed; registry reloaded";
+      const message = "Workspace refresh completed; registry + agent manifest reloaded";
       settleScanStatus("success", message);
       addLog("Tool", message);
       await loadLocalRegistry();

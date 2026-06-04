@@ -89,7 +89,7 @@ export function SystemAgentContextPanel() {
           className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-3 text-xs font-medium text-indigo-100 hover:bg-indigo-500/20 disabled:opacity-50"
         >
           <RefreshCw size={compactIconSize(14)} className={loading ? "animate-spin" : ""} />
-          Sync manifest
+          Refresh
         </button>
       </>
     ),
@@ -112,8 +112,7 @@ export function SystemAgentContextPanel() {
         <p className="py-10 text-center text-sm text-[var(--muted)]">Loading agent context in background…</p>
       ) : items.length === 0 && !error ? (
         <p className="py-10 text-center text-sm text-[var(--muted)]">
-          No agent manifest items. Run{" "}
-          <code className="rounded bg-white/5 px-1">pnpm agent:manifest</code> then Sync manifest.
+          No agent manifest items. Use sidebar <strong>Refresh</strong> or the toolbar button (rebuilds manifest in dev).
         </p>
       ) : filtered.length === 0 ? null : viewMode === "table" ? (
         <div className="pb-8">

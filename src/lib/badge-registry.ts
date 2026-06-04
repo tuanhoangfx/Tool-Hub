@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   Archive,
   Beaker,
+  BookOpen,
   Bot,
   Calculator,
   CheckCircle2,
@@ -35,7 +36,10 @@ import {
   Shield,
   ShieldCheck,
   Sparkles,
+  LayoutTemplate,
   Tag,
+  Terminal,
+  Wrench,
   Zap,
   Crown,
   UserRound,
@@ -227,24 +231,27 @@ export const SCHEMA_MODE: Record<Mode, FilterIconMeta> = {
 
 /** Agent context tab — kind / scope chips (Schema-style tones). */
 export const AGENT_KIND_META: Record<string, FilterIconMeta> = {
+  pattern: { icon: LayoutTemplate, className: "text-violet-300" },
   rule: { icon: Shield, className: "text-emerald-300" },
   skill: { icon: Sparkles, className: "text-purple-300" },
-  file: { icon: FileCode2, className: "text-sky-300" },
-  contract: { icon: Link2, className: "text-amber-300" },
+  command: { icon: Terminal, className: "text-cyan-300" },
+  doc: { icon: BookOpen, className: "text-amber-300" },
 };
 
 export const AGENT_KIND_LABEL: Record<string, string> = {
+  pattern: "Pattern",
   rule: "Rule",
   skill: "Skill",
-  file: "File",
-  contract: "Contract",
+  command: "Command",
+  doc: "Doc",
 };
 
 export const AGENT_KIND_TONE: Record<string, string> = {
+  pattern: "border-violet-500/40 bg-violet-500/[.04] text-violet-300",
   rule: "border-emerald-500/40 bg-emerald-500/[.04] text-emerald-300",
   skill: "border-purple-500/40 bg-purple-500/[.04] text-purple-300",
-  file: "border-sky-500/40 bg-sky-500/[.04] text-sky-300",
-  contract: "border-amber-500/40 bg-amber-500/[.04] text-amber-300",
+  command: "border-cyan-500/40 bg-cyan-500/[.04] text-cyan-300",
+  doc: "border-amber-500/40 bg-amber-500/[.04] text-amber-300",
 };
 
 export const AGENT_SCOPE_META: Record<string, FilterIconMeta> = {

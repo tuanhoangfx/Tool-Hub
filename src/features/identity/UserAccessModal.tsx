@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, Package, UserRound, X } from "lucide-react";
+import { Check, KeyRound, Package, UserRound, X } from "lucide-react";
+import { HubConfirmDialog } from "../../components/HubConfirmDialog";
 import { FilterBar } from "../../components/sales-shell";
 import { HubSingleFilterDropdown } from "../../components/sales-shell/FilterBar";
 import { HubEmailBadge } from "./HubEmailBadge";
@@ -91,6 +92,7 @@ export function UserAccessModal({
   const [resetMsg, setResetMsg] = useState<string | null>(null);
   const [resetBusy, setResetBusy] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
 
   const isAdminUser = user?.role === "admin";
   const idPrefix = user ? `ua-${user.id}-` : "";
@@ -110,6 +112,7 @@ export function UserAccessModal({
     setError(null);
     setResetMsg(null);
     setNewPassword("");
+    setResetConfirmOpen(false);
     if (isAdminUser) {
       setSelected(new Set(tools.map((t) => t.tool_code)));
       return;
@@ -243,19 +246,14 @@ export function UserAccessModal({
     user,
   ]);
 
-  const onAdminResetPassword = useCallback(async () => {
+  const runAdminResetPassword = useCallback(async () => {
     if (!user || !accessToken) return;
     const pwd = newPassword.trim();
-    const ok = window.confirm(
-      pwd
-        ? `Set a new password for ${user.fullName || user.loginId}?`
-        : `Generate a new temporary password for ${user.fullName || user.loginId}?`,
-    );
-    if (!ok) return;
     setResetBusy(true);
     setResetMsg(null);
     const result = await resetHubUserPassword(accessToken, user.id, pwd || undefined);
     setResetBusy(false);
+    setResetConfirmOpen(false);
     if (!result.ok) {
       setResetMsg(result.error ?? "Could not reset password");
       return;
@@ -265,11 +263,38 @@ export function UserAccessModal({
     setNewPassword("");
   }, [accessToken, newPassword, user]);
 
+  const resetConfirmCopy = useMemo(() => {
+    if (!user) return { title: "", message: "" };
+    const label = user.fullName || user.loginId || "this user";
+    const pwd = newPassword.trim();
+    return pwd
+      ? {
+          title: "Set new password?",
+          message: (
+            <>
+              Set a new password for <strong className="text-[var(--text)]">{label}</strong>. The user must sign
+              in with this password on the next login.
+            </>
+          ),
+        }
+      : {
+          title: "Generate temporary password?",
+          message: (
+            <>
+              Generate a new temporary password for <strong className="text-[var(--text)]">{label}</strong>? It will
+              be shown once — copy and share it securely.
+            </>
+          ),
+        };
+  }, [newPassword, user]);
+
   if (!user) return null;
 
   const allFilteredGranted = filteredTools.length > 0 && filteredTools.every((t) => selected.has(t.tool_code));
 
-  return createPortal(
+  return (
+    <>
+      {createPortal(
     <div className="modal-backdrop modal-backdrop--tool-detail" role="presentation" onClick={onClose}>
       <div
         className="modal-shell modal-shell--tool-detail"
@@ -393,7 +418,7 @@ export function UserAccessModal({
                       type="button"
                       disabled={resetBusy || !accessToken}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/15 px-3 py-1.5 text-xs font-semibold text-amber-100 hover:bg-amber-500/25 disabled:opacity-50"
-                      onClick={() => void onAdminResetPassword()}
+                      onClick={() => setResetConfirmOpen(true)}
                     >
                       {resetBusy ? "Resetting…" : "Reset password"}
                     </button>
@@ -581,5 +606,21 @@ export function UserAccessModal({
       </div>
     </div>,
     document.body,
+      )}
+
+      <HubConfirmDialog
+        open={resetConfirmOpen}
+        title={resetConfirmCopy.title}
+        message={resetConfirmCopy.message}
+        confirmLabel={newPassword.trim() ? "Set password" : "Generate password"}
+        tone="warning"
+        icon={KeyRound}
+        confirmBusy={resetBusy}
+        onClose={() => {
+          if (!resetBusy) setResetConfirmOpen(false);
+        }}
+        onConfirm={() => void runAdminResetPassword()}
+      />
+    </>
   );
 }

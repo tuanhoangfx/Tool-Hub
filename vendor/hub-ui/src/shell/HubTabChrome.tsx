@@ -53,9 +53,11 @@ export function HubTabChrome({
       {...(headerPin ? { "data-header-pin": true } : {})}
     >
       {stack ? (
-        <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 border-b border-white/5 bg-[var(--bg)]">
+        <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 bg-[var(--bg)]">
           {header}
           {filterBar}
+          <div className="hub-chrome-sticky-divider border-b border-white/5" aria-hidden />
+          <div className="hub-chrome-sticky-gap" aria-hidden />
         </div>
       ) : (
         <>

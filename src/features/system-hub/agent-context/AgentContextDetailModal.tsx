@@ -99,6 +99,16 @@ export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: 
                     <dd className="font-medium capitalize">{item.scope}</dd>
                   </div>
                   <div>
+                    <dt className="text-[var(--muted)]">Golden</dt>
+                    <dd className="font-mono text-[11px] font-medium text-emerald-200/90">{item.golden ?? "—"}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[var(--muted)]">Clone</dt>
+                    <dd className="whitespace-pre-wrap font-mono text-[11px] font-medium text-sky-200/90" title={item.cloneTooltip}>
+                      {item.clone ?? "—"}
+                    </dd>
+                  </div>
+                  <div>
                     <dt className="text-[var(--muted)]">Lines</dt>
                     <dd className="font-medium tabular-nums">{item.lines}</dd>
                   </div>
@@ -125,7 +135,7 @@ export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: 
                   Paths & sync
                 </h3>
                 <p className="text-xs text-[var(--muted)]">
-                  Manifest from <span className="font-mono text-indigo-200/90">pnpm agent:manifest</span> (runs on build).
+                  Manifest rebuilt on Refresh (dev) or <span className="font-mono text-indigo-200/90">pnpm build</span>.
                   {manifestGeneratedAt ? (
                     <>
                       {" "}

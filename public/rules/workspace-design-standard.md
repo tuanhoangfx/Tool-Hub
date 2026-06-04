@@ -157,7 +157,7 @@ Other shared rules:
 
 For any form that needs a **themed** local date + time value, use the **non-native** compact picker defined in **`Datetime_Picker_Standard.md`** (wire format `YYYY-MM-DDTHH:mm`, stable `schedule-datetime` / `schedule-dp-*` class registry, styles in `workspace-design-base.css`). Do not use `<input type="datetime-local">` when the product requires matching shell theming or consistent popover behavior in Electron/Chromium.
 
-Reference React implementation: `E:\Dev\Tool\YT-Multistream-Console\src\components\ScheduleDatetimeField.tsx` (copy into new tools or extract a shared package).
+Reference React implementation: `E:\Dev\Tool\P0002-YT-Multistream-Console\src\components\ScheduleDatetimeField.tsx` (copy into new tools or extract a shared package).
 
 ## Pagination footer standard
 

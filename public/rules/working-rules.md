@@ -1,6 +1,5 @@
-## Response Completion
+# Working rules — pointer only
 
-After each response:
+**Single Cursor rule (Always Apply):** `E:\Dev\.cursor\rules\dev-workspace-compact.mdc`
 
-- Summarize the issues that have been resolved.
-- Provide 3 proposals to optimize performance, expand features, and improve code structure.
+Do not @ this file in chat.

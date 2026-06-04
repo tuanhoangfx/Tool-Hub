@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabase";
 import type { Session } from "@supabase/supabase-js";
 import { hubRoleLabel, hubUserInitials, parseHubRole } from "./hubUserDisplay";
 import { fetchCurrentProfileRole } from "./userManagementRepository";
+import { HubAlertDialog } from "../../components/HubAlertDialog";
 import { hubSessionLabels } from "./HubAuthGate";
 import { canUseEmailPasswordRecovery } from "@tool-workspace/hub-identity";
 
@@ -26,6 +27,9 @@ export function HubUserModal({ open, onClose, session }: Props) {
   const [otpStep, setOtpStep] = useState<"idle" | "sent">("idle");
   const [otpBusy, setOtpBusy] = useState(false);
   const [otpMsg, setOtpMsg] = useState<string | null>(null);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
 
   const user = session?.user ?? null;
   const labels = hubSessionLabels(session);
@@ -155,7 +159,7 @@ export function HubUserModal({ open, onClose, session }: Props) {
 
   if (!open || typeof document === "undefined") return null;
 
-  return createPortal(
+  const modal = createPortal(
     <div
       className="fixed inset-0 z-[1300] grid place-items-center bg-black/60 px-4 py-6 backdrop-blur-sm"
       role="dialog"
@@ -325,7 +329,9 @@ export function HubUserModal({ open, onClose, session }: Props) {
                 const { error } = await supabase.auth.signOut();
                 setSigningOut(false);
                 if (error) {
-                  window.alert(error.message);
+                  setAlertTitle("Sign out failed");
+                  setAlertMessage(error.message);
+                  setAlertOpen(true);
                   return;
                 }
                 onClose();
@@ -339,5 +345,17 @@ export function HubUserModal({ open, onClose, session }: Props) {
       </div>
     </div>,
     document.body,
+  );
+
+  return (
+    <>
+      {modal}
+      <HubAlertDialog
+        open={alertOpen}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => setAlertOpen(false)}
+      />
+    </>
   );
 }

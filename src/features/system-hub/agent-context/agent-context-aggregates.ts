@@ -1,7 +1,15 @@
 import type { BarItem } from "../../../components/sales-shell";
-import type { AgentContextItem } from "./types";
+import type { AgentContextItem, AgentContextKind } from "./types";
 
 const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
+
+const AGENT_KIND_CHART_LABEL: Record<AgentContextKind, string> = {
+  pattern: "Pattern",
+  rule: "Rule",
+  skill: "Skill",
+  command: "Command",
+  doc: "Doc",
+};
 
 function breakdown(items: AgentContextItem[], pick: (item: AgentContextItem) => string): BarItem[] {
   const map = new Map<string, number>();
@@ -33,9 +41,9 @@ function sizeBucket(lines: number): string {
 export function agentContextKpis(items: AgentContextItem[]) {
   return {
     shown: items.length,
+    patterns: items.filter((i) => i.kind === "pattern").length,
     rules: items.filter((i) => i.kind === "rule").length,
     skills: items.filter((i) => i.kind === "skill").length,
-    files: items.filter((i) => i.kind === "file" || i.kind === "contract").length,
     always: items.filter((i) => i.alwaysApply).length,
     requestable: items.filter((i) => i.agentRequestable).length,
   };
@@ -43,10 +51,7 @@ export function agentContextKpis(items: AgentContextItem[]) {
 
 export function agentContextCharts(items: AgentContextItem[]) {
   return {
-    kind: breakdown(items, (i) => {
-      if (i.kind === "contract") return "Contract";
-      return i.kind.charAt(0).toUpperCase() + i.kind.slice(1);
-    }),
+    kind: breakdown(items, (i) => AGENT_KIND_CHART_LABEL[i.kind] ?? i.kind),
     scope: breakdown(items, (i) => i.scope.charAt(0).toUpperCase() + i.scope.slice(1)),
     apply: breakdown(items, applyMode),
     size: breakdown(items, (i) => sizeBucket(i.lines)),

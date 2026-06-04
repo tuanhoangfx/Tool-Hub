@@ -1,6 +1,12 @@
 import type { ReactNode } from "react";
 
-export type HubTableColumn = { key: string; label: string; className?: string };
+export type HubTableColumn = {
+  key: string;
+  label: string;
+  className?: string;
+  /** Custom header cell (sort buttons, select-all, etc.) */
+  header?: ReactNode;
+};
 
 export function HubDataTable({
   columns,
@@ -17,8 +23,8 @@ export function HubDataTable({
         <thead>
           <tr>
             {columns.map((col) => (
-              <th key={col.key} className={col.className}>
-                <span className="hub-users-th-text">{col.label}</span>
+              <th key={col.key} className={col.className} scope="col">
+                {col.header ?? <span className="hub-users-th-text">{col.label}</span>}
               </th>
             ))}
           </tr>

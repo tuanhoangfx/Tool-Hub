@@ -19,6 +19,7 @@ configureFilterIcons({
 import "./theme/hub-boot.css";
 import "./theme/p0008-globals.css";
 import "./theme/hub-auth.css";
+import "./theme/hub-confirm.css";
 import "./styles.css";
 
 const rootEl = document.getElementById("root");

@@ -5,10 +5,14 @@ import {
   ArrowUpDown,
   BookOpen,
   CalendarDays,
+  Copy,
+  FileCode2,
   FileText,
+  Hash,
   Layers,
   ScrollText,
   Sparkles,
+  Star,
 } from "lucide-react";
 import { compactIconSize } from "../../../lib/ui-scale";
 import { formatDate } from "../../../lib/tooling";
@@ -19,7 +23,17 @@ import { AgentKindBadge, AgentScopeBadge } from "./AgentContextBadges";
 import { agentKindIcon, agentStatusDotColor } from "./agent-kind-icon";
 import "../../identity/hub-users-table.css";
 
-type AgentSortKey = "kind" | "name" | "scope" | "mode" | "updated";
+type AgentSortKey =
+  | "kind"
+  | "layer"
+  | "name"
+  | "golden"
+  | "clone"
+  | "path"
+  | "scope"
+  | "lines"
+  | "mode"
+  | "updated";
 
 type SortDir = "asc" | "desc";
 
@@ -33,8 +47,13 @@ type ColumnDef = {
 
 const COLUMNS: ColumnDef[] = [
   { key: "kind", label: "Kind", colClass: "hub-users-col--hub-code", icon: ScrollText, iconClass: "hub-users-th-icon--role" },
+  { key: "layer", label: "Layer", colClass: "hub-users-col--agent-layer", icon: Layers, iconClass: "hub-users-th-icon--tools" },
   { key: "name", label: "Name", colClass: "hub-users-col--hub-project", icon: FileText, iconClass: "hub-users-th-icon--name" },
+  { key: "golden", label: "Golden", colClass: "hub-users-col--agent-golden", icon: Star, iconClass: "hub-users-th-icon--role" },
+  { key: "clone", label: "Clone", colClass: "hub-users-col--agent-clone", icon: Copy, iconClass: "hub-users-th-icon--tools" },
+  { key: "path", label: "Path", colClass: "hub-users-col--agent-path", icon: FileCode2, iconClass: "hub-users-th-icon--id" },
   { key: "scope", label: "Scope", colClass: "hub-users-col--hub-version", icon: Layers, iconClass: "hub-users-th-icon--tools" },
+  { key: "lines", label: "Lines", colClass: "hub-users-col--agent-lines", icon: Hash, iconClass: "hub-users-th-icon--created" },
   { key: "mode", label: "Mode", colClass: "hub-users-col--hub-status", icon: Sparkles, iconClass: "hub-users-th-icon--activity" },
   {
     key: "updated",
@@ -62,14 +81,35 @@ function applyModeTone(item: AgentContextItem): "ok" | "warn" | "neutral" {
   return "neutral";
 }
 
+function layerLabel(layer?: AgentContextItem["layer"]): string {
+  if (!layer) return "—";
+  return layer === "screen" ? "Screen" : "Modal";
+}
+
+function layerTone(layer?: AgentContextItem["layer"]): "ok" | "warn" | "neutral" {
+  if (layer === "screen") return "ok";
+  if (layer === "modal") return "warn";
+  return "neutral";
+}
+
 function sortableValue(item: AgentContextItem, key: AgentSortKey): string | number {
   switch (key) {
     case "kind":
       return item.kind;
+    case "layer":
+      return item.layer ?? "";
     case "name":
       return item.name;
+    case "golden":
+      return item.golden ?? "";
+    case "clone":
+      return item.clone ?? "";
+    case "path":
+      return item.path;
     case "scope":
       return item.scope;
+    case "lines":
+      return item.lines;
     case "mode":
       return applyModeLabel(item);
     case "updated":
@@ -109,7 +149,7 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
   };
 
   return (
-    <div className="hub-users-table-wrap overflow-hidden rounded-2xl border border-white/5">
+    <div className="hub-users-table-wrap overflow-x-auto rounded-2xl border border-white/5">
       <table className="hub-users-table">
         <thead>
           <tr>
@@ -140,6 +180,13 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
               <td className="hub-users-col--hub-code">
                 <AgentKindBadge kind={item.kind} className="rounded-full px-2" />
               </td>
+              <td className="hub-users-col--agent-layer">
+                {item.kind === "pattern" && item.layer ? (
+                  <QuietChip label={layerLabel(item.layer)} tone={layerTone(item.layer)} />
+                ) : (
+                  <span className="hub-users-cell-muted text-[11px]">—</span>
+                )}
+              </td>
               <td className="hub-users-col--hub-project">
                 <div className="flex min-w-0 items-start gap-2 text-left">
                   <HubCardAvatar
@@ -151,17 +198,47 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
                     className="mt-0.5"
                   />
                   <div className="min-w-0 flex-1">
-                  <p className="hub-users-name-title">{item.name}</p>
-                  <p className="hub-users-cell-sub mt-0.5 font-mono">{item.path}</p>
-                  <p className="hub-users-cell-sub mt-0.5 line-clamp-1">{item.summary}</p>
+                    <p className="hub-users-name-title">{item.name}</p>
+                    {item.summary ? (
+                      <p className="hub-users-cell-sub mt-0.5 line-clamp-2">{item.summary}</p>
+                    ) : null}
                   </div>
                 </div>
               </td>
+              <td className="hub-users-col--agent-golden">
+                {item.golden && item.golden !== "—" ? (
+                  <span
+                    className="inline-block max-w-full truncate rounded-md border border-emerald-400/35 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-100"
+                    title={item.golden}
+                  >
+                    {item.golden}
+                  </span>
+                ) : (
+                  <span className="hub-users-cell-muted text-[11px]">—</span>
+                )}
+              </td>
+              <td className="hub-users-col--agent-clone">
+                {item.clone && item.clone !== "—" ? (
+                  <p
+                    className="line-clamp-2 font-mono text-[10px] leading-snug text-sky-200/85"
+                    title={item.cloneTooltip ?? item.clone}
+                  >
+                    {item.clone}
+                  </p>
+                ) : (
+                  <span className="hub-users-cell-muted text-[11px]">—</span>
+                )}
+              </td>
+              <td className="hub-users-col--agent-path">
+                <p className="font-mono text-[10px] leading-snug text-indigo-200/85 break-all" title={item.path}>
+                  {item.path}
+                </p>
+              </td>
               <td className="hub-users-col--hub-version">
-                <div className="hub-users-role-cell">
-                  <AgentScopeBadge scope={item.scope} />
-                  <p className="hub-users-cell-sub mt-1 tabular-nums">{item.lines} lines</p>
-                </div>
+                <AgentScopeBadge scope={item.scope} />
+              </td>
+              <td className="hub-users-col--agent-lines hub-users-cell-muted">
+                <span className="tabular-nums font-medium text-[var(--text)]">{item.lines > 0 ? item.lines : "—"}</span>
               </td>
               <td className="hub-users-col--hub-status">
                 <div className="hub-users-role-cell flex-col gap-1">

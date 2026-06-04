@@ -72,6 +72,15 @@ export function AgentContextCard({ item, onOpen }: AgentContextCardProps) {
         <MetaRow kind="summary">
           <span className="line-clamp-2">{item.summary || "—"}</span>
         </MetaRow>
+        {item.golden || (item.clone && item.clone !== "—") ? (
+          <MetaRow kind="scope">
+            <span className="line-clamp-2 font-mono text-[10px] text-indigo-200/90">
+              {item.golden && item.golden !== "—" ? `Golden: ${item.golden}` : null}
+              {item.golden && item.clone && item.clone !== "—" ? " · " : null}
+              {item.clone && item.clone !== "—" ? `Clone: ${item.clone}` : null}
+            </span>
+          </MetaRow>
+        ) : null}
         <MetaRow kind="scope">
           <AgentScopeBadge scope={item.scope} />
         </MetaRow>

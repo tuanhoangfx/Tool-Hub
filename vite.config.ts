@@ -50,6 +50,11 @@ export default defineConfig(({ mode }) => {
         name: "supabase-management-api-proxy",
         configureServer(server) {
           server.middlewares.use(createWorkspaceRefreshMiddleware({ cwd: process.cwd() }));
+          server.middlewares.use(
+            require("./scripts/lib/agent-manifest-sync.cjs").createAgentManifestSyncMiddleware({
+              cwd: process.cwd(),
+            }),
+          );
           server.middlewares.use(createSupabaseApiProxy({ mode, cwd: process.cwd(), loadEnv }));
           server.middlewares.use(createQuotaMiddleware({ cwd: process.cwd() }));
           server.middlewares.use(require("./scripts/lib/local-health-proxy.cjs").createLocalHealthMiddleware());
