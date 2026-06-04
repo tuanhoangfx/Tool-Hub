@@ -4,9 +4,9 @@
 
 - Version: `3.2.2`
 - Timestamp: 2026-06-05 01:16 (UTC+7)
-- Commit: pending
+- Commit: `482b60d`
 - Type: Patch
-- Status: Draft
+- Status: Committed
 
 ### Changes
 
@@ -24,7 +24,7 @@
 - Type: Minor
 - Product: P0004
 - Prompt: ok 1 2 3 — verify Agent tab, Git P0004 (manifest + Subagent kind)
-- Commit: pending
+- Commit: `482b60d`
 - Status: Draft
 
 ### Changes
