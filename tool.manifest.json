@@ -70,9 +70,9 @@
       "local-registry"
     ],
     "latestPublished": {
-      "tag": "v2.1.16",
-      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v2.1.16",
-      "publishedAt": "2026-06-03T15:30:44.733Z"
+      "tag": "v3.1.1",
+      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v3.1.1",
+      "publishedAt": "2026-06-04T17:53:52.644Z"
     }
   },
   "urls": {
@@ -101,7 +101,7 @@
       "migrateDoc": "docs/IDENTITY.md"
     }
   },
-  "manifestUpdatedAt": "2026-06-04T17:50:08.622Z",
+  "manifestUpdatedAt": "2026-06-04T17:53:52.645Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infi.io.vn). Library-only catalog."

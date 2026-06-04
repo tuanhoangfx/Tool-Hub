@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-06-03T19:20:43.837Z",
+  "generatedAt": "2026-06-04T17:53:53.369Z",
   "roots": [
     {
       "id": "tool",
@@ -25,8 +25,8 @@
     }
   ],
   "summary": {
-    "total": 20,
-    "projects": 18,
+    "total": 19,
+    "projects": 17,
     "n8n": 2
   },
   "entries": [
@@ -123,7 +123,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "2.1.23",
+      "localVersion": "3.1.1",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -410,13 +410,13 @@
         "Vite",
         "Tailwind"
       ],
-      "appUrl": "https://p0011-infix1-mail.workers.dev",
+      "appUrl": "https://p0011-infix1-mail.tuanhoangfx.workers.dev",
       "localUrl": "http://127.0.0.1:3011",
       "deployTarget": "cloudflare",
       "usage": [
         "Dev: corepack pnpm dev",
         "Build: corepack pnpm build",
-        "App: https://p0011-infix1-mail.workers.dev"
+        "App: https://p0011-infix1-mail.tuanhoangfx.workers.dev"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -428,9 +428,12 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/deploy-infix1.ps1",
-        "scripts/dev-api.cjs",
-        "scripts/ensure-dev.cjs"
+        "scripts/cf-add-custom-domain.mjs",
+        "scripts/cf-dns-fix-mail.mjs",
+        "scripts/cf-dns-list.mjs",
+        "scripts/cf-register-subdomain.mjs",
+        "scripts/cf-setup-infix1-zone.mjs",
+        "scripts/cf-zone-status.mjs"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"
@@ -473,7 +476,7 @@
     },
     {
       "id": "youtube-channel-dashboard",
-      "code": "LOCAL-013",
+      "code": "LOCAL-012",
       "name": "P0013-czp-youtube-tda-team",
       "repo": "",
       "branch": "main",
@@ -509,7 +512,7 @@
     },
     {
       "id": "infi-project-performance-tracker",
-      "code": "LOCAL-015",
+      "code": "LOCAL-014",
       "name": "P0019-Work-Performance",
       "repo": "",
       "branch": "main",
@@ -550,7 +553,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "2.2.3",
+      "localVersion": "2.3.24",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
@@ -586,8 +589,8 @@
         "scripts/apply-batches-pg.mjs",
         "scripts/apply-databox-env.mjs",
         "scripts/apply-databox-migrations-api.mjs",
-        "scripts/apply-fix-v-note.mjs",
-        "scripts/apply-migrations.mjs"
+        "scripts/apply-fix-v-note-api.mjs",
+        "scripts/apply-fix-v-note.mjs"
       ],
       "workspaceRoot": "tool",
       "assetKind": "project"
@@ -735,7 +738,7 @@
       "repo": "tuanhoangfx/E0001-cookie-bridge",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "0.5.71",
+      "localVersion": "0.5.83",
       "category": "Extension",
       "audience": "Tool maintainers",
       "status": "Active",

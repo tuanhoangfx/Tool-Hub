@@ -115,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "2.1.23",
+    "localVersion": "3.1.1",
     "remoteEnabled": true
   },
   {
@@ -342,7 +342,7 @@
       "Vite",
       "Tailwind"
     ],
-    "appUrl": "https://p0011-infix1-mail.workers.dev",
+    "appUrl": "https://p0011-infix1-mail.tuanhoangfx.workers.dev",
     "localUrl": "http://127.0.0.1:3011",
     "deployTarget": "cloudflare",
     "usage": [
@@ -409,7 +409,7 @@
   },
   {
     "id": "youtube-channel-dashboard",
-    "code": "LOCAL-013",
+    "code": "LOCAL-012",
     "name": "P0013-czp-youtube-tda-team",
     "repo": "",
     "branch": "main",
@@ -443,7 +443,7 @@
   },
   {
     "id": "infi-project-performance-tracker",
-    "code": "LOCAL-015",
+    "code": "LOCAL-014",
     "name": "P0019-Work-Performance",
     "repo": "",
     "branch": "main",
@@ -482,7 +482,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "2.2.3",
+    "localVersion": "2.3.24",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",
@@ -650,7 +650,7 @@
     "repo": "tuanhoangfx/E0001-cookie-bridge",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.5.71",
+    "localVersion": "0.5.83",
     "category": "Extension",
     "audience": "Tool maintainers",
     "status": "Active",

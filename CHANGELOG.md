@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-06-05 - Release: remove P0003, Agent catalog, hub-ui sync
+## 2026-06-05 - Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v3.1.1
 
 - Version: `3.1.1`
 - Timestamp: 2026-06-05
@@ -8,7 +8,7 @@
 - Product: P0004
 - Prompt: Release P0004 — xóa ChatHubAI, đồng bộ registry/Agent manifest, deploy infi.io.vn
 - Commit: `cd24c90`
-- Status: Committed
+- Status: Verified
 - Release:
 
 ### Changes
