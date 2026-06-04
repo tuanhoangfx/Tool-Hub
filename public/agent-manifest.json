@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-04T18:20:22.266Z",
-  "workspaceRoot": "e:\\Dev",
+  "generatedAt": "2026-06-04T18:24:43.663Z",
+  "workspaceRoot": "E:\\Dev",
   "items": [
     {
       "id": "cursor-agents-cookie-bridge-ops-md",
@@ -135,9 +135,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
-      "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" }\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try {\n          $j = Get-Content -LiteralPath $manifest -Raw | ConvertFr",
-      "lines": 192,
-      "updatedAt": "2026-06-03T09:15:23.230Z",
+      "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try {\n          $j = Get-Content -LiteralPath $manifest -Raw | Conver",
+      "lines": 195,
+      "updatedAt": "2026-06-04T18:21:02.106Z",
       "tags": [
         "ship",
         "workspace",

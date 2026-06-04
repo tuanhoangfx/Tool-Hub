@@ -7,7 +7,8 @@
 - Product: P0004
 - Prompt: Release P0004, P0020, E0001
 - Commit: `23fdea4`
-- Status: Committed
+- Status: Verified
+- Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v4.1.1
 
 ### Changes
 
