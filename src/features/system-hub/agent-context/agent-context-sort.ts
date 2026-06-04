@@ -4,8 +4,9 @@ const KIND_ORDER: Record<AgentContextKind, number> = {
   pattern: 0,
   rule: 1,
   skill: 2,
-  command: 3,
-  doc: 4,
+  agent: 3,
+  command: 4,
+  doc: 5,
 };
 
 /** Stable flat list: kind (Pattern first), then name. */

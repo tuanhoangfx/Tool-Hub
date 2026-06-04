@@ -18,15 +18,19 @@ Then: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-c
 
 ---
 
-## Workspace agent stack (lean)
+## Workspace agent stack (repo = source of truth)
 
 | Layer | Path |
 |-------|------|
-| Workspace rule | `.cursor/rules/dev-workspace-compact.mdc` (§0–§5, Always Apply) |
-| Ship | skill `p00xx-ship-keywords` · `/ship` · `ship-product.ps1` |
-| Browser verify | skill `browser-verify-until-done` |
-| Onboard | skill `p00xx-tool-onboard` · `/onboard-tool` |
-| Rare | `Tool/docs/playbooks/` (design, icons) |
+| Rule | `.cursor/rules/dev-workspace-compact.mdc` (Always Apply) |
+| Commands | `.cursor/commands/*.md` → `/ship`, `/onboard-tool`, `/bump-version`, `/design-5` |
+| Skills | `.cursor/skills/*/SKILL.md` (3) |
+| Subagents | `.cursor/agents/*.md` (2) |
+| Playbooks | `Tool/docs/playbooks/*.md` |
+| Ship script | `Tool/scripts/ship-product.ps1` |
+
+**Refresh Agent tab:** `pnpm agent:manifest` or System → Agent → Refresh.  
+**Not in manifest:** Cursor Settings UI commands / bundled `electron-pro` subagents — see `.cursor/CURSOR-SETTINGS-CLEANUP.md`.
 | P0006 domain | `.cursor/rules/p0006-aichathub.mdc` (globs only) |
 
 ---

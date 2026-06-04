@@ -1,4 +1,4 @@
-export type AgentContextKind = "rule" | "skill" | "pattern" | "command" | "doc";
+export type AgentContextKind = "rule" | "skill" | "pattern" | "command" | "doc" | "agent";
 
 export type AgentPatternLayer = "screen" | "modal";
 

@@ -1,7 +1,61 @@
 {
-  "generatedAt": "2026-06-04T17:53:07.577Z",
+  "generatedAt": "2026-06-04T18:15:42.436Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
+    {
+      "id": "cursor-agents-cookie-bridge-ops-md",
+      "kind": "agent",
+      "name": "cookie-bridge-ops",
+      "path": ".cursor\\agents\\cookie-bridge-ops.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "trigger": "P0020 Cookie Auto and E0001 cookie-bridge operations. Use for cookie sync, browser agents, brand icons, extension reload, Supabase bridge commands, or Cookie Auto routes.",
+      "summary": "P0020 Cookie Auto and E0001 cookie-bridge operations. Use for cookie sync, browser agents, brand icons, extension reload, Supabase bridge commands, or Cookie Auto routes.",
+      "bodyPreview": "You operate Cookie Auto (`Tool/P0020-Data-Box`) and extension `Extension/E0001-cookie-bridge`.\n\n## Read first\n\n1. `.cursor/rules/dev-workspace-compact.mdc` §4 (Cookie) and §0 (version)\n2. `Extension/E0001-cookie-bridge/.cursor/rules/e0001-auto-bump-version.mdc` when changing extension code\n\n## Operations\n\n- Prefer Supabase agent commands: `Sync source`, `Load vault`, `Check`, `Reload ext` — not mouse/keyboard automation.\n- Brand icons: single registry `cookieBrandIcons.registry.json` + `sync-cookie-brand-icons.mjs`.\n- Never commit service role keys, cookies, or passwords.\n- Bump versions per dev-workspace §0 and E0001 patch rule when shipping extension changes.\n\nLocal UI: `http://127.0.0.1:5177/?screen=cookie`",
+      "lines": 15,
+      "updatedAt": "2026-06-04T17:38:59.714Z",
+      "tags": [
+        "agent",
+        "cursor",
+        "workspace"
+      ]
+    },
+    {
+      "id": "cursor-agents-p00xx-tool-onboard-md",
+      "kind": "agent",
+      "name": "p00xx-tool-onboard",
+      "path": ".cursor\\agents\\p00xx-tool-onboard.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "trigger": ">-",
+      "summary": ">-",
+      "bodyPreview": "Read `.cursor/skills/p00xx-tool-onboard/SKILL.md` and follow Phase A–C.\n\nShip handoff: `p00xx-ship-keywords` or `/ship` when user asks Git/Push/Release.",
+      "lines": 3,
+      "updatedAt": "2026-06-04T17:28:36.114Z",
+      "tags": [
+        "agent",
+        "cursor",
+        "workspace"
+      ]
+    },
+    {
+      "id": "cursor-commands-bump-version-md",
+      "kind": "command",
+      "name": "/bump-version",
+      "path": ".cursor\\commands\\bump-version.md",
+      "scope": "workspace",
+      "commandId": "bump-version",
+      "agentRequestable": true,
+      "summary": "Bump version (current product)",
+      "bodyPreview": "# Bump version (current product)\n\nApply version bump per `.cursor/rules/dev-workspace-compact.mdc` §0.\n\n## Steps\n\n1. Identify which `Tool/P00xx-*` or `Extension/E00xx-*` was edited.\n2. Default: **patch** +1 for meaningful code/UI changes completed in the task.\n3. **Prepend** a full CHANGELOG block (template: `E:\\Dev\\Rules\\templates\\tool-docs\\CHANGELOG_ENTRY_TEMPLATE.md`):\n   - Title, Version, Type, Product, **Prompt** (this task), `Commit: pending`, `### Changes` (specific bullets), Verification, Rollback.\n4. Sync `package.json`, `tool.manifest.json`, `public/tool.manifest.json` (if any), extension manifests.\n5. End with: `Version: X.Y.Z → A.B.C`.\n\n**Minor:** Git keyword. **Major:** Release keyword.\n\n**Forbidden:** entries with only “version stamp” and no real Changes.\n",
+      "lines": 17,
+      "updatedAt": "2026-06-04T17:38:58.919Z",
+      "tags": [
+        "command",
+        "cursor",
+        "workspace"
+      ]
+    },
     {
       "id": "cursor-commands-design-5-md",
       "kind": "command",
@@ -16,7 +70,8 @@
       "updatedAt": "2026-06-04T17:00:59.057Z",
       "tags": [
         "hub-ui",
-        "command"
+        "command",
+        "cursor"
       ]
     },
     {
@@ -33,7 +88,8 @@
       "updatedAt": "2026-06-04T17:28:37.059Z",
       "tags": [
         "hub-ui",
-        "command"
+        "command",
+        "cursor"
       ]
     },
     {
@@ -50,7 +106,8 @@
       "updatedAt": "2026-06-04T17:00:57.963Z",
       "tags": [
         "hub-ui",
-        "command"
+        "command",
+        "cursor"
       ]
     },
     {
@@ -67,6 +124,23 @@
       "tags": [
         "hub-ui",
         "command",
+        "script"
+      ]
+    },
+    {
+      "id": "tool-scripts-ship-product",
+      "kind": "command",
+      "name": "ship-product.ps1",
+      "path": "Tool\\scripts\\ship-product.ps1",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Git / Push / Release pipeline (PowerShell)",
+      "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" }\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try {\n          $j = Get-Content -LiteralPath $manifest -Raw | ConvertFr",
+      "lines": 192,
+      "updatedAt": "2026-06-03T09:15:23.230Z",
+      "tags": [
+        "ship",
+        "workspace",
         "script"
       ]
     },
@@ -129,13 +203,29 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "P0004 Hub UI + agent stack catalog; /hub-ui bundle entry",
-      "bodyPreview": "# P0004 Tool Hub — Agent catalog (Hub UI + workspace agent context)\n\n**Design source:** this repo (`src/components/sales-shell`, `features/hub`).  \n**UI trong app:** System → **Agent** (`pnpm agent:manifest` → `public/agent-manifest.json`).  \n**Hub UI doc:** `packages/hub-ui/README.md` — scripts only, no Cursor sync-ui skill/rule.\n\n---\n\n## Hub UI — one command\n\n```powershell\ncd E:\\Dev\\Tool\\P0004-Tool-Hub\npnpm hub-ui:stack                              # vendor + manifest\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0006 overview   # + screen scaffold\n```\n\nThen: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n\n---\n\n## Workspace agent stack (lean)\n\n| Layer | Path |\n|-------|------|\n| Workspace rule | `.cursor/rules/dev-workspace-compact.mdc` (§0–§5, Always Apply) |\n| Ship | skill `p00xx-ship-keywords` · `/ship` · `ship-product.ps1` |\n| Browser verify | skill `browser-verify-until-done` |\n| Onboard | skill `p00xx-tool-onboard` · `/onboard-tool` |\n| Rare | `Tool/docs/playbooks/` (design, icons) |\n| P0006 domain | `.cursor/rules/p0006-aichathub.mdc` (globs only) |\n\n---\n\n## Code dùng chung\n\n### Package `@tool-workspace/hub-ui`\n\n| Path | Vai trò |\n|------|-",
-      "lines": 160,
-      "updatedAt": "2026-06-04T17:52:01.466Z",
+      "bodyPreview": "# P0004 Tool Hub — Agent catalog (Hub UI + workspace agent context)\n\n**Design source:** this repo (`src/components/sales-shell`, `features/hub`).  \n**UI trong app:** System → **Agent** (`pnpm agent:manifest` → `public/agent-manifest.json`).  \n**Hub UI doc:** `packages/hub-ui/README.md` — scripts only, no Cursor sync-ui skill/rule.\n\n---\n\n## Hub UI — one command\n\n```powershell\ncd E:\\Dev\\Tool\\P0004-Tool-Hub\npnpm hub-ui:stack                              # vendor + manifest\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0006 overview   # + screen scaffold\n```\n\nThen: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n\n---\n\n## Workspace agent stack (repo = source of truth)\n\n| Layer | Path |\n|-------|------|\n| Rule | `.cursor/rules/dev-workspace-compact.mdc` (Always Apply) |\n| Commands | `.cursor/commands/*.md` → `/ship`, `/onboard-tool`, `/bump-version`, `/design-5` |\n| Skills | `.cursor/skills/*/SKILL.md` (3) |\n| Subagents | `.cursor/agents/*.md` (2) |\n| Playbooks | `Tool/docs/playbooks/*.md` |\n| Ship script | `Tool/scripts/ship-product.ps1` |\n\n**Refresh Agent tab:** `pnpm agent:manifest` or System → Agent → Refresh.  \n**Not in manifest:** Cursor Settings UI ",
+      "lines": 164,
+      "updatedAt": "2026-06-04T18:07:42.711Z",
       "tags": [
         "hub-ui",
         "catalog",
         "p0004"
+      ]
+    },
+    {
+      "id": "Tool-docs-playbooks-design-template-gate-md",
+      "kind": "doc",
+      "name": "Design Template gate (on-demand only)",
+      "path": "Tool\\docs\\playbooks\\design-template-gate.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Design Template gate (on-demand only)",
+      "bodyPreview": "# Design Template gate (on-demand only)\n\n**Trigger:** user asks 5 mẫu, Design Template, `Design: V1`…`V5`, `/design-5`.\n\n1. Mockups in **System → Design Template** (`/system/template`) — ≥5 variants, static data.\n2. **Do not** scaffold previews for every new feature.\n3. After lock: delete `*-mock.tsx`, preview CSS, registry entries; tab shows **No active designs**.\n4. P0004 path: `features/system-hub/design-template/`. P0020: same on-demand rules.\n",
+      "lines": 9,
+      "updatedAt": "2026-06-04T17:00:56.685Z",
+      "tags": [
+        "playbook",
+        "workspace"
       ]
     },
     {
@@ -201,6 +291,54 @@
       ]
     },
     {
+      "id": "Tool-docs-playbooks-tool-icon-identity-md",
+      "kind": "doc",
+      "name": "Tool icon identity",
+      "path": "Tool\\docs\\playbooks\\tool-icon-identity.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Tool icon identity",
+      "bodyPreview": "# Tool icon identity\n\n**Trigger:** scan icons, 5 icon samples, chốt icon, đồng bộ icon.\n\n1. Source: `Tool/P0004-Tool-Hub/public/icons/tools/<CODE>.svg` + `src/lib/visual.ts`\n2. Gap report before edit.\n3. Five SVG variants for review; after approval sync manifest, favicon, extension `manifest.json` icons.\n4. Not for generic UI glyphs or third-party brand icons.\n",
+      "lines": 9,
+      "updatedAt": "2026-06-04T17:00:57.271Z",
+      "tags": [
+        "playbook",
+        "workspace"
+      ]
+    },
+    {
+      "id": "Tool-docs-playbooks-tool-onboard-pitfalls-md",
+      "kind": "doc",
+      "name": "Tool onboard — pitfalls",
+      "path": "Tool\\docs\\playbooks\\tool-onboard-pitfalls.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Tool onboard — pitfalls",
+      "bodyPreview": "# Tool onboard — pitfalls\n\n| Symptom | Fix |\n|---------|-----|\n| UTF-8 BOM on `tool.manifest.json` | Rewrite JSON with Node (`fs.writeFileSync` UTF-8 no BOM) |\n| Port taken | Change port in `workspace-ports.json` or stop conflicting dev server |\n| Duplicate manifest `id` | One folder per `id`; fix `TOOL-CODES.md` |\n| `scan:local` dirty unrelated files | Stage only P0004 registry JSON paths |\n",
+      "lines": 9,
+      "updatedAt": "2026-06-04T17:00:55.949Z",
+      "tags": [
+        "playbook",
+        "workspace"
+      ]
+    },
+    {
+      "id": "Tool-docs-playbooks-tool-onboard-md",
+      "kind": "doc",
+      "name": "Tool onboard (import → P00xx)",
+      "path": "Tool\\docs\\playbooks\\tool-onboard.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Tool onboard (import → P00xx)",
+      "bodyPreview": "# Tool onboard (import → P00xx)\n\n**Canonical:** `.cursor/skills/p00xx-tool-onboard/SKILL.md` — this file is a short mirror.\n\n**Ship after onboard:** `p00xx-ship-keywords` or `Release P00xx` → `Tool/scripts/ship-product.ps1`.\n\n## Phase A — Import\n\n1. `Tool/TOOL-CODES.md` → next `P00xx`, folder `Tool/{CODE}-{Slug}`.\n2. Preflight: `Tool/scripts/onboard-preflight.ps1 -Slug {Slug}`\n3. `git clone` → scaffold manifest from `Rules/templates/workspace/manifest/tool.manifest.template.json`\n4. Register port in `Tool/scripts/lib/workspace-ports.json` + `pnpm open` script.\n5. Fix build (`pnpm install`, `pnpm build`).\n6. Validate:\n\n```powershell\npowershell -NoProfile -File E:\\Dev\\Tool\\scripts\\validate-tool-manifest.ps1 `\n  -ManifestPath \"E:\\Dev\\Tool\\{CODE}-{Slug}\\tool.manifest.json\"\n```\n\n7. Hub catalog: `scan:local` in P0004 — commit only registry JSON outputs (see onboard command scope).\n\n## Phase B — Hardening (only if user asked)\n\nRename, Vercel domain, Tailwind, code-split — one product at a time.\n\n## Phase C — Ship\n\n`Git P00xx` / `Push` / `Release` — never invent steps; use `ship-product.ps1` for Release.\n\n## Hub UI for new web tool\n\n```powershell\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P",
+      "lines": 38,
+      "updatedAt": "2026-06-04T18:08:21.657Z",
+      "tags": [
+        "playbook",
+        "workspace"
+      ]
+    },
+    {
       "id": "packages-hub-ui-ui-patterns",
       "kind": "doc",
       "name": "UI_PATTERNS.md",
@@ -217,6 +355,22 @@
         "hub-ui",
         "pattern",
         "catalog"
+      ]
+    },
+    {
+      "id": "Tool-docs-playbooks-README-md",
+      "kind": "doc",
+      "name": "Workspace playbooks (on-demand)",
+      "path": "Tool\\docs\\playbooks\\README.md",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "summary": "Workspace playbooks (on-demand)",
+      "bodyPreview": "# Workspace playbooks (on-demand)\n\nRead only when the task matches. **Default:** `dev-workspace-compact.mdc` + skills `p00xx-ship-keywords`, `browser-verify-until-done`, `p00xx-tool-onboard`.\n\n| Playbook | When |\n|----------|------|\n| [tool-onboard.md](./tool-onboard.md) | Mirror — canonical: `.cursor/skills/p00xx-tool-onboard/SKILL.md` |\n| [tool-onboard-pitfalls.md](./tool-onboard-pitfalls.md) | Manifest BOM, clone blocked |\n| [design-template-gate.md](./design-template-gate.md) | User asks 5 design variants |\n| [tool-icon-identity.md](./tool-icon-identity.md) | Scan/sync product icons |\n\n**Hub UI clone:** `packages/hub-ui/README.md` + `node Tool/scripts/hub-ui-stack.cjs`.\n\n**After editing `.cursor/` or playbooks:** `cd Tool/P0004-Tool-Hub && pnpm agent:manifest`\n",
+      "lines": 15,
+      "updatedAt": "2026-06-04T18:08:21.000Z",
+      "tags": [
+        "playbook",
+        "workspace"
       ]
     },
     {
@@ -374,7 +528,8 @@
       "updatedAt": "2026-06-04T17:49:09.506Z",
       "tags": [
         "rule",
-        "rules"
+        "cursor",
+        "workspace"
       ]
     },
     {
@@ -390,6 +545,7 @@
       "updatedAt": "2026-06-04T17:39:19.792Z",
       "tags": [
         "skill",
+        "cursor",
         "workspace"
       ]
     },
@@ -406,6 +562,7 @@
       "updatedAt": "2026-06-04T17:38:58.760Z",
       "tags": [
         "skill",
+        "cursor",
         "workspace"
       ]
     },
@@ -422,6 +579,7 @@
       "updatedAt": "2026-06-04T17:28:33.155Z",
       "tags": [
         "skill",
+        "cursor",
         "workspace"
       ]
     }

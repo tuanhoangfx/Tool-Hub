@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-06-05 - Git commit version stamp
+
+- Version: `3.2.2`
+- Timestamp: 2026-06-05 01:16 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Agent manifest: full cursor stack scan
+
+- Version: `3.2.1`
+- Timestamp: 2026-06-05
+- Type: Minor
+- Product: P0004
+- Prompt: ok 1 2 3 — verify Agent tab, Git P0004 (manifest + Subagent kind)
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- `sync-agent-manifest.mjs` — scan all `.cursor/commands`, `agents/`, playbooks, `ship-product.ps1` (bỏ lọc hub-only).
+- Agent tab — kind `agent` (Subagent), filter Kind + sort.
+- `.cursor/README.md`, `CURSOR-SETTINGS-CLEANUP.md` — workflow repo vs Settings.
+
+### Verification
+
+- `node scripts/sync-agent-manifest.mjs` → 32 items (10 cursor-tagged)
+- `pnpm exec tsc --noEmit` in P0004-Tool-Hub
+
+### Rollback
+
+- `git checkout v3.1.2`
+
+---
+
 ## 2026-06-05 - Workspace snapshots mirror (schemas + ports)
 
 - Version: `3.1.2`

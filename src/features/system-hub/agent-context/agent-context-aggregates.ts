@@ -9,6 +9,7 @@ const AGENT_KIND_CHART_LABEL: Record<AgentContextKind, string> = {
   skill: "Skill",
   command: "Command",
   doc: "Doc",
+  agent: "Subagent",
 };
 
 function breakdown(items: AgentContextItem[], pick: (item: AgentContextItem) => string): BarItem[] {
@@ -44,6 +45,7 @@ export function agentContextKpis(items: AgentContextItem[]) {
     patterns: items.filter((i) => i.kind === "pattern").length,
     rules: items.filter((i) => i.kind === "rule").length,
     skills: items.filter((i) => i.kind === "skill").length,
+    agents: items.filter((i) => i.kind === "agent").length,
     always: items.filter((i) => i.alwaysApply).length,
     requestable: items.filter((i) => i.agentRequestable).length,
   };

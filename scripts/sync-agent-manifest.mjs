@@ -12,8 +12,6 @@ const toolRoot = path.join(devRoot, "Tool");
 const cursorRoot = devRoot;
 const outFile = path.join(hubRoot, "public", "agent-manifest.json");
 
-const HUB_UI_COMMAND_FILES = new Set(["design-5.md"]);
-
 const HUB_UI_SCRIPT_NAMES = new Set([
   "hub-ui-stack.cjs",
   "sync-hub-ui-screen.cjs",
@@ -113,7 +111,7 @@ function scanRules(items) {
       bodyPreview: body.slice(0, 1200),
       lines: body.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
-      tags: isHubUi ? hubUiTags(["rule"]) : ["rule", path.dirname(rel).split("\\").pop() || "rules"],
+      tags: isHubUi ? hubUiTags(["rule", "cursor"]) : ["rule", "cursor", "workspace"],
     });
   }
 }
@@ -141,7 +139,7 @@ function scanSkills(items, skillsDir, scope) {
       bodyPreview: body.slice(0, 1200),
       lines: body.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
-      tags: isHubUi ? hubUiTags(["skill"]) : ["skill", scope],
+      tags: isHubUi ? hubUiTags(["skill", "cursor"]) : ["skill", "cursor", scope],
     });
   }
 }
@@ -155,8 +153,10 @@ function scanCommands(items) {
     const raw = fs.readFileSync(file, "utf8");
     const rel = relWorkspace(file);
     const name = ent.name.replace(/\.md$/, "");
-    const isHubUi = HUB_UI_COMMAND_FILES.has(ent.name) || name.includes("hub");
-    if (!isHubUi && !raw.toLowerCase().includes("hub-ui") && !raw.toLowerCase().includes("p0004")) continue;
+    const hub =
+      name.includes("hub") ||
+      raw.toLowerCase().includes("hub-ui") ||
+      raw.toLowerCase().includes("p0004");
     addItem(items, {
       id: slugId(rel),
       kind: "command",
@@ -169,9 +169,92 @@ function scanCommands(items) {
       bodyPreview: raw.slice(0, 1200),
       lines: raw.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
-      tags: hubUiTags(["command"]),
+      tags: hub ? hubUiTags(["command", "cursor"]) : ["command", "cursor", "workspace"],
     });
   }
+}
+
+function parseAgentFrontmatter(raw) {
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+  if (!match) return {};
+  const fm = {};
+  for (const line of match[1].split(/\r?\n/)) {
+    const m = line.match(/^([\w-]+):\s*(.+)$/);
+    if (m) fm[m[1]] = m[2].trim();
+  }
+  return fm;
+}
+
+function scanCursorAgents(items) {
+  const agentsDir = path.join(cursorRoot, ".cursor", "agents");
+  if (!fs.existsSync(agentsDir)) return;
+  for (const ent of fs.readdirSync(agentsDir, { withFileTypes: true })) {
+    if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
+    const file = path.join(agentsDir, ent.name);
+    const raw = fs.readFileSync(file, "utf8");
+    const fm = parseAgentFrontmatter(raw);
+    const rel = relWorkspace(file);
+    const name = fm.name || path.basename(ent.name, ".md");
+    const body = raw.replace(/^---[\s\S]*?---\r?\n?/, "").trim();
+    addItem(items, {
+      id: slugId(rel),
+      kind: "agent",
+      name,
+      path: rel,
+      scope: "workspace",
+      agentRequestable: true,
+      trigger: fm.description || "",
+      summary: String(fm.description || body.slice(0, 200)).slice(0, 240),
+      bodyPreview: body.slice(0, 1200),
+      lines: body.split(/\r?\n/).length,
+      updatedAt: fs.statSync(file).mtime.toISOString(),
+      tags: ["agent", "cursor", "workspace"],
+    });
+  }
+}
+
+function scanPlaybooks(items) {
+  const dir = path.join(toolRoot, "docs", "playbooks");
+  if (!fs.existsSync(dir)) return;
+  for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!ent.isFile() || !ent.name.endsWith(".md")) continue;
+    const file = path.join(dir, ent.name);
+    const raw = fs.readFileSync(file, "utf8");
+    const rel = relWorkspace(file);
+    const title = raw.split("\n").find((l) => l.startsWith("#"))?.replace(/^#+\s*/, "") || ent.name;
+    addItem(items, {
+      id: slugId(rel),
+      kind: "doc",
+      name: title.slice(0, 80),
+      path: rel,
+      scope: "workspace",
+      agentRequestable: true,
+      summary: title.slice(0, 240),
+      bodyPreview: raw.slice(0, 1200),
+      lines: raw.split(/\r?\n/).length,
+      updatedAt: fs.statSync(file).mtime.toISOString(),
+      tags: ["playbook", "workspace"],
+    });
+  }
+}
+
+function scanShipScript(items) {
+  const file = path.join(toolRoot, "scripts", "ship-product.ps1");
+  if (!fs.existsSync(file)) return;
+  const raw = fs.readFileSync(file, "utf8");
+  addItem(items, {
+    id: "tool-scripts-ship-product",
+    kind: "command",
+    name: "ship-product.ps1",
+    path: relWorkspace(file),
+    scope: "workspace",
+    agentRequestable: true,
+    summary: "Git / Push / Release pipeline (PowerShell)",
+    bodyPreview: raw.slice(0, 1200),
+    lines: raw.split(/\r?\n/).length,
+    updatedAt: fs.statSync(file).mtime.toISOString(),
+    tags: ["ship", "workspace", "script"],
+  });
 }
 
 function scanHubScripts(items) {
@@ -429,6 +512,9 @@ function main() {
   scanRules(items);
   scanSkills(items, path.join(cursorRoot, ".cursor", "skills"), "workspace");
   scanCommands(items);
+  scanCursorAgents(items);
+  scanPlaybooks(items);
+  scanShipScript(items);
   scanHubScripts(items);
   scanHubKeyboardDoc(items);
   scanAgentsCatalog(items);
@@ -445,7 +531,8 @@ function main() {
   fs.mkdirSync(path.dirname(outFile), { recursive: true });
   fs.writeFileSync(outFile, JSON.stringify(manifest, null, 2), "utf8");
   const hubCount = items.filter((i) => i.tags?.includes("hub-ui")).length;
-  console.log(`OK  agent-manifest.json (${items.length} items, ${hubCount} hub-ui tagged)`);
+  const cursorCount = items.filter((i) => i.tags?.includes("cursor")).length;
+  console.log(`OK  agent-manifest.json (${items.length} items, ${hubCount} hub-ui, ${cursorCount} cursor)`);
 }
 
 main();

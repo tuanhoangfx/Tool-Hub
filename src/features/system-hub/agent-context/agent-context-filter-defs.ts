@@ -10,6 +10,7 @@ export const AGENT_KIND_FILTERS: FilterDef[] = [
       { value: "rule", label: "Rule" },
       { value: "skill", label: "Skill" },
       { value: "command", label: "Command" },
+      { value: "agent", label: "Subagent" },
       { value: "doc", label: "Doc" },
     ],
   },

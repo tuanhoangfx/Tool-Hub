@@ -1,6 +1,6 @@
 import type { AgentContextItem, AgentContextKind, AgentManifest } from "./types";
 
-const VALID_KINDS = new Set<AgentContextKind>(["rule", "skill", "pattern", "command", "doc"]);
+const VALID_KINDS = new Set<AgentContextKind>(["rule", "skill", "pattern", "command", "doc", "agent"]);
 
 /** Legacy manifest rows → canonical kind */
 const LEGACY_KIND_MAP: Record<string, AgentContextKind> = {

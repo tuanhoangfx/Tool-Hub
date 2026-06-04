@@ -22,8 +22,10 @@ export function agentKindIcon(kind: AgentContextKind): LucideIcon {
       return Terminal;
     case "doc":
       return BookOpen;
-    default:
+    case "agent":
       return Bot;
+    default:
+      return FileText;
   }
 }
 
