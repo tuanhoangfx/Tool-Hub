@@ -32,6 +32,8 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0013 | P0013-czp-youtube-tda-team | tuanhoangfx/P0001-czp-youtube-tda-team | YouTube TDA |
 
+| P0014 | P0014-Hub-Shell | tuanhoangfx/P0014-Hub-Shell | **Hub Shell** — P0004 UI clone (Hub / Users / System), logic TBD |
+
 | P0015 | P0015-student-id-generator-v2 | tuanhoangfx/P0005-student-id-generator-v2 | Static HTML generator |
 
 | P0019 | P0019-Work-Performance | tuanhoangfx/-Work-Performance | Infi task manager |
@@ -46,13 +48,21 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 
 
-**Mã tiếp theo:** P0024
+| P0016 | P0016-ChatCenter | tuanhoangfx/chat-center | **Chat Center** — thin console :5186, P0006 worker API |
+
+| P0017 | P0017-ChatHubAI | tuanhoangfx/chathub-ai | **ChatHubAI** — P0004 golden shell (`@tool-workspace/hub-ui`) + P0006 worker API (console :5181) |
+
+**Mã tiếp theo:** P0025
 
 
 
-**Đã gỡ (2026-05-21):** P0016, P0017, P0018 — folder local, repo GitHub archived, Vercel cần xóa thủ công nếu còn.
+**P0018 (2026-06-05):** Tái sử dụng mã (đã gỡ 2026-05-21) cho **AI Project Manager** — P0004 golden shell + P0006-inspired project workflow, console :5188.
 
-**P0014 (2026-06-05):** Tái sử dụng mã cho **ChatHubAI** (thay bản cũ đã gỡ 2026-05-21).
+**P0017 (2026-06-05):** Tái sử dụng mã (đã gỡ 2026-05-21) cho **ChatHubAI** — P0004 golden shell + P0006 worker API, console :5181.
+
+**P0016 (2026-06-04):** Tái sử dụng mã cho **Chat Center** (P0004 shell + P0006 logic).
+
+**P0014 (2026-06-05):** **Hub Shell** — clone UI P0004 (`P0014-Hub-Shell`, :5184); thay ChatHubAI đã gỡ.
 
 **P0011 (2026-06-04):** Tái sử dụng mã cho **Infix1 Mail** (thay Tool-Control-Center đã gỡ 2026-05-22).
 

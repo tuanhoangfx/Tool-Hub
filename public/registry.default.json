@@ -115,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "4.1.1",
+    "localVersion": "4.1.6",
     "remoteEnabled": true
   },
   {
@@ -409,7 +409,7 @@
   },
   {
     "id": "youtube-channel-dashboard",
-    "code": "LOCAL-013",
+    "code": "LOCAL-012",
     "name": "P0013-czp-youtube-tda-team",
     "repo": "",
     "branch": "main",
@@ -442,8 +442,121 @@
     "scriptFiles": []
   },
   {
+    "id": "hub-shell",
+    "code": "P0014",
+    "name": "Hub Shell",
+    "repo": "tuanhoangfx/P0014-Hub-Shell",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "0.1.2",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Draft",
+    "summary": "P0004 Tool Hub UI shell — Hub, Users, System tabs cloned for later product logic.",
+    "localPath": "E:\\Dev\\Tool\\P0014-Hub-Shell",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "@tool-workspace/hub-ui"
+    ],
+    "localUrl": "http://127.0.0.1:5184",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: corepack pnpm open",
+      "Build: corepack pnpm build"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": [
+      "scripts/apply-fix-profiles-rls.ps1",
+      "scripts/apply-hub-identity-migration.ps1",
+      "scripts/apply-hub-login-id.mjs",
+      "scripts/apply-hub-migrations-all.mjs",
+      "scripts/apply-hub-tool-access.ps1",
+      "scripts/apply-hub-user-directory-projects.ps1"
+    ]
+  },
+  {
+    "id": "p0016-chat-center",
+    "code": "LOCAL-015",
+    "name": "P0016-ChatCenter",
+    "repo": "",
+    "branch": "main",
+    "remoteEnabled": false,
+    "localVersion": "1.0.5",
+    "category": "Local",
+    "audience": "Tool maintainers",
+    "status": "Needs review",
+    "summary": "P0016 Chat Center — P0004 Hub shell, P0006 worker API",
+    "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
+    "tags": [
+      "Local",
+      "Workspace"
+    ],
+    "localUrl": "http://127.0.0.1:5186",
+    "deployTarget": "vercel",
+    "usage": [
+      "Run the configured dev command from package.json.",
+      "Run the configured build command from package.json."
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": []
+  },
+  {
+    "id": "chathub-ai",
+    "code": "P0017",
+    "name": "ChatHubAI",
+    "repo": "tuanhoangfx/chathub-ai",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "1.0.0",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Draft",
+    "summary": "Unified multi-channel chat console — P0004 golden Hub shell, P0006 worker API (bots, groups, channels, inbox).",
+    "localPath": "E:\\Dev\\Tool\\P0017-ChatHubAI",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "@tool-workspace/hub-ui"
+    ],
+    "localUrl": "http://127.0.0.1:5181",
+    "deployTarget": "local",
+    "usage": [
+      "Dev: node ../scripts/ensure-dev-product.cjs P0017",
+      "Build: corepack pnpm build"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": []
+  },
+  {
     "id": "infi-project-performance-tracker",
-    "code": "LOCAL-016",
+    "code": "LOCAL-018",
     "name": "P0019-Work-Performance",
     "repo": "",
     "branch": "main",
@@ -683,6 +796,42 @@
     "scriptFiles": [
       "scripts/test-bindings-pull-logic.mjs"
     ]
+  },
+  {
+    "id": "chat-center",
+    "code": "P0016",
+    "name": "Chat Center",
+    "repo": "tuanhoangfx/chat-center",
+    "branch": "main",
+    "remoteEnabled": true,
+    "localVersion": "1.0.2",
+    "category": "Web",
+    "audience": "Tool maintainers",
+    "status": "Draft",
+    "summary": "Unified chat console — P0004 Hub shell, P0006 worker API (bots, groups, channels, inbox).",
+    "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
+    "tags": [
+      "React",
+      "TypeScript",
+      "Vite",
+      "@tool-workspace/hub-ui"
+    ],
+    "localUrl": "http://127.0.0.1:5186",
+    "deployTarget": "vercel",
+    "usage": [
+      "Dev: node ../scripts/ensure-dev-product.cjs P0016",
+      "Build: corepack pnpm build"
+    ],
+    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+    "manifestPath": "tool.manifest.json",
+    "trackedFiles": [
+      "tool.manifest.json",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "RELEASE.md"
+    ],
+    "scriptFiles": []
   },
   {
     "id": "zalo-ai-bot",

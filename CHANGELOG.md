@@ -1,5 +1,76 @@
 # Changelog
 
+## 2026-06-05 - Git commit version stamp
+
+- Version: `4.2.2`
+- Timestamp: 2026-06-05 04:28 (UTC+7)
+- Commit: `7d1a6b8`
+- Type: Patch
+- Status: Committed
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Remove P0018 and P0024 tools
+
+- Version: `4.2.1`
+- Type: Patch
+- Product: P0004
+- Prompt: Xóa Tool/P0018-AI-Project-Manager và Tool/P0024-ChatHubAI
+- Commit: `7d1a6b8`
+- Status: Draft
+
+### Changes
+
+- Deleted `P0018-AI-Project-Manager` (:5188) and `P0024-ChatHubAI` (:5180).
+- Removed from `workspace-ports.json`, `TOOL-CODES.md`, Hub catalogs, snapshot guard.
+- Stopped related Vite instances (shared pnpm rollup hardlink with P0017/P0016/P0014-Hub-Shell).
+
+### Verification
+
+- `Test-Path` both folders → false
+- `node ../scripts/sync-workspace-snapshots.cjs`
+
+### Rollback
+
+- Re-clone from GitHub if needed.
+
+---
+
+## 2026-06-05 - Hub dev recover (esbuild / Vite crash)
+
+- Version: `4.1.5`
+- Type: Patch
+- Product: P0004
+- Prompt: Xử lý triệt để lỗi `[plugin:vite:esbuild] The service is no longer running` trên :5176
+- Status: Local fix
+
+### Changes
+
+- Moved `vps-inventory.json` import to `src/data/` (Vite 7 forbids importing from `public/`).
+- Added `dev:recover` / `ensure-dev --recover` (kill :5176 + clear `node_modules/.vite` + restart).
+- Dev API `POST /api/hub-dev/recover` and Hub button **Restart Hub dev** (dev only).
+- Vite `optimizeDeps` + `esbuild.target` for stabler transforms on `vendor/hub-ui`.
+
+### Verification
+
+- `node scripts/dev-recover.cjs` → Hub ready on :5176
+- Reload `http://127.0.0.1:5176/` — no esbuild overlay
+
+### Rollback
+
+- Revert `SystemServerPanel` import path; remove recover middleware and scripts.
+
+Version: 4.1.4 → 4.1.5
+
+---
+
 ## 2026-06-05 - Remove P0014-ChatHubAI permanently
 
 - Version: `4.1.4`

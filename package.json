@@ -1,7 +1,7 @@
 {
   "name": "tool-hub",
   "private": true,
-  "version": "4.1.4",
+  "version": "4.2.2",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
@@ -13,6 +13,8 @@
     "open": "node scripts/ensure-dev.cjs --open",
     "daemon:start": "node scripts/ensure-dev.cjs",
     "dev:clean": "node scripts/kill-port.cjs 5176 5178 && node -e \"require('fs').rmSync('node_modules/.vite',{recursive:true,force:true})\" && vite --host 127.0.0.1 --port 5176",
+    "dev:recover": "node scripts/dev-recover.cjs",
+    "dev:recover:open": "node scripts/dev-recover.cjs --open",
     "agent:manifest": "node scripts/sync-agent-manifest.mjs",
     "hub-ui:stack": "node ../scripts/hub-ui-stack.cjs",
     "build": "node scripts/build-supabase-quota-snapshot.mjs && node scripts/sync-agent-manifest.mjs && tsc --noEmit && vitest run --passWithNoTests && vite build",

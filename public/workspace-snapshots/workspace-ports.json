@@ -104,6 +104,38 @@
       "stack": "vite",
       "migrateFrom": 3000
     },
+    "P0014": {
+      "name": "Hub Shell",
+      "root": "P0014-Hub-Shell",
+      "port": 5184,
+      "probePath": "/",
+      "openPath": "/?screen=library",
+      "stack": "vite",
+      "notes": "P0004 Tool Hub UI clone — product logic TBD"
+    },
+    "P0016": {
+      "name": "Chat Center",
+      "root": "P0016-ChatCenter",
+      "port": 5186,
+      "probePath": "/",
+      "openPath": "/?screen=dashboard",
+      "stack": "vite",
+      "dependsOn": [
+        "P0006"
+      ],
+      "notes": "Thin console — API proxied to P0006 worker :3921"
+    },
+    "P0017": {
+      "name": "ChatHubAI",
+      "root": "P0017-ChatHubAI",
+      "port": 5181,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite",
+      "workerPort": 3921,
+      "workerProbePath": "/api/health",
+      "notes": "P0004 golden shell + P0006 worker API. Console :5181 proxies /api -> :3921"
+    },
     "P0019": {
       "name": "Work Performance",
       "root": "P0019-Work-Performance",

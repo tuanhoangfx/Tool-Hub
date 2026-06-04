@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T18:46:35.801Z",
+  "generatedAt": "2026-06-04T20:41:11.324Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -350,7 +350,7 @@
       "clone": "P0006, P0008, P0020",
       "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | P0004/auth |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Agent Kind (manifest)\n\n| Kind | Nội dung |\n|------|----------|\n| **pattern** | Hu\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0006** (clone): bots, groups, logs, channels\n- **P0008** (clone-migrate): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system",
       "lines": 45,
-      "updatedAt": "2026-06-04T18:46:35.656Z",
+      "updatedAt": "2026-06-04T20:41:11.205Z",
       "tags": [
         "hub-ui",
         "pattern",
