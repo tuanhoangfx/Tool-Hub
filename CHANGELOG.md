@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-05 - Remove P0017 ChatHubAI
+
+- Version: `4.2.3`
+- Type: Patch
+- Product: P0004
+- Prompt: Xóa Tool/P0017-ChatHubAI
+- Commit: `e4aa5fc`
+- Status: Committed
+
+### Changes
+
+- Deleted `P0017-ChatHubAI` folder and port **5181** from `workspace-ports.json`.
+- Removed P0017 from Hub catalogs (`workspace-catalog`, `registry`, `local-registry`) and P0014-Hub-Shell mirrors.
+- Extended snapshot guard (`sync-workspace-snapshots.cjs`) for P0017 / port 5181.
+- Stopped P0016 Vite and P0004/P0006 dev briefly to clear shared pnpm hardlinks during folder delete.
+
+### Verification
+
+- Chat/API remains on **P0006-AIChatHub**; thin consoles: **P0016-ChatCenter**, **P0014-Hub-Shell**.
+
+---
+
 ## 2026-06-05 - Git commit version stamp
 
 - Version: `4.2.2`

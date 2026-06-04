@@ -50,15 +50,11 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0016 | P0016-ChatCenter | tuanhoangfx/chat-center | **Chat Center** — thin console :5186, P0006 worker API |
 
-| P0017 | P0017-ChatHubAI | tuanhoangfx/chathub-ai | **ChatHubAI** — P0004 golden shell (`@tool-workspace/hub-ui`) + P0006 worker API (console :5181) |
-
 **Mã tiếp theo:** P0025
 
 
 
-**P0018 (2026-06-05):** Tái sử dụng mã (đã gỡ 2026-05-21) cho **AI Project Manager** — P0004 golden shell + P0006-inspired project workflow, console :5188.
-
-**P0017 (2026-06-05):** Tái sử dụng mã (đã gỡ 2026-05-21) cho **ChatHubAI** — P0004 golden shell + P0006 worker API, console :5181.
+**P0017 / P0018 / P0024 (2026-06-05):** Đã gỡ folder local ChatHubAI clones và AI Project Manager. Chat/API: **P0006-AIChatHub** (worker + console trong repo chính); thin UI: **P0016-ChatCenter**, **P0014-Hub-Shell**.
 
 **P0016 (2026-06-04):** Tái sử dụng mã cho **Chat Center** (P0004 shell + P0006 logic).
 
