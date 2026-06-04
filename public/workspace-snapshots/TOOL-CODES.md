@@ -14,6 +14,8 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0002 | P0002-YT-Multistream-Console | tuanhoangfx/YT-Multistream-Console | Desktop YT |
 
+| P0003 | P0003-ChatHubAI | tuanhoangfx/chathub-ai | **ChatHub AI** — P0004 golden console, API via P0006 worker |
+
 | P0004 | P0004-Tool-Hub | tuanhoangfx/Tool-Hub | **Tool Hub** — catalog |
 
 | P0005 | P0005-zalo-ai-bot | tuanhoangfx/zalo-ai-bot | Zalo bot |

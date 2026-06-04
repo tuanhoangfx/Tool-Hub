@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-05 - Tool Hub 4.1 — agent catalog and workspace mirror
+
+- Version: `4.1.1`
+- Type: Major
+- Product: P0004
+- Prompt: Release P0004, P0020, E0001
+- Commit: `23fdea4`
+- Status: Committed
+
+### Changes
+
+- Agent tab manifest sync scans full `.cursor` stack (commands, agents, playbooks, ship scripts).
+- Subagent kind filter and sort on Agent catalog.
+- Supabase quota catalog snapshot refresh for Hub registry.
+
+### Verification
+
+- `corepack pnpm build` in P0004-Tool-Hub
+- Production smoke via `verify-production-smoke.mjs`
+
+### Rollback
+
+- Revert to `v3.2.2` tag
+
+---
+
 ## 2026-06-05 - Git commit version stamp
 
 - Version: `3.2.2`
