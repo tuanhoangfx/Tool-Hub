@@ -1,0 +1,315 @@
+{
+  "$schema": "./tool-manifest.schema.json",
+  "description": "Screen templates + uiScreens defaults. Agent patterns: ui-patterns.catalog.json (ready only).",
+  "packageDoc": "packages/hub-ui/UI_TEMPLATES.md",
+  "deferredTemplates": [
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "reason": "Chưa có golden chuẩn — thêm lại Agent pattern khi P0008 mẫu xong",
+      "goldenScreenPath": "Tool/P0008-Sales-Console/app/src/app/dashboard/page.tsx",
+      "scaffold": "packages/hub-ui/examples/GoldenAnalyticsScreen.tsx"
+    },
+    {
+      "id": "inbox-split",
+      "name": "Inbox master-detail",
+      "reason": "Shell chưa chuẩn hóa — thêm lại khi có mẫu",
+      "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/inbox/InboxScreen.tsx"
+    }
+  ],
+  "templates": [
+    {
+      "id": "directory",
+      "name": "Directory",
+      "golden": "P0004/hub-list",
+      "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx",
+      "goldenScreenAlt": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx",
+      "goldenTablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserDirectoryTable.tsx",
+      "packageExports": [
+        "HubDirectoryScreen",
+        "HubDataTable",
+        "FilterBar",
+        "ViewToggle",
+        "HubTabScreenBody"
+      ],
+      "scaffold": "packages/hub-ui/examples/GoldenDirectoryScreen.tsx",
+      "verify": "hub-ui-parity-check.mjs --template directory"
+    },
+    {
+      "id": "document-toc",
+      "name": "Overview + TOC left",
+      "golden": "P0004/overview-toc",
+      "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/overview/ToolOverviewContent.tsx",
+      "goldenTablePath": "Tool/P0004-Tool-Hub/src/features/overview/ToolLinksTable.tsx",
+      "packageExports": [],
+      "scaffold": null,
+      "verify": "overview-toc.css + OverviewTocNav",
+      "linkedTablePattern": null,
+      "notes": "Screen shell (TOC + content). Tool links table is composed in pattern document-toc — not a separate Agent row."
+    },
+    {
+      "id": "system-panels",
+      "name": "System",
+      "golden": "P0004/system",
+      "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemHubScreen.tsx",
+      "packageExports": [
+        "HubTabChrome",
+        "HubPanel"
+      ],
+      "scaffold": "packages/hub-ui/examples/GoldenSystemPanelsScreen.tsx",
+      "verify": "System → Overview / Agent / Quota"
+    },
+    {
+      "id": "workspace-composer",
+      "name": "Workspace composer (split)",
+      "golden": "P0020/notes",
+      "goldenScreenPath": "Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx",
+      "packageExports": [
+        "FilterBar",
+        "WorkspaceTabHeader"
+      ],
+      "scaffold": null,
+      "verify": "P0020 notes split pane"
+    },
+    {
+      "id": "auth-gate",
+      "name": "Auth gate",
+      "golden": "P0004/auth",
+      "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
+      "packageExports": [],
+      "scaffold": "packages/hub-ui/examples/GoldenAuthGateScreen.tsx",
+      "verify": "Compare P0004 Users gate vs P0020 NotesAuthGate"
+    }
+  ],
+  "hubUiCloneRegistry": {
+    "description": "Canonical golden on P0004 (or noted). All other rows are clones of the screen/table/component pattern.",
+    "auditedAt": "2026-06-04",
+    "toolsWithHubUi": [
+      {
+        "product": "P0004",
+        "role": "golden-source",
+        "screens": [
+          "hub (directory golden)",
+          "users",
+          "overview",
+          "system",
+          "auth (HubAuthGate)"
+        ]
+      },
+      {
+        "product": "P0006",
+        "role": "clone",
+        "screens": [
+          "bots → directory",
+          "groups → directory",
+          "logs → directory",
+          "channels → directory"
+        ]
+      },
+      {
+        "product": "P0008",
+        "role": "clone-migrate",
+        "screens": [
+          "buyers",
+          "orders",
+          "products → directory"
+        ]
+      },
+      {
+        "product": "P0020",
+        "role": "clone",
+        "screens": [
+          "notes (workspace-composer)",
+          "cookie → directory",
+          "twofa → directory",
+          "auth → auth-gate (NotesAuthGate)",
+          "system → system-panels"
+        ]
+      }
+    ],
+    "toolsNoHubUiYet": [
+      "P0001",
+      "P0002",
+      "P0005",
+      "P0007",
+      "P0009",
+      "P0010",
+      "P0011",
+      "P0012",
+      "P0013",
+      "P0015",
+      "P0019",
+      "P0021",
+      "P0022",
+      "P0023"
+    ],
+    "byPattern": {
+      "directory": {
+        "golden": "P0004/hub-list",
+        "clones": [
+          "P0004/users",
+          "P0006/bots",
+          "P0006/groups",
+          "P0006/logs",
+          "P0006/channels",
+          "P0020/cookie",
+          "P0020/twofa",
+          "P0008/buyers",
+          "P0008/orders",
+          "P0008/products"
+        ]
+      },
+      "auth-gate": {
+        "golden": "P0004/auth",
+        "clones": [
+          "P0020/auth"
+        ]
+      },
+      "system-panels": {
+        "golden": "P0004/system",
+        "clones": [
+          "P0020/system"
+        ]
+      },
+      "document-toc": {
+        "golden": "P0004/overview-toc",
+        "clones": []
+      }
+    }
+  },
+  "defaults": {
+    "P0004": [
+      {
+        "screen": "users",
+        "template": "directory",
+        "golden": "P0004/users",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx"
+      },
+      {
+        "screen": "hub",
+        "template": "directory",
+        "golden": "P0004/hub-list",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx"
+      },
+      {
+        "screen": "overview",
+        "template": "document-toc",
+        "golden": "P0004/overview-toc",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/overview/ToolOverviewContent.tsx"
+      },
+      {
+        "screen": "system",
+        "template": "system-panels",
+        "golden": "P0004/system",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemHubScreen.tsx"
+      },
+      {
+        "screen": "auth",
+        "template": "auth-gate",
+        "golden": "P0004/auth",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
+      }
+    ],
+    "P0006": [
+      {
+        "screen": "dashboard",
+        "template": "dashboard",
+        "golden": "P0008/dashboard",
+        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/dashboard/DashboardScreen.tsx",
+        "notes": "Clone — golden source P0008/dashboard"
+      },
+      {
+        "screen": "bots",
+        "template": "directory",
+        "golden": "P0004/hub-list",
+        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotsScreen.tsx",
+        "notes": "Clone directory — HubListPage chrome + BotDirectoryTable"
+      },
+      {
+        "screen": "groups",
+        "template": "directory",
+        "golden": "P0006/groups",
+        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx"
+      },
+      {
+        "screen": "channels",
+        "template": "directory",
+        "golden": "P0006/channels",
+        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/channels/ChannelsScreen.tsx",
+        "notes": "Directory clone — card grid only (no table body yet)"
+      },
+      {
+        "screen": "inbox",
+        "template": "inbox-split",
+        "golden": "P0020/notes",
+        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/inbox/InboxScreen.tsx",
+        "notes": "shell only — keep split UI"
+      },
+      {
+        "screen": "logs",
+        "template": "directory",
+        "golden": "P0006/logs",
+        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx",
+        "notes": "logs-activity table golden"
+      }
+    ],
+    "P0008": [
+      {
+        "screen": "dashboard",
+        "template": "dashboard",
+        "golden": "P0008/dashboard",
+        "goldenScreenPath": "Tool/P0008-Sales-Console/app/src/app/dashboard/page.tsx"
+      },
+      {
+        "screen": "buyers",
+        "template": "directory",
+        "golden": "P0008/buyers",
+        "goldenScreenPath": "Tool/P0008-Sales-Console/app/src/components/buyers/BuyersTable.tsx",
+        "notes": "legacy EntityTable — migrate to hub-users-table"
+      },
+      {
+        "screen": "orders",
+        "template": "directory",
+        "golden": "P0008/orders",
+        "goldenScreenPath": "Tool/P0008-Sales-Console/app/src/components/orders/OrdersTable.tsx",
+        "notes": "legacy EntityTable"
+      },
+      {
+        "screen": "products",
+        "template": "directory",
+        "golden": "P0008/products",
+        "goldenScreenPath": "Tool/P0008-Sales-Console/app/src/components/products/ProductsTable.tsx",
+        "notes": "legacy EntityTable"
+      }
+    ],
+    "P0020": [
+      {
+        "screen": "notes",
+        "template": "workspace-composer",
+        "golden": "P0020/notes",
+        "goldenScreenPath": "Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx"
+      },
+      {
+        "screen": "cookie",
+        "template": "directory",
+        "golden": "P0004/hub-list",
+        "goldenScreenPath": "Tool/P0020-Data-Box/src/features/cookie/CookieScreen.tsx",
+        "notes": "Chrome clone from HubListPage; table CookieAutoSyncTable (custom cells)"
+      },
+      {
+        "screen": "twofa",
+        "template": "directory",
+        "golden": "P0004/hub-list",
+        "goldenScreenPath": "Tool/P0020-Data-Box/src/features/twofa/TwofaManagerScreen.tsx",
+        "notes": "Clone directory"
+      },
+      {
+        "screen": "auth",
+        "template": "auth-gate",
+        "golden": "P0004/auth",
+        "goldenScreenPath": "Tool/P0020-Data-Box/src/features/notes/NotesAuthGate.tsx",
+        "notes": "Clone auth-gate from HubAuthGate"
+      }
+    ]
+  }
+}

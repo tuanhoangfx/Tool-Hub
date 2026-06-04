@@ -1,0 +1,115 @@
+{
+  "$schema": "./tool-manifest.schema.json",
+  "description": "DEPRECATED — merged into ui-patterns.catalog.json. Do not add new rows here.",
+  "packageDoc": "packages/hub-ui/UI_COMPONENTS.md",
+  "patterns": [
+    {
+      "id": "hub-filter-bar",
+      "name": "FilterBar (hub layout)",
+      "category": "filter",
+      "composedIn": [
+        "directory-table",
+        "meta-list-table",
+        "system-panels"
+      ],
+      "status": "ready",
+      "summary": "Faceted filter row — part of directory golden HubListPage; clone via screen template only.",
+      "golden": {
+        "ref": "P0004/hub-list",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx",
+        "sourcePath": "packages/hub-ui/src/shell/FilterBar.tsx"
+      },
+      "clones": []
+    },
+    {
+      "id": "hub-view-toggle",
+      "name": "ViewToggle",
+      "category": "control",
+      "composedIn": [
+        "directory-table"
+      ],
+      "status": "ready",
+      "summary": "Card/table toggle in directory toolbar — clone with directory screen.",
+      "golden": {
+        "ref": "P0004/hub-list",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx",
+        "sourcePath": "packages/hub-ui/src/shell/ViewToggle.tsx"
+      },
+      "clones": []
+    },
+    {
+      "id": "hub-display-prefs",
+      "name": "Display prefs menu",
+      "category": "settings",
+      "composedIn": [
+        "directory-table",
+        "system-panels"
+      ],
+      "status": "ready",
+      "summary": "Settings menu (tab + global footer) — composed in directory/system golden screens.",
+      "golden": {
+        "ref": "P0004/hub-list",
+        "screenPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/DisplayPrefs.tsx",
+        "sourcePath": "packages/hub-ui/src/display-prefs/HubDisplayPrefs.tsx"
+      },
+      "clones": []
+    },
+    {
+      "id": "hub-tab-chrome",
+      "name": "HubTabChrome",
+      "category": "chrome",
+      "composedIn": [
+        "system-panels"
+      ],
+      "status": "ready",
+      "summary": "System sub-tab sticky stack — not used on directory Hub list.",
+      "golden": {
+        "ref": "P0004/system",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemHubScreen.tsx",
+        "sourcePath": "packages/hub-ui/src/shell/HubTabChrome.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0020",
+          "screen": "system"
+        }
+      ]
+    },
+    {
+      "id": "hub-user-access-modal",
+      "name": "User access modal",
+      "category": "modal",
+      "composedIn": [],
+      "status": "ready",
+      "summary": "Domain modal on Users tab only — not part of generic directory clone.",
+      "golden": {
+        "ref": "P0004/users",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx",
+        "sourcePath": "Tool/P0004-Tool-Hub/src/features/identity/UserAccessModal.tsx"
+      },
+      "clones": []
+    },
+    {
+      "id": "hub-auth-gate",
+      "name": "Auth gate",
+      "category": "modal",
+      "composedIn": [],
+      "status": "ready",
+      "summary": "Sign-in / sign-up modal shell (hub-auth.css). Golden P0004 HubAuthGate; tools clone markup.",
+      "golden": {
+        "ref": "P0004/auth",
+        "label": "HubAuthGate",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
+        "sourcePath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0020",
+          "screen": "auth",
+          "sourcePath": "Tool/P0020-Data-Box/src/features/notes/NotesAuthGate.tsx",
+          "notes": "Synced from P0004 HubAuthGate"
+        }
+      ]
+    }
+  ]
+}

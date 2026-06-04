@@ -1,0 +1,260 @@
+{
+  "$schema": "./tool-manifest.schema.json",
+  "description": "Unified Hub UI clone patterns — Agent kind=pattern only for ready goldens. Deferred: dashboard, inbox-split (see deferredPatterns).",
+  "packageDoc": "packages/hub-ui/UI_PATTERNS.md",
+  "deferredPatterns": [
+    {
+      "id": "dashboard",
+      "reason": "Chưa có golden chuẩn — gộp analytics/sales sau khi có mẫu P0008"
+    },
+    {
+      "id": "inbox-split",
+      "reason": "Inbox master-detail chưa chuẩn hóa — thêm lại khi có mẫu"
+    }
+  ],
+  "patterns": [
+    {
+      "id": "directory",
+      "name": "Directory",
+      "layer": "screen",
+      "screenTemplate": "directory",
+      "status": "ready",
+      "skin": "hub-users-table",
+      "summary": "Directory screen: FilterBar, ViewToggle (card ↔ table), KPI, HubDirectoryCard / HubDataTable. One golden HubListPage — card and table are views, not separate patterns.",
+      "composed": [
+        "AppTabHeader",
+        "FilterBar",
+        "ViewToggle",
+        "DisplayPrefs",
+        "KpiStrip",
+        "HubResultCount"
+      ],
+      "preferredClone": "HubDataTable",
+      "scaffold": "packages/hub-ui/examples/GoldenDirectoryScreen.tsx",
+      "verify": "hub-ui-parity-check.mjs --template directory; :5176 Hub tab",
+      "golden": {
+        "ref": "P0004/hub-list",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/hub/HubToolsDirectoryTable.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screen": "users",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserDirectoryTable.tsx"
+        },
+        {
+          "product": "P0006",
+          "screen": "bots",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotsScreen.tsx"
+        },
+        {
+          "product": "P0006",
+          "screen": "groups",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx"
+        },
+        {
+          "product": "P0006",
+          "screen": "logs",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx"
+        },
+        {
+          "product": "P0006",
+          "screen": "channels",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/channels/ChannelsScreen.tsx",
+          "notes": "Card grid only today — same directory pattern; add table + ViewToggle when needed"
+        },
+        {
+          "product": "P0020",
+          "screen": "cookie",
+          "screenPath": "Tool/P0020-Data-Box/src/features/cookie/CookieScreen.tsx",
+          "notes": "Custom table body"
+        },
+        {
+          "product": "P0020",
+          "screen": "twofa",
+          "screenPath": "Tool/P0020-Data-Box/src/features/twofa/TwofaManagerScreen.tsx"
+        },
+        {
+          "product": "P0008",
+          "screen": "buyers",
+          "status": "migrate"
+        },
+        {
+          "product": "P0008",
+          "screen": "orders",
+          "status": "migrate"
+        },
+        {
+          "product": "P0008",
+          "screen": "products",
+          "status": "migrate"
+        }
+      ]
+    },
+    {
+      "id": "document-toc",
+      "name": "Overview + TOC",
+      "layer": "screen",
+      "screenTemplate": "document-toc",
+      "status": "ready",
+      "summary": "Overview shell with TOC nav + embedded tool links table — one pattern (links grid is not a separate Agent row).",
+      "composed": [
+        "OverviewTocNav",
+        "ToolLinksTable"
+      ],
+      "verify": "overview-toc.css + OverviewTocNav",
+      "golden": {
+        "ref": "P0004/overview-toc",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/overview/ToolOverviewContent.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/overview/ToolLinksTable.tsx"
+      },
+      "clones": []
+    },
+    {
+      "id": "system-panels",
+      "name": "System",
+      "layer": "screen",
+      "screenTemplate": "system-panels",
+      "status": "ready",
+      "summary": "SystemHubScreen: sub-tabs + panels. Agent meta list and Supabase quota use hub-users-table skins inside this screen — same clone unit as Directory chrome, not separate patterns.",
+      "composed": [
+        "HubTabChrome",
+        "HubPanel",
+        "FilterBar",
+        "KpiStrip",
+        "SystemAgentContextPanel",
+        "SystemSupabaseQuotaPanel",
+        "AgentContextDetailModal"
+      ],
+      "panels": [
+        {
+          "id": "agent",
+          "label": "Agent context table",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/system-hub/agent-context/AgentContextTableView.tsx",
+          "skin": "hub-users-table"
+        },
+        {
+          "id": "quota",
+          "label": "Wide metrics (Supabase quota)",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemSupabaseQuotaPanel.tsx",
+          "skin": "hub-users-table--wide"
+        }
+      ],
+      "scaffold": "packages/hub-ui/examples/GoldenSystemPanelsScreen.tsx",
+      "verify": "System → Overview / Agent / Quota",
+      "golden": {
+        "ref": "P0004/system",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemHubScreen.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0020",
+          "screen": "system"
+        }
+      ]
+    },
+    {
+      "id": "workspace-composer",
+      "name": "Workspace composer",
+      "layer": "screen",
+      "screenTemplate": "workspace-composer",
+      "status": "ready",
+      "summary": "Split notes / editor (P0020).",
+      "golden": {
+        "ref": "P0020/notes",
+        "screenPath": "Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx"
+      },
+      "clones": []
+    },
+    {
+      "id": "auth-gate",
+      "name": "Auth gate",
+      "layer": "modal",
+      "screenTemplate": "auth-gate",
+      "status": "ready",
+      "summary": "Sign-in modal (hub-auth.css). Golden HubAuthGate.",
+      "scaffold": "packages/hub-ui/examples/GoldenAuthGateScreen.tsx",
+      "golden": {
+        "ref": "P0004/auth",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0020",
+          "screen": "auth",
+          "notes": "NotesAuthGate"
+        }
+      ]
+    },
+    {
+      "id": "user-access-modal",
+      "name": "User access modal",
+      "layer": "modal",
+      "status": "ready",
+      "summary": "Users tab — tool access editor modal.",
+      "golden": {
+        "ref": "P0004/users",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserAccessModal.tsx"
+      },
+      "clones": []
+    }
+  ],
+  "toolsWithHubUi": {
+    "P0004": {
+      "role": "golden-source",
+      "screens": [
+        "hub",
+        "users",
+        "overview",
+        "system",
+        "auth"
+      ]
+    },
+    "P0006": {
+      "role": "clone",
+      "screens": [
+        "bots",
+        "groups",
+        "logs",
+        "channels"
+      ]
+    },
+    "P0008": {
+      "role": "clone-migrate",
+      "screens": [
+        "buyers",
+        "orders",
+        "products"
+      ]
+    },
+    "P0020": {
+      "role": "clone",
+      "screens": [
+        "notes",
+        "cookie",
+        "twofa",
+        "auth",
+        "system"
+      ]
+    }
+  },
+  "toolsNoHubUiYet": [
+    "P0001",
+    "P0002",
+    "P0005",
+    "P0007",
+    "P0009",
+    "P0010",
+    "P0011",
+    "P0012",
+    "P0013",
+    "P0015",
+    "P0019",
+    "P0021",
+    "P0022",
+    "P0023"
+  ]
+}

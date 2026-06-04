@@ -1,7 +1,7 @@
 {
   "name": "tool-hub",
   "private": true,
-  "version": "3.1.1",
+  "version": "3.1.2",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
@@ -23,6 +23,7 @@
     "test:watch": "vitest",
     "hooks:install": "node ../scripts/install-product-git-hooks.cjs --product-root .",
     "scan:local": "node scripts/scan-local-workspace.cjs",
+    "sync:snapshots": "node ../scripts/sync-workspace-snapshots.cjs",
     "supabase:sync-vercel": "node ../scripts/supabase-sync-vercel.mjs",
     "supabase:apply-hub": "node scripts/apply-hub-migrations-all.mjs",
     "supabase:bundle-hub": "node scripts/bundle-hub-migrations.mjs",

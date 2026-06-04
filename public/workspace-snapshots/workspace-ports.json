@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "host": "127.0.0.1",
+  "notes": "Canonical local dev ports. Scanner + ensure-dev use this table. Fix vite.config when port differs.",
+  "products": {
+    "P0001": {
+      "name": "GPM Automation Console",
+      "root": "P0001-GPM-Automation-Console",
+      "port": 5173,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite"
+    },
+    "P0002": {
+      "name": "YT Multistream Console",
+      "root": "P0002-YT-Multistream-Console",
+      "port": 5174,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite"
+    },
+    "P0004": {
+      "name": "Tool Hub",
+      "root": "P0004-Tool-Hub",
+      "port": 5176,
+      "probePath": "/",
+      "openPath": "/?screen=library",
+      "stack": "vite",
+      "ensureScript": "scripts/ensure-dev.cjs",
+      "launcherPort": 5190
+    },
+    "P0005": {
+      "name": "Zalo AI Bot",
+      "root": "P0005-zalo-ai-bot",
+      "port": 3920,
+      "probePath": "/p0005/",
+      "openPath": "/p0005/",
+      "stack": "node-admin",
+      "startCommand": "node src/cli-admin.js"
+    },
+    "P0006": {
+      "name": "AIChatHub Console",
+      "root": "P0006-AIChatHub",
+      "port": 5178,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite-monorepo",
+      "ensureScript": "scripts/ensure-dev.cjs",
+      "cwd": "apps/console",
+      "dependsOn": [
+        "P0004"
+      ],
+      "workerPort": 3921,
+      "workerProbePath": "/api/health"
+    },
+    "P0008": {
+      "name": "Sales Console",
+      "root": "P0008-Sales-Console",
+      "port": 3000,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "next",
+      "ensureScript": "scripts/ensure-dev.cjs",
+      "cwd": "app"
+    },
+    "P0009": {
+      "name": "Mie Hair Performance",
+      "root": "P0009-Mie-Hair-Performance",
+      "port": 3009,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite",
+      "migrateFrom": 3000
+    },
+    "P0010": {
+      "name": "Cursor Telegram",
+      "root": "P0010-Cursor-Telegram",
+      "port": 3922,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "node-admin",
+      "startCommand": "node src/cli-admin.js",
+      "migrateFrom": 3921
+    },
+    "P0011": {
+      "name": "Infix1 Mail",
+      "root": "P0011-Infix1-Mail",
+      "port": 3011,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite",
+      "cwd": "web",
+      "ensureScript": "scripts/ensure-dev.cjs",
+      "workerPort": 8787,
+      "workerProbePath": "/api/health",
+      "notes": "Plan 1: worker :8787 + web :3011 — pnpm dev starts both"
+    },
+    "P0013": {
+      "name": "YouTube TDA Team",
+      "root": "P0013-czp-youtube-tda-team",
+      "port": 3013,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite",
+      "migrateFrom": 3000
+    },
+    "P0019": {
+      "name": "Work Performance",
+      "root": "P0019-Work-Performance",
+      "port": 5179,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite",
+      "migrateFrom": 5173
+    },
+    "P0020": {
+      "name": "Data Box",
+      "root": "P0020-Data-Box",
+      "port": 5177,
+      "probePath": "/notes",
+      "openPath": "/notes",
+      "stack": "vite",
+      "dependsOn": [
+        "P0004"
+      ]
+    },
+    "P0021": {
+      "name": "AutoVideo Studio",
+      "root": "P0021-AutoVideo-Studio",
+      "port": 3021,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "next",
+      "cwd": "app",
+      "migrateFrom": 3000
+    },
+    "P0022": {
+      "name": "Infi Store",
+      "root": "P0022-Infi-Store",
+      "port": 3022,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite"
+    },
+    "P0023": {
+      "name": "Fanpage Dashboard",
+      "root": "P0023-Fanpage-Dashboard",
+      "port": 3023,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite"
+    }
+  }
+}

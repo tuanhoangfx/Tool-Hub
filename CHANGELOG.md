@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-05 - Workspace snapshots mirror (schemas + ports)
+
+- Version: `3.1.2`
+- Timestamp: 2026-06-05
+- Type: Patch
+- Product: P0004
+- Prompt: Dọn workspace ngoài repo — sync Tool/schemas và workspace-ports vào Hub git
+- Commit: `cd33e1c`
+- Status: Committed
+
+### Changes
+
+- `Tool/scripts/sync-workspace-snapshots.cjs` — mirror `schemas/*.json`, `workspace-ports.json`, `TOOL-CODES.md` → `public/workspace-snapshots/`.
+- `pnpm sync:snapshots` — guard không cho phép P0003/chathubai trong snapshot.
+- Catalog scanner vẫn đọc source `E:\Dev\Tool\`; snapshot chỉ để audit/version control trên GitHub.
+
+### Verification
+
+- `node ../scripts/sync-workspace-snapshots.cjs` · grep P0003 trong snapshots → 0
+
+### Rollback
+
+- `git revert <sha>`
+
+---
+
 ## 2026-06-05 - Release: https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v3.1.1
 
 - Version: `3.1.1`

@@ -1,0 +1,330 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/tuanhoangfx/Tool/schemas/tool-manifest.schema.json",
+  "title": "Tool Manifest (E:\\Dev\\Tool)",
+  "description": "Self-describe metadata cho mỗi project trong workspace E:\\Dev\\Tool. P0004 Tool Hub đọc file này qua pnpm scan:local + memoFetch để hiển thị catalog.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "code",
+    "id",
+    "name",
+    "type",
+    "status",
+    "stack",
+    "release"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "const": 1,
+      "description": "Phiên bản schema này. Bump khi shape thay đổi (breaking)."
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^P\\d{4}$",
+      "description": "Mã workspace P0001..P9999 (xem TOOL-CODES.md). Hiện đến P0019; mã tiếp theo P0020."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Slug duy nhất, dùng làm key trong registry."
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Tên rút gọn user hay dùng (GPM, YT, Sales, Infi, ...)."
+    },
+    "name": {
+      "type": "string",
+      "description": "Tên hiển thị đầy đủ."
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Desktop",
+        "Web",
+        "Bot",
+        "Infrastructure",
+        "CLI",
+        "Library"
+      ],
+      "description": "Kiểu dự án. Quyết định icon + filter trong P0004 catalog."
+    },
+    "owner": {
+      "type": "string",
+      "description": "Người chịu trách nhiệm (default 'Tool' = solo dev)."
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Ready",
+        "Needs review",
+        "Experimental",
+        "Archived",
+        "Active"
+      ],
+      "description": "Trạng thái lifecycle."
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 280,
+      "description": "1-2 câu tiếng Anh hoặc tiếng Việt mô tả mục đích."
+    },
+    "stack": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "description": "Tech stack tags chính: Electron, Next.js, Supabase, Node.js, ..."
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "(Optional) Danh sách tính năng cấp cao đang có. Cập nhật manually khi thêm/bỏ feature."
+    },
+    "uiScreens": {
+      "type": "array",
+      "description": "Hub UI template per screen. See packages/hub-ui/UI_TEMPLATES.md and Tool/schemas/ui-screens.catalog.json.",
+      "items": {
+        "type": "object",
+        "required": [
+          "screen",
+          "template"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "screen": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Route/tab key: users, bots, overview, notes, dashboard, …"
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "directory",
+              "analytics",
+              "document-toc",
+              "workspace-composer",
+              "dashboard",
+              "system-panels",
+              "inbox-split",
+              "auth-gate"
+            ],
+            "description": "Layer-B screen template from @tool-workspace/hub-ui."
+          },
+          "golden": {
+            "type": "string",
+            "description": "Golden clone reference, e.g. P0006/groups, P0004/users."
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional agent hint (parity quirks, WIP)."
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Lệnh thường dùng. Key tự do (dev/build/test/deploy/sync/...). Value là string command đã quote."
+    },
+    "docs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Path tương đối tới các file docs (readme/changelog/release/architecture/contributing)."
+    },
+    "github": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "repo": {
+          "type": "string",
+          "description": "owner/repo"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "manifestPath": {
+          "type": "string",
+          "description": "Path file manifest này trong repo (mặc định 'tool.manifest.json')."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "Thông tin GitHub. Bỏ trống nếu project chưa lên git remote."
+    },
+    "release": {
+      "type": "object",
+      "required": [
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+",
+          "description": "Phải đồng bộ với package.json.version qua scripts/check-version-sync.mjs."
+        },
+        "readiness": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Checklist các mảnh đã sẵn sàng (build/docs/tests/...)."
+        },
+        "latestPublished": {
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Thông tin release mới nhất đã publish (tag, url, publishedAt, asset)."
+        }
+      }
+    },
+    "distribution": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Cho Electron apps: thông tin nơi user download, CI workflow publish, pattern installer."
+    },
+    "health": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "Ready",
+            "Needs review",
+            "Experimental",
+            "Archived",
+            "Down"
+          ]
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "description": "Trạng thái runtime, ghi chú dependency external."
+    },
+    "urls": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "app": {
+          "type": "string",
+          "format": "uri"
+        },
+        "api": {
+          "type": "string",
+          "format": "uri"
+        },
+        "admin": {
+          "type": "string",
+          "format": "uri"
+        },
+        "local": {
+          "type": "string",
+          "description": "Local dev URL (http://127.0.0.1:PORT)."
+        },
+        "localSetupAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO UTC — lần đầu / lần cuối thiết lập urls.local (hoặc urls.admin)."
+        },
+        "adminSetupAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO UTC — lần thiết lập urls.admin (P0010 và bot admin UI)."
+        },
+        "appSetupAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO UTC — lần đầu / lần cuối thiết lập urls.app (production / website)."
+        },
+        "downloads": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "URLs public/local của tool."
+    },
+    "nextActions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "TODO cấp roadmap, hiển thị trong System tab. Mỗi item là 1 câu hành động."
+    },
+    "manifestUpdatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp lần cuối edit manifest này. Sửa khi update file."
+    },
+    "deployTarget": {
+      "type": "string",
+      "enum": [
+        "vercel",
+        "github-release",
+        "vps",
+        "static",
+        "none"
+      ],
+      "description": "Target deploy chính của project. P0008/P0009/P0013/P0015/P0019=vercel; P0001/P0002=github-release; P0005/P0007=vps; P0015=static."
+    },
+    "vercel": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Tên Vercel project."
+        },
+        "projectId": {
+          "type": "string",
+          "description": "Vercel project ID (prj_...)."
+        },
+        "productionUrl": {
+          "type": "string",
+          "format": "uri"
+        },
+        "productionBranch": {
+          "type": "string"
+        },
+        "team": {
+          "type": "string"
+        }
+      },
+      "description": "Metadata Vercel deployment, dùng cho /deploy-vercel command."
+    },
+    "supabase": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "projectRef": {
+          "type": "string",
+          "description": "Supabase project ref (20 chars lowercase)."
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "dashboard": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "description": "Metadata Supabase project. Phải KHÁC nhau giữa P0008/P0009/P0013/P0019 — kiểm tra ref trước khi chạy SQL."
+    }
+  }
+}

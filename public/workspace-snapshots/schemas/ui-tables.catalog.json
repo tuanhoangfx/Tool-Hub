@@ -1,0 +1,188 @@
+{
+  "$schema": "./tool-manifest.schema.json",
+  "description": "DEPRECATED — use ui-patterns.catalog.json. Kept for hub-ui-stack / ui-screens defaults only.",
+  "packageDoc": "packages/hub-ui/UI_TABLES.md",
+  "patterns": [
+    {
+      "id": "directory-table",
+      "name": "Directory",
+      "screenTemplate": "directory",
+      "skin": "hub-users-table",
+      "status": "ready",
+      "summary": "Directory screen + table: AppTabHeader, FilterBar, ViewToggle, DisplayPrefs, KPI, hub-users-table. Clone whole screen from HubListPage — not separate component rows.",
+      "composedChrome": [
+        "AppTabHeader",
+        "FilterBar",
+        "ViewToggle",
+        "DisplayPrefs",
+        "KpiStrip",
+        "HubResultCount"
+      ],
+      "features": [
+        "sort",
+        "multi-select",
+        "view-toggle",
+        "faceted-filters",
+        "bulk-actions"
+      ],
+      "preferredClone": "HubDataTable",
+      "verify": "Golden :5176 Hub tab table view; hub-ui-parity-check --template directory",
+      "golden": {
+        "ref": "P0004/hub-list",
+        "label": "Hub tools (canonical)",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/hub/HubToolsDirectoryTable.tsx",
+        "component": "inline"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screen": "users",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserDirectoryTable.tsx",
+          "component": "inline",
+          "notes": "Same pattern — user/role columns"
+        },
+        {
+          "product": "P0006",
+          "screen": "bots",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotsScreen.tsx",
+          "tablePath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotDirectoryTable.tsx",
+          "component": "inline"
+        },
+        {
+          "product": "P0006",
+          "screen": "groups",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx",
+          "tablePath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx",
+          "component": "HubDataTable"
+        },
+        {
+          "product": "P0006",
+          "screen": "logs",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx",
+          "tablePath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx",
+          "component": "HubDataTable",
+          "notes": "Monospace activity stream"
+        },
+        {
+          "product": "P0006",
+          "screen": "channels",
+          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/channels/ChannelsScreen.tsx",
+          "notes": "Directory clone — card grid only (no table body yet)"
+        },
+        {
+          "product": "P0020",
+          "screen": "twofa",
+          "screenPath": "Tool/P0020-Data-Box/src/features/twofa/TwofaManagerScreen.tsx",
+          "tablePath": "Tool/P0020-Data-Box/src/features/twofa/TwofaAccountsTable.tsx",
+          "component": "inline",
+          "notes": "hub-users-table--twofa variant"
+        },
+        {
+          "product": "P0020",
+          "screen": "cookie",
+          "screenPath": "Tool/P0020-Data-Box/src/features/cookie/CookieScreen.tsx",
+          "tablePath": "Tool/P0020-Data-Box/src/features/cookie/CookieAutoSyncTable.tsx",
+          "component": "inline",
+          "notes": "Directory chrome from HubListPage; table body still custom-grid (migrate to hub-users-table optional)"
+        },
+        {
+          "product": "P0008",
+          "screen": "buyers",
+          "screenPath": "Tool/P0008-Sales-Console/app/src/components/buyers/BuyersTable.tsx",
+          "tablePath": "Tool/P0008-Sales-Console/app/src/components/buyers/BuyersTable.tsx",
+          "component": "EntityTable",
+          "status": "migrate"
+        },
+        {
+          "product": "P0008",
+          "screen": "orders",
+          "screenPath": "Tool/P0008-Sales-Console/app/src/components/orders/OrdersTable.tsx",
+          "tablePath": "Tool/P0008-Sales-Console/app/src/components/orders/OrdersTable.tsx",
+          "component": "EntityTable",
+          "status": "migrate"
+        },
+        {
+          "product": "P0008",
+          "screen": "products",
+          "screenPath": "Tool/P0008-Sales-Console/app/src/components/products/ProductsTable.tsx",
+          "tablePath": "Tool/P0008-Sales-Console/app/src/components/products/ProductsTable.tsx",
+          "component": "EntityTable",
+          "status": "migrate"
+        }
+      ]
+    },
+    {
+      "id": "wide-metrics-table",
+      "name": "Wide metrics table",
+      "screenTemplate": "system-panels",
+      "skin": "hub-users-table--wide",
+      "status": "ready",
+      "summary": "Dense metrics columns + horizontal scroll on hub-users-table skin.",
+      "features": [
+        "sort",
+        "wide-columns",
+        "detail-drawer"
+      ],
+      "verify": "SystemSupabaseQuotaPanel ProjectTable",
+      "golden": {
+        "ref": "P0004/system/supabase-quota",
+        "label": "Supabase quota",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemSupabaseQuotaPanel.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemSupabaseQuotaPanel.tsx",
+        "component": "inline"
+      },
+      "clones": []
+    },
+    {
+      "id": "meta-list-table",
+      "name": "Meta list table",
+      "screenTemplate": "system-panels",
+      "skin": "hub-users-table",
+      "status": "ready",
+      "summary": "System meta lists (Agent context). Uses directory-like shell (FilterBar/KPI) but not HubListPage; detail modal is part of this golden screen only.",
+      "composedChrome": [
+        "FilterBar",
+        "KpiStrip",
+        "AgentContextDetailModal"
+      ],
+      "features": [
+        "sort",
+        "detail-modal",
+        "card-view"
+      ],
+      "verify": "System → Agent tab",
+      "golden": {
+        "ref": "P0004/system/agent",
+        "label": "Agent context",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemAgentContextPanel.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/system-hub/agent-context/AgentContextTableView.tsx",
+        "component": "inline"
+      },
+      "clones": []
+    },
+    {
+      "id": "panel-links-table",
+      "name": "Panel links table",
+      "screenTemplate": "document-toc",
+      "skin": "hub-inline-table",
+      "status": "ready",
+      "summary": "Embedded links table inside Overview (document-toc screen). Clone table body only; screen shell → Kind Screen → document-toc.",
+      "features": [
+        "sort",
+        "health-ping",
+        "faceted-filters"
+      ],
+      "verify": "Overview → tool links panel",
+      "golden": {
+        "ref": "P0004/overview-toc",
+        "label": "Overview tool links",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/overview/ToolOverviewContent.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/overview/ToolLinksTable.tsx",
+        "component": "inline"
+      },
+      "clones": []
+    }
+  ]
+}
