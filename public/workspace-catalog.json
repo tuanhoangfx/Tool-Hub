@@ -511,44 +511,6 @@
       "assetKind": "project"
     },
     {
-      "id": "chathub-ai",
-      "code": "P0014",
-      "name": "ChatHubAI",
-      "repo": "tuanhoangfx/chathub-ai",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "1.0.0",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Draft",
-      "summary": "Unified multi-channel chat console — P0004 golden Hub shell, P0006 worker API (bots, groups, channels, inbox).",
-      "localPath": "E:\\Dev\\Tool\\P0014-ChatHubAI",
-      "tags": [
-        "React",
-        "TypeScript",
-        "Vite",
-        "@tool-workspace/hub-ui"
-      ],
-      "localUrl": "http://127.0.0.1:5184",
-      "deployTarget": "local",
-      "usage": [
-        "Dev: node ../scripts/ensure-dev-product.cjs P0014",
-        "Build: corepack pnpm build"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [],
-      "workspaceRoot": "tool",
-      "assetKind": "project"
-    },
-    {
       "id": "infi-project-performance-tracker",
       "code": "LOCAL-016",
       "name": "P0019-Work-Performance",

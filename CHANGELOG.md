@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-06-05 - Remove P0014-ChatHubAI permanently
+
+- Version: `4.1.4`
+- Type: Patch
+- Product: P0004
+- Prompt: Xóa hoàn toàn Tool/P0014-ChatHubAI
+- Commit: `98c02cf`
+- Status: Committed
+
+### Changes
+
+- Deleted folder `Tool/P0014-ChatHubAI` (port 5184 freed).
+- Removed P0014 from `workspace-ports.json`, `TOOL-CODES.md`, Hub catalogs and `workspace-snapshots`.
+- Snapshot guard extended for P0014 / port 5184 / `chathub-ai` catalog id.
+
+### Verification
+
+- `Test-Path P0014-ChatHubAI` → false
+- `node ../scripts/sync-workspace-snapshots.cjs`
+
+### Rollback
+
+- Re-clone `tuanhoangfx/chathub-ai` if a dedicated ChatHub console is needed again.
+
+---
+
 ## 2026-06-05 - Git commit version stamp
 
 - Version: `4.1.3`

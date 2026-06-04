@@ -32,8 +32,6 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0013 | P0013-czp-youtube-tda-team | tuanhoangfx/P0001-czp-youtube-tda-team | YouTube TDA |
 
-| P0014 | P0014-ChatHubAI | tuanhoangfx/chathub-ai | **ChatHubAI** — P0004 golden console, P0006 worker API |
-
 | P0015 | P0015-student-id-generator-v2 | tuanhoangfx/P0005-student-id-generator-v2 | Static HTML generator |
 
 | P0019 | P0019-Work-Performance | tuanhoangfx/-Work-Performance | Infi task manager |
