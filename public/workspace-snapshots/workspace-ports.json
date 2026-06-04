@@ -104,6 +104,19 @@
       "stack": "vite",
       "migrateFrom": 3000
     },
+    "P0014": {
+      "name": "ChatHubAI",
+      "root": "P0014-ChatHubAI",
+      "port": 5184,
+      "probePath": "/",
+      "openPath": "/",
+      "stack": "vite",
+      "workerPort": 3921,
+      "workerProbePath": "/api/health",
+      "dependsOn": [
+        "P0006"
+      ]
+    },
     "P0019": {
       "name": "Work Performance",
       "root": "P0019-Work-Performance",

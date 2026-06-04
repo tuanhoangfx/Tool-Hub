@@ -1,5 +1,49 @@
 # Changelog
 
+## 2026-06-05 - Git commit version stamp
+
+- Version: `4.1.3`
+- Timestamp: 2026-06-05 02:02 (UTC+7)
+- Commit: `37cef95`
+- Type: Patch
+- Status: Committed
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Remove P0003-ChatHubAI permanently
+
+- Version: `4.1.2`
+- Type: Patch
+- Product: P0004
+- Prompt: Xóa hoàn toàn Tool/P0003-ChatHubAI
+- Commit: `37cef95`
+- Status: Draft
+
+### Changes
+
+- Deleted folder `Tool/P0003-ChatHubAI` (freed port 5180; stopped ensure-dev P0003 / shared rollup lock).
+- Removed P0003 from `workspace-ports.json`, `TOOL-CODES.md`, Hub catalogs (`workspace-catalog`, `registry`, `local-registry`).
+- Refreshed `workspace-snapshots`; fixed snapshot guard (no false positive on P0014 ChatHubAI).
+- P0014 registry usage: `ensure-dev-product.cjs P0014` (replaces P0003).
+
+### Verification
+
+- `Test-Path P0003-ChatHubAI` → false
+- `node ../scripts/sync-workspace-snapshots.cjs`
+
+### Rollback
+
+- Restore from git history or re-clone `tuanhoangfx/chathub-ai` as new code if needed (use P0014 instead).
+
+---
+
 ## 2026-06-05 - Tool Hub 4.1 — agent catalog and workspace mirror
 
 - Version: `4.1.1`

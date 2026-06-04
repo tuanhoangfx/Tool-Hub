@@ -14,8 +14,6 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0002 | P0002-YT-Multistream-Console | tuanhoangfx/YT-Multistream-Console | Desktop YT |
 
-| P0003 | P0003-ChatHubAI | tuanhoangfx/chathub-ai | **ChatHub AI** — P0004 golden console, API via P0006 worker |
-
 | P0004 | P0004-Tool-Hub | tuanhoangfx/Tool-Hub | **Tool Hub** — catalog |
 
 | P0005 | P0005-zalo-ai-bot | tuanhoangfx/zalo-ai-bot | Zalo bot |
@@ -33,6 +31,8 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 | P0012 | P0012-Apps-Script-Sync | tuanhoangfx/Apps-Script-Sync | clasp monorepo |
 
 | P0013 | P0013-czp-youtube-tda-team | tuanhoangfx/P0001-czp-youtube-tda-team | YouTube TDA |
+
+| P0014 | P0014-ChatHubAI | tuanhoangfx/chathub-ai | **ChatHubAI** — P0004 golden console, P0006 worker API |
 
 | P0015 | P0015-student-id-generator-v2 | tuanhoangfx/P0005-student-id-generator-v2 | Static HTML generator |
 
@@ -52,7 +52,9 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 
 
-**Đã gỡ (2026-05-21):** P0014, P0016, P0017, P0018 — folder local, repo GitHub archived, Vercel cần xóa thủ công nếu còn.
+**Đã gỡ (2026-05-21):** P0016, P0017, P0018 — folder local, repo GitHub archived, Vercel cần xóa thủ công nếu còn.
+
+**P0014 (2026-06-05):** Tái sử dụng mã cho **ChatHubAI** (thay bản cũ đã gỡ 2026-05-21).
 
 **P0011 (2026-06-04):** Tái sử dụng mã cho **Infix1 Mail** (thay Tool-Control-Center đã gỡ 2026-05-22).
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T18:24:43.663Z",
+  "generatedAt": "2026-06-04T18:46:35.801Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -136,8 +136,8 @@
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
       "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try {\n          $j = Get-Content -LiteralPath $manifest -Raw | Conver",
-      "lines": 195,
-      "updatedAt": "2026-06-04T18:21:02.106Z",
+      "lines": 198,
+      "updatedAt": "2026-06-04T18:25:33.837Z",
       "tags": [
         "ship",
         "workspace",
@@ -350,7 +350,7 @@
       "clone": "P0006, P0008, P0020",
       "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | P0004/auth |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Agent Kind (manifest)\n\n| Kind | Nội dung |\n|------|----------|\n| **pattern** | Hu\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0006** (clone): bots, groups, logs, channels\n- **P0008** (clone-migrate): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system",
       "lines": 45,
-      "updatedAt": "2026-06-04T18:20:22.155Z",
+      "updatedAt": "2026-06-04T18:46:35.656Z",
       "tags": [
         "hub-ui",
         "pattern",
