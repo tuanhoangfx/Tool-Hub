@@ -2,104 +2,98 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import {
   FilterBar,
-  KpiStrip,
+  HubTabScreenBody,
+  hubSystemShortcutScope,
   type FilterDef,
   type FilterValues,
   type KpiTileData,
-} from "../../components/sales-shell";
+} from "@tool-workspace/hub-ui";
 import { readHubListPrefs } from "../../lib/url-prefs";
-import { readSystemTab, type SystemTab } from "./components/SystemTabs";
-import {
-  readSystemTabDisplay,
-  systemDisplayDefs,
-} from "./system-display-prefs";
+import { SYSTEM_TAB_ITEMS, type SystemTab } from "./components/SystemTabs";
 import { useSystemChrome } from "./system-chrome-context";
-
-function visibleSet(set: Set<string> | null, defaults: Set<string>) {
-  return set ?? defaults;
-}
+import { useRegisterSystemTabFilter } from "./system-filter-registry";
+import {
+  buildSystemChartsBand,
+  filterKpiByDisplay,
+  useSystemTabDisplayState,
+  type SystemChartSlots,
+} from "./system-tab-analytics";
 
 export type SystemHubShellProps = {
-  placeholder: string;
+  /** System sub-tab id — drives sticky filter portal + Display prefs scope. */
+  tabId: SystemTab;
+  placeholder?: string;
   filters?: FilterDef[];
-  query: string;
-  onQueryChange: (q: string) => void;
-  values: FilterValues;
-  onValuesChange: (v: FilterValues) => void;
+  query?: string;
+  onQueryChange?: (q: string) => void;
+  values?: FilterValues;
+  onValuesChange?: (v: FilterValues) => void;
   toolbar?: ReactNode;
-  kpiItems: KpiTileData[];
-  /** Render when matching chart pref keys (health_bar, category_bar, deploy_donut, status_donut). */
-  charts?: ReactNode;
-  /** When set, only this System tab portals FilterBar into the sticky chrome stack. */
-  stickyFilterTab?: SystemTab;
+  kpiItems?: KpiTileData[];
+  chartSlots?: SystemChartSlots;
+  /** Override pill between analytics and body (default: tab label from SYSTEM_TAB_ITEMS). */
+  sectionRuleLabel?: string;
+  /** Hide search/filter row (e.g. Design Template). */
+  showFilter?: boolean;
   children: ReactNode;
 };
 
 export function SystemHubShell({
-  placeholder,
+  tabId,
+  placeholder = "Search…",
   filters = [],
-  query,
+  query = "",
   onQueryChange,
-  values,
+  values = {},
   onValuesChange,
   toolbar,
-  kpiItems,
-  charts,
-  stickyFilterTab,
+  kpiItems = [],
+  chartSlots = {},
+  sectionRuleLabel,
+  showFilter = true,
   children,
 }: SystemHubShellProps) {
   const [prefs, setPrefs] = useState(readHubListPrefs);
-  const [stab, setStab] = useState(readSystemTab);
-  const [displayTick, setDisplayTick] = useState(0);
   const chrome = useSystemChrome();
+  const { visKpi, visCharts, isActiveTab } = useSystemTabDisplayState(tabId);
 
   useEffect(() => {
-    const sync = () => {
-      setPrefs(readHubListPrefs());
-      setStab(readSystemTab());
-      setDisplayTick((n) => n + 1);
-    };
+    const sync = () => setPrefs(readHubListPrefs());
     window.addEventListener("popstate", sync);
-    window.addEventListener("system-display-change", sync);
-    return () => {
-      window.removeEventListener("popstate", sync);
-      window.removeEventListener("system-display-change", sync);
-    };
+    return () => window.removeEventListener("popstate", sync);
   }, []);
 
-  const displayDefs = useMemo(() => systemDisplayDefs(stab), [stab]);
-  const tabDisplay = useMemo(() => {
-    void displayTick;
-    return readSystemTabDisplay(stab);
-  }, [stab, displayTick]);
-  const visKpi = visibleSet(tabDisplay.kpi, displayDefs.defaultKpiKeys);
-  const visCharts = visibleSet(tabDisplay.charts, displayDefs.defaultChartKeys);
-  const kpiVisible = kpiItems.filter((item) => {
-    const key = item.prefKey;
-    if (!key) return true;
-    return visKpi.has(key);
-  });
-  const showCharts = charts && visCharts.size > 0;
-  const hasAnalytics = kpiVisible.length > 0 || showCharts;
+  const kpiVisible = useMemo(() => filterKpiByDisplay(kpiItems, visKpi), [kpiItems, visKpi]);
+  const chartsBand = useMemo(
+    () => buildSystemChartsBand(visCharts, chartSlots),
+    [visCharts, chartSlots],
+  );
+
+  const ruleLabel =
+    sectionRuleLabel ?? SYSTEM_TAB_ITEMS.find((t) => t.id === tabId)?.label ?? "Data";
 
   const filterBar = useMemo(
-    () => (
-      <FilterBar
-        shortcutScope="system"
-        layout="hub"
-        pinSticky={chrome?.stackChrome ? false : prefs.searchPin}
-        headerPinned={prefs.headerPin}
-        embedded={Boolean(chrome?.stackChrome)}
-        placeholder={placeholder}
-        filters={filters}
-        query={query}
-        onQueryChange={onQueryChange}
-        values={values}
-        onValuesChange={onValuesChange}
-        toolbar={toolbar}
-      />
-    ),
+    () =>
+      showFilter && onQueryChange ? (
+        <FilterBar
+          shortcutScope={hubSystemShortcutScope(tabId)}
+          layout="hub"
+          pinSticky={chrome?.stackChrome ? false : prefs.searchPin}
+          headerPinned={prefs.headerPin}
+          embedded={Boolean(chrome?.stackChrome)}
+          placeholder={placeholder}
+          filters={filters}
+          query={query}
+          onQueryChange={onQueryChange}
+          values={values}
+          onValuesChange={onValuesChange ?? (() => {})}
+          toolbar={toolbar}
+        />
+      ) : null,
     [
+      showFilter,
+      onQueryChange,
+      tabId,
       chrome?.stackChrome,
       prefs.searchPin,
       prefs.headerPin,
@@ -108,38 +102,40 @@ export function SystemHubShell({
       query,
       values,
       toolbar,
-      onQueryChange,
       onValuesChange,
     ],
   );
 
   const portalFilter =
+    Boolean(showFilter) &&
     Boolean(chrome?.stackChrome) &&
     Boolean(chrome?.filterAnchorReady) &&
-    stickyFilterTab != null &&
-    stab === stickyFilterTab &&
-    chrome?.filterAnchorRef.current != null;
+    isActiveTab &&
+    chrome?.filterAnchorRef.current != null &&
+    filterBar != null;
 
   const filterChrome =
     portalFilter && chrome?.filterAnchorRef.current
       ? createPortal(filterBar, chrome.filterAnchorRef.current)
       : null;
 
-  const showFilterInline = !chrome?.stackChrome;
+  useRegisterSystemTabFilter(tabId, filterBar, {
+    enabled: showFilter,
+    stacked: Boolean(chrome?.stackChrome),
+    isActiveTab,
+  });
 
   return (
-    <div className={`system-hub-shell anim-fade ${showFilterInline ? "space-y-4" : "space-y-4 pt-4"}`}>
-      {showFilterInline ? filterBar : null}
+    <>
       {filterChrome}
-
-      {hasAnalytics ? (
-        <div className="mt-5 space-y-5">
-          {kpiVisible.length > 0 ? <KpiStrip items={kpiVisible} /> : null}
-          {showCharts ? <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">{charts}</div> : null}
-        </div>
-      ) : null}
-
-      <div className="system-hub-body">{children}</div>
-    </div>
+      <HubTabScreenBody
+        embedded
+        kpis={kpiVisible}
+        charts={chartsBand}
+        sectionRuleLabel={ruleLabel}
+      >
+        {children}
+      </HubTabScreenBody>
+    </>
   );
 }

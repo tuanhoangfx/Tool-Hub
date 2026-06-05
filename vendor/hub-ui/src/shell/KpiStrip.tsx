@@ -22,11 +22,20 @@ export type KpiTileData = {
   prefKey?: string;
 };
 
+const KPI_ROW_MAX = 8;
+
 export function KpiStrip({ items, className = "" }: { items: KpiTileData[]; className?: string }) {
+  if (items.length === 0) return null;
+
+  const count = Math.min(items.length, KPI_ROW_MAX);
+
   return (
-    <div className={`stagger grid grid-cols-2 gap-3 sm:grid-cols-4 ${className}`}>
-      {items.map((it, i) => (
-        <KpiTile key={i} {...it} />
+    <div
+      className={`hub-kpi-strip stagger min-w-0 ${className}`.trim()}
+      data-kpi-count={count}
+    >
+      {items.slice(0, KPI_ROW_MAX).map((it, i) => (
+        <KpiTile key={it.prefKey ?? `${it.label}-${i}`} {...it} />
       ))}
     </div>
   );
@@ -36,17 +45,17 @@ function KpiTile({ label, value, hint, icon: Icon, tone = "indigo" }: KpiTileDat
   const t = tones[tone];
   return (
     <div
-      className={`anim-slide relative overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)] p-4 transition-all hover:-translate-y-0.5 hover:ring-2 ${t.ring}`}
+      className={`hub-kpi-tile anim-slide relative min-w-0 overflow-hidden rounded-2xl border border-white/5 bg-[var(--panel)] transition-all hover:-translate-y-0.5 hover:ring-2 ${t.ring}`}
     >
       <div className={`pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-gradient-to-br ${t.bg} blur-2xl`} />
-      <div className="relative flex items-center gap-3">
-        <div className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${t.icon}`}>
-          {Icon ? <Icon size={compactIconSize(18)} /> : null}
+      <div className="hub-kpi-tile__inner relative flex min-w-0 items-center">
+        <div className={`hub-kpi-tile__icon grid shrink-0 place-items-center rounded-xl ${t.icon}`}>
+          {Icon ? <Icon size={compactIconSize(18)} className="hub-kpi-tile__icon-svg" /> : null}
         </div>
-        <div className="min-w-0 flex-1">
-          <div className="text-[10px] uppercase tracking-wider text-[var(--muted)]">{label}</div>
-          <div className="mt-0.5 truncate text-2xl font-semibold tabular-nums">{value}</div>
-          {hint ? <div className="text-[10px] text-[var(--muted)]">{hint}</div> : null}
+        <div className="hub-kpi-tile__body">
+          <div className="hub-kpi-tile__label truncate uppercase tracking-wider text-[var(--muted)]">{label}</div>
+          <div className="hub-kpi-tile__value truncate font-semibold tabular-nums">{value}</div>
+          {hint ? <div className="hub-kpi-tile__hint truncate text-[var(--muted)]">{hint}</div> : null}
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { FileText } from "lucide-react";
-import { setHubActiveScreen } from "@tool-workspace/hub-ui";
+import { useHubActiveScreenSync } from "@tool-workspace/hub-ui";
 import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
@@ -21,11 +21,22 @@ import { systemDisplayDefs } from "./features/system-hub/system-display-prefs";
 import {
   DEFAULT_HUB_CHART_KEYS,
   DEFAULT_HUB_FILTER_KEYS,
+  DEFAULT_HUB_HEADER_STAT_KEYS,
   DEFAULT_HUB_KPI_KEYS,
   HUB_CHART_DEFS,
   HUB_FILTER_DEFS,
+  HUB_HEADER_STAT_DEFS,
   HUB_KPI_DEFS,
 } from "./features/hub/hub-prefs";
+import {
+  DEFAULT_USER_HEADER_STAT_KEYS,
+  USER_HEADER_STAT_DEFS,
+} from "./features/identity/user-header-metrics";
+import { DEFAULT_USER_KPI_KEYS, USER_KPI_DEFS } from "./features/identity/user-display-prefs";
+import {
+  defaultSystemHeaderStatKeys,
+  systemHeaderStatDefs,
+} from "./features/system-hub/system-header-metrics";
 import { HubListPage, LocalHealthPollSettings } from "./features/hub";
 
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
@@ -66,13 +77,36 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
   }, []);
 
   const isGlobal = scope === "global";
-  const defs = !isGlobal && screen === "system" ? systemDisplayDefs(systemTab) : null;
+  const defs =
+    !isGlobal && screen === "system"
+      ? systemDisplayDefs(systemTab)
+      : !isGlobal && screen === "users"
+        ? { kpis: USER_KPI_DEFS, charts: undefined, defaultKpiKeys: DEFAULT_USER_KPI_KEYS, defaultChartKeys: undefined }
+        : null;
+  const headerStats =
+    isGlobal || screen === "library"
+      ? HUB_HEADER_STAT_DEFS
+      : screen === "users"
+        ? USER_HEADER_STAT_DEFS
+        : screen === "system"
+          ? systemHeaderStatDefs(systemTab)
+          : [];
+  const defaultHeaderStatKeys =
+    isGlobal || screen === "library"
+      ? DEFAULT_HUB_HEADER_STAT_KEYS
+      : screen === "users"
+        ? DEFAULT_USER_HEADER_STAT_KEYS
+        : screen === "system"
+          ? defaultSystemHeaderStatKeys(systemTab)
+          : undefined;
 
   return (
     <DisplayPrefs
       kpis={isGlobal ? undefined : defs?.kpis ?? HUB_KPI_DEFS}
       charts={isGlobal ? undefined : defs?.charts ?? HUB_CHART_DEFS}
       filters={isGlobal || screen === "system" ? undefined : HUB_FILTER_DEFS}
+      headerStats={isGlobal ? undefined : headerStats}
+      defaultHeaderStatKeys={defaultHeaderStatKeys}
       defaultKpiKeys={defs?.defaultKpiKeys ?? DEFAULT_HUB_KPI_KEYS}
       defaultChartKeys={defs?.defaultChartKeys ?? DEFAULT_HUB_CHART_KEYS}
       defaultFilterKeys={DEFAULT_HUB_FILTER_KEYS}
@@ -208,10 +242,19 @@ function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
 function App() {
   const { state: urlState, update: updateUrl } = useUrlState();
   const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
+  const [systemTab, setSystemTab] = useState(() => readSystemTab());
 
   useEffect(() => {
-    setHubActiveScreen(screen);
-  }, [screen]);
+    const syncSystemTab = () => setSystemTab(readSystemTab());
+    window.addEventListener("popstate", syncSystemTab);
+    window.addEventListener("system-display-change", syncSystemTab);
+    return () => {
+      window.removeEventListener("popstate", syncSystemTab);
+      window.removeEventListener("system-display-change", syncSystemTab);
+    };
+  }, []);
+
+  useHubActiveScreenSync(screen, systemTab);
   /** Eager keep-mounted — avoids blank main when URL is /system/* before visited effect runs. */
   const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set(ALL_APP_SCREENS));
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
@@ -432,7 +475,10 @@ function App() {
         ) : null}
         {visitedScreens.has("users") ? (
           <div className={screen !== "users" ? "hidden" : undefined} aria-hidden={screen !== "users"}>
-            <UserManagementScreen headerActions={headerActions} />
+            <UserManagementScreen
+              versionReleaseDate={versionRelease.shortLabel}
+              headerActions={headerActions}
+            />
           </div>
         ) : null}
         {visitedScreens.has("system") ? (

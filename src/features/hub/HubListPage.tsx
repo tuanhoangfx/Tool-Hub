@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle, Boxes, Radio } from "lucide-react";
-import { resolveHubKpiIcon } from "../../lib/badge-registry";
+import { AlertTriangle, Boxes, Radio, RotateCcw } from "lucide-react";
+import { buildHubKpiItems } from "./hub-kpi-items";
 import {
   HubResultCount,
   HubRowLimitSelect,
@@ -145,24 +145,7 @@ export function HubListPage({
   const visHeaderStats = visibleSet(prefs.headerStats, DEFAULT_HUB_HEADER_STAT_KEYS);
 
   const kpiItems = useMemo(() => {
-    const items: KpiTileData[] = [];
-    if (visKpi.has("total")) {
-      const m = resolveHubKpiIcon("total")!;
-      items.push({ label: "Tools (shown)", value: kpis.total, icon: m.icon, tone: "indigo" });
-    }
-    if (visKpi.has("ready")) {
-      const m = resolveHubKpiIcon("ready")!;
-      items.push({ label: "Ready", value: kpis.ready, icon: m.icon, tone: "emerald" });
-    }
-    if (visKpi.has("releases")) {
-      const m = resolveHubKpiIcon("releases")!;
-      items.push({ label: "With release", value: kpis.releases, icon: m.icon, tone: "amber" });
-    }
-    if (visKpi.has("drift")) {
-      const m = resolveHubKpiIcon("drift")!;
-      items.push({ label: "Drift alerts", value: kpis.drift, icon: m.icon, tone: "rose" });
-    }
-    return items;
+    return buildHubKpiItems(kpis).filter((item) => !item.prefKey || visKpi.has(item.prefKey));
   }, [kpis, visKpi]);
 
   const hubFiltersBase = useMemo(() => {
@@ -201,7 +184,28 @@ export function HubListPage({
   const { state: healthState, check: recheckLocal } = useLocalHealth(localUrls, localHealthPollMs);
   const quotaVersion = useSupabaseQuotaVersion();
   const [localHealthBusy, setLocalHealthBusy] = useState(false);
+  const [hubRecoverBusy, setHubRecoverBusy] = useState(false);
   const checkingLocal = localHealthBusy;
+
+  const hubLocalUrl = useMemo(
+    () => allTools.find((t) => t.code === "P0004")?.localUrl ?? "http://127.0.0.1:5176/",
+    [allTools],
+  );
+  const hubDevDown = healthState[hubLocalUrl] === "offline";
+
+  async function recoverHubDev() {
+    setHubRecoverBusy(true);
+    try {
+      const res = await fetch("/api/hub-dev/recover", { method: "POST" });
+      const body = (await res.json()) as { ok?: boolean; message?: string };
+      window.alert(body.message ?? (body.ok ? "Restarting Hub dev server…" : "Recover failed"));
+      window.setTimeout(() => window.location.reload(), 12_000);
+    } catch {
+      window.alert("Recover request failed. Run: corepack pnpm dev:recover in P0004-Tool-Hub");
+    } finally {
+      setHubRecoverBusy(false);
+    }
+  }
 
   const modalTool = modalOpen ? filtered.find((t) => t.id === selectedId) ?? allTools.find((t) => t.id === selectedId) ?? null : null;
 
@@ -212,12 +216,12 @@ export function HubListPage({
     visCharts.has("status_donut");
 
   const chartsBand = hasCharts ? (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-      {visCharts.has("health_bar") ? <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} /> : null}
-      {visCharts.has("category_bar") ? <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} /> : null}
+    <>
+      {visCharts.has("health_bar") ? <MiniBarChart title="By Health" items={charts.health} /> : null}
+      {visCharts.has("category_bar") ? <MiniBarChart title="By Category" items={charts.category} /> : null}
       {visCharts.has("deploy_donut") ? <MiniDonut title="Deploy distribution" items={charts.deploy} /> : null}
       {visCharts.has("status_donut") ? <MiniDonut title="Status distribution" items={charts.status} /> : null}
-    </div>
+    </>
   ) : undefined;
 
   const hubBusy = loadingAll || scanningWorkspace;
@@ -287,6 +291,22 @@ export function HubListPage({
               <Radio size={14} className={checkingLocal ? "animate-pulse" : ""} aria-hidden />
               Local health
             </button>
+            {import.meta.env.DEV ? (
+              <button
+                type="button"
+                disabled={hubRecoverBusy}
+                onClick={() => void recoverHubDev()}
+                title="Kill port 5176, clear Vite cache, restart Hub dev (fixes esbuild crash overlay)"
+                className={`inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  hubDevDown
+                    ? "border-amber-400/40 bg-amber-500/15 text-amber-100 hover:bg-amber-500/25"
+                    : "border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10 hover:text-[var(--text)]"
+                }`}
+              >
+                <RotateCcw size={14} className={hubRecoverBusy ? "animate-spin" : ""} aria-hidden />
+                Restart Hub dev
+              </button>
+            ) : null}
             <HubToolBulkActionBar
               hasSelection={selectedIds.size > 0}
               selectedCount={selectedIds.size}

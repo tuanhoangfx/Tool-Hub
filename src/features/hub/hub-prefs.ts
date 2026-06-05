@@ -1,10 +1,15 @@
 import type { PrefItem } from "../../components/sales-shell/DisplayPrefs";
+import { defaultKpiKeysFromDefs } from "../../lib/kpi-display-defaults";
 
 export const HUB_KPI_DEFS: PrefItem[] = [
-  { key: "total", label: "Tools (catalog)" },
+  { key: "total", label: "Tools (shown)" },
   { key: "ready", label: "Ready" },
   { key: "releases", label: "With release" },
   { key: "drift", label: "Drift alerts" },
+  { key: "local_only", label: "Local only" },
+  { key: "link_gaps", label: "Link gaps" },
+  { key: "draft", label: "Draft" },
+  { key: "hosted", label: "Hosted (VPS/Vercel)" },
 ];
 
 export const HUB_CHART_DEFS: PrefItem[] = [
@@ -33,6 +38,7 @@ export const HUB_FILTER_DEFS: PrefItem[] = [
 ];
 
 export const DEFAULT_HUB_HEADER_STAT_KEYS = new Set(["ready", "releases"]);
-export const DEFAULT_HUB_KPI_KEYS = new Set(["total", "ready", "releases"]);
+/** 7 of 8 Hub KPIs on by default (hides last: Hosted). */
+export const DEFAULT_HUB_KPI_KEYS = defaultKpiKeysFromDefs(HUB_KPI_DEFS);
 export const DEFAULT_HUB_CHART_KEYS = new Set(["health_bar", "category_bar", "deploy_donut", "status_donut"]);
 export const DEFAULT_HUB_FILTER_KEYS = new Set(HUB_FILTER_DEFS.map((f) => f.key));

@@ -13,11 +13,10 @@ import {
   type HubViewMode,
 } from "../../components/sales-shell";
 import { useSessionState } from "../../hooks";
-import { resolveHubKpiIcon } from "../../lib/badge-registry";
+import { buildHubKpiItems } from "../hub/hub-kpi-items";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool, ToolManifest, ToolRepository } from "../../types";
 import { hubCharts, hubKpis, matchesTimeRange } from "../hub/hub-aggregates";
-import { DEFAULT_HUB_CHART_KEYS } from "../hub/hub-prefs";
 import { ToolOverviewContent } from "../overview/ToolOverviewContent";
 import { SystemHubShell } from "./SystemHubShell";
 import { filterToolsForSystem } from "./system-hub-aggregates";
@@ -62,10 +61,6 @@ function hubToolFromManifest(manifest: ToolManifest): ResolvedTool {
       files: [],
     },
   };
-}
-
-function visibleChartKeys(set: Set<string> | null) {
-  return set ?? DEFAULT_HUB_CHART_KEYS;
 }
 
 export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
@@ -131,24 +126,21 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
     if (picked) setFocusedId(picked);
   }, []);
 
-  const kpiItems = useMemo(() => {
-    const items = [];
-    const total = resolveHubKpiIcon("total");
-    if (total) items.push({ prefKey: "total", label: "Tools (shown)", value: kpis.total, icon: total.icon, tone: "indigo" as const });
-    const ready = resolveHubKpiIcon("ready");
-    if (ready) items.push({ prefKey: "ready", label: "Ready", value: kpis.ready, icon: ready.icon, tone: "emerald" as const });
-    const releases = resolveHubKpiIcon("releases");
-    if (releases) items.push({ prefKey: "releases", label: "With release", value: kpis.releases, icon: releases.icon, tone: "amber" as const });
-    const drift = resolveHubKpiIcon("drift");
-    if (drift) items.push({ prefKey: "drift", label: "Drift alerts", value: kpis.drift, icon: drift.icon, tone: "rose" as const });
-    return items;
-  }, [kpis]);
+  const kpiItems = useMemo(() => buildHubKpiItems(kpis), [kpis]);
 
-  const visCharts = visibleChartKeys(prefs.charts);
+  const chartSlots = useMemo(
+    () => ({
+      health_bar: <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} />,
+      category_bar: <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} />,
+      deploy_donut: <MiniDonut title="Deploy distribution" items={charts.deploy} />,
+      status_donut: <MiniDonut title="Status distribution" items={charts.status} />,
+    }),
+    [charts],
+  );
 
   return (
     <SystemHubShell
-      stickyFilterTab="overview"
+      tabId="overview"
       placeholder="Search Overview by tool name, code, repo, tag..."
       filters={toolFilters}
       query={query}
@@ -163,14 +155,7 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
         </>
       }
       kpiItems={kpiItems}
-      charts={
-        <>
-          {visCharts.has("health_bar") ? <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} /> : null}
-          {visCharts.has("category_bar") ? <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} /> : null}
-          {visCharts.has("deploy_donut") ? <MiniDonut title="Deploy distribution" items={charts.deploy} /> : null}
-          {visCharts.has("status_donut") ? <MiniDonut title="Status distribution" items={charts.status} /> : null}
-        </>
-      }
+      chartSlots={chartSlots}
     >
       <ToolOverviewContent
         tool={activeTool}

@@ -1,17 +1,8 @@
 import { APP_VERSION } from "./app-meta";
 import changelogRaw from "../../CHANGELOG.md?raw";
+import { formatTabHeaderTimestamp } from "./hub-tab-header-meta";
 import { formatDate, normalizeVersion } from "./tooling";
 import type { ResolvedTool } from "../types";
-
-function formatHeaderDate(value?: string) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  const dd = String(date.getDate()).padStart(2, "0");
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const yy = String(date.getFullYear()).slice(-2);
-  return `${dd}/${mm}/${yy}`;
-}
 
 function parseChangelogTimestamp(version: string, changelog = changelogRaw): string | undefined {
   const escaped = version.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -40,14 +31,14 @@ export function resolveVersionReleaseMeta(hubTool: ResolvedTool | undefined): {
   const published = release?.published_at;
 
   if (published) {
-    return { label: formatDate(published), shortLabel: formatHeaderDate(published), live: true, publishedAt: published };
+    return { label: formatDate(published), shortLabel: formatTabHeaderTimestamp(published), live: true, publishedAt: published };
   }
 
   const latestPublished = hubTool?.remote?.manifest?.release?.latestPublished;
   if (normalizeVersion(latestPublished?.tag) === currentVersion && latestPublished?.publishedAt) {
     return {
       label: formatDate(latestPublished.publishedAt),
-      shortLabel: formatHeaderDate(latestPublished.publishedAt),
+      shortLabel: formatTabHeaderTimestamp(latestPublished.publishedAt),
       live: true,
       publishedAt: latestPublished.publishedAt,
     };
@@ -57,7 +48,7 @@ export function resolveVersionReleaseMeta(hubTool: ResolvedTool | undefined): {
   if (changelogTimestamp) {
     return {
       label: formatDate(changelogTimestamp),
-      shortLabel: formatHeaderDate(changelogTimestamp),
+      shortLabel: formatTabHeaderTimestamp(changelogTimestamp),
       live: false,
       publishedAt: changelogTimestamp,
     };

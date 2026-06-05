@@ -1,4 +1,5 @@
 import type { FilterIconMeta } from "../../lib/badge-registry";
+import { prepareChartItems } from "../../lib/chart-items";
 import { compactIconSize } from "../../lib/ui-scale";
 
 export type DonutItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };
@@ -13,21 +14,22 @@ export function MiniDonut({
   title,
   items,
   total: customTotal,
-  size = compactIconSize(110),
+  size = compactIconSize(64),
 }: {
   title: string;
   items: DonutItem[];
   total?: number;
   size?: number;
 }) {
+  const rows = prepareChartItems(items);
   const total = customTotal ?? items.reduce((s, i) => s + i.value, 0);
   const safe = Math.max(total, 1);
-  const stroke = 14;
+  const stroke = 10;
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
 
   type Slice = DonutItem & { color: string; dasharray: string; dashoffset: number };
-  const slices = items.reduce<{ acc: number; out: Slice[] }>(
+  const slices = rows.reduce<{ acc: number; out: Slice[] }>(
     (state, it, i) => {
       const len = (it.value / safe) * c;
       const dasharray = `${len} ${c - len}`;
@@ -44,10 +46,13 @@ export function MiniDonut({
   ).out;
 
   return (
-    <div className="rounded-2xl border border-white/5 bg-[var(--panel)] p-4">
-      <div className="mb-3 text-[10px] uppercase tracking-wider text-[var(--muted)]">{title}</div>
-      <div className="flex items-center gap-4">
-        <div className="relative shrink-0" style={{ width: size, height: size }}>
+    <div className="hub-chart-card rounded-2xl border border-white/5 bg-[var(--panel)] p-4">
+      <div className="mb-2 shrink-0 text-[10px] uppercase tracking-wider text-[var(--muted)]">{title}</div>
+      <div
+        className="hub-chart-card__body hub-chart-card__body--donut text-xs"
+        style={{ gridTemplateRows: `repeat(${Math.max(slices.length, 1)}, auto)` }}
+      >
+        <div className="hub-chart-card__donut relative shrink-0" style={{ width: size, height: size }}>
           <svg width={size} height={size} className="-rotate-90">
             <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#ffffff10" strokeWidth={stroke} />
             {slices.map((s, i) => (
@@ -68,27 +73,32 @@ export function MiniDonut({
           </svg>
           <div className="absolute inset-0 grid place-items-center text-center">
             <div>
-              <div className="text-base font-semibold tabular-nums leading-none">{compact(total)}</div>
+              <div className="text-sm font-semibold tabular-nums leading-none">{compact(total)}</div>
               <div className="text-[9px] text-[var(--muted)]">total</div>
             </div>
           </div>
         </div>
 
-        <ul className="min-w-0 flex-1 space-y-1 text-xs">
-          {slices.slice(0, 6).map((s, i) => (
-            <li key={i} className="flex items-center gap-2">
-              {s.iconMeta ? (
-                <s.iconMeta.icon size={compactIconSize(11)} className={`shrink-0 ${s.iconMeta.className}`} aria-hidden />
-              ) : (
-                <span className="h-2 w-2 shrink-0 rounded-full" style={{ background: s.color }} />
-              )}
-              <span className="truncate text-[var(--muted)]" title={s.label}>
-                {s.label}
-              </span>
-              <span className="ml-auto font-mono text-[10px] tabular-nums">{fmtInt(s.value)}</span>
-            </li>
-          ))}
-        </ul>
+        {slices.map((s, i) => (
+          <span key={`${s.label}-label`} className="hub-chart-legend-label" title={s.label} style={{ gridRow: i + 1 }}>
+            {s.iconMeta ? (
+              <s.iconMeta.icon size={compactIconSize(11)} className={`shrink-0 ${s.iconMeta.className}`} aria-hidden />
+            ) : (
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden />
+            )}
+            <span className="hub-chart-legend-label__text">{s.label}</span>
+          </span>
+        ))}
+
+        {slices.map((s, i) => (
+          <span
+            key={`${s.label}-value`}
+            className="hub-chart-donut-value font-mono text-[10px] tabular-nums"
+            style={{ gridRow: i + 1 }}
+          >
+            {fmtInt(s.value)}
+          </span>
+        ))}
       </div>
     </div>
   );

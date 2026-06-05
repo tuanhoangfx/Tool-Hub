@@ -1,5 +1,6 @@
 import type { PrefItem } from "../../components/sales-shell/DisplayPrefs";
 import { DEFAULT_HUB_CHART_KEYS, HUB_CHART_DEFS, HUB_KPI_DEFS } from "../hub/hub-prefs";
+import { defaultKpiKeysFromDefs } from "../../lib/kpi-display-defaults";
 import type { SystemTab } from "./components/SystemTabs";
 import { readSystemTab } from "./components/SystemTabs";
 
@@ -9,10 +10,14 @@ type TabDisplayStored = { kpi: string[] | null; charts: string[] | null };
 type StoredMap = Partial<Record<SystemTab, TabDisplayStored>>;
 
 export const SYSTEM_SCHEMA_KPI_DEFS: PrefItem[] = [
-  { key: "fields", label: "Fields" },
+  { key: "fields", label: "Fields (shown)" },
   { key: "groups", label: "Groups" },
   { key: "input", label: "Input fields" },
   { key: "options", label: "With options" },
+  { key: "pk", label: "Primary keys" },
+  { key: "auto", label: "Auto fields" },
+  { key: "derive", label: "Derived / compute" },
+  { key: "readonly", label: "Read-only" },
 ];
 
 export const SYSTEM_SCHEMA_CHART_DEFS: PrefItem[] = [
@@ -20,24 +25,31 @@ export const SYSTEM_SCHEMA_CHART_DEFS: PrefItem[] = [
   { key: "category_bar", label: "By group (bar)" },
 ];
 
-export const DEFAULT_SYSTEM_SCHEMA_KPI_KEYS = new Set(SYSTEM_SCHEMA_KPI_DEFS.map((d) => d.key));
+export const DEFAULT_SYSTEM_SCHEMA_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_SCHEMA_KPI_DEFS);
 export const DEFAULT_SYSTEM_SCHEMA_CHART_KEYS = new Set(["health_bar", "category_bar"]);
 
 export const SYSTEM_TEMPLATE_KPI_DEFS: PrefItem[] = [
   { key: "total", label: "Templates" },
   { key: "locked", label: "Locked" },
   { key: "preview", label: "In preview" },
+  { key: "draft", label: "Draft" },
+  { key: "published", label: "Published" },
+  { key: "variants", label: "Variants" },
+  { key: "features", label: "Features" },
+  { key: "archived", label: "Archived" },
 ];
 
 export const SYSTEM_TEMPLATE_CHART_DEFS: PrefItem[] = [
   { key: "status_donut", label: "Template status (donut)" },
 ];
 
-export const DEFAULT_SYSTEM_TEMPLATE_KPI_KEYS = new Set(["total", "locked", "preview"]);
+export const DEFAULT_SYSTEM_TEMPLATE_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_TEMPLATE_KPI_DEFS);
 export const DEFAULT_SYSTEM_TEMPLATE_CHART_KEYS = new Set(["status_donut"]);
 
 export const SYSTEM_SUPABASE_QUOTA_KPI_DEFS: PrefItem[] = [
   { key: "total", label: "Projects (shown)" },
+  { key: "metrics", label: "Live metrics" },
+  { key: "catalog", label: "Catalog only" },
   { key: "orgs", label: "Organizations" },
   { key: "errors", label: "Errors" },
   { key: "restricted", label: "Restricted" },
@@ -50,20 +62,18 @@ export const SYSTEM_SUPABASE_QUOTA_CHART_DEFS: PrefItem[] = [
   { key: "health_bar", label: "By plan (bar)" },
 ];
 
-export const DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS = new Set([
-  "total",
-  "orgs",
-  "errors",
-  "restricted",
-  "api_total",
-]);
+export const DEFAULT_SYSTEM_SUPABASE_QUOTA_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_SUPABASE_QUOTA_KPI_DEFS);
 export const DEFAULT_SYSTEM_SUPABASE_QUOTA_CHART_KEYS = new Set(["category_bar", "health_bar"]);
 
 export const SYSTEM_AGENT_KPI_DEFS: PrefItem[] = [
   { key: "total", label: "Items (shown)" },
   { key: "rules", label: "Rules" },
   { key: "skills", label: "Skills" },
+  { key: "patterns", label: "Patterns" },
+  { key: "agents", label: "Subagents" },
+  { key: "commands", label: "Commands" },
   { key: "always", label: "Always on" },
+  { key: "requestable", label: "Agent requestable" },
 ];
 
 export const SYSTEM_AGENT_CHART_DEFS: PrefItem[] = [
@@ -73,7 +83,7 @@ export const SYSTEM_AGENT_CHART_DEFS: PrefItem[] = [
   { key: "status_donut", label: "Size (lines) (donut)" },
 ];
 
-export const DEFAULT_SYSTEM_AGENT_KPI_KEYS = new Set(["total", "rules", "skills", "always"]);
+export const DEFAULT_SYSTEM_AGENT_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_AGENT_KPI_DEFS);
 export const DEFAULT_SYSTEM_AGENT_CHART_KEYS = new Set([
   "health_bar",
   "category_bar",
@@ -81,18 +91,28 @@ export const DEFAULT_SYSTEM_AGENT_CHART_KEYS = new Set([
   "status_donut",
 ]);
 
-/** Overview hides all KPI and chart cards by default. */
+/** Overview: all KPI/chart defs available in Display prefs, hidden by default. */
 export const DEFAULT_SYSTEM_OVERVIEW_KPI_KEYS = new Set<string>();
 export const DEFAULT_SYSTEM_OVERVIEW_CHART_KEYS = new Set<string>();
 
 export const SYSTEM_SERVER_KPI_DEFS: PrefItem[] = [
-  { key: "host", label: "VPS host" },
-  { key: "ready", label: "Ready" },
-  { key: "releases", label: "With release" },
-  { key: "drift", label: "Drift alerts" },
+  { key: "total", label: "Deployments (shown)" },
+  { key: "metrics", label: "Live URL" },
+  { key: "catalog", label: "No public URL" },
+  { key: "orgs", label: "Hosts" },
+  { key: "errors", label: "Errors" },
+  { key: "restricted", label: "Drift alerts" },
+  { key: "api_total", label: "Tools linked" },
+  { key: "api_rest", label: "Ready" },
 ];
 
-export const DEFAULT_SYSTEM_SERVER_KPI_KEYS = new Set(SYSTEM_SERVER_KPI_DEFS.map((d) => d.key));
+export const SYSTEM_SERVER_CHART_DEFS: PrefItem[] = [
+  { key: "category_bar", label: "By provider (bar)" },
+  { key: "health_bar", label: "By health (bar)" },
+];
+
+export const DEFAULT_SYSTEM_SERVER_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_SERVER_KPI_DEFS);
+export const DEFAULT_SYSTEM_SERVER_CHART_KEYS = new Set(["category_bar", "health_bar"]);
 
 function loadStored(): StoredMap {
   if (typeof window === "undefined") return {};
@@ -127,9 +147,9 @@ export function systemDisplayDefs(stab: SystemTab = readSystemTab()) {
     case "server":
       return {
         kpis: SYSTEM_SERVER_KPI_DEFS,
-        charts: HUB_CHART_DEFS,
+        charts: SYSTEM_SERVER_CHART_DEFS,
         defaultKpiKeys: DEFAULT_SYSTEM_SERVER_KPI_KEYS,
-        defaultChartKeys: DEFAULT_HUB_CHART_KEYS,
+        defaultChartKeys: DEFAULT_SYSTEM_SERVER_CHART_KEYS,
       };
     case "agent":
       return {

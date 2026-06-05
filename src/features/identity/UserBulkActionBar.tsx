@@ -1,14 +1,12 @@
-import { Pencil, Plus, Package, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 
 type UserBulkActionBarProps = {
   hasSelection: boolean;
   selectedCount: number;
-  loading: boolean;
+  roleLoading: boolean;
   isAdmin: boolean;
   isManager: boolean;
-  roleLoading: boolean;
   onAdd: () => void;
-  onSyncTools: () => void;
   onEdit: () => void;
   onDelete: () => void;
 };
@@ -16,15 +14,14 @@ type UserBulkActionBarProps = {
 const btnBase =
   "inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40";
 
+/** Row-2 actions for user records only (Add / Edit / Delete). Catalog sync lives in filter toolbar. */
 export function UserBulkActionBar({
   hasSelection,
   selectedCount,
-  loading,
+  roleLoading,
   isAdmin,
   isManager,
-  roleLoading,
   onAdd,
-  onSyncTools,
   onEdit,
   onDelete,
 }: UserBulkActionBarProps) {
@@ -32,7 +29,6 @@ export function UserBulkActionBar({
   const editEnabled = canEdit && hasSelection && !roleLoading;
   const deleteEnabled = isAdmin && hasSelection && !roleLoading;
   const addEnabled = isAdmin && !roleLoading;
-  const syncEnabled = isAdmin && !loading && !roleLoading;
 
   return (
     <>
@@ -90,16 +86,6 @@ export function UserBulkActionBar({
       >
         <Trash2 size={14} aria-hidden />
         Delete
-      </button>
-      <button
-        type="button"
-        disabled={!syncEnabled}
-        onClick={onSyncTools}
-        title={roleLoading ? "Loading your role…" : isAdmin ? "Sync P00xx tools and E00xx extensions" : "Admin only"}
-        className={`${btnBase} border border-sky-500/30 bg-sky-500/12 text-sky-100 hover:bg-sky-500/20`}
-      >
-        <Package size={14} aria-hidden />
-        Sync tools
       </button>
     </>
   );

@@ -1,10 +1,12 @@
-export type HubShortcutId = "search" | "new" | "edit" | "dismiss";
+export type HubShortcutId = "search" | "clear" | "new" | "edit" | "settings" | "dismiss";
 
 export const HUB_SHORTCUT_LEGEND: { id: HubShortcutId; keys: string; label: string }[] = [
   { id: "search", keys: "F", label: "Search" },
+  { id: "clear", keys: "Ctrl+Q", label: "Clear search" },
   { id: "new", keys: "N", label: "Add / create" },
   { id: "edit", keys: "E", label: "Edit selection" },
-  { id: "dismiss", keys: "Esc", label: "Close modal" },
+  { id: "settings", keys: "S", label: "Settings" },
+  { id: "dismiss", keys: "Esc", label: "Blur search · close modal" },
 ];
 
 export type HubPageShortcutHandlers = {
@@ -14,12 +16,19 @@ export type HubPageShortcutHandlers = {
   canEdit?: () => boolean;
 };
 
+type SearchClearEntry = {
+  clear: () => void;
+  getInput?: () => HTMLInputElement | null;
+};
+
 let activeScreenId = "default";
 const searchFocusByScreen = new Map<string, () => void>();
+const searchClearByScreen = new Map<string, SearchClearEntry>();
 const handlersByScreen = new Map<string, HubPageShortcutHandlers>();
+let settingsOpenFn: (() => void) | null = null;
 let listenerAttached = false;
 
-/** Call from app shell when sidebar tab changes (library | users | system). */
+/** Call from app shell when sidebar tab changes (library | users | system-*). */
 export function setHubActiveScreen(screenId: string) {
   activeScreenId = screenId || "default";
 }
@@ -45,6 +54,27 @@ export function registerHubSearchFocus(screenId: string, fn: () => void): () => 
   };
 }
 
+export function registerHubSearchClear(
+  screenId: string,
+  clear: () => void,
+  getInput?: () => HTMLInputElement | null,
+): () => void {
+  searchClearByScreen.set(screenId, { clear, getInput });
+  ensureHubKeyboardListener();
+  return () => {
+    searchClearByScreen.delete(screenId);
+  };
+}
+
+/** Tab header Settings panel (scope !== global). */
+export function registerHubSettingsOpen(open: () => void): () => void {
+  settingsOpenFn = open;
+  ensureHubKeyboardListener();
+  return () => {
+    if (settingsOpenFn === open) settingsOpenFn = null;
+  };
+}
+
 export function registerHubPageShortcuts(screenId: string, handlers: HubPageShortcutHandlers): () => void {
   handlersByScreen.set(screenId, handlers);
   ensureHubKeyboardListener();
@@ -66,8 +96,21 @@ function activeHandlers(): HubPageShortcutHandlers {
   return handlersByScreen.get(activeScreenId) ?? {};
 }
 
+function isActiveSearchInput(target: EventTarget | null, screenId: string): boolean {
+  const input = searchClearByScreen.get(screenId)?.getInput?.();
+  return Boolean(input && target === input);
+}
+
 function onGlobalKeyDown(e: KeyboardEvent) {
-  if (e.key === "Escape") return;
+  if (e.key === "Escape") {
+    const entry = searchClearByScreen.get(activeScreenId);
+    const input = entry?.getInput?.();
+    if (input && document.activeElement === input) {
+      e.preventDefault();
+      input.blur();
+    }
+    return;
+  }
 
   const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   const handlers = activeHandlers();
@@ -78,6 +121,25 @@ function onGlobalKeyDown(e: KeyboardEvent) {
     if (focus) {
       e.preventDefault();
       focus();
+    }
+    return;
+  }
+
+  if (key === "q" && (e.ctrlKey || e.metaKey) && !e.altKey) {
+    const entry = searchClearByScreen.get(activeScreenId);
+    if (!entry) return;
+    const inSearch = isActiveSearchInput(e.target, activeScreenId);
+    if (isHubTypingTarget(e.target) && !inSearch) return;
+    e.preventDefault();
+    entry.clear();
+    return;
+  }
+
+  if (key === "s" && !hasModifier(e)) {
+    if (isHubTypingTarget(e.target)) return;
+    if (settingsOpenFn) {
+      e.preventDefault();
+      settingsOpenFn();
     }
     return;
   }

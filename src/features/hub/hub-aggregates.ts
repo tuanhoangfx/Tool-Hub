@@ -24,13 +24,17 @@ function breakdown(tools: ResolvedTool[], pick: (t: ResolvedTool) => string): Ba
     .sort((a, b) => b.value - a.value);
 }
 
+const HOSTED_TARGETS = new Set(["vps", "vercel", "cloudflare"]);
+
 export function hubKpis(tools: ResolvedTool[]) {
   const ready = tools.filter((t) => t.healthLabel === "Ready").length;
   const releases = tools.filter((t) => Boolean(t.remote?.latestRelease)).length;
   const drift = tools.filter((t) => t.driftAlerts.length > 0).length;
   const localOnly = tools.filter((t) => t.remoteEnabled === false).length;
   const linkGaps = tools.filter((t) => hasManifestLinkGaps(t)).length;
-  return { total: tools.length, ready, releases, drift, localOnly, linkGaps };
+  const draft = tools.filter((t) => t.status === "Draft").length;
+  const hosted = tools.filter((t) => t.deployTarget && HOSTED_TARGETS.has(t.deployTarget)).length;
+  return { total: tools.length, ready, releases, drift, localOnly, linkGaps, draft, hosted };
 }
 
 export function hubCharts(tools: ResolvedTool[]) {

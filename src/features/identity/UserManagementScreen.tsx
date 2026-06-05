@@ -21,11 +21,20 @@ import {
   type FilterValues,
   type HubViewMode,
   type KpiTileData,
-  type TabHeaderStatItem,
 } from "../../components/sales-shell";
-import { AppTabHeader, HubDirectoryScreen, useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import { HubDirectoryScreen, useHubPageShortcuts } from "@tool-workspace/hub-ui";
 import { UserListChromeHeader } from "./UserListChromeHeader";
-import { APP_VERSION } from "../../lib/app-meta";
+import {
+  buildUserHeaderStats,
+  DEFAULT_USER_HEADER_STAT_KEYS,
+} from "./user-header-metrics";
+import { readHubListPrefs } from "../../lib/url-prefs";
+import { DEFAULT_USER_KPI_KEYS } from "./user-display-prefs";
+import { buildUserKpiItems } from "./user-kpi-items";
+
+function visibleKpiSet(set: Set<string> | null, defaults: Set<string>) {
+  return set ?? defaults;
+}
 import { HubAuthGate } from "./HubAuthGate";
 import { HubRoleBadge } from "./HubRoleBadge";
 import { HubUserAvatar } from "./HubUserAvatar";
@@ -206,10 +215,11 @@ function UserCards({
 }
 
 type UserManagementScreenProps = {
+  versionReleaseDate: string;
   headerActions?: ReactNode;
 };
 
-export function UserManagementScreen({ headerActions }: UserManagementScreenProps) {
+export function UserManagementScreen({ versionReleaseDate, headerActions }: UserManagementScreenProps) {
   const { session, loading: authLoading, isSupabaseConfigured } = useHubAuth();
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
@@ -226,6 +236,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   const [visibleColumns, setVisibleColumns] = useState<Set<UserTableColumnKey>>(() => readUserTableColumns());
   const [sortKey, setSortKey] = useState<UserTableSortKey>("lastActiveAt");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [hubPrefs, setHubPrefs] = useState(readHubListPrefs);
   const [myRole, setMyRole] = useState<UserManagementRow["role"] | null>(null);
   const [roleMessage, setRoleMessage] = useState<string | null>(null);
   const [pendingClearUsers, setPendingClearUsers] = useState<UserManagementRow[] | null>(null);
@@ -262,14 +273,26 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
         ]);
         if (profileRole) setMyRole(profileRole);
         const effectiveRole = profileRole ?? resolveSessionActorRole(null, session.user.id, result.rows);
-        const mergedTools = mergeHubToolCatalog(toolsResult.tools, catalog);
+        let mergedTools = mergeHubToolCatalog(toolsResult.tools, catalog);
+        const warnParts = [result.warning, toolsResult.error].filter(Boolean);
+        let pending = countRegistryOnlyTools(mergedTools);
+        if (pending > 0 && effectiveRole === "admin" && catalog.length > 0) {
+          const sync = await syncHubToolsCatalog(catalog);
+          if (sync.error) {
+            warnParts.push(sync.error);
+          } else {
+            const toolsAfter = await fetchHubTools();
+            mergedTools = mergeHubToolCatalog(toolsAfter.tools, catalog);
+            pending = countRegistryOnlyTools(mergedTools);
+          }
+        }
         setRows(result.rows);
         setHubTools(mergedTools);
         writeUserManagementClientCache(result.rows, mergedTools);
-        const pending = countRegistryOnlyTools(mergedTools);
-        const warnParts = [result.warning, toolsResult.error].filter(Boolean);
         if (pending > 0 && effectiveRole === "admin") {
-          warnParts.push(`${pending} tool(s)/extension(s) need Sync tools before grants can be saved.`);
+          warnParts.push(
+            `${pending} tool(s)/extension(s) could not be registered in Hub DB — grant save may fail until catalog sync succeeds.`,
+          );
         }
         setDataWarning(warnParts.join(" · ") || null);
       } catch (error) {
@@ -354,20 +377,6 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     );
     setRoleMessage("User updated.");
   }, []);
-
-  const handleSyncToolsClick = useCallback(async () => {
-    if (!canManageTools) return;
-    setLoading(true);
-    setRoleMessage(null);
-    const sync = await syncWorkspaceTools();
-    await refresh();
-    setLoading(false);
-    if (sync.error) {
-      setRoleMessage(sync.error);
-      return;
-    }
-    setRoleMessage(`Synced ${sync.count} tools and extensions from workspace.`);
-  }, [canManageTools, refresh, syncWorkspaceTools]);
 
   const handleAddUserOpen = useCallback(() => {
     setRoleMessage(null);
@@ -517,19 +526,19 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     const total = filteredRows.length;
     const admins = filteredRows.filter((row) => row.role === "admin").length;
     const managers = filteredRows.filter((row) => row.role === "manager").length;
+    const members = filteredRows.filter((row) => row.role === "user").length;
     const active = filteredRows.filter((row) => row.status === "online" || row.status === "active").length;
+    const idle = filteredRows.filter((row) => row.status === "idle" || row.status === "offline").length;
     const toolGrants = filteredRows.reduce((sum, row) => sum + row.toolCount, 0);
-    return { total, admins, managers, active, toolGrants };
+    const withTools = filteredRows.filter((row) => row.toolCount > 0).length;
+    return { total, admins, managers, members, active, idle, toolGrants, withTools };
   }, [filteredRows]);
 
-  const kpis = useMemo<KpiTileData[]>(
-    () => [
-      { label: "Users (shown)", value: stats.total, icon: Users, tone: "indigo" },
-      { label: "Active now", value: stats.active, icon: Activity, tone: "emerald" },
-      { label: "Admins", value: stats.admins, icon: Crown, tone: "amber" },
-      { label: "Tool grants", value: stats.toolGrants, icon: Package, tone: "purple" },
-    ],
-    [stats],
+  const visKpi = useMemo(() => visibleKpiSet(hubPrefs.kpi, DEFAULT_USER_KPI_KEYS), [hubPrefs.kpi]);
+
+  const kpis = useMemo(
+    () => buildUserKpiItems(stats).filter((item) => !item.prefKey || visKpi.has(item.prefKey)),
+    [stats, visKpi],
   );
 
   const charts = useMemo<{
@@ -559,14 +568,26 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
     return { roleItems, statusItems, toolItems, activityItems };
   }, [filteredRows]);
 
-  const centerStats = useMemo<TabHeaderStatItem[]>(
-    () => [
-      { key: "active", icon: CheckCircle2, label: "active", value: stats.active, toneClass: "text-emerald-300" },
-      { key: "admins", icon: ShieldCheck, label: "admins", value: stats.admins, toneClass: "text-indigo-300" },
-      { key: "managers", icon: UserRound, label: "managers", value: stats.managers, toneClass: "text-purple-300" },
-      { key: "tools", icon: Package, label: "grants", value: stats.toolGrants, toneClass: "text-amber-300" },
-    ],
-    [stats],
+  useEffect(() => {
+    const sync = () => setHubPrefs(readHubListPrefs());
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
+
+  const visHeaderStats = useMemo(
+    () => hubPrefs.headerStats ?? DEFAULT_USER_HEADER_STAT_KEYS,
+    [hubPrefs.headerStats],
+  );
+
+  const centerStats = useMemo(
+    () =>
+      buildUserHeaderStats(visHeaderStats, {
+        active: stats.active,
+        admins: stats.admins,
+        managers: stats.managers,
+        toolGrants: stats.toolGrants,
+      }),
+    [visHeaderStats, stats],
   );
 
   function handleSort(next: UserTableSortKey) {
@@ -589,7 +610,13 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
   if (authLoading && rows.length === 0 && !readUserManagementStaleCache()) {
     return (
       <HubDirectoryScreen
-        header={<UserListChromeHeader centerStats={[]} actions={headerActions} />}
+        header={
+          <UserListChromeHeader
+            versionReleaseDate={versionReleaseDate}
+            centerStats={[]}
+            actions={headerActions}
+          />
+        }
         sectionRuleLabel="Users"
       >
         <div className="relative min-h-[320px]">
@@ -605,37 +632,40 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
       /* paint cached users while session resolves */
     } else {
       return (
-        <div className="anim-fade space-y-4">
-          <AppTabHeader
-            ariaLabel="Users header"
-            titleIcon={Users}
-            titleIconClass="text-emerald-300"
-            title="Users"
-            metaItems={[{ icon: Users, title: "Build", value: `v${APP_VERSION}` }]}
-            centerStats={[]}
-            actions={headerActions}
-            pinSticky={false}
-            dividerBelow
-          />
+        <HubDirectoryScreen
+          header={
+            <UserListChromeHeader
+              versionReleaseDate={versionReleaseDate}
+              centerStats={[]}
+              actions={headerActions}
+            />
+          }
+        >
           <HubAuthGate variant="users" />
-        </div>
+        </HubDirectoryScreen>
       );
     }
   }
 
   const chartsBand = (
-    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+    <>
       <MiniBarChart title="By Role" items={charts.roleItems} />
       <MiniBarChart title="By Activity" items={charts.statusItems} />
       <MiniBarChart title="Tool access" items={charts.toolItems} />
       <MiniDonut title="Activity Distribution" items={charts.activityItems} />
-    </div>
+    </>
   );
 
   return (
     <>
       <HubDirectoryScreen
-        header={<UserListChromeHeader centerStats={centerStats} actions={headerActions} />}
+        header={
+          <UserListChromeHeader
+            versionReleaseDate={versionReleaseDate}
+            centerStats={centerStats}
+            actions={headerActions}
+          />
+        }
         filters={userFilters}
         query={query}
         onQueryChange={setQuery}
@@ -663,12 +693,10 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
             <UserBulkActionBar
               hasSelection={hasSelection}
               selectedCount={selectedIds.size}
-              loading={loading}
               isAdmin={isAdmin}
               isManager={isManager}
               roleLoading={roleLoading}
               onAdd={handleAddUserOpen}
-              onSyncTools={() => void handleSyncToolsClick()}
               onEdit={handleBulkEdit}
               onDelete={() => void handleBulkDelete()}
             />
@@ -697,7 +725,7 @@ export function UserManagementScreen({ headerActions }: UserManagementScreenProp
             </div>
           ) : null}
 
-          <div className="relative mt-3 min-h-[200px]">
+          <div className="relative min-h-[200px]">
             {rows.length === 0 && (loading || refreshing) ? (
               <p className="py-10 text-center text-sm text-[var(--muted)]">Loading users in background…</p>
             ) : null}

@@ -41,6 +41,7 @@ import {
   Terminal,
   Wrench,
   Zap,
+  Ellipsis,
   Crown,
   UserRound,
   Users,
@@ -79,9 +80,19 @@ function pick(map: Record<string, FilterIconMeta>, key: string): FilterIconMeta 
 }
 
 /** Hub — health / status filters & cards */
+export const CHART_OTHERS_LABEL = "Others";
+
+/** Rolled-up chart bucket + KPI/chart parity for Draft. */
+export const CHART_LEGEND_EXTRA: Record<string, FilterIconMeta> = {
+  [CHART_OTHERS_LABEL]: { icon: Ellipsis, className: "text-slate-400" },
+  Other: { icon: Ellipsis, className: "text-slate-400" },
+  Draft: { icon: Pencil, className: "text-amber-300" },
+};
+
 export const STATUS_HEALTH: Record<string, FilterIconMeta> = {
   Ready: { icon: CheckCircle2, className: "text-emerald-400" },
   "Needs review": { icon: Flag, className: "text-purple-400" },
+  Draft: CHART_LEGEND_EXTRA.Draft,
   Active: { icon: Zap, className: "text-sky-400" },
   Beta: { icon: Beaker, className: "text-amber-400" },
   Experimental: { icon: FlaskConical, className: "text-amber-400" },
@@ -92,6 +103,7 @@ export const STATUS_HEALTH: Record<string, FilterIconMeta> = {
 export const CATEGORY: Record<string, FilterIconMeta> = {
   Web: { icon: Monitor, className: "text-indigo-400" },
   Desktop: { icon: Monitor, className: "text-violet-400" },
+  Local: { icon: HardDrive, className: "text-purple-400" },
   Bot: { icon: Bot, className: "text-cyan-400" },
   Extension: { icon: Puzzle, className: "text-fuchsia-300" },
   Infrastructure: { icon: Server, className: "text-slate-300" },
@@ -236,6 +248,7 @@ export const AGENT_KIND_META: Record<string, FilterIconMeta> = {
   skill: { icon: Sparkles, className: "text-purple-300" },
   command: { icon: Terminal, className: "text-cyan-300" },
   doc: { icon: BookOpen, className: "text-amber-300" },
+  agent: { icon: Bot, className: "text-indigo-300" },
 };
 
 export const AGENT_KIND_LABEL: Record<string, string> = {
@@ -244,6 +257,7 @@ export const AGENT_KIND_LABEL: Record<string, string> = {
   skill: "Skill",
   command: "Command",
   doc: "Doc",
+  agent: "Subagent",
 };
 
 export const AGENT_KIND_TONE: Record<string, string> = {
@@ -252,6 +266,7 @@ export const AGENT_KIND_TONE: Record<string, string> = {
   skill: "border-purple-500/40 bg-purple-500/[.04] text-purple-300",
   command: "border-cyan-500/40 bg-cyan-500/[.04] text-cyan-300",
   doc: "border-amber-500/40 bg-amber-500/[.04] text-amber-300",
+  agent: "border-indigo-500/40 bg-indigo-500/[.04] text-indigo-300",
 };
 
 export const AGENT_SCOPE_META: Record<string, FilterIconMeta> = {
@@ -312,6 +327,10 @@ const HUB_KPI: Record<string, FilterIconMeta> = {
   ready: { icon: CheckCircle2, className: "text-emerald-300" },
   releases: { icon: Rocket, className: "text-amber-300" },
   drift: { icon: AlertTriangle, className: "text-rose-300" },
+  local_only: { icon: Monitor, className: "text-slate-300" },
+  link_gaps: { icon: Link2, className: "text-rose-300" },
+  draft: { icon: Pencil, className: "text-amber-300" },
+  hosted: { icon: Server, className: "text-sky-300" },
 };
 
 const LINK_GROUP_LABEL: Record<LinkGroup, string> = {
@@ -447,7 +466,32 @@ export function resolveHubKpiIcon(key: string): FilterIconMeta | null {
 }
 
 export function resolveChartLegendIcon(label: string): FilterIconMeta | null {
-  return pick(STATUS_HEALTH, label) ?? pick(CATEGORY, label) ?? pick(DEPLOY, label) ?? null;
+  const key = label.trim();
+  if (!key || key === "—") return null;
+  if (key === CHART_OTHERS_LABEL || key === "Other") return CHART_LEGEND_EXTRA[CHART_OTHERS_LABEL];
+
+  for (const [kind, display] of Object.entries(AGENT_KIND_LABEL)) {
+    if (display === key) return AGENT_KIND_META[kind] ?? null;
+  }
+  const scopeHit = pick(AGENT_SCOPE_META, key.toLowerCase());
+  if (scopeHit) return scopeHit;
+
+  if (key === "Always apply") return { icon: BookOpen, className: "text-amber-300" };
+  if (key === "Agent requestable") return { icon: Sparkles, className: "text-purple-300" };
+  if (key.startsWith("Manual")) return { icon: Wrench, className: "text-slate-400" };
+
+  for (const mode of Object.keys(SCHEMA_MODE) as Mode[]) {
+    if (MODE_LABEL_SHORT[mode] === key || mode === key) return SCHEMA_MODE[mode];
+  }
+
+  return (
+    pick(CHART_LEGEND_EXTRA, key) ??
+    pick(STATUS_HEALTH, key) ??
+    pick(CATEGORY, key) ??
+    pick(DEPLOY, key) ??
+    pick(SCHEMA_GROUP, key) ??
+    null
+  );
 }
 
 /** Hub deploy chip spec — reused for link group `vercel` and deployTarget fields. */

@@ -8,7 +8,7 @@ describe("sanitizeQueryForScreen", () => {
     expect(users.get("hpin")).toBe("0");
     expect(users.get("spin")).toBe("0");
     expect(users.get("navicon")).toBe("0");
-    expect(users.has("kpi")).toBe(false);
+    expect(users.get("kpi")).toBe("total");
     expect(users.has("range")).toBe(false);
 
     const system = sanitizeQueryForScreen("system", search);

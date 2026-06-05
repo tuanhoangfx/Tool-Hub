@@ -36,25 +36,6 @@ import { readSupabaseQuotaStaleCache, writeSupabaseQuotaClientCache } from "./su
 import { mergeQuotaPayloadPatches } from "./supabase-quota-merge";
 import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 
-/** Accent divider before data section — mirror HubListPage. */
-function HubLikeDataSectionRule({ label }: { label: string }) {
-  return (
-    <div role="separator" className="relative py-5" aria-label={label}>
-      <div
-        className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-indigo-400/45 to-transparent shadow-[0_0_10px_rgba(99,102,241,0.2)]"
-        aria-hidden
-      />
-      <div className="relative flex justify-center" aria-hidden>
-        <span className="inline-flex items-center gap-2 rounded-full border border-indigo-500/25 bg-[var(--bg)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-indigo-300/90 shadow-[0_0_16px_rgba(99,102,241,0.12)]">
-          <span className="h-1 w-1 shrink-0 rounded-full bg-indigo-400" />
-          {label}
-          <span className="h-1 w-1 shrink-0 rounded-full bg-indigo-400" />
-        </span>
-      </div>
-    </div>
-  );
-}
-
 function toneForPlan(plan: string | null | undefined) {
   const p = (plan ?? "").toLowerCase();
   if (!p) return "neutral";
@@ -595,7 +576,7 @@ export function SystemSupabaseQuotaPanel() {
           type="button"
           onClick={() => void fetchData(true)}
           disabled={refreshing}
-          className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-[var(--panel-2)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-white/5 disabled:opacity-50"
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-[var(--panel-2)] px-3 text-xs text-[var(--text)] hover:bg-white/5 disabled:opacity-50"
           title="Force refresh (bypass server cache)"
         >
           <RefreshCcw size={compactIconSize(12)} className={refreshing ? "anim-spin" : ""} />
@@ -607,7 +588,7 @@ export function SystemSupabaseQuotaPanel() {
     );
   }, [viewMode, setViewMode, fetchData, refreshing, payload, projectsFiltered.length, projectsRaw.length, cacheHint]);
 
-  const chartsNode = useMemo(() => {
+  const chartSlots = useMemo(() => {
     const regionItems = charts.byRegion.slice(0, 8).map((i: { label: string; value: number }, idx: number) => ({
       label: i.label,
       value: i.value,
@@ -618,12 +599,10 @@ export function SystemSupabaseQuotaPanel() {
       value: i.value,
       color: ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"][idx % 7],
     }));
-    return (
-      <>
-        <MiniBarChart title="By region" items={regionItems} />
-        <MiniBarChart title="By plan" items={planItems} />
-      </>
-    );
+    return {
+      category_bar: <MiniBarChart title="By region" items={regionItems} />,
+      health_bar: <MiniBarChart title="By plan" items={planItems} />,
+    };
   }, [charts.byPlan, charts.byRegion]);
 
   const body = useMemo(() => {
@@ -674,9 +653,7 @@ export function SystemSupabaseQuotaPanel() {
     }
 
     return (
-      <div className={`relative space-y-3 pb-8 transition-opacity ${refreshing ? "opacity-85" : ""}`}>
-        <HubLikeDataSectionRule label="Projects" />
-
+      <div className={`relative space-y-3 transition-opacity ${refreshing ? "opacity-85" : ""}`}>
         {viewMode === "card" ? (
           projectsFiltered.length === 0 ? (
             <EmptyState />
@@ -703,19 +680,20 @@ export function SystemSupabaseQuotaPanel() {
   return (
     <>
       <SystemHubShell
-      stickyFilterTab="supabase-quota"
-      placeholder="Search Supabase by org, owner, tool, project, ref, plan, region..."
-      filters={filters}
-      query={query}
-      onQueryChange={setQuery}
-      values={filterValues}
-      onValuesChange={setFilterValues}
-      toolbar={toolbar}
-      kpiItems={kpiItems}
-      charts={chartsNode}
-    >
-      {body}
-    </SystemHubShell>
+        tabId="supabase-quota"
+        sectionRuleLabel="Projects"
+        placeholder="Search Supabase by org, owner, tool, project, ref, plan, region..."
+        filters={filters}
+        query={query}
+        onQueryChange={setQuery}
+        values={filterValues}
+        onValuesChange={setFilterValues}
+        toolbar={toolbar}
+        kpiItems={kpiItems}
+        chartSlots={chartSlots}
+      >
+        {body}
+      </SystemHubShell>
       <SupabaseProjectDetailModal
         project={modalProject}
         org={modalOrg}

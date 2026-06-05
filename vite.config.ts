@@ -59,6 +59,9 @@ export default defineConfig(({ mode }) => {
           server.middlewares.use(createQuotaMiddleware({ cwd: process.cwd() }));
           server.middlewares.use(require("./scripts/lib/local-health-proxy.cjs").createLocalHealthMiddleware());
           server.middlewares.use(
+            require("./scripts/lib/hub-dev-recover-proxy.cjs").createHubDevRecoverMiddleware(),
+          );
+          server.middlewares.use(
             require("./scripts/lib/hub-create-users-proxy.cjs").createHubCreateUsersMiddleware({
               cwd: process.cwd(),
               mode,
@@ -77,6 +80,13 @@ export default defineConfig(({ mode }) => {
       host: "127.0.0.1",
       port: 5176,
       strictPort: true,
+    },
+    optimizeDeps: {
+      include: ["react", "react-dom", "lucide-react"],
+      holdUntilCrawlEnd: false,
+    },
+    esbuild: {
+      target: "es2022",
     },
     resolve: {
       alias: {

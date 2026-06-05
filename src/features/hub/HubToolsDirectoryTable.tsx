@@ -9,6 +9,7 @@ import {
   GitBranch,
   Hash,
   Link2,
+  Unlink,
 } from "lucide-react";
 import { MaterialIcon } from "../../components";
 import { ToolAvatar } from "../../components/ToolAvatar";
@@ -134,8 +135,19 @@ export function HubToolsDirectoryTable({
   healthState?: Record<string, HealthState>;
 }) {
   return (
-    <div className="hub-users-table-wrap overflow-hidden rounded-2xl border border-white/5">
-      <table className="hub-users-table">
+    <div className="hub-users-table-wrap overflow-x-auto rounded-2xl border border-white/5">
+      <table className="hub-users-table hub-users-table--hub-tools">
+        <colgroup>
+          <col className="hub-users-col--select" />
+          <col className="hub-users-col--hub-code" />
+          <col className="hub-users-col--hub-project" />
+          <col className="hub-users-col--hub-version" />
+          <col className="hub-users-col--hub-status" />
+          <col className="hub-users-col--hub-drift" />
+          <col className="hub-users-col--hub-updated" />
+          <col className="hub-users-col--hub-manifest" />
+          <col className="hub-users-col--hub-links" />
+        </colgroup>
         <thead>
           <tr>
             <th className="hub-users-col--select" scope="col">
@@ -168,6 +180,14 @@ export function HubToolsDirectoryTable({
                 </th>
               );
             })}
+            <th className="hub-users-col--hub-manifest" scope="col">
+              <span className="hub-users-th-btn hub-users-th-btn--static">
+                <span className="hub-users-th-label">
+                  <Unlink size={13} className="hub-users-th-icon hub-users-th-icon--actions" aria-hidden />
+                  <span className="hub-users-th-text">Manifest</span>
+                </span>
+              </span>
+            </th>
             <th className="hub-users-col--hub-links" scope="col">
               <span className="hub-users-th-btn hub-users-th-btn--static">
                 <span className="hub-users-th-label">
@@ -280,9 +300,10 @@ export function HubToolsDirectoryTable({
                     "—"
                   )}
                 </td>
+                <td className="hub-users-col--hub-manifest align-top" onClick={(e) => e.stopPropagation()}>
+                  <LinkManifestFooter linkGaps={linkGaps} variant="table" />
+                </td>
                 <td className="hub-users-col--hub-links align-top" onClick={(e) => e.stopPropagation()}>
-                  <div className="mx-auto max-w-[9.5rem] space-y-1 text-center">
-                  <LinkManifestFooter linkGaps={linkGaps} />
                   <div className="link-row flex flex-wrap justify-center gap-0.5">
                     {tool.appUrl ? (
                       <a
@@ -349,7 +370,6 @@ export function HubToolsDirectoryTable({
                         iconMeta={resolveLocalPortIcon(localHealth === "online")}
                       />
                     ) : null}
-                  </div>
                   </div>
                 </td>
               </tr>

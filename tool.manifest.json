@@ -61,7 +61,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "4.2.9",
+    "version": "4.2.10",
     "readiness": [
       "build",
       "lint",

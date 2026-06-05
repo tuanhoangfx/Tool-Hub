@@ -39,8 +39,10 @@ export type HubListPrefs = {
   localHealthPoll: LocalHealthPollValue;
 };
 
+/** `null` = defaults; `""` = explicitly none visible. */
 function parseSet(raw: string | null): Set<string> | null {
   if (raw === null) return null;
+  if (raw === "") return new Set();
   return new Set(raw.split(",").filter(Boolean));
 }
 
@@ -90,7 +92,7 @@ export function patchHubListPrefs(patch: Record<string, string | null>) {
   const screen = readAppScreen();
   const sp = sanitizeQueryForScreen(screen, window.location.search);
   for (const [k, v] of Object.entries(patch)) {
-    if (v == null || v === "") sp.delete(k);
+    if (v == null) sp.delete(k);
     else sp.set(k, v);
   }
   const url = buildAppUrl(screen, sp.toString());

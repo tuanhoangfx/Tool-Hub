@@ -42,13 +42,21 @@ export function QuietChip({
   return <MetricBadge label={label} tone={tone} title={title} iconMeta={iconMeta} />;
 }
 
-/** Fixed-height footer row so cards align with or without link gaps. */
-export function LinkManifestFooter({ linkGaps }: { linkGaps: ManifestLinkGap[] }) {
+/** Manifest link audit — table cell or card footer. */
+export function LinkManifestFooter({
+  linkGaps,
+  variant = "card",
+}: {
+  linkGaps: ManifestLinkGap[];
+  variant?: "card" | "table";
+}) {
   const linkGapIcon = resolveLinkGapChipIcon();
   const LinkGapIcon = linkGapIcon.icon;
+  const wrapClass =
+    variant === "table" ? "min-w-0 text-left" : "mt-2 h-8 shrink-0 overflow-hidden";
 
   return (
-    <div className="mt-2 h-8 shrink-0 overflow-hidden">
+    <div className={wrapClass}>
       {linkGaps.length > 0 ? (
         <p className="flex items-start gap-1 text-[10px] leading-snug text-amber-200/90">
           <LinkGapIcon size={compactIconSize(10)} className={`mt-0.5 shrink-0 ${linkGapIcon.className}`} aria-hidden />

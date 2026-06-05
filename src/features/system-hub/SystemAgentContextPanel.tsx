@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { prefetchAgentManifest } from "../../lib/hub-background-prefetch";
-import { AlertTriangle, BookOpen, Bot, RefreshCw, ScrollText, Sparkles } from "lucide-react";
+import { AlertTriangle, BookOpen, Bot, Command, Layers, RefreshCw, ScrollText, Sparkles, Wand2 } from "lucide-react";
 import {
   HubResultCount,
   MiniBarChart,
@@ -10,7 +10,6 @@ import {
   type FilterValues,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { HubKeyboardHints } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import { useSessionState } from "../../hooks/useSessionState";
 import { SystemHubShell } from "./SystemHubShell";
@@ -22,12 +21,10 @@ import {
   agentFiltersWithCounts,
   matchesAgentContext,
 } from "./agent-context/agent-context-filters";
-import { HubLikeDataSectionRule } from "./agent-context/HubLikeDataSectionRule";
 import { sortAgentContextItems } from "./agent-context/agent-context-sort";
 import type { AgentContextItem } from "./agent-context/types";
 import { useAgentManifest } from "./agent-context/useAgentManifest";
 
-/** Agent context — flat list + Hub shell (FilterBar / KPI / charts). */
 export function SystemAgentContextPanel() {
   const { items, manifest, loading, error, reload } = useAgentManifest();
   const [query, setQuery] = useState("");
@@ -59,27 +56,28 @@ export function SystemAgentContextPanel() {
       { prefKey: "total", label: "Items (shown)", value: kpis.shown, icon: Bot, tone: "indigo" },
       { prefKey: "rules", label: "Rules", value: kpis.rules, icon: ScrollText, tone: "emerald" },
       { prefKey: "skills", label: "Skills", value: kpis.skills, icon: Sparkles, tone: "purple" },
+      { prefKey: "patterns", label: "Patterns", value: kpis.patterns, icon: Wand2, tone: "indigo" },
+      { prefKey: "agents", label: "Subagents", value: kpis.agents, icon: Bot, tone: "indigo" },
+      { prefKey: "commands", label: "Commands", value: kpis.commands, icon: Command, tone: "amber" },
       { prefKey: "always", label: "Always on", value: kpis.always, icon: BookOpen, tone: "amber" },
+      { prefKey: "requestable", label: "Agent requestable", value: kpis.requestable, icon: Layers, tone: "purple" },
     ],
     [kpis],
   );
 
-  const chartsNode = useMemo(
-    () => (
-      <>
-        <MiniBarChart title="By kind" items={charts.kind.slice(0, 8)} />
-        <MiniBarChart title="By scope" items={charts.scope.slice(0, 6)} />
-        <MiniDonut title="Apply mode" items={charts.apply} />
-        <MiniDonut title="Size (lines)" items={charts.size} />
-      </>
-    ),
+  const chartSlots = useMemo(
+    () => ({
+      health_bar: <MiniBarChart title="By kind" items={charts.kind.slice(0, 8)} />,
+      category_bar: <MiniBarChart title="By scope" items={charts.scope.slice(0, 6)} />,
+      deploy_donut: <MiniDonut title="Apply mode" items={charts.apply} />,
+      status_donut: <MiniDonut title="Size (lines)" items={charts.size} />,
+    }),
     [charts],
   );
 
   const toolbar = useMemo(
     () => (
       <>
-        <HubKeyboardHints />
         <ViewToggle value={viewMode} onChange={setViewMode} />
         <HubResultCount icon={Bot} shown={filtered.length} total={items.length} />
         <button
@@ -99,7 +97,7 @@ export function SystemAgentContextPanel() {
   const body = (
     <>
       {error ? (
-        <div className="mb-4 flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+        <div className="flex items-center gap-2 rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
           <AlertTriangle size={compactIconSize(16)} />
           {error}
           <button type="button" className="ml-auto text-xs underline" onClick={() => void reload()}>
@@ -115,18 +113,12 @@ export function SystemAgentContextPanel() {
           No agent manifest items. Use sidebar <strong>Refresh</strong> or the toolbar button (rebuilds manifest in dev).
         </p>
       ) : filtered.length === 0 ? null : viewMode === "table" ? (
-        <div className="pb-8">
-          <HubLikeDataSectionRule label="Agent context" />
-          <AgentContextTableView items={filtered} onOpen={setDetail} />
-        </div>
+        <AgentContextTableView items={filtered} onOpen={setDetail} />
       ) : (
-        <div className="space-y-3 pb-8">
-          <HubLikeDataSectionRule label="Agent context" />
-          <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filtered.map((item) => (
-              <AgentContextCard key={item.id} item={item} onOpen={setDetail} />
-            ))}
-          </div>
+        <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filtered.map((item) => (
+            <AgentContextCard key={item.id} item={item} onOpen={setDetail} />
+          ))}
         </div>
       )}
     </>
@@ -135,7 +127,8 @@ export function SystemAgentContextPanel() {
   return (
     <>
       <SystemHubShell
-        stickyFilterTab="agent"
+        tabId="agent"
+        sectionRuleLabel="Agent context"
         placeholder="Search rules, skills, paths, triggers…"
         filters={filters}
         query={query}
@@ -144,7 +137,7 @@ export function SystemAgentContextPanel() {
         onValuesChange={setFilterValues}
         toolbar={toolbar}
         kpiItems={kpiItems}
-        charts={chartsNode}
+        chartSlots={chartSlots}
       >
         {body}
       </SystemHubShell>

@@ -17,7 +17,6 @@ import {
   type HubViewMode,
 } from "../../components/sales-shell";
 import { useSessionState } from "../../hooks";
-import { DEFAULT_HUB_CHART_KEYS } from "../hub/hub-prefs";
 import { SchemaGraph } from "./components/SchemaGraph";
 import { SpecTable } from "./components/SpecTable";
 import { SystemHubShell } from "./SystemHubShell";
@@ -28,10 +27,6 @@ function entityFieldCount(entity: HubEntity, query: string) {
 }
 
 const ENTITIES: HubEntity[] = ["catalog", "manifest", "runtime"];
-
-function visibleChartKeys(set: Set<string> | null) {
-  return set ?? DEFAULT_HUB_CHART_KEYS;
-}
 
 export function SystemSchemaPanel() {
   const [current, setCurrent] = useState<HubEntity>(() => readSchemaEntity());
@@ -84,15 +79,26 @@ export function SystemSchemaPanel() {
 
   const kpiItems = useMemo(
     () => [
-      { prefKey: "total", label: "Fields", value: kpis.fields, icon: Database, tone: "indigo" as const },
-      { prefKey: "ready", label: "Groups", value: kpis.groups, icon: Database, tone: "emerald" as const },
-      { prefKey: "releases", label: "Input fields", value: kpis.input, icon: Database, tone: "amber" as const },
-      { prefKey: "drift", label: "With options", value: kpis.options, icon: Database, tone: "purple" as const },
+      { prefKey: "fields", label: "Fields (shown)", value: kpis.fields, icon: Database, tone: "indigo" as const },
+      { prefKey: "groups", label: "Groups", value: kpis.groups, icon: Database, tone: "emerald" as const },
+      { prefKey: "input", label: "Input fields", value: kpis.input, icon: Database, tone: "amber" as const },
+      { prefKey: "options", label: "With options", value: kpis.options, icon: Database, tone: "purple" as const },
+      { prefKey: "pk", label: "Primary keys", value: kpis.pk, icon: Database, tone: "blue" as const },
+      { prefKey: "auto", label: "Auto fields", value: kpis.auto, icon: Database, tone: "purple" as const },
+      { prefKey: "derive", label: "Derived / compute", value: kpis.derive, icon: Database, tone: "indigo" as const },
+      { prefKey: "readonly", label: "Read-only", value: kpis.readonly, icon: Database, tone: "rose" as const },
     ],
     [kpis],
   );
 
-  const visCharts = visibleChartKeys(prefs.charts);
+  const chartSlots = useMemo(
+    () => ({
+      health_bar: <MiniBarChart title="By mode" items={charts.mode.slice(0, 8)} />,
+      category_bar: <MiniBarChart title="By group" items={charts.group.slice(0, 8)} />,
+    }),
+    [charts],
+  );
+
   const handleFilterValuesChange = useCallback(
     (next: FilterValues) => {
       const entity = next.entity?.[0] as HubEntity | undefined;
@@ -107,7 +113,7 @@ export function SystemSchemaPanel() {
 
   return (
     <SystemHubShell
-      stickyFilterTab="schema"
+      tabId="schema"
       placeholder="Search Schema by field, column, type, mode, source..."
       filters={entityFilters}
       query={query}
@@ -122,18 +128,12 @@ export function SystemSchemaPanel() {
         </>
       }
       kpiItems={kpiItems}
-      charts={
-        <>
-          {visCharts.has("health_bar") ? <MiniBarChart title="By mode" items={charts.mode.slice(0, 8)} /> : null}
-          {visCharts.has("category_bar") ? <MiniBarChart title="By group" items={charts.group.slice(0, 8)} /> : null}
-        </>
-      }
+      chartSlots={chartSlots}
     >
-      <div className="space-y-3 pb-8">
+      <div className="space-y-3">
         {viewMode === "card" ? (
           <SchemaGraph spec={fullSpec} groups={groups} entity={current} overrides={0} customs={0} />
         ) : null}
-
         <section className={`rounded-2xl border border-white/5 bg-[var(--panel)] ${viewMode === "table" ? "p-3" : "p-4"}`}>
           <SpecTable spec={spec} groups={groups} tableName={current} compact={viewMode === "table"} />
         </section>

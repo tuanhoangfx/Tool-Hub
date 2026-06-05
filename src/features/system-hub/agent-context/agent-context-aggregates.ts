@@ -1,4 +1,5 @@
 import type { BarItem } from "../../../components/sales-shell";
+import { resolveChartLegendIcon } from "../../../lib/badge-registry";
 import type { AgentContextItem, AgentContextKind } from "./types";
 
 const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
@@ -23,6 +24,7 @@ function breakdown(items: AgentContextItem[], pick: (item: AgentContextItem) => 
       label,
       value,
       color: CHART_COLORS[i % CHART_COLORS.length],
+      iconMeta: resolveChartLegendIcon(label),
     }))
     .sort((a, b) => b.value - a.value);
 }
@@ -46,6 +48,7 @@ export function agentContextKpis(items: AgentContextItem[]) {
     rules: items.filter((i) => i.kind === "rule").length,
     skills: items.filter((i) => i.kind === "skill").length,
     agents: items.filter((i) => i.kind === "agent").length,
+    commands: items.filter((i) => i.kind === "command").length,
     always: items.filter((i) => i.alwaysApply).length,
     requestable: items.filter((i) => i.agentRequestable).length,
   };

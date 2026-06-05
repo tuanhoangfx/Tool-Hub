@@ -127,11 +127,13 @@ Mẫu đầy đủ: `Tool/P0006-AIChatHub/apps/console` (`TabScreenChrome.tsx`, 
 | Key | Action |
 |-----|--------|
 | **F** | Focus tab search |
+| **Ctrl+Q** | Clear search + filters (works in search input too) |
+| **S** | Open tab header Settings panel |
 | **N** | Add / create (when screen registers `onNew`) |
 | **E** | Edit / action on selection (Users → Edit; Hub → Refresh selected) |
 | **Esc** | Close modal |
 
-Doc: `docs/HUB-KEYBOARD-SHORTCUTS.md` · code: `packages/hub-ui/src/keyboard/` · System → Agent toolbar: `HubKeyboardHints`.
+Doc: `docs/HUB-KEYBOARD-SHORTCUTS.md` · code: `packages/hub-ui/src/keyboard/` · app: `useHubActiveScreenSync(screen, systemTab)`.
 
 ---
 

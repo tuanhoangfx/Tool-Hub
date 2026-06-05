@@ -6,6 +6,7 @@
  *   node scripts/ensure-dev.cjs           # start in background if needed
  *   node scripts/ensure-dev.cjs --open    # + open browser
  *   node scripts/ensure-dev.cjs --force   # kill port + restart
+ *   node scripts/ensure-dev.cjs --recover  # kill + clear .vite cache + restart (esbuild crash)
  *   node scripts/ensure-dev.cjs --foreground  # attach Vite to this terminal (no detach)
  */
 const { spawn, execSync } = require("node:child_process");
@@ -22,7 +23,8 @@ const LOG_FILE = path.join(root, "dev-server.log");
 const PID_FILE = path.join(root, ".dev-vite.pid");
 
 const open = process.argv.includes("--open");
-const force = process.argv.includes("--force");
+const force = process.argv.includes("--force") || process.argv.includes("--recover");
+const recover = process.argv.includes("--recover");
 const foreground = process.argv.includes("--foreground");
 
 function log(msg) {
@@ -150,8 +152,24 @@ function startForeground() {
   });
 }
 
+function clearViteCache() {
+  const viteCache = path.join(root, "node_modules", ".vite");
+  if (!fs.existsSync(viteCache)) return;
+  log("Clearing Vite cache (node_modules/.vite)…");
+  fs.rmSync(viteCache, { recursive: true, force: true });
+}
+
 async function main() {
-  if (force) {
+  if (recover) {
+    log("--recover: freeing port + clearing Vite cache…");
+    killPort();
+    try {
+      fs.unlinkSync(PID_FILE);
+    } catch {
+      /* ignore */
+    }
+    clearViteCache();
+  } else if (force) {
     log("--force: freeing port before restart…");
     killPort();
     try {

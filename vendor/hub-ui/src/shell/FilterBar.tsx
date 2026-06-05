@@ -18,7 +18,7 @@ import {
 import type { FilterIconMeta } from "./filter-icons";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "./filter-icons";
 import { compactIconSize } from "../ui-scale";
-import { registerHubSearchFocus } from "../keyboard/hub-keyboard-shortcuts";
+import { registerHubSearchClear, registerHubSearchFocus } from "../keyboard/hub-keyboard-shortcuts";
 
 export type FilterOption = { value: string; label: string; color?: string; count?: number };
 export type FilterDef = {
@@ -74,6 +74,8 @@ type FilterBarProps = {
   /** Panel only (inside shared sticky chrome with header). */
   embedded?: boolean;
   shortcutScope?: string;
+  /** Hub dashboard-style row: filters only, no search field or F shortcut. */
+  hideSearch?: boolean;
 };
 
 export function FilterBar({
@@ -92,15 +94,10 @@ export function FilterBar({
   headerPinned = true,
   embedded = false,
   shortcutScope = "default",
+  hideSearch = false,
 }: FilterBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    return registerHubSearchFocus(shortcutScope, () => {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    });
-  }, [shortcutScope]);
+  const clearAllRef = useRef<() => void>(() => {});
 
   function setFilter(key: string, selected: string[]) {
     const next = { ...values };
@@ -113,6 +110,26 @@ export function FilterBar({
     onQueryChange("");
     onValuesChange({});
   }
+
+  clearAllRef.current = clearAll;
+
+  useEffect(() => {
+    const unregisterFocus = hideSearch
+      ? () => {}
+      : registerHubSearchFocus(shortcutScope, () => {
+          inputRef.current?.focus();
+          inputRef.current?.select();
+        });
+    const unregisterClear = registerHubSearchClear(
+      shortcutScope,
+      () => clearAllRef.current(),
+      hideSearch ? undefined : () => inputRef.current,
+    );
+    return () => {
+      unregisterFocus();
+      unregisterClear();
+    };
+  }, [shortcutScope, hideSearch]);
 
   const hasActive = query !== "" || filters.some((f) => (values[f.key]?.length ?? 0) > 0);
   const activeCount =
@@ -176,7 +193,7 @@ export function FilterBar({
     const panel = (
       <div className="space-y-2 rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
         <div className="flex flex-wrap items-center gap-2">
-          {searchField}
+          {hideSearch ? null : searchField}
           {toolbar ? <div className="flex w-full flex-wrap items-center gap-2 sm:ml-auto sm:w-auto">{toolbar}</div> : null}
         </div>
         <div className="flex min-h-[var(--hub-control-h)] flex-wrap items-center gap-2">
@@ -217,7 +234,7 @@ export function FilterBar({
   return (
     <div className="space-y-2 rounded-2xl border border-white/5 bg-[var(--panel)] p-3">
       <div className="flex flex-wrap items-center gap-2">
-        {searchField}
+        {hideSearch ? null : searchField}
         {filterRow}
         {trailing ? <div className="ml-auto flex items-center gap-2">{trailing}</div> : null}
       </div>

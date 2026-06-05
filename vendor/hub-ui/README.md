@@ -151,6 +151,8 @@ import {
 | Key | Action |
 |-----|--------|
 | F | Focus FilterBar search |
+| Ctrl+Q | Clear search + filters (`registerHubSearchClear`) |
+| S | Open tab Settings panel (`registerHubSettingsOpen`) |
 | N | Add / create (`useHubPageShortcuts.onNew`) |
 | E | Edit selection (`useHubPageShortcuts.onEdit`) |
 | Esc | Close modal (per modal) |

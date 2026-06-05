@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
-import { AppTabHeader } from "../../components/sales-shell/AppTabHeader";
+import { AppTabHeader, type TabHeaderStatItem } from "@tool-workspace/hub-ui";
+import { buildVersionMetaItems } from "../../lib/hub-tab-header-meta";
 import { readSystemTab, SYSTEM_TAB_ITEMS } from "./components/SystemTabs";
 
 type SystemTabHeaderProps = {
+  versionReleaseDate: string;
+  centerStats: TabHeaderStatItem[];
   pinSticky?: boolean;
   dividerBelow?: boolean;
   embedded?: boolean;
@@ -10,6 +13,8 @@ type SystemTabHeaderProps = {
 };
 
 export function SystemTabHeader({
+  versionReleaseDate,
+  centerStats,
   pinSticky = true,
   dividerBelow = true,
   embedded = false,
@@ -18,14 +23,6 @@ export function SystemTabHeader({
   const tab = readSystemTab();
   const item = SYSTEM_TAB_ITEMS.find((row) => row.id === tab) ?? SYSTEM_TAB_ITEMS[0];
   const Icon = item.icon;
-  const metaItems =
-    tab === "template"
-      ? [{ icon: Icon, value: "5 layouts · pick V1–V5 below" }]
-      : tab === "server"
-        ? [{ icon: Icon, value: "CloudFly VPS · P0006 / P0007 inventory" }]
-        : tab === "agent"
-          ? [{ icon: Icon, value: "Read-only · workspace rules & skills" }]
-          : [];
 
   return (
     <AppTabHeader
@@ -36,8 +33,8 @@ export function SystemTabHeader({
       pinSticky={pinSticky}
       dividerBelow={dividerBelow}
       embedded={embedded}
-      metaItems={metaItems}
-      centerStats={[]}
+      metaItems={buildVersionMetaItems(versionReleaseDate)}
+      centerStats={centerStats}
       actions={actions}
     />
   );

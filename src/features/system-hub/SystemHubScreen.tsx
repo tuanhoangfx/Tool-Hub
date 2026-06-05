@@ -1,10 +1,18 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { HubTabChrome } from "@tool-workspace/hub-ui";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { readSystemTab, type SystemTab } from "./components/SystemTabs";
 import { SystemChromeContext } from "./system-chrome-context";
+import { SystemFilterBarOutlet, SystemFilterRegistryProvider } from "./system-filter-registry";
 import { SystemTabHeader } from "./SystemTabHeader";
+import {
+  buildSystemHeaderStats,
+  defaultSystemHeaderStatKeys,
+} from "./system-header-metrics";
 import { prefetchSupabaseQuotaCatalog } from "../../lib/hub-background-prefetch";
+import { SUPABASE_QUOTA_UPDATED_EVENT } from "./supabase-quota-events";
+import { AGENT_MANIFEST_REFRESH_EVENT } from "./agent-manifest-events";
 import { DesignTemplateHub } from "./design-template/DesignTemplateHub";
 import { SystemOverviewPanel } from "./SystemOverviewPanel";
 import { SystemSchemaPanel } from "./SystemSchemaPanel";
@@ -41,8 +49,13 @@ function TabPanel({
   );
 }
 
+function visibleHeaderStats(set: Set<string> | null, defaults: Set<string>) {
+  return set ?? defaults;
+}
+
 export function SystemHubScreen({
   tools,
+  versionReleaseDate,
   headerActions,
 }: SystemHubScreenProps) {
   const [tab, setTab] = useState<SystemTab>(() => readSystemTab());
@@ -75,7 +88,25 @@ export function SystemHubScreen({
     prefetchSupabaseQuotaCatalog();
   }, []);
 
+  const [headerTick, setHeaderTick] = useState(0);
+
+  useEffect(() => {
+    const bump = () => setHeaderTick((n) => n + 1);
+    window.addEventListener(SUPABASE_QUOTA_UPDATED_EVENT, bump);
+    window.addEventListener(AGENT_MANIFEST_REFRESH_EVENT, bump);
+    return () => {
+      window.removeEventListener(SUPABASE_QUOTA_UPDATED_EVENT, bump);
+      window.removeEventListener(AGENT_MANIFEST_REFRESH_EVENT, bump);
+    };
+  }, []);
+
   const stackChrome = prefs.searchPin && prefs.headerPin;
+
+  const centerStats = useMemo(() => {
+    void headerTick;
+    const keys = visibleHeaderStats(prefs.systemHeaderStats, defaultSystemHeaderStatKeys(tab));
+    return buildSystemHeaderStats(tab, tools, keys);
+  }, [prefs.systemHeaderStats, tab, tools, headerTick]);
 
   const bindFilterAnchor = useCallback((node: HTMLDivElement | null) => {
     filterAnchorRef.current = node;
@@ -89,6 +120,8 @@ export function SystemHubScreen({
 
   const header = (
     <SystemTabHeader
+      versionReleaseDate={versionReleaseDate}
+      centerStats={centerStats}
       pinSticky={stackChrome ? false : prefs.headerPin}
       dividerBelow={stackChrome ? false : !prefs.searchPin}
       embedded={stackChrome}
@@ -96,25 +129,17 @@ export function SystemHubScreen({
     />
   );
 
-  return (
-    <SystemChromeContext.Provider value={chromeValue}>
-      <div
-        className="anim-fade relative"
-        {...(prefs.searchPin ? { "data-search-pin": true } : {})}
-        {...(prefs.headerPin ? { "data-header-pin": true } : {})}
-      >
-        {stackChrome ? (
-          <div className="hub-chrome-sticky sticky top-0 z-40 -mx-6 bg-[var(--bg)]">
-            {header}
-            <div ref={bindFilterAnchor} className="system-filter-portal" />
-            <div className="hub-chrome-sticky-divider border-b border-white/5" aria-hidden />
-            <div className="hub-chrome-sticky-gap" aria-hidden />
-          </div>
-        ) : (
-          header
-        )}
+  const filterBar = stackChrome ? (
+    <div ref={bindFilterAnchor} className="system-filter-portal" />
+  ) : (
+    <SystemFilterBarOutlet tabId={tab} />
+  );
 
-        <div className="relative z-0">
+  return (
+    <SystemFilterRegistryProvider>
+      <SystemChromeContext.Provider value={chromeValue}>
+        <HubTabChrome header={header} filterBar={filterBar}>
+          <div className="hub-tab-content-zone relative z-0">
           <TabPanel tabId="overview" activeTab={tab} visited={visited}>
             <SystemOverviewPanel tools={tools} />
           </TabPanel>
@@ -135,9 +160,10 @@ export function SystemHubScreen({
               <DesignTemplateHub />
             </div>
           ) : null}
-        </div>
-      </div>
-    </SystemChromeContext.Provider>
+          </div>
+        </HubTabChrome>
+      </SystemChromeContext.Provider>
+    </SystemFilterRegistryProvider>
   );
 }
 

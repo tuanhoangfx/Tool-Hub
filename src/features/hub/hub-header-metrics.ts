@@ -1,7 +1,12 @@
 import { AlertTriangle, CheckCircle2, Link2, Rocket } from "lucide-react";
 import type { TabHeaderStatItem } from "../../components/sales-shell/AppTabHeader";
 import { HUB_HEADER_STAT_DEFS, type HubHeaderStatKey } from "./hub-prefs";
-import type { HubHeaderKpi } from "./HubStickyHeader";
+export type HubHeaderKpi = {
+  ready: number;
+  drift: number;
+  releases: number;
+  linkGaps: number;
+};
 
 const STAT_DEFS: Record<
   HubHeaderStatKey,

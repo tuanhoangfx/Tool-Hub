@@ -1,16 +1,11 @@
-import { LayoutGrid, Tag } from "lucide-react";
+import { LayoutGrid } from "lucide-react";
 import type { ReactNode } from "react";
 import { AppTabHeader } from "../../components/sales-shell/AppTabHeader";
-import { APP_VERSION } from "../../lib/app-meta";
+import { buildVersionMetaItems } from "../../lib/hub-tab-header-meta";
 import { DEFAULT_HUB_HEADER_STAT_KEYS } from "./hub-prefs";
-import { buildHubHeaderStats } from "./hub-header-metrics";
+import { buildHubHeaderStats, type HubHeaderKpi } from "./hub-header-metrics";
 
-export type HubHeaderKpi = {
-  ready: number;
-  drift: number;
-  releases: number;
-  linkGaps: number;
-};
+export type { HubHeaderKpi };
 
 type HubStickyHeaderProps = {
   registryLive: boolean;
@@ -37,13 +32,6 @@ export function HubStickyHeader({
 }: HubStickyHeaderProps) {
   const statKeys = visibleHeaderStats.size > 0 ? visibleHeaderStats : DEFAULT_HUB_HEADER_STAT_KEYS;
 
-  const metaItems = [
-    {
-      icon: Tag,
-      value: `v${APP_VERSION} · ${versionReleaseDate}`,
-    },
-  ];
-
   return (
     <AppTabHeader
       ariaLabel="Hub header"
@@ -52,7 +40,7 @@ export function HubStickyHeader({
       pinSticky={pinSticky}
       dividerBelow={dividerBelow}
       embedded={embedded}
-      metaItems={metaItems}
+      metaItems={buildVersionMetaItems(versionReleaseDate)}
       centerStats={buildHubHeaderStats(statKeys, kpi)}
       titleIconClass="text-indigo-400"
       actions={actions}

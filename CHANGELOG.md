@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-06-05 - MiniDonut grid parity with bar charts
+
+- Version: `4.2.10`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- MiniDonut uses the same 3-column grid as `hub-chart-row`: labels column 1, donut `justify-self: end` column 2, counts column 3 (right edge).
+
+---
 ## 2026-06-05 - Hub Manifest/Links columns + donut layout + Local icon
 
 - Version: `4.2.9`

@@ -28,12 +28,18 @@ export function schemaKpis(spec: FieldSpec[], groupCount: number) {
   const input = spec.filter((f) => f.mode === "input").length;
   const pk = spec.filter((f) => f.pk).length;
   const withOptions = spec.filter((f) => f.options?.length).length;
+  const auto = spec.filter((f) => f.mode === "auto").length;
+  const derive = spec.filter((f) => f.mode === "derive" || f.mode === "compute").length;
+  const readonly = spec.filter((f) => f.mode === "ro").length;
   return {
     fields: spec.length,
     groups: groupCount,
     input,
     pk,
     options: withOptions,
+    auto,
+    derive,
+    readonly,
   };
 }
 

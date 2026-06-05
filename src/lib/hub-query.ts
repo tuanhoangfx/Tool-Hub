@@ -58,7 +58,8 @@ export function sanitizeQueryForScreen(screen: AppScreen, search = ""): URLSearc
     p.delete("table");
     p.delete("sstat");
   } else if (screen === "users") {
-    for (const k of [...LIBRARY_KEYS, ...DESIGN_QUERY_KEYS]) p.delete(k);
+    for (const k of ["range", "limit", "hfilt", "hstat", "tool", "detail"] as const) p.delete(k);
+    for (const k of DESIGN_QUERY_KEYS) p.delete(k);
     p.delete("table");
     p.delete("sstat");
   } else if (screen === "system") {

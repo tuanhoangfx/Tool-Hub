@@ -1,10 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { configureFilterIcons, configureHubChromePrefs } from "@tool-workspace/hub-ui";
+import { configureChartLegend, configureFilterIcons, configureHubChromePrefs } from "@tool-workspace/hub-ui";
 import App from "./App";
 import { hideBootLoader } from "./lib/hide-boot-loader";
-import { resolveFilterAllIcon, resolveFilterOptionIcon } from "./lib/badge-registry";
+import { resolveChartLegendIcon, resolveFilterAllIcon, resolveFilterOptionIcon } from "./lib/badge-registry";
+import { initHubUserZoom } from "@tool-workspace/hub-ui";
 import { readHubListPrefs } from "./lib/url-prefs";
+
+initHubUserZoom();
 
 configureHubChromePrefs(() => ({
   headerPin: readHubListPrefs().headerPin,
@@ -16,6 +19,8 @@ configureFilterIcons({
   resolveOption: (filterKey, value) =>
     resolveFilterOptionIcon(filterKey, { value, label: value }),
 });
+
+configureChartLegend(resolveChartLegendIcon);
 import "./theme/hub-boot.css";
 import "./theme/p0008-globals.css";
 import "./theme/hub-auth.css";

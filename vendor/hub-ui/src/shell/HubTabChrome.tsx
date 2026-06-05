@@ -48,7 +48,7 @@ export function HubTabChrome({
 
   return (
     <div
-      className="anim-fade relative flex min-h-0 flex-1 flex-col"
+      className={`anim-fade relative flex min-h-0 flex-1 flex-col${stack ? " hub-tab-chrome-stack" : ""}`}
       {...(searchPin ? { "data-search-pin": true } : {})}
       {...(headerPin ? { "data-header-pin": true } : {})}
     >
@@ -57,7 +57,6 @@ export function HubTabChrome({
           {header}
           {filterBar}
           <div className="hub-chrome-sticky-divider border-b border-white/5" aria-hidden />
-          <div className="hub-chrome-sticky-gap" aria-hidden />
         </div>
       ) : (
         <>

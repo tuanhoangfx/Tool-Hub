@@ -59,6 +59,8 @@ export type HubDisplayPrefsProps = {
   filtersFromUrl?: boolean;
   readPrefs: () => DisplayPrefsPrefs;
   patchPrefs: (patch: Record<string, string | null>, logMessage?: string) => void;
+  /** Fired after patchPrefs updates URL (default `hub-list-prefs-change`). */
+  prefsChangeEvent?: string;
   getScreen: () => string;
   getSystemTab?: () => string;
   systemDisplay?: SystemDisplayAdapter;

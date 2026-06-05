@@ -430,8 +430,8 @@ export function UserAccessModal({
               <DetailSection id={`${idPrefix}tools`} title={userAccessSectionTitle("tools")}>
                 {registryOnlyCount > 0 ? (
                   <p className="mb-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-[10px] text-amber-100">
-                    {registryOnlyCount} item(s) from workspace scan are not in Hub DB yet. Use{" "}
-                    <strong>Sync tools</strong> in the toolbar, then save grants.
+                    {registryOnlyCount} item(s) from workspace scan are not in Hub DB yet. Saving grants
+                    will sync the catalog automatically when needed.
                   </p>
                 ) : null}
                 {loading ? <p className="text-xs text-[var(--muted)]">Loading grants…</p> : null}

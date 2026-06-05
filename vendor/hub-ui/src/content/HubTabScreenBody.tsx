@@ -11,12 +11,15 @@ export function HubTabScreenBody({
   charts,
   sectionRuleLabel,
   bodyFlex = false,
+  /** Inside `hub-tab-content-zone` (System tabs) — skip outer zone wrapper. */
+  embedded = false,
   children,
 }: {
   kpis?: KpiTileData[];
   charts?: ReactNode;
   sectionRuleLabel?: string;
   bodyFlex?: boolean;
+  embedded?: boolean;
   children: ReactNode;
 }) {
   const hasAnalytics = Boolean(kpis?.length || charts);
@@ -25,16 +28,19 @@ export function HubTabScreenBody({
     ? "hub-tab-body-zone hub-tab-body-zone--split space-y-3"
     : "hub-tab-body-zone space-y-3";
 
-  return (
-    <div className="hub-tab-content-zone">
+  const inner = (
+    <>
       {hasAnalytics ? (
-        <div className="hub-tab-kpi-zone flex flex-col gap-3">
-          {kpis?.length ? <KpiStrip items={kpis} className="hub-kpi-strip" /> : null}
-          {charts}
+        <div className="hub-tab-kpi-zone flex flex-col">
+          {kpis?.length ? <KpiStrip items={kpis} /> : null}
+          {charts ? <div className="hub-charts-band">{charts}</div> : null}
         </div>
       ) : null}
       {sectionRuleLabel ? <HubTabSectionRule label={sectionRuleLabel} /> : null}
       <div className={bodyClass}>{children}</div>
-    </div>
+    </>
   );
+
+  if (embedded) return inner;
+  return <div className="hub-tab-content-zone">{inner}</div>;
 }
