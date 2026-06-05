@@ -2,11 +2,50 @@
 
 ## 2026-06-05 - Git commit version stamp
 
-- Version: `5.1.2`
+- Version: `5.1.5`
+- Timestamp: 2026-06-05 15:49 (UTC+7)
+- Commit: `1894086`
+- Type: Patch
+- Status: Committed
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Remove P0014 Hub Shell
+
+- Version: `5.1.4`
+- Type: Patch
+- Product: P0004
+- Prompt: Xóa Tool/P0014-Hub-Shell
+- Commit: `1894086`
+- Status: Draft
+
+### Changes
+
+- Deleted `P0014-Hub-Shell` folder and port **5184** from `workspace-ports.json`.
+- Removed P0014 from Hub catalogs, `supabase-workspace-map.json`, and `TOOL-CODES.md`.
+- Gỡ P0014 khỏi `sync-hub-ui-vendor.cjs`, `hub-ui-css-check.mjs`, `hub-ui-parity-check.mjs`.
+- Extended snapshot guard for `P0014-Hub-Shell` / id `hub-shell`.
+
+### Verification
+
+- Hub UI golden: **P0004**; chat thin console: **P0016-ChatCenter** + **P0006** worker.
+
+---
+
+## 2026-06-05 - Git commit version stamp
+
+- Version: `5.1.3`
 - Timestamp: 2026-06-05 08:23 (UTC+7)
 - Commit: `1ef4f6b`
 - Type: Patch
-- Status: Draft
+- Status: Committed
 
 ### Changes
 

@@ -32,8 +32,6 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0013 | P0013-czp-youtube-tda-team | tuanhoangfx/P0001-czp-youtube-tda-team | YouTube TDA |
 
-| P0014 | P0014-Hub-Shell | tuanhoangfx/P0014-Hub-Shell | **Hub Shell** — P0004 UI clone (Hub / Users / System), logic TBD |
-
 | P0015 | P0015-student-id-generator-v2 | tuanhoangfx/P0005-student-id-generator-v2 | Static HTML generator |
 
 | P0019 | P0019-Work-Performance | tuanhoangfx/-Work-Performance | Infi task manager |
@@ -56,11 +54,9 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 **P0005 (retired 2026-06):** Zalo bot consolidated into **P0006-AIChatHub** — code `P0005` no longer used in workspace.
 
-**P0017 / P0018 / P0024 (2026-06-05):** Đã gỡ folder local ChatHubAI clones và AI Project Manager. Chat/API: **P0006-AIChatHub** (worker + console trong repo chính); thin UI: **P0016-ChatCenter**, **P0014-Hub-Shell**.
+**P0014 / P0017 / P0018 / P0024 (2026-06-05):** Đã gỡ folder local Hub Shell (:5184), ChatHubAI clones và AI Project Manager. Hub UI: **P0004**; chat/API: **P0006**; thin console: **P0016-ChatCenter**.
 
 **P0016 (2026-06-04):** Tái sử dụng mã cho **Chat Center** (P0004 shell + P0006 logic).
-
-**P0014 (2026-06-05):** **Hub Shell** — clone UI P0004 (`P0014-Hub-Shell`, :5184); thay ChatHubAI đã gỡ.
 
 **P0011 (2026-06-04):** Tái sử dụng mã cho **Infix1 Mail** (thay Tool-Control-Center đã gỡ 2026-05-22).
 

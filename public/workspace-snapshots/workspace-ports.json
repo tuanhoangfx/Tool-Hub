@@ -95,26 +95,17 @@
       "stack": "vite",
       "migrateFrom": 3000
     },
-    "P0014": {
-      "name": "Hub Shell",
-      "root": "P0014-Hub-Shell",
-      "port": 5184,
-      "probePath": "/",
-      "openPath": "/?screen=library",
-      "stack": "vite",
-      "notes": "P0004 Tool Hub UI clone — product logic TBD"
-    },
     "P0016": {
       "name": "Chat Center",
       "root": "P0016-ChatCenter",
       "port": 5186,
       "probePath": "/",
       "openPath": "/?screen=dashboard",
-      "stack": "vite",
-      "dependsOn": [
-        "P0006"
-      ],
-      "notes": "Thin console — API proxied to P0006 worker :3921"
+      "stack": "vite-monorepo",
+      "ensureScript": "scripts/ensure-dev.cjs",
+      "workerPort": 3921,
+      "workerProbePath": "/api/health",
+      "notes": "Monorepo: console :5186 + worker :3921 (self-contained)"
     },
     "P0019": {
       "name": "Work Performance",

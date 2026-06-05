@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T07:10:49.340Z",
+  "generatedAt": "2026-06-05T07:57:28.278Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -187,8 +187,8 @@
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst p0008Root = path.join(devRoot, \"Tool\", \"P0008-Sales-Console\", \"app\");\nconst p0014Root = path.join(devRoot, \"Tool\", \"P0014-Hub-Shell\");\nconst defaultVendor = path.join(hubRoot, \"vendor\", \"hub-ui\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\nconst p0008Vendor = path.join(p0008Root, \"vendor\", \"hub-ui\");\nconst p0014Vendor = path.join(p0014Root, \"vendor\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubPanel.tsx\", \"src/content/HubPanel.tsx\"],\n  [\"src/content/HubDirectoryCard.tsx\", \"src/content/HubDirectoryCard.tsx\"],\n  ",
-      "lines": 189,
-      "updatedAt": "2026-06-05T07:10:35.547Z",
+      "lines": 192,
+      "updatedAt": "2026-06-05T07:50:35.691Z",
       "tags": [
         "hub-ui",
         "command",
@@ -350,7 +350,7 @@
       "clone": "P0006, P0008, P0020",
       "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | P0004/auth |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Agent Kind (manifest)\n\n| Kind | Nội dung |\n|------|----------|\n| **pattern** | Hu\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0006** (clone): bots, groups, logs, channels\n- **P0008** (clone-migrate): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system",
       "lines": 45,
-      "updatedAt": "2026-06-05T01:16:43.307Z",
+      "updatedAt": "2026-06-05T07:50:57.384Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -557,9 +557,9 @@
       "scope": "workspace",
       "trigger": ">-",
       "summary": ">-",
-      "bodyPreview": "# P00xx clone Hub shell\n\nPlaybook distilled from **P0016 Chat Center** (shell P0004 + inbox golden P0020 Notes + API P0006).\n\n**Golden sources:** `Tool/P0004-Tool-Hub` (chrome) · `Tool/P0020-Data-Box` (notes split) · `packages/hub-ui/README.md`\n\n**Companion:** skill `browser-verify-until-done` (mandatory after UI edits) · skill `p00xx-tool-onboard` (import before clone)\n\n**Templates:** [templates/](templates/) · **Checklist:** [checklist.md](checklist.md) · **Pitfalls:** [pitfalls.md](pitfalls.md) · **Manifest fields:** [manifest-fields.md](manifest-fields.md)\n\n---\n\n## When to use\n\n- New P00xx web tool needs **Hub sidebar + tab chrome** like P0004\n- Clone **directory tab** (Users/Bots) or **notes-split tab** (Inbox/Notes)\n- User says: clone shell Hub, đồng bộ UI P0004, hub-ui shell, golden screen\n- After `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` — finish layer 3\n\n**Not in scope:** Design Template 5 mockups (only when user explicitly asks) · full business logic · Push/Release (→ `p00xx-ship-keywords`)\n\n---\n\n## Golden screen map (pick before coding)\n\n| Template id | Golden path | Use for |\n|-------------|-------------|---------|\n| `directory` | `P0004/users` | Bots, Groups,",
-      "lines": 217,
-      "updatedAt": "2026-06-04T23:47:01.295Z",
+      "bodyPreview": "# P00xx clone Hub shell\n\nPlaybook distilled from **P0016 Chat Center** (shell P0004 + inbox golden P0020 Notes + API P0006).\n\n**Golden sources:** `Tool/P0004-Tool-Hub` (chrome) · `Tool/P0020-Data-Box` (notes split) · `packages/hub-ui/README.md`\n\n**Companion:** skill `browser-verify-until-done` (mandatory after UI edits) · skill `p00xx-tool-onboard` (import before clone)\n\n**Templates:** [templates/](templates/) · **Checklist:** [checklist.md](checklist.md) · **Pitfalls:** [pitfalls.md](pitfalls.md) · **Manifest fields:** [manifest-fields.md](manifest-fields.md)\n\n## Preferred command (direct)\n\nChạy chuỗi “sync Hub shell UI + copy header templates + ghi notes-split CSS + merge manifest” theo golden.\n\n```powershell\n# A = golden/source (tool đã có manifest golden đầy đủ: directory + notes-split), B = target/destination\nnode Tool/scripts/fix-hub-shell.cjs Fix P0016 theo P0017 --apply\n\n# kiểm tra trước\nnode Tool/scripts/fix-hub-shell.cjs Fix P0016 theo P0017 --dry-run\n```\n\nFlags hay dùng:\n- `--no-templates` (chỉ sync vendor/theme + css-check + manifest)\n- `--no-manifest` (chỉ sync UI + copy templates)\n\n---\n\n## When to use\n\n- New P00xx web tool needs **Hub sidebar + tab chrome** like P0004",
+      "lines": 233,
+      "updatedAt": "2026-06-05T07:42:01.446Z",
       "tags": [
         "skill",
         "cursor",

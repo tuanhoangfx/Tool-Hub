@@ -16,7 +16,6 @@ Synced across Hub tools via `@tool-workspace/hub-ui` (single source: `packages/h
 | Tool | Dependency | App shell | Filter scope |
 |------|------------|-----------|--------------|
 | P0004 | `vendor/hub-ui` | `useHubActiveScreenSync(screen, systemTab)` | `library` / `users` / `system-<tab>` |
-| P0014 | `vendor/hub-ui` | same as P0004 | same |
 | P0020 | `vendor/hub-ui` | `useHubActiveScreenSync(activeNav)` | `notes` / `twofa` / `cookie` / `system` |
 | P0006 | `workspace:*` | `useHubActiveScreenSync(screen)` | per tab via `TabScreenChrome` |
 | P0008 | `vendor/hub-ui` | `HubKeyboardScopeSync` (pathname) | `products` / `orders` / `buyers` / `dashboard` |
