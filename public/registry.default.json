@@ -115,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "4.2.3",
+    "localVersion": "4.2.9",
     "remoteEnabled": true
   },
   {
@@ -448,7 +448,7 @@
     "repo": "tuanhoangfx/P0014-Hub-Shell",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "0.1.2",
+    "localVersion": "0.1.3",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Draft",
@@ -495,12 +495,14 @@
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Draft",
-    "summary": "Unified chat console — P0004 Hub shell, P0006 worker API (bots, inbox, groups, channels).",
+    "summary": "Unified chat platform — P0004 Hub console + Zalo worker engine (bots, inbox, groups, channels).",
     "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
     "tags": [
       "React",
       "TypeScript",
       "Vite",
+      "Node.js",
+      "zca-js",
       "@tool-workspace/hub-ui"
     ],
     "localUrl": "http://127.0.0.1:5186",
@@ -561,7 +563,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "3.1.9",
+    "localVersion": "3.2.0",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",

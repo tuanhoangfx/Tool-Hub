@@ -61,7 +61,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "4.3.2",
+    "version": "4.2.9",
     "readiness": [
       "build",
       "lint",
@@ -70,9 +70,9 @@
       "local-registry"
     ],
     "latestPublished": {
-      "tag": "v4.1.1",
-      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v4.1.1",
-      "publishedAt": "2026-06-04T18:25:26.860Z"
+      "tag": "v4.2.9",
+      "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v4.2.9",
+      "publishedAt": "2026-06-05T01:05:24.128Z"
     }
   },
   "urls": {
@@ -101,7 +101,7 @@
       "migrateDoc": "docs/IDENTITY.md"
     }
   },
-  "manifestUpdatedAt": "2026-06-05T00:01:37.870Z",
+  "manifestUpdatedAt": "2026-06-05T01:05:26.167Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infi.io.vn). Library-only catalog."

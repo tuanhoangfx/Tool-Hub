@@ -1,5 +1,98 @@
 # Changelog
 
+## 2026-06-05 - Hub Manifest/Links columns + donut layout + Local icon
+
+- Version: `4.2.9`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- Hub tools table: **Manifest** (missing/full links) and **Links** (quick actions) as separate columns.
+- MiniDonut: legend left (`hub-chart-row`), donut on the right — same rhythm as bar charts.
+- **Local** category: `HardDrive` icon in By Category chart and code badges.
+
+### Verification
+
+- Browser: Hub table + chart band
+
+---
+## 2026-06-05 - Keyboard shortcuts on all System sub-tabs
+
+- Version: `4.2.8`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- `useHubActiveScreenSync` + `hubSystemShortcutScope` — F / Ctrl+Q / S work on every System tab with FilterBar (Overview, Schema, Quota, Server, Agent).
+- App shell tracks `systemTab` from URL; scope matches `SystemHubShell` FilterBar registration.
+
+### Verification
+
+- `pnpm exec tsc --noEmit` — pass
+- Browser: System → Schema — F focus search — pass
+
+---
+## 2026-06-05 - Remove Agent tab keyboard hints bar
+
+- Version: `4.2.7`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- System → Agent: remove `HubKeyboardHints` from filter toolbar (shortcuts still work; no on-screen legend).
+
+---
+## 2026-06-05 - Hub tools table column spacing (Agent parity)
+
+- Version: `4.2.6`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- Hub directory table: `hub-users-table--hub-tools` colgroup + % column widths (Agent model), `min-width: 72rem`, `overflow-x-auto`, cell `overflow: hidden`; Links cell uses full column width.
+
+### Verification
+
+- Browser: Hub table view — columns no longer overlap
+
+---
+## 2026-06-05 - Clear shortcut: C → Ctrl+Q
+
+- Version: `4.2.5`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- Hub clear search/filters: **Ctrl+Q** (was **C**) in `hub-keyboard-shortcuts.ts` + docs.
+
+### Verification
+
+- `pnpm exec tsc --noEmit` — pass
+
+---
+## 2026-06-05 - Hub keyboard shortcuts C / S + system tab scope
+
+- Version: `4.2.4`
+- Type: Patch
+- Product: P0004
+
+### Changes
+
+- Sync `@tool-workspace/hub-ui` keyboard module: **C** clear search/filters, **S** open tab Settings.
+- `FilterBar` registers clear handler; `HubDisplayPrefs` registers Settings open (non-global scope).
+- `setHubActiveScreen` uses `system-<tab>` when on System so **F** / **C** match `FilterBar` scope.
+
+### Verification
+
+- `pnpm exec tsc --noEmit` — pass
+- Browser: Hub F/C/S; System → Agent F — pass
+
+---
 ## 2026-06-05 - Git commit version stamp
 
 - Version: `4.3.2`
