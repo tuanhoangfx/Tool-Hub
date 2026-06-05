@@ -4,7 +4,7 @@
 
 - Version: `4.3.2`
 - Timestamp: 2026-06-05 07:01 (UTC+7)
-- Commit: pending
+- Commit: `507a942`
 - Type: Patch
 - Status: Draft
 
@@ -23,7 +23,7 @@
 - Type: Minor
 - Product: P0004
 - Prompt: ok 1 2 3 — xóa P0005, gỡ script legacy P0007, Push doc cleanup
-- Commit: pending
+- Commit: `507a942`
 - Status: Draft
 
 ### Changes
