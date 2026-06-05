@@ -115,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "4.2.9",
+    "localVersion": "5.1.3",
     "remoteEnabled": true
   },
   {
@@ -563,7 +563,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "3.2.0",
+    "localVersion": "3.2.3",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",

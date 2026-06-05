@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T01:21:46.074Z",
+  "generatedAt": "2026-06-05T07:10:49.340Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -187,8 +187,8 @@
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst p0008Root = path.join(devRoot, \"Tool\", \"P0008-Sales-Console\", \"app\");\nconst p0014Root = path.join(devRoot, \"Tool\", \"P0014-Hub-Shell\");\nconst defaultVendor = path.join(hubRoot, \"vendor\", \"hub-ui\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\nconst p0008Vendor = path.join(p0008Root, \"vendor\", \"hub-ui\");\nconst p0014Vendor = path.join(p0014Root, \"vendor\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubPanel.tsx\", \"src/content/HubPanel.tsx\"],\n  [\"src/content/HubDirectoryCard.tsx\", \"src/content/HubDirectoryCard.tsx\"],\n  ",
-      "lines": 188,
-      "updatedAt": "2026-06-05T01:00:07.616Z",
+      "lines": 189,
+      "updatedAt": "2026-06-05T07:10:35.547Z",
       "tags": [
         "hub-ui",
         "command",

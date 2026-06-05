@@ -4,7 +4,7 @@
 
 - Version: `5.1.2`
 - Timestamp: 2026-06-05 08:23 (UTC+7)
-- Commit: pending
+- Commit: `1ef4f6b`
 - Type: Patch
 - Status: Draft
 
@@ -23,7 +23,7 @@
 - Type: Major
 - Product: P0004
 - Prompt: ok 1 2 3 — Push WIP, fix blockers, Release Major, browser-verify-until-done
-- Commit: pending
+- Commit: `1ef4f6b`
 - Status: Draft
 
 ### Changes
