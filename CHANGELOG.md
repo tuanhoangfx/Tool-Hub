@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-05 - Git commit version stamp
+
+- Version: `5.1.2`
+- Timestamp: 2026-06-05 08:23 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Workspace ship 4-tier + browser verify all tools
+
+- Version: `5.1.1`
+- Type: Major
+- Product: P0004
+- Prompt: ok 1 2 3 — Push WIP, fix blockers, Release Major, browser-verify-until-done
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Ship pipeline: Git / Push / Deploy / Release (4 tiers); `ship-product.ps1` Deploy + skip build when no script.
+- `verify-production-smoke.mjs`: redirect chain + Vercel 307 soft-OK.
+- Hub UI WIP pushed; agent-manifest + workspace catalog synced.
+
+### Verification
+
+- `corepack pnpm build` — passed
+- Browser: 16/16 local dev URLs probed OK; 15/16 MCP verify pass (P0002 Electron preload)
+
+---
+
 ## 2026-06-05 - MiniDonut grid parity with bar charts
 
 - Version: `4.2.10`

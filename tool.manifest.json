@@ -61,7 +61,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "4.2.10",
+    "version": "5.1.2",
     "readiness": [
       "build",
       "lint",
@@ -101,7 +101,7 @@
       "migrateDoc": "docs/IDENTITY.md"
     }
   },
-  "manifestUpdatedAt": "2026-06-05T01:05:26.167Z",
+  "manifestUpdatedAt": "2026-06-05T01:23:15.067Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infi.io.vn). Library-only catalog."

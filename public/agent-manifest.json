@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T01:03:16.811Z",
+  "generatedAt": "2026-06-05T01:21:46.074Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -136,8 +136,8 @@
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
       "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Deploy / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Deploy\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Deploy\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try",
-      "lines": 272,
-      "updatedAt": "2026-06-05T00:57:59.473Z",
+      "lines": 281,
+      "updatedAt": "2026-06-05T01:16:46.254Z",
       "tags": [
         "ship",
         "workspace",
@@ -236,9 +236,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "F Search · N New · E Edit selection · Esc close modal",
-      "bodyPreview": "# Hub keyboard shortcuts (workspace standard)\n\nSynced across P0004 Hub UI via `@tool-workspace/hub-ui`.\n\n| Key | Action | Where |\n|-----|--------|--------|\n| **F** | Focus main tab search (FilterBar) | All Hub list tabs with FilterBar |\n| **Ctrl+Q** | Clear search query and all active filters | Same scope as **F** |\n| **N** | Add / create (primary row action) | Users → Add; screens with `onNew` handler |\n| **S** | Open tab header Settings panel | Tab chrome (not sidebar global Settings) |\n| **E** | Edit selection (when rows checked) | Users → Edit; Hub → Refresh selected tools |\n| **Esc** | Close open modal | Tool detail, user access, agent context, Supabase detail |\n\n## Implementation\n\n- Module: `packages/hub-ui/src/keyboard/hub-keyboard-shortcuts.ts`\n- App shell: `useHubActiveScreenSync(screen, systemTab)` in `App.tsx` — scope `library` | `users` | `system-<tab>`\n- System FilterBar: `hubSystemShortcutScope(tabId)` in `SystemHubShell` (must match active screen)\n- Search: `FilterBar` with `shortcutScope` matching active tab\n- Clear: `registerHubSearchClear` from `FilterBar` (**Ctrl+Q**; works in search input too)\n- Settings: `registerHubSettingsOpen` from `HubDisplayPrefs` when `sc",
-      "lines": 57,
-      "updatedAt": "2026-06-05T00:48:29.049Z",
+      "bodyPreview": "# Hub keyboard shortcuts (workspace standard)\n\nSynced across Hub tools via `@tool-workspace/hub-ui` (single source: `packages/hub-ui/src/keyboard/`).\n\n| Key | Action | Where |\n|-----|--------|--------|\n| **F** | Focus main tab search (FilterBar) | All Hub list tabs with FilterBar |\n| **Ctrl+Q** | Clear search query and all active filters | Same scope as **F** |\n| **N** | Add / create (primary row action) | Users → Add; screens with `onNew` handler |\n| **S** | Open tab header Settings panel | Tab chrome (not sidebar global Settings) |\n| **E** | Edit selection (when rows checked) | Users → Edit; Hub → Refresh selected tools |\n| **Esc** | Blur FilterBar search when focused; otherwise close open modal | Search field after **F**; modals unchanged when search not focused |\n\n## Cross-tool sync\n\n| Tool | Dependency | App shell | Filter scope |\n|------|------------|-----------|--------------|\n| P0004 | `vendor/hub-ui` | `useHubActiveScreenSync(screen, systemTab)` | `library` / `users` / `system-<tab>` |\n| P0014 | `vendor/hub-ui` | same as P0004 | same |\n| P0020 | `vendor/hub-ui` | `useHubActiveScreenSync(activeNav)` | `notes` / `twofa` / `cookie` / `system` |\n| P0006 | `workspace:*` | `useH",
+      "lines": 69,
+      "updatedAt": "2026-06-05T01:16:34.283Z",
       "tags": [
         "hub-ui",
         "keyboard",
@@ -350,7 +350,7 @@
       "clone": "P0006, P0008, P0020",
       "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | P0004/auth |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Agent Kind (manifest)\n\n| Kind | Nội dung |\n|------|----------|\n| **pattern** | Hu\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0006** (clone): bots, groups, logs, channels\n- **P0008** (clone-migrate): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system",
       "lines": 45,
-      "updatedAt": "2026-06-05T01:03:10.618Z",
+      "updatedAt": "2026-06-05T01:16:43.307Z",
       "tags": [
         "hub-ui",
         "pattern",
