@@ -29,15 +29,6 @@
       "ensureScript": "scripts/ensure-dev.cjs",
       "launcherPort": 5190
     },
-    "P0005": {
-      "name": "Zalo AI Bot",
-      "root": "P0005-zalo-ai-bot",
-      "port": 3920,
-      "probePath": "/p0005/",
-      "openPath": "/p0005/",
-      "stack": "node-admin",
-      "startCommand": "node src/cli-admin.js"
-    },
     "P0006": {
       "name": "AIChatHub Console",
       "root": "P0006-AIChatHub",

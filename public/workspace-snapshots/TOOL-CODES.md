@@ -16,7 +16,7 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0004 | P0004-Tool-Hub | tuanhoangfx/Tool-Hub | **Tool Hub** — catalog |
 
-| P0005 | P0005-zalo-ai-bot | tuanhoangfx/zalo-ai-bot | Zalo bot |
+| P0006 | P0006-AIChatHub | tuanhoangfx/aichathub | **AIChatHub** — Zalo bot engine + console (replaces retired P0005) |
 
 | P0007 | P0007-9router-infra | tuanhoangfx/9router-infra | Infra |
 
@@ -53,6 +53,8 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 **Mã tiếp theo:** P0025
 
 
+
+**P0005 (retired 2026-06):** Zalo bot consolidated into **P0006-AIChatHub** — code `P0005` no longer used in workspace.
 
 **P0017 / P0018 / P0024 (2026-06-05):** Đã gỡ folder local ChatHubAI clones và AI Project Manager. Chat/API: **P0006-AIChatHub** (worker + console trong repo chính); thin UI: **P0016-ChatCenter**, **P0014-Hub-Shell**.
 

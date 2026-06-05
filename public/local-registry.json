@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T21:05:13.014Z",
+  "generatedAt": "2026-06-04T23:59:52.187Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -91,7 +91,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "4.1.6",
+      "localVersion": "4.2.3",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -214,10 +214,10 @@
       "scriptFiles": [
         "scripts/apply-9router-config.ps1",
         "scripts/apply-codex-9router-full.ps1",
-        "scripts/apply-https-sync-zalo-to-vps.ps1",
         "scripts/apply-openresty.mjs",
         "scripts/audit-vps-infix1-deep.mjs",
-        "scripts/audit-vps-infix1.mjs"
+        "scripts/audit-vps-infix1.mjs",
+        "scripts/check-vps-base-url.mjs"
       ]
     },
     {
@@ -352,7 +352,7 @@
       "repo": "tuanhoangfx/P0011-Infix1-Mail",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.2.0",
+      "localVersion": "1.2.3",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Needs review",
@@ -387,9 +387,9 @@
         "scripts/cf-add-custom-domain.mjs",
         "scripts/cf-dns-fix-mail.mjs",
         "scripts/cf-dns-list.mjs",
-        "scripts/cf-register-subdomain.mjs",
-        "scripts/cf-setup-infix1-zone.mjs",
-        "scripts/cf-zone-status.mjs"
+        "scripts/cf-dns-mx-fix.mjs",
+        "scripts/cf-email-routing-dns.mjs",
+        "scripts/cf-email-routing-enable.mjs"
       ]
     },
     {
@@ -428,7 +428,7 @@
     },
     {
       "id": "youtube-channel-dashboard",
-      "code": "LOCAL-012",
+      "code": "LOCAL-011",
       "name": "P0013-czp-youtube-tda-team",
       "repo": "",
       "branch": "main",
@@ -504,27 +504,29 @@
       ]
     },
     {
-      "id": "p0016-chat-center",
-      "code": "LOCAL-015",
-      "name": "P0016-ChatCenter",
-      "repo": "",
+      "id": "chat-center",
+      "code": "P0016",
+      "name": "Chat Center",
+      "repo": "tuanhoangfx/chat-center",
       "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "1.0.5",
-      "category": "Local",
+      "remoteEnabled": true,
+      "localVersion": "1.1.0",
+      "category": "Web",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "P0016 Chat Center — P0004 Hub shell, P0006 worker API",
+      "status": "Draft",
+      "summary": "Unified chat console — P0004 Hub shell, P0006 worker API (bots, inbox, groups, channels).",
       "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
       "tags": [
-        "Local",
-        "Workspace"
+        "React",
+        "TypeScript",
+        "Vite",
+        "@tool-workspace/hub-ui"
       ],
       "localUrl": "http://127.0.0.1:5186",
       "deployTarget": "vercel",
       "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Dev: node ../scripts/ensure-dev-product.cjs P0016",
+        "Build: corepack pnpm build"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -535,11 +537,18 @@
         "CHANGELOG.md",
         "RELEASE.md"
       ],
-      "scriptFiles": []
+      "scriptFiles": [
+        "scripts/apply-hub-seed.ps1",
+        "scripts/chathub-nginx-blocks.mjs",
+        "scripts/deploy-console-remote.mjs",
+        "scripts/deploy-remote.mjs",
+        "scripts/ensure-dev.cjs",
+        "scripts/load-vps-env.mjs"
+      ]
     },
     {
       "id": "infi-project-performance-tracker",
-      "code": "LOCAL-018",
+      "code": "LOCAL-015",
       "name": "P0019-Work-Performance",
       "repo": "",
       "branch": "main",
@@ -578,7 +587,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "3.1.1",
+      "localVersion": "3.1.9",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",

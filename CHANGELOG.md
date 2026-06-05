@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-06-05 - Git commit version stamp
+
+- Version: `4.3.2`
+- Timestamp: 2026-06-05 07:01 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-05 - Retire P0005, sync ship docs and catalog
+
+- Version: `4.3.1`
+- Type: Minor
+- Product: P0004
+- Prompt: ok 1 2 3 — xóa P0005, gỡ script legacy P0007, Push doc cleanup
+- Commit: pending
+- Status: Draft
+
+### Changes
+
+- Removed **P0005-zalo-ai-bot** from workspace; catalog/registry/ports no longer list P0005.
+- Refreshed `agent-manifest`, `tools-launch`, `vps-inventory`, workspace snapshots via `scan:local`.
+- Deleted Hub icon `public/icons/tools/P0005.svg`.
+
+### Verification
+
+- `corepack pnpm scan:local` — 19 projects, no P0005 entry
+- `powershell -File Tool/scripts/ship-product.ps1 -Code P0004 -Keyword Push`
+
+---
+
 ## 2026-06-05 - Remove P0017 ChatHubAI
 
 - Version: `4.2.3`

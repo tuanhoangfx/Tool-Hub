@@ -115,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "4.1.6",
+    "localVersion": "4.2.3",
     "remoteEnabled": true
   },
   {
@@ -328,7 +328,7 @@
     "repo": "tuanhoangfx/P0011-Infix1-Mail",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "1.2.0",
+    "localVersion": "1.2.3",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Needs review",
@@ -409,7 +409,7 @@
   },
   {
     "id": "youtube-channel-dashboard",
-    "code": "LOCAL-012",
+    "code": "LOCAL-011",
     "name": "P0013-czp-youtube-tda-team",
     "repo": "",
     "branch": "main",
@@ -485,27 +485,29 @@
     ]
   },
   {
-    "id": "p0016-chat-center",
-    "code": "LOCAL-015",
-    "name": "P0016-ChatCenter",
-    "repo": "",
+    "id": "chat-center",
+    "code": "P0016",
+    "name": "Chat Center",
+    "repo": "tuanhoangfx/chat-center",
     "branch": "main",
-    "remoteEnabled": false,
-    "localVersion": "1.0.5",
-    "category": "Local",
+    "remoteEnabled": true,
+    "localVersion": "1.1.0",
+    "category": "Web",
     "audience": "Tool maintainers",
-    "status": "Needs review",
-    "summary": "P0016 Chat Center — P0004 Hub shell, P0006 worker API",
+    "status": "Draft",
+    "summary": "Unified chat console — P0004 Hub shell, P0006 worker API (bots, inbox, groups, channels).",
     "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
     "tags": [
-      "Local",
-      "Workspace"
+      "React",
+      "TypeScript",
+      "Vite",
+      "@tool-workspace/hub-ui"
     ],
     "localUrl": "http://127.0.0.1:5186",
     "deployTarget": "vercel",
     "usage": [
-      "Run the configured dev command from package.json.",
-      "Run the configured build command from package.json."
+      "Dev: node ../scripts/ensure-dev-product.cjs P0016",
+      "Build: corepack pnpm build"
     ],
     "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
     "manifestPath": "tool.manifest.json",
@@ -520,7 +522,7 @@
   },
   {
     "id": "infi-project-performance-tracker",
-    "code": "LOCAL-018",
+    "code": "LOCAL-015",
     "name": "P0019-Work-Performance",
     "repo": "",
     "branch": "main",
@@ -559,7 +561,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "3.1.1",
+    "localVersion": "3.1.9",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",
@@ -760,85 +762,6 @@
     "scriptFiles": [
       "scripts/test-bindings-pull-logic.mjs"
     ]
-  },
-  {
-    "id": "chat-center",
-    "code": "P0016",
-    "name": "Chat Center",
-    "repo": "tuanhoangfx/chat-center",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "1.0.2",
-    "category": "Web",
-    "audience": "Tool maintainers",
-    "status": "Draft",
-    "summary": "Unified chat console — P0004 Hub shell, P0006 worker API (bots, groups, channels, inbox).",
-    "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
-    "tags": [
-      "React",
-      "TypeScript",
-      "Vite",
-      "@tool-workspace/hub-ui"
-    ],
-    "localUrl": "http://127.0.0.1:5186",
-    "deployTarget": "vercel",
-    "usage": [
-      "Dev: node ../scripts/ensure-dev-product.cjs P0016",
-      "Build: corepack pnpm build"
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": []
-  },
-  {
-    "id": "zalo-ai-bot",
-    "code": "P0005",
-    "name": "Zalo AI Bot",
-    "repo": "tuanhoangfx/zalo-ai-bot",
-    "branch": "main",
-    "category": "Bot",
-    "audience": "Zalo group operators",
-    "status": "Ready",
-    "summary": "Zalo personal account bot with 9Router AI, multi-bot admin dashboard, and local thread history.",
-    "localPath": "E:\\Dev\\Tool\\P0005-zalo-ai-bot",
-    "tags": [
-      "Node.js",
-      "zca-js",
-      "9Router",
-      "Admin UI"
-    ],
-    "appUrl": "https://zaloai.infi.io.vn",
-    "localUrl": "http://127.0.0.1:3920",
-    "deployTarget": "vps",
-    "usage": [
-      "Local: admin.bat or pnpm run admin → http://127.0.0.1:3920/p0005/",
-      "Login: pnpm run login (Zalo QR)",
-      "Bot: pnpm run bot",
-      "Production: https://zaloai.infi.io.vn"
-    ],
-    "downloadHint": "Clone the repo — runtime data stays local, not in the repo.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [
-      "scripts/health-check.ps1",
-      "scripts/install-autostart.ps1",
-      "scripts/patch-admin-botlist.mjs"
-    ],
-    "localVersion": "1.4.0",
-    "remoteEnabled": true
   },
   {
     "id": "czp-youtube-tda-team",

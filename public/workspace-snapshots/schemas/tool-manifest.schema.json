@@ -280,7 +280,7 @@
         "static",
         "none"
       ],
-      "description": "Target deploy chính của project. P0008/P0009/P0013/P0015/P0019=vercel; P0001/P0002=github-release; P0005/P0007=vps; P0015=static."
+      "description": "Target deploy chính của project. P0008/P0009/P0013/P0015/P0019=vercel; P0001/P0002=github-release; P0006/P0007=vps; P0015=static."
     },
     "vercel": {
       "type": "object",

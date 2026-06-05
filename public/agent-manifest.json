@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T20:41:11.324Z",
+  "generatedAt": "2026-06-04T23:54:49.782Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -11,9 +11,9 @@
       "agentRequestable": true,
       "trigger": "P0020 Cookie Auto and E0001 cookie-bridge operations. Use for cookie sync, browser agents, brand icons, extension reload, Supabase bridge commands, or Cookie Auto routes.",
       "summary": "P0020 Cookie Auto and E0001 cookie-bridge operations. Use for cookie sync, browser agents, brand icons, extension reload, Supabase bridge commands, or Cookie Auto routes.",
-      "bodyPreview": "You operate Cookie Auto (`Tool/P0020-Data-Box`) and extension `Extension/E0001-cookie-bridge`.\n\n## Read first\n\n1. `.cursor/rules/dev-workspace-compact.mdc` §4 (Cookie) and §0 (version)\n2. `Extension/E0001-cookie-bridge/.cursor/rules/e0001-auto-bump-version.mdc` when changing extension code\n\n## Operations\n\n- Prefer Supabase agent commands: `Sync source`, `Load vault`, `Check`, `Reload ext` — not mouse/keyboard automation.\n- Brand icons: single registry `cookieBrandIcons.registry.json` + `sync-cookie-brand-icons.mjs`.\n- Never commit service role keys, cookies, or passwords.\n- Bump versions per dev-workspace §0 and E0001 patch rule when shipping extension changes.\n\nLocal UI: `http://127.0.0.1:5177/?screen=cookie`",
+      "bodyPreview": "You operate Cookie Auto (`Tool/P0020-Data-Box`) and extension `Extension/E0001-cookie-bridge`.\n\n## Read first\n\n1. `.cursor/rules/dev-workspace-compact.mdc` (Version)\n2. `Extension/E0001-cookie-bridge/.cursor/rules/e0001-auto-bump-version.mdc` when changing extension code\n\n## Operations\n\n- Prefer Supabase agent commands: `Sync source`, `Load vault`, `Check`, `Reload ext` — not mouse/keyboard automation.\n- Brand icons: single registry `cookieBrandIcons.registry.json` + `sync-cookie-brand-icons.mjs`.\n- Never commit service role keys, cookies, or passwords.\n- Bump versions per `dev-workspace-compact.mdc` (Version) and E0001 patch rule when shipping extension changes.\n\nLocal UI: `http://127.0.0.1:5177/?screen=cookie`",
       "lines": 15,
-      "updatedAt": "2026-06-04T17:38:59.714Z",
+      "updatedAt": "2026-06-04T23:52:42.992Z",
       "tags": [
         "agent",
         "cursor",
@@ -47,9 +47,9 @@
       "commandId": "bump-version",
       "agentRequestable": true,
       "summary": "Bump version (current product)",
-      "bodyPreview": "# Bump version (current product)\n\nApply version bump per `.cursor/rules/dev-workspace-compact.mdc` §0.\n\n## Steps\n\n1. Identify which `Tool/P00xx-*` or `Extension/E00xx-*` was edited.\n2. Default: **patch** +1 for meaningful code/UI changes completed in the task.\n3. **Prepend** a full CHANGELOG block (template: `E:\\Dev\\Rules\\templates\\tool-docs\\CHANGELOG_ENTRY_TEMPLATE.md`):\n   - Title, Version, Type, Product, **Prompt** (this task), `Commit: pending`, `### Changes` (specific bullets), Verification, Rollback.\n4. Sync `package.json`, `tool.manifest.json`, `public/tool.manifest.json` (if any), extension manifests.\n5. End with: `Version: X.Y.Z → A.B.C`.\n\n**Minor:** Git keyword. **Major:** Release keyword.\n\n**Forbidden:** entries with only “version stamp” and no real Changes.\n",
+      "bodyPreview": "# Bump version (current product)\n\nApply version bump per `.cursor/rules/dev-workspace-compact.mdc` (Version).\n\n## Steps\n\n1. Identify which `Tool/P00xx-*` or `Extension/E00xx-*` was edited.\n2. Default: **patch** +1 for meaningful code/UI changes completed in the task.\n3. **Prepend** a full CHANGELOG block (template: `E:\\Dev\\Rules\\templates\\tool-docs\\CHANGELOG_ENTRY_TEMPLATE.md`):\n   - Title, Version, Type, Product, **Prompt** (this task), `Commit: pending`, `### Changes` (specific bullets), Verification, Rollback.\n4. Sync `package.json`, `tool.manifest.json`, `public/tool.manifest.json` (if any), extension manifests.\n5. End with: `Version: X.Y.Z → A.B.C`.\n\n**Minor:** Git keyword. **Major:** Release keyword.\n\n**Forbidden:** entries with only “version stamp” and no real Changes.\n",
       "lines": 17,
-      "updatedAt": "2026-06-04T17:38:58.919Z",
+      "updatedAt": "2026-06-04T23:52:36.237Z",
       "tags": [
         "command",
         "cursor",
@@ -101,9 +101,9 @@
       "commandId": "ship",
       "agentRequestable": true,
       "summary": "Ship — Git · Push · Release",
-      "bodyPreview": "# Ship — Git · Push · Release\n\nKeywords: **`Git P0004`**, **`Push P0020`**, **`Release E0001`** (replace code).\n\n## Run\n\n1. Read `.cursor/skills/p00xx-ship-keywords/SKILL.md` for the keyword tier.\n2. **Release (full pipeline):**\n\n```powershell\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Release\n```\n\n3. **Git / Push:** same skill — verify/build → commit (minor) → push only; no deploy unless Release.\n\n**P0005 Release:** VPS deploy via `zalo-ai-bot-release` skill after push.\n\nReport the ship block from `p00xx-ship-keywords` when done.\n",
-      "lines": 19,
-      "updatedAt": "2026-06-04T17:00:57.963Z",
+      "bodyPreview": "# Ship — Git · Push · Release\n\nKeywords: **`Git P0004`**, **`Push P0020`**, **`Release E0001`** (replace code).\n\n## Run\n\n1. Read `.cursor/skills/p00xx-ship-keywords/SKILL.md` for the keyword tier.\n2. **Release (full pipeline):**\n\n```powershell\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Release\n```\n\n3. **Git / Push:** same skill — verify/build → commit (minor) → push only; no deploy unless Release.\n\nReport the ship block from `p00xx-ship-keywords` when done.\n",
+      "lines": 17,
+      "updatedAt": "2026-06-04T23:52:22.914Z",
       "tags": [
         "hub-ui",
         "command",
@@ -136,8 +136,8 @@
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
       "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try {\n          $j = Get-Content -LiteralPath $manifest -Raw | Conver",
-      "lines": 198,
-      "updatedAt": "2026-06-04T18:25:33.837Z",
+      "lines": 196,
+      "updatedAt": "2026-06-04T23:52:23.253Z",
       "tags": [
         "ship",
         "workspace",
@@ -187,8 +187,8 @@
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst defaultVendor = path.join(hubRoot, \"vendor\", \"hub-ui\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubPanel.tsx\", \"src/content/HubPanel.tsx\"],\n  [\"src/content/HubDirectoryCard.tsx\", \"src/content/HubDirectoryCard.tsx\"],\n  [\"src/content/HubTabScreenBody.tsx\", \"src/content/HubTabScreenBody.tsx\"],\n  [\"src/shell/HubTabChrome.tsx\", \"src/shell/HubTabChrome.tsx\"],\n  [\"src/shell/HubTabSectionRule.tsx\", \"src/shell/HubTabSectionRule.tsx\"],\n  [\"src/styles/hub-shell-layout.css\", \"src/styles/hub",
-      "lines": 174,
-      "updatedAt": "2026-06-04T08:42:09.011Z",
+      "lines": 181,
+      "updatedAt": "2026-06-04T23:54:32.142Z",
       "tags": [
         "hub-ui",
         "command",
@@ -350,7 +350,7 @@
       "clone": "P0006, P0008, P0020",
       "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | P0004/auth |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Agent Kind (manifest)\n\n| Kind | Nội dung |\n|------|----------|\n| **pattern** | Hu\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0006** (clone): bots, groups, logs, channels\n- **P0008** (clone-migrate): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system",
       "lines": 45,
-      "updatedAt": "2026-06-04T20:41:11.205Z",
+      "updatedAt": "2026-06-04T23:49:25.349Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -412,7 +412,7 @@
       "cloneTooltip": "P0004/users\nP0006/bots\nP0006/groups\nP0006/logs\nP0006/channels — Card grid only today — same directory pattern; add table + ViewToggle when needed\nP0020/cookie — Custom table body\nP0020/twofa\nP0008/buyers\nP0008/orders\nP0008/products",
       "bodyPreview": "# Directory\nLayer: screen\nPattern ID: directory\nScreen template: directory\nStatus: ready\nGolden: P0004/hub-list\nScreen: Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx\nTable: Tool/P0004-Tool-Hub/src/features/hub/HubToolsDirectoryTable.tsx\nDirectory screen: FilterBar, ViewToggle (card ↔ table), KPI, HubDirectoryCard / HubDataTable. One golden HubListPage — card and table are views, not separate patterns.\nComposed: AppTabHeader, FilterBar, ViewToggle, DisplayPrefs, KpiStrip, HubResultCount\nVerify: hub-ui-parity-check.mjs --template directory; :5176 Hub tab\n## Clones\n\n- P0004/users\n- P0006/bots\n- P0006/groups\n- P0006/logs\n- P0006/channels — Card grid only today — same directory pattern; add table + ViewToggle when needed\n- P0020/cookie — Custom table body\n- P0020/twofa\n- P0008/buyers [migrate]\n- P0008/orders [migrate]\n- P0008/products [migrate]",
       "lines": 23,
-      "updatedAt": "2026-06-03T15:10:24.643Z",
+      "updatedAt": "2026-06-04T23:54:35.930Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -459,7 +459,7 @@
       "cloneTooltip": "P0020/system",
       "bodyPreview": "# System\nLayer: screen\nPattern ID: system-panels\nScreen template: system-panels\nPanels (in-screen): agent (hub-users-table), quota (hub-users-table--wide)\nStatus: ready\nGolden: P0004/system\nScreen: Tool/P0004-Tool-Hub/src/features/system-hub/SystemHubScreen.tsx\nSystemHubScreen: sub-tabs + panels. Agent meta list and Supabase quota use hub-users-table skins inside this screen — same clone unit as Directory chrome, not separate patterns.\nComposed: HubTabChrome, HubPanel, FilterBar, KpiStrip, SystemAgentContextPanel, SystemSupabaseQuotaPanel, AgentContextDetailModal\nVerify: System → Overview / Agent / Quota\n## Clones\n\n- P0020/system",
       "lines": 14,
-      "updatedAt": "2026-06-03T18:58:47.651Z",
+      "updatedAt": "2026-06-04T23:54:28.708Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -482,7 +482,7 @@
       "clone": "—",
       "bodyPreview": "# User access modal\nLayer: modal\nPattern ID: user-access-modal\nStatus: ready\nGolden: P0004/users\nScreen: Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx\nTable: Tool/P0004-Tool-Hub/src/features/identity/UserAccessModal.tsx\nUsers tab — tool access editor modal.",
       "lines": 8,
-      "updatedAt": "2026-06-03T18:56:46.672Z",
+      "updatedAt": "2026-06-04T23:54:29.595Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -505,7 +505,7 @@
       "clone": "—",
       "bodyPreview": "# Workspace composer\nLayer: screen\nPattern ID: workspace-composer\nScreen template: workspace-composer\nStatus: ready\nGolden: P0020/notes\nScreen: Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx\nSplit notes / editor (P0020).",
       "lines": 8,
-      "updatedAt": "2026-06-04T17:34:55.782Z",
+      "updatedAt": "2026-06-04T23:43:47.167Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -525,7 +525,7 @@
       "summary": "Dev workspace E:\\Dev — policy duy nhất (Always Apply)",
       "bodyPreview": "# Dev workspace (E:\\Dev)\n\n## Giao tiếp & mỗi câu trả lời\n\n- Trao đổi với user bằng **tiếng Việt**; mọi **chuỗi UI** Tool/Extension bằng **tiếng Anh**.\n- **Luôn** kết thúc bằng **3 đề xuất** đánh số `1.` `2.` `3.` (kể cả trả lời ngắn / xong việc).\n- **Tự động** thực hiện các đề xuất (setup, migration, verify browser, script…) — **không** chờ `ok 1` trừ khi user nói rõ chỉ tư vấn / không làm.\n- Dòng cuối: `Version: X.Y.Z → A.B.C` hoặc `Version: no bump (lý do)`.\n- **Không** xóa dữ liệu quan trọng; **không** commit secret; commit/push/release chỉ khi user yêu cầu rõ.\n- Hooks kiểm tra format — xem Settings → Hooks → Execution Log nếu thiếu 3 đề xuất / Version.\n\n## P0004 golden pattern (Hub · Users · Overview)\n\n- **P0004 Tool Hub** — tab **Hub / Users / Overview** là chuẩn layout & typography cho mọi P00xx.\n- Tuân thủ **format text/UI P004** (title case có chừng mực, không ALL CAPS lung tung; copy UI English).\n- Clone shell: `packages/hub-ui/README.md` · `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` · verify `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n- Design source: `Tool/P0004-Tool-Hub` (`HubListPage`, `UserDirectoryTable`, Overview TOC). Dùng `@tool-workspace/hub-ui`, ",
       "lines": 41,
-      "updatedAt": "2026-06-04T17:49:09.506Z",
+      "updatedAt": "2026-06-04T23:54:25.668Z",
       "tags": [
         "rule",
         "cursor",
@@ -541,8 +541,25 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# Browser verify until done\n\n## When this applies\n\n- Changed **UI**, routes, client logic, or styles in `Tool/P00xx-*` / `Extension/E00xx-*`\n- User reports a **bug** visible in the app or extension popup\n- **Deploy / release** smoke test (with production or local URL)\n- User says: *fix xong*, *test browser*, *loop đến khi được*, *smoke test*\n\n**Skip** only when: pure docs, read-only review, server-only change with no UI surface, or user says *skip browser*.\n\n## Browsers (priority)\n\n1. **Cursor IDE browser MCP** — default (`browser_navigate`, `browser_snapshot`, console/network tools)\n2. **Chrome profile 0010** — if user already logged in there and MCP cannot reach local host / extension-only flow\n\nDo not ask the user to log in again if a session is already authenticated.\n\n## Fix loop (mandatory)\n\nRepeat until **done** or **blocked**:\n\n```\nEDIT → RUN (dev/build if needed) → BROWSER VERIFY → pass?\n         ↑                                    |\n         └──────── no: diagnose, fix ─────────┘\n```\n\n### 1. Prepare\n\n- Know the **URL** (local port from `tool.manifest.json` / README, or production URL).\n- Know **acceptance**: what screen, button, or data proves the fix.\n\n### 2. Browser ver",
-      "lines": 92,
-      "updatedAt": "2026-06-04T17:39:19.792Z",
+      "lines": 91,
+      "updatedAt": "2026-06-04T23:52:43.782Z",
+      "tags": [
+        "skill",
+        "cursor",
+        "workspace"
+      ]
+    },
+    {
+      "id": "cursor-skills-p00xx-clone-hub-shell-SKILL-md",
+      "kind": "skill",
+      "name": "p00xx-clone-hub-shell",
+      "path": ".cursor\\skills\\p00xx-clone-hub-shell\\SKILL.md",
+      "scope": "workspace",
+      "trigger": ">-",
+      "summary": ">-",
+      "bodyPreview": "# P00xx clone Hub shell\n\nPlaybook distilled from **P0016 Chat Center** (shell P0004 + inbox golden P0020 Notes + API P0006).\n\n**Golden sources:** `Tool/P0004-Tool-Hub` (chrome) · `Tool/P0020-Data-Box` (notes split) · `packages/hub-ui/README.md`\n\n**Companion:** skill `browser-verify-until-done` (mandatory after UI edits) · skill `p00xx-tool-onboard` (import before clone)\n\n**Templates:** [templates/](templates/) · **Checklist:** [checklist.md](checklist.md) · **Pitfalls:** [pitfalls.md](pitfalls.md) · **Manifest fields:** [manifest-fields.md](manifest-fields.md)\n\n---\n\n## When to use\n\n- New P00xx web tool needs **Hub sidebar + tab chrome** like P0004\n- Clone **directory tab** (Users/Bots) or **notes-split tab** (Inbox/Notes)\n- User says: clone shell Hub, đồng bộ UI P0004, hub-ui shell, golden screen\n- After `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` — finish layer 3\n\n**Not in scope:** Design Template 5 mockups (only when user explicitly asks) · full business logic · Push/Release (→ `p00xx-ship-keywords`)\n\n---\n\n## Golden screen map (pick before coding)\n\n| Template id | Golden path | Use for |\n|-------------|-------------|---------|\n| `directory` | `P0004/users` | Bots, Groups,",
+      "lines": 217,
+      "updatedAt": "2026-06-04T23:47:01.295Z",
       "tags": [
         "skill",
         "cursor",
@@ -557,9 +574,9 @@
       "scope": "workspace",
       "trigger": ">-",
       "summary": ">-",
-      "bodyPreview": "# P00xx ship keywords (Git · Push · Release)\n\n## Parse the command\n\nPattern: **`{Git|Push|Release} {CODE}`**\n\n| User says | CODE examples | Resolve path |\n|-----------|---------------|--------------|\n| `Git P0004` | P0004, P0020, E0001 | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | case-insensitive | Match folder by code prefix; read `tool.manifest.json` |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n**P0005** release/deploy: use `zalo-ai-bot-release` skill instead of generic deploy step 6.\n\n---\n\n## Keyword → pipeline (cumulative)\n\nEach level **includes all steps above it**:\n\n| Keyword | Steps | Version tier (§0) |\n|---------|--------|-------------------|\n| **Git** | 1 verify/build → 2 commit | **Minor** before commit (`MINOR+1`, `PATCH=1`) |\n| **Push** | Git + 3 push GitHub | Minor on commit; **no Major** unless user also said Release |\n| **Release** | Push + 4 deploy → 5 smoke → 6 tag + `gh release` | **Major** before official push to `main` (`MAJOR+1`, `MINOR=1`, `PATCH=1`) |\n\n**Patch** is separate: bump when **finishing a code task**, before any Git/Push/Release keyword.\n\n### Release = run full pipeline autono",
-      "lines": 91,
-      "updatedAt": "2026-06-04T17:38:58.760Z",
+      "bodyPreview": "# P00xx ship keywords (Git · Push · Release)\n\n## Parse the command\n\nPattern: **`{Git|Push|Release} {CODE}`**\n\n| User says | CODE examples | Resolve path |\n|-----------|---------------|--------------|\n| `Git P0004` | P0004, P0020, E0001 | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | case-insensitive | Match folder by code prefix; read `tool.manifest.json` |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n---\n\n## Keyword → pipeline (cumulative)\n\nEach level **includes all steps above it**:\n\n| Keyword | Steps | Version tier |\n|---------|--------|--------------|\n| **Git** | 1 verify/build → 2 commit | **Minor** before commit (`MINOR+1`, `PATCH=1`) |\n| **Push** | Git + 3 push GitHub | Minor on commit; **no Major** unless user also said Release |\n| **Release** | Push + 4 deploy → 5 smoke → 6 tag + `gh release` | **Major** before official push to `main` (`MAJOR+1`, `MINOR=1`, `PATCH=1`) |\n\n**Patch** is separate: bump when **finishing a code task**, before any Git/Push/Release keyword.\n\n### Release = run full pipeline autonomously\n\nWhen the user says **`Release P00xx`** (or ok 1 2 3 on release proposals), **do not** ask step-",
+      "lines": 105,
+      "updatedAt": "2026-06-04T23:52:22.558Z",
       "tags": [
         "skill",
         "cursor",
@@ -575,8 +592,8 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# P00xx tool onboard\n\nBring an external repo into `E:\\Dev\\Tool` with workspace conventions. **Ship later:** skill `p00xx-ship-keywords` or `Release P00xx` → `Tool/scripts/ship-product.ps1`.\n\n**Not in scope:** Git/Push/Release during import — hand off when user asks.\n\nMirror (short): `Tool/docs/playbooks/tool-onboard.md` · Pitfalls: `pitfalls.md` in this folder.\n\n---\n\n## Parse intent\n\n| User says | Phase |\n|-----------|-------|\n| Pull / clone / sync repo | A |\n| Gán P00xx, onboard, chuẩn hóa | A + catalog |\n| Rename, domain, Tailwind, code-split | B (only if asked) |\n| Git / Push / Release | **Stop** → `p00xx-ship-keywords` |\n\nConfirm when unclear: GitHub URL, display name, slug (`id` kebab-case), stack type, deploy target (vercel / vps / local-only).\n\n---\n\n## Phase A — Import\n\n```\n- [ ] A1 Assign P00xx + folder Tool/{CODE}-{Slug}\n- [ ] A2 Preflight + clone\n- [ ] A3 Scaffold manifest, CHANGELOG, RELEASE, port in workspace-ports.json\n- [ ] A4 pnpm install + build\n- [ ] A5 validate-tool-manifest.ps1 (no BOM)\n- [ ] A6 P0004 scan:local — commit registry JSON only\n```\n\n### A1 — Code\n\nRead `E:\\Dev\\Tool\\TOOL-CODES.md` → next code. Folder: `E:\\Dev\\Tool\\{CODE}-{Slug}`. Append row to `TOOL-CO",
-      "lines": 108,
-      "updatedAt": "2026-06-04T17:28:33.155Z",
+      "lines": 110,
+      "updatedAt": "2026-06-04T23:52:39.327Z",
       "tags": [
         "skill",
         "cursor",
