@@ -638,12 +638,13 @@
       "name": "Fanpage Dashboard",
       "repo": "tuanhoangfx/P0023-Fanpage-Dashboard",
       "branch": "main",
-      "remoteEnabled": true,
+      "remoteEnabled": false,
       "localVersion": "2.1.1",
       "category": "Web",
       "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Facebook Fanpage metrics, posts, and page management via Graph API (React + Vite + Tailwind).",
+      "status": "Archived",
+      "supersededBy": "P0016",
+      "summary": "Archived — Fanpage ops on P0016 only (https://chathub.infi.io.vn/fanpages). Repo to be removed.",
       "localPath": "E:\\Dev\\Tool\\P0023-Fanpage-Dashboard",
       "tags": [
         "React",
@@ -652,13 +653,12 @@
         "Tailwind CSS",
         "Facebook Graph API"
       ],
-      "appUrl": "https://fanpage.infi.io.vn",
+      "appUrl": "https://chathub.infi.io.vn/fanpages",
       "localUrl": "http://127.0.0.1:3023",
       "deployTarget": "vercel",
       "usage": [
-        "Dev: corepack pnpm open",
-        "Build: corepack pnpm build",
-        "App: https://fanpage.infi.io.vn"
+        "Use P0016 → Fanpages: https://chathub.infi.io.vn/fanpages",
+        "Do not use — scheduled for repo deletion"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",

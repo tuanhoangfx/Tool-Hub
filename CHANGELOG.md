@@ -1,5 +1,64 @@
 # Changelog
 
+## 2026-06-06 - Git commit version stamp
+
+- Version: `5.2.2`
+- Timestamp: 2026-06-06 21:04 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-06 - P0023 Archived; fanpage DNS retired
+
+- Version: `5.2.1`
+- Type: Minor
+- Product: P0004
+- Prompt: Archive P0023 Fanpage Dashboard — superseded by P0016 Fanpages tab
+
+### Changes
+
+- Registry/catalog: P0023 → `Archived`, `supersededBy: P0016`, `appUrl` → `chathub.infi.io.vn/fanpages`.
+- `docs/DNS-infi.io.vn.md`: remove `fanpage.infi.io.vn`; chathub → P0016.
+
+Version: 5.1.10 → 5.2.1
+
+---
+
+## 2026-06-06 - Hub Start all down (workspace dev from UI)
+
+- Version: `5.1.7`
+- Type: Patch
+- Product: P0004
+- Prompt: ok 1 — nút Start all down trên Hub (P0006 đã xóa, không check)
+- Status: Local
+
+### Changes
+
+- Dev API `POST /api/workspace-dev/start-down` + `GET /api/workspace-dev/status` (Vite middleware).
+- Hub Library tab: **Start all down (N)** — runs `ensure-dev-product --stack workspace --down-only`, polls Local health.
+- Log: `workspace-dev-start.log` (gitignored via `*.log`).
+
+### Verification
+
+- Hub dev → button visible; after click, `probe-local-urls` shows down tools starting.
+
+### Rollback
+
+- Remove `hub-workspace-dev-proxy.cjs` and HubListPage button.
+
+Version: 5.1.6 → 5.1.7
+
+---
+
 ## 2026-06-06 - Retire P0006; P0016 is canonical chat platform
 
 - Version: `5.1.6`
