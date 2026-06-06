@@ -2,7 +2,13 @@ import type { FilterIconMeta } from "../types/filter-badge";
 import { prepareChartItems } from "../chart-items";
 import { compactIconSize } from "../ui-scale";
 
-export type BarItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };
+export type BarItem = {
+  label: string;
+  value: number;
+  color?: string;
+  iconMeta?: FilterIconMeta | null;
+  iconSrc?: string;
+};
 
 function fmtInt(n: number): string {
   return new Intl.NumberFormat("vi-VN").format(n);
@@ -33,7 +39,14 @@ export function MiniBarChart({
           return (
             <li key={`${it.label}-${i}`} className="hub-chart-row anim-slide text-xs">
               <span className="hub-chart-legend-label" title={it.label}>
-                {it.iconMeta ? (
+                {it.iconSrc ? (
+                  <img
+                    src={it.iconSrc}
+                    alt=""
+                    className="h-3.5 w-3.5 shrink-0 rounded-sm object-contain"
+                    aria-hidden
+                  />
+                ) : it.iconMeta ? (
                   <it.iconMeta.icon size={compactIconSize(11)} className={`shrink-0 ${it.iconMeta.className}`} aria-hidden />
                 ) : null}
                 <span className="hub-chart-legend-label__text">{it.label}</span>

@@ -17,10 +17,14 @@ import {
 } from "lucide-react";
 import type { FilterIconMeta } from "./filter-icons";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "./filter-icons";
+import {
+  HUB_FILTER_DROPDOWN_PANEL_CLASS,
+  HubFilterDropdownCircle,
+} from "./filter-dropdown-primitives";
 import { compactIconSize } from "../ui-scale";
 import { registerHubSearchClear, registerHubSearchFocus } from "../keyboard/hub-keyboard-shortcuts";
 
-export type FilterOption = { value: string; label: string; color?: string; count?: number };
+export type FilterOption = { value: string; label: string; color?: string; count?: number; iconSrc?: string };
 export type FilterDef = {
   key: string;
   label: string;
@@ -265,6 +269,16 @@ function FilterOptionCount({ value }: { value?: number }) {
 }
 
 function FilterOptionGlyph({ filterKey, option }: { filterKey: string; option: FilterOption }) {
+  if (option.iconSrc) {
+    return (
+      <img
+        src={option.iconSrc}
+        alt=""
+        className="h-3.5 w-3.5 shrink-0 rounded-sm object-contain"
+        aria-hidden
+      />
+    );
+  }
   const meta = resolveFilterOptionIcon(filterKey, option.value);
   if (!meta) {
     return option.color ? (
@@ -335,6 +349,8 @@ function MultiFilterDropdown({
   })();
 
   const triggerIcon = resolveFilterTriggerIcon(filter, selected);
+  const triggerIconSrc =
+    selected.length === 1 ? filter.options.find((o) => o.value === selected[0])?.iconSrc : undefined;
   const allIcon = resolveFilterAllIcon(filter.key);
   const showTotalOnTrigger = selected.length === 0 && filter.totalCount !== undefined;
 
@@ -349,7 +365,11 @@ function MultiFilterDropdown({
             : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
         }`}
       >
-        {triggerIcon ? <FilterIconGlyph meta={triggerIcon} size={compactIconSize(12)} /> : null}
+        {triggerIconSrc ? (
+          <img src={triggerIconSrc} alt="" className="h-3 w-3 shrink-0 rounded-sm object-contain" aria-hidden />
+        ) : triggerIcon ? (
+          <FilterIconGlyph meta={triggerIcon} size={compactIconSize(12)} />
+        ) : null}
         <span>{buttonLabel}</span>
         {showTotalOnTrigger ? (
           <span className="shrink-0 tabular-nums text-[10px] font-medium text-[var(--muted)]">{filter.totalCount}</span>
@@ -363,7 +383,7 @@ function MultiFilterDropdown({
       </button>
 
       {open ? (
-        <div className="anim-pop absolute left-0 top-full z-30 mt-1 w-72 rounded-xl border border-white/10 bg-[var(--panel)] shadow-xl shadow-black/40">
+        <div className={`${HUB_FILTER_DROPDOWN_PANEL_CLASS} absolute left-0 top-full z-30 mt-1`}>
           <div className="border-b border-white/5 p-2">
             <div className="relative">
               <Search size={compactIconSize(12)} className="pointer-events-none absolute left-2.5 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" />
@@ -383,7 +403,7 @@ function MultiFilterDropdown({
               onClick={toggleAll}
               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:bg-white/5"
             >
-              <Circle checked={allSelected} indeterminate={someSelected} />
+              <HubFilterDropdownCircle checked={allSelected} indeterminate={someSelected} />
               {allIcon ? <FilterIconGlyph meta={allIcon} /> : null}
               <span>All {filter.label}</span>
               <FilterOptionCount
@@ -403,7 +423,7 @@ function MultiFilterDropdown({
                 onClick={() => toggle(o.value)}
                 className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-white/5"
               >
-                <Circle checked={selected.includes(o.value)} />
+                <HubFilterDropdownCircle checked={selected.includes(o.value)} />
                 <FilterOptionGlyph filterKey={filter.key} option={o} />
                 <span className="flex-1 truncate text-left" title={o.label}>
                   {o.label}
@@ -509,7 +529,7 @@ export function HubSingleFilterDropdown({
             }}
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-white/5"
           >
-            <Circle checked={o.value === value} />
+            <HubFilterDropdownCircle checked={o.value === value} />
             <FilterOptionGlyph filterKey={filterKey} option={o} />
             <span className="flex-1 truncate text-left" title={o.label}>
               {o.label}
@@ -527,7 +547,7 @@ export function HubSingleFilterDropdown({
   const panelEl = open ? (
     <div
       data-hub-single-filter-panel
-      className="anim-pop w-72 rounded-xl border border-white/10 bg-[var(--panel)] shadow-xl shadow-black/40"
+      className={HUB_FILTER_DROPDOWN_PANEL_CLASS}
       style={
         usePortal
           ? {
@@ -568,28 +588,6 @@ export function HubSingleFilterDropdown({
         (usePortal ? createPortal(panelEl, document.body) : (
           <div className="absolute left-0 top-full z-30 mt-1">{panelEl}</div>
         ))}
-    </div>
-  );
-}
-
-function Circle({ checked, indeterminate }: { checked: boolean; indeterminate?: boolean }) {
-  return (
-    <div
-      className={`grid h-4 w-4 shrink-0 place-items-center rounded-full border transition-all ${
-        checked
-          ? "border-indigo-400 bg-indigo-500"
-          : indeterminate
-            ? "border-indigo-400 bg-indigo-500/30"
-            : "border-white/25"
-      }`}
-    >
-      {checked || indeterminate ? (
-        indeterminate ? (
-          <div className="h-1 w-2 rounded-full bg-white" />
-        ) : (
-          <Check size={compactIconSize(9)} className="text-white" />
-        )
-      ) : null}
     </div>
   );
 }

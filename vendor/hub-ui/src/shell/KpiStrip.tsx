@@ -22,19 +22,20 @@ export type KpiTileData = {
   prefKey?: string;
 };
 
-const KPI_ROW_MAX = 8;
+const KPI_ROW_MAX = 4;
 
 export function KpiStrip({ items, className = "" }: { items: KpiTileData[]; className?: string }) {
   if (items.length === 0) return null;
 
-  const count = Math.min(items.length, KPI_ROW_MAX);
+  const visible = items.slice(0, KPI_ROW_MAX);
+  const count = visible.length;
 
   return (
     <div
       className={`hub-kpi-strip stagger min-w-0 ${className}`.trim()}
       data-kpi-count={count}
     >
-      {items.slice(0, KPI_ROW_MAX).map((it, i) => (
+      {visible.map((it, i) => (
         <KpiTile key={it.prefKey ?? `${it.label}-${i}`} {...it} />
       ))}
     </div>
@@ -53,7 +54,9 @@ function KpiTile({ label, value, hint, icon: Icon, tone = "indigo" }: KpiTileDat
           {Icon ? <Icon size={compactIconSize(18)} className="hub-kpi-tile__icon-svg" /> : null}
         </div>
         <div className="hub-kpi-tile__body">
-          <div className="hub-kpi-tile__label truncate uppercase tracking-wider text-[var(--muted)]">{label}</div>
+          <div className="hub-kpi-tile__label truncate uppercase tracking-wider text-[var(--muted)]" title={label}>
+            {label}
+          </div>
           <div className="hub-kpi-tile__value truncate font-semibold tabular-nums">{value}</div>
           {hint ? <div className="hub-kpi-tile__hint truncate text-[var(--muted)]">{hint}</div> : null}
         </div>

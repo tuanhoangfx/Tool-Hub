@@ -106,3 +106,35 @@ select.hub-filter-select-native option,
   flex-shrink: 0;
   place-items: center;
 }
+
+/* Modal form field label + filter trigger prefix */
+.hub-form-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.35rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+.hub-form-field-label__icon {
+  color: #a5b4fc;
+  flex-shrink: 0;
+}
+
+.hub-modal-filter-field {
+  min-width: 0;
+}
+
+.hub-filter-trigger-text__prefix {
+  color: var(--muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.hub-filter-trigger-text__value {
+  color: inherit;
+  font-weight: 500;
+}

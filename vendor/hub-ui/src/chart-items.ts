@@ -8,6 +8,8 @@ export type ChartRow = {
   value: number;
   color?: string;
   iconMeta?: FilterIconMeta | null;
+  /** Brand image — takes precedence over iconMeta when set. */
+  iconSrc?: string;
 };
 
 export const CHART_OTHERS_LABEL = "Others";
@@ -33,7 +35,7 @@ function legendFor(label: string): FilterIconMeta | null {
 }
 
 export function withChartLegendIcon<T extends ChartRow>(row: T): T {
-  const iconMeta = legendFor(row.label);
+  const iconMeta = row.iconMeta ?? legendFor(row.label);
   const color = row.label === CHART_OTHERS_LABEL ? (row.color ?? OTHERS_COLOR) : row.color;
   return iconMeta ? { ...row, iconMeta, color } : { ...row, color };
 }

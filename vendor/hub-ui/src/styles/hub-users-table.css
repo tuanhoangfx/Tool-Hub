@@ -21,9 +21,7 @@ table.hub-users-table {
   padding: 8px 10px;
   color: var(--text);
   font-weight: 600;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-size: 12px;
   vertical-align: middle;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.02);
@@ -59,9 +57,8 @@ table.hub-users-table {
 }
 
 .hub-users-th-text {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.05em;
   color: var(--text);
 }
 
@@ -140,6 +137,41 @@ table.hub-users-table {
   width: 26%;
   min-width: 11rem;
   text-align: left;
+}
+
+.hub-users-col--agent-layer {
+  width: 8%;
+  min-width: 5rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.hub-users-col--agent-golden {
+  width: 11%;
+  min-width: 6.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.hub-users-col--agent-clone {
+  width: 14%;
+  min-width: 7.5rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.hub-users-col--agent-lines {
+  width: 5%;
+  min-width: 3.25rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.hub-users-col--agent-path {
+  width: 22%;
+  min-width: 11rem;
+  text-align: left;
+  vertical-align: top;
 }
 .hub-users-col--hub-version {
   width: 5.5rem;
@@ -299,6 +331,14 @@ table.hub-users-table--hub-tools .hub-users-col--hub-code > span {
 
 .hub-users-th-btn--static {
   cursor: default;
+}
+
+.hub-users-th-btn--align-start {
+  justify-content: flex-start;
+}
+
+.hub-users-th-label--start {
+  justify-content: flex-start;
 }
 
 .hub-users-select-all,
@@ -536,4 +576,15 @@ table.hub-users-table--hub-tools .hub-users-col--hub-code > span {
   text-align: center;
   color: var(--muted);
   font-size: 12px;
+}
+
+/* Wide metrics tables (e.g. Supabase quota) — same skin, auto layout + scroll */
+table.hub-users-table.hub-users-table--wide {
+  table-layout: auto;
+}
+
+table.hub-users-table.hub-users-table--wide th,
+table.hub-users-table.hub-users-table--wide td {
+  text-align: left;
+  white-space: nowrap;
 }

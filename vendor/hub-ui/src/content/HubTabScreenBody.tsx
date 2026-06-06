@@ -36,7 +36,7 @@ export function HubTabScreenBody({
           {charts ? <div className="hub-charts-band">{charts}</div> : null}
         </div>
       ) : null}
-      {sectionRuleLabel ? <HubTabSectionRule label={sectionRuleLabel} /> : null}
+      {hasAnalytics && sectionRuleLabel ? <HubTabSectionRule label={sectionRuleLabel} /> : null}
       <div className={bodyClass}>{children}</div>
     </>
   );

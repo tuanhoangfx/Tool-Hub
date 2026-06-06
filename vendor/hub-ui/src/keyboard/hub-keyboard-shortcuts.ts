@@ -101,6 +101,11 @@ function isActiveSearchInput(target: EventTarget | null, screenId: string): bool
   return Boolean(input && target === input);
 }
 
+function isHubModalOpen(): boolean {
+  if (typeof document === "undefined") return false;
+  return Boolean(document.querySelector(".modal-backdrop [role='dialog'][aria-modal='true']"));
+}
+
 function onGlobalKeyDown(e: KeyboardEvent) {
   if (e.key === "Escape") {
     const entry = searchClearByScreen.get(activeScreenId);
@@ -114,9 +119,10 @@ function onGlobalKeyDown(e: KeyboardEvent) {
 
   const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   const handlers = activeHandlers();
+  const modalOpen = isHubModalOpen();
 
   if (key === "f" && !hasModifier(e)) {
-    if (isHubTypingTarget(e.target)) return;
+    if (modalOpen || isHubTypingTarget(e.target)) return;
     const focus = searchFocusByScreen.get(activeScreenId);
     if (focus) {
       e.preventDefault();
@@ -126,6 +132,7 @@ function onGlobalKeyDown(e: KeyboardEvent) {
   }
 
   if (key === "q" && (e.ctrlKey || e.metaKey) && !e.altKey) {
+    if (modalOpen) return;
     const entry = searchClearByScreen.get(activeScreenId);
     if (!entry) return;
     const inSearch = isActiveSearchInput(e.target, activeScreenId);
@@ -136,7 +143,7 @@ function onGlobalKeyDown(e: KeyboardEvent) {
   }
 
   if (key === "s" && !hasModifier(e)) {
-    if (isHubTypingTarget(e.target)) return;
+    if (modalOpen || isHubTypingTarget(e.target)) return;
     if (settingsOpenFn) {
       e.preventDefault();
       settingsOpenFn();
@@ -144,7 +151,7 @@ function onGlobalKeyDown(e: KeyboardEvent) {
     return;
   }
 
-  if (isHubTypingTarget(e.target)) return;
+  if (isHubTypingTarget(e.target) || modalOpen) return;
 
   if (key === "n" && !hasModifier(e)) {
     if (handlers.onNew && (handlers.canNew?.() ?? true)) {

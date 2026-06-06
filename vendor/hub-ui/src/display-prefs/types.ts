@@ -65,7 +65,11 @@ export type HubDisplayPrefsProps = {
   getSystemTab?: () => string;
   systemDisplay?: SystemDisplayAdapter;
   generalExtras?: ReactNode;
+  /** TOC rows for sections inside `generalExtras` (DOM ids must match). */
+  generalSectionToc?: { id: string; label: string; icon?: ReactNode; emoji?: string }[];
   tablePanel?: ReactNode;
+  /** Actions in the Table columns section header (e.g. Reset columns). */
+  tableSectionActions?: ReactNode;
   tableActiveCount?: number;
   headerStatLabel?: (isSystem: boolean) => string;
   onLog?: (scope: string, message: string) => void;

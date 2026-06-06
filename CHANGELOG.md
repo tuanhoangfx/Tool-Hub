@@ -2,6 +2,75 @@
 
 ## 2026-06-06 - Git commit version stamp
 
+- Version: `5.2.6`
+- Timestamp: 2026-06-06 21:46 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
+## 2026-06-06 - Per-card Start dev; import scan
+
+- Version: `5.2.5`
+- Type: Patch
+- Product: P0004
+- Prompt: ok 1 2 — grep duplicate imports; per-card Start when :port down
+- Status: Local
+
+### Changes
+
+- `scan:imports` — `scripts/scan-duplicate-imports.cjs` fails CI/dev if named import blocks repeat an identifier (scan clean after Overview fix).
+- Hub Library (dev): **Start :port** on each card/table row when local health is **down** (`POST /api/workspace-dev/start-product`).
+- `hub-workspace-dev-proxy.cjs`: single-product ensure-dev launcher.
+- `UserTableColumnsSettings.tsx`: fix stray quote blocking Hub compile.
+
+Version: 5.2.4 → 5.2.5
+
+---
+
+## 2026-06-06 - Fix Overview panel import
+
+- Version: `5.2.4`
+- Type: Patch
+- Product: P0004
+- Prompt: vẫn lỗi — duplicate MiniBarChart on SystemOverviewPanel
+- Status: Local
+
+### Changes
+
+- `SystemOverviewPanel.tsx`: remove duplicate `MiniBarChart` import (blocked System → Overview and `/users` compile).
+
+Version: 5.2.3 → 5.2.4
+
+---
+
+## 2026-06-06 - Fix Agent panel import; dev toast
+
+- Version: `5.2.3`
+- Type: Patch
+- Product: P0004
+- Prompt: Sửa lỗi MiniBarChart duplicate; ok 1 toast Start all down
+- Status: Local
+
+### Changes
+
+- `SystemAgentContextPanel.tsx`: remove duplicate `MiniBarChart` import (blocked System → Agent).
+- Hub Library: toast banner replaces `alert` for **Start all down** and **Restart Hub dev**.
+
+Version: 5.2.2 → 5.2.3
+
+---
+
+## 2026-06-06 - Git commit version stamp
+
 - Version: `5.2.2`
 - Timestamp: 2026-06-06 21:04 (UTC+7)
 - Commit: `032270f`
