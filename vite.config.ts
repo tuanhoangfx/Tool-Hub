@@ -62,6 +62,9 @@ export default defineConfig(({ mode }) => {
             require("./scripts/lib/hub-dev-recover-proxy.cjs").createHubDevRecoverMiddleware(),
           );
           server.middlewares.use(
+            require("./scripts/lib/hub-workspace-dev-proxy.cjs").createHubWorkspaceDevMiddleware(),
+          );
+          server.middlewares.use(
             require("./scripts/lib/hub-create-users-proxy.cjs").createHubCreateUsersMiddleware({
               cwd: process.cwd(),
               mode,

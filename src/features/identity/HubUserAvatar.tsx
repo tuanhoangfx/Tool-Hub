@@ -1,6 +1,5 @@
 import { hubUserInitials } from "./hubUserDisplay";
 import type { UserManagementRow } from "./userManagementRepository";
-import "./hub-users-table.css";
 
 type HubUserAvatarProps = {
   user: Pick<UserManagementRow, "email" | "fullName" | "id">;

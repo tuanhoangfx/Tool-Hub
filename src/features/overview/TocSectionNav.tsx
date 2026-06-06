@@ -1,6 +1,7 @@
 import type { OverviewTocItem } from "./overview-toc";
+import { useHubTocNavActive, useHubTocNavHighlight } from "@tool-workspace/hub-ui";
 import { scrollToTocSection } from "./use-toc-section-spy";
-import { useTocNavHighlight } from "./toc-section-highlight-context";
+import { useTocNavActive, useTocNavHighlight } from "./toc-section-highlight-context";
 
 type Props = {
   items: readonly OverviewTocItem[];
@@ -37,7 +38,8 @@ function TocSectionNavItem({
   sectionId: string;
   scrollRootSelector?: string;
 }) {
-  const isHighlighted = useTocNavHighlight(sectionId);
+  const isHighlighted = useHubTocNavHighlight(sectionId) || useTocNavHighlight(sectionId);
+  const isActive = useHubTocNavActive(sectionId) || useTocNavActive(sectionId);
 
   return (
     <button
@@ -47,7 +49,7 @@ function TocSectionNavItem({
         scrollToTocSection(sectionId, scrollRootSelector);
       }}
       className={`overview-toc-nav__item group relative z-[1] min-h-[var(--overview-toc-row-h)] w-full cursor-pointer text-left text-[13px] transition-colors ${
-        isHighlighted ? "is-highlighted" : ""
+        isHighlighted ? "is-highlighted" : isActive ? "is-active" : ""
       }`}
     >
       <span className="overview-toc-nav__label flex min-w-0 items-center gap-1.5 truncate rounded-lg px-2 py-1 font-medium text-[var(--muted)] transition-all duration-200 group-hover:text-[var(--text)]">

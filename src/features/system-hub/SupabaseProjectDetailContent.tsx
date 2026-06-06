@@ -1,18 +1,14 @@
 import { CheckCircle2, ExternalLink, Layers } from "lucide-react";
-import { useMemo, type ReactNode } from "react";
+import { HubToolDetailSection } from "@tool-workspace/hub-ui";
 import { MetricBadge } from "../../components/sales-shell";
-import { ToolAvatar } from "../../components/ToolAvatar";
 import { resolveHealthStatusIcon } from "../../lib/badge-registry";
 import { compactIconSize } from "../../lib/ui-scale";
-import { ToolCodeBadge, QuietChip } from "../hub/hub-tool-ui";
-import { SupabaseProjectToolBadges } from "./SupabaseProjectToolBadges";
+import { QuietChip } from "../hub/hub-tool-ui";
 import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
 import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 import type { OrgRow, ProjectRow } from "./SystemSupabaseQuotaPanel.types";
 import { QuotaBudgetBlock } from "./QuotaUsageBar";
-import { SupabaseDetailTocNav } from "./SupabaseDetailTocNav";
-import { SUPABASE_DETAIL_TOC } from "./supabase-detail-toc";
-import { TocHighlightContent, TocSectionHighlightProvider } from "../overview/toc-section-highlight-context";
+import { supabaseSectionTitle } from "./supabase-detail-toc";
 import { computeQuotaBudget, formatQuotaLineInline } from "./supabase-quota-budget";
 import {
   formatApiUsageInline,
@@ -36,19 +32,6 @@ export type SupabaseProjectDetailContentProps = {
   tools?: string[];
   idPrefix?: string;
 };
-
-function refBadgeClass() {
-  return "border-emerald-400/35 bg-emerald-500/12 text-emerald-200";
-}
-
-function DetailSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
-  return (
-    <section id={id} className="scroll-mt-3 space-y-3">
-      <h2 className="border-b border-white/5 pb-2 text-lg font-semibold">{title}</h2>
-      {children}
-    </section>
-  );
-}
 
 function MetricRow({ label, value, good }: { label: string; value: string; good?: boolean }) {
   return (
@@ -75,7 +58,6 @@ export function SupabaseProjectDetailContent({
   const budgetLines = metricsSource === "live" ? computeQuotaBudget(project, org) : [];
   const dbBudget = budgetLines.find((l) => l.key === "db_disk");
   const plans = resolvePlanDisplay(project, org);
-  const refShort = project.projectRef.slice(0, 8);
   const dashboardUrl = `https://supabase.com/dashboard/project/${encodeURIComponent(project.projectRef)}`;
   const hasError = Boolean(project.error);
   const healthLabel = resolveProjectHealthLabel(project);
@@ -86,34 +68,9 @@ export function SupabaseProjectDetailContent({
       ? `${project.projectName} on Supabase (${project.region ?? "unknown region"}). Organization ${project.orgSlug}. Metrics below are from the Management API.`
       : `${project.projectName} on Supabase (${project.region ?? "unknown region"}). Organization ${project.orgSlug}. Showing catalog metadata — live metrics load in background.`;
 
-  const tocSectionIds = useMemo(
-    () => SUPABASE_DETAIL_TOC.map(({ id }) => `${idPrefix}${id}`),
-    [idPrefix],
-  );
-
   return (
-    <TocSectionHighlightProvider sectionIds={tocSectionIds}>
-      <div className="grid gap-4 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
-        <aside className="lg:sticky lg:top-0 lg:self-start">
-          <SupabaseDetailTocNav idPrefix={idPrefix} />
-        </aside>
-
-        <TocHighlightContent className="min-w-0 space-y-5 p-1 sm:p-2">
-        <div className="flex items-center gap-3 pb-1">
-          <ToolAvatar code="SB" iconName="cloud" size="md" />
-          <div className="min-w-0">
-            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-              <MetricBadge label={refShort} mono variantClass={refBadgeClass()} />
-              <SupabaseMetricsSourceBadge source={metricsSource} />
-              <h2 className="min-w-0 truncate text-lg font-semibold leading-tight">{project.projectName}</h2>
-            </div>
-            <div className="mt-1">
-              <SupabaseProjectToolBadges tools={tools} bindings={project.toolBindings} />
-            </div>
-          </div>
-        </div>
-
-        <DetailSection id={sid("about")} title="About">
+    <>
+      <HubToolDetailSection id={sid("about")} title={supabaseSectionTitle("about")}>
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-2xl font-semibold">{project.projectName}</span>
             <SupabaseMetricsSourceBadge source={metricsSource} />
@@ -144,9 +101,9 @@ export function SupabaseProjectDetailContent({
           {project.error ? (
             <p className="rounded-md border border-rose-400/20 bg-rose-500/5 px-2.5 py-1.5 text-[11px] text-rose-200">{project.error}</p>
           ) : null}
-        </DetailSection>
+        </HubToolDetailSection>
 
-        <DetailSection id={sid("usage")} title="Usage">
+        <HubToolDetailSection id={sid("usage")} title={supabaseSectionTitle("usage")}>
           {budgetLines.length > 0 ? (
             <div className="rounded-xl border border-white/8 bg-white/[.02] px-3 py-2">
               <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--muted)]">
@@ -177,9 +134,9 @@ export function SupabaseProjectDetailContent({
               for exact GB. Restricted status above comes from the health API.
             </p>
           ) : null}
-        </DetailSection>
+        </HubToolDetailSection>
 
-        <DetailSection id={sid("infra")} title="Infrastructure">
+        <HubToolDetailSection id={sid("infra")} title={supabaseSectionTitle("infra")}>
           <div className="grid gap-1.5 md:grid-cols-2">
             <div className="flex items-center justify-between rounded-md border border-white/5 bg-white/[.02] px-2.5 py-1.5 text-[12px]">
               <span className="font-mono text-[var(--muted)]">region</span>
@@ -211,9 +168,9 @@ export function SupabaseProjectDetailContent({
               good={tools.length > 0}
             />
           </div>
-        </DetailSection>
+        </HubToolDetailSection>
 
-        <DetailSection id={sid("quota")} title="Org quota">
+        <HubToolDetailSection id={sid("quota")} title={supabaseSectionTitle("quota")}>
           {quota ? (
             <div className="grid gap-1.5 md:grid-cols-2">
               <MetricRow
@@ -243,9 +200,9 @@ export function SupabaseProjectDetailContent({
             <p className="text-[12px] text-[var(--muted)]">No org entitlements loaded.</p>
           )}
           {org?.error ? <p className="text-[11px] text-rose-200">{org.error}</p> : null}
-        </DetailSection>
+        </HubToolDetailSection>
 
-        <DetailSection id={sid("health")} title="Health">
+        <HubToolDetailSection id={sid("health")} title={supabaseSectionTitle("health")}>
           {health.length > 0 ? (
             <div className="space-y-2">
               <div className="grid gap-1.5 md:grid-cols-2">
@@ -268,9 +225,9 @@ export function SupabaseProjectDetailContent({
           ) : (
             <p className="text-[12px] text-[var(--muted)]">Service health not available (token scope or API error).</p>
           )}
-        </DetailSection>
+        </HubToolDetailSection>
 
-        <DetailSection id={sid("links")} title="Links">
+        <HubToolDetailSection id={sid("links")} title={supabaseSectionTitle("links")}>
           <ul className="space-y-1.5">
             <li>
               <a
@@ -301,9 +258,7 @@ export function SupabaseProjectDetailContent({
               />
             ) : null}
           </div>
-        </DetailSection>
-        </TocHighlightContent>
-      </div>
-    </TocSectionHighlightProvider>
+        </HubToolDetailSection>
+    </>
   );
 }

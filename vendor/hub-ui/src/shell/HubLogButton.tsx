@@ -27,7 +27,7 @@ export function HubLogButton({
       logs={logs}
       compact={false}
       sidebarRow={isGlobal}
-      title={title ?? (isGlobal ? "Session log" : "Tab log")}
+      title={title ?? "Log"}
       subtitle={subtitle ?? (isGlobal ? "All tabs in this session" : "Actions on this tab")}
       emptyMessage={emptyMessage}
     />

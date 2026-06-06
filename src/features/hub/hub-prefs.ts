@@ -15,8 +15,8 @@ export const HUB_KPI_DEFS: PrefItem[] = [
 export const HUB_CHART_DEFS: PrefItem[] = [
   { key: "health_bar", label: "By Health (bar)" },
   { key: "category_bar", label: "By Category (bar)" },
-  { key: "deploy_donut", label: "Deploy distribution (donut)" },
-  { key: "status_donut", label: "Status distribution (donut)" },
+  { key: "deploy_bar", label: "Deploy distribution (bar)" },
+  { key: "status_bar", label: "Status distribution (bar)" },
 ];
 
 export type HubHeaderStatKey = "ready" | "releases" | "drift" | "link_gaps";
@@ -38,7 +38,7 @@ export const HUB_FILTER_DEFS: PrefItem[] = [
 ];
 
 export const DEFAULT_HUB_HEADER_STAT_KEYS = new Set(["ready", "releases"]);
-/** 7 of 8 Hub KPIs on by default (hides last: Hosted). */
+/** 4 of 4 Hub KPIs on by default. */
 export const DEFAULT_HUB_KPI_KEYS = defaultKpiKeysFromDefs(HUB_KPI_DEFS);
-export const DEFAULT_HUB_CHART_KEYS = new Set(["health_bar", "category_bar", "deploy_donut", "status_donut"]);
+export const DEFAULT_HUB_CHART_KEYS = new Set(["health_bar", "category_bar", "deploy_bar", "status_bar"]);
 export const DEFAULT_HUB_FILTER_KEYS = new Set(HUB_FILTER_DEFS.map((f) => f.key));

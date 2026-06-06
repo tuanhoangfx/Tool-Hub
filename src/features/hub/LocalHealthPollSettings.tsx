@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Radio } from "lucide-react";
+import { HubToolDetailSection } from "@tool-workspace/hub-ui";
 import {
   isDefaultLocalHealthPoll,
   LOCAL_HEALTH_POLL_OPTIONS,
   type LocalHealthPollValue,
 } from "../../lib/local-health-prefs";
 import { patchHubListPrefs, readHubListPrefs } from "../../lib/url-prefs";
-import { compactIconSize } from "../../lib/ui-scale";
 
 export function LocalHealthPollSettings() {
   const [value, setValue] = useState<LocalHealthPollValue>(() => readHubListPrefs().localHealthPoll);
@@ -32,11 +31,7 @@ export function LocalHealthPollSettings() {
   }
 
   return (
-    <div className="mb-3 last:mb-0">
-      <div className="mb-1.5 flex items-center gap-1.5 text-[11px] font-medium text-[var(--muted)]">
-        <Radio size={compactIconSize(12)} className="text-emerald-400" aria-hidden />
-        <span>Local health poll</span>
-      </div>
+    <HubToolDetailSection id="settings-local-health" title="Local health poll">
       <p className="mb-2 text-[10px] leading-snug text-[var(--muted)]">
         Auto-check <code className="text-[var(--text)]/80">:port live</code> on cards.{" "}
         <span className="text-[var(--text)]/90">Local health</span> on the filter bar = check now.
@@ -65,6 +60,6 @@ export function LocalHealthPollSettings() {
           );
         })}
       </div>
-    </div>
+    </HubToolDetailSection>
   );
 }

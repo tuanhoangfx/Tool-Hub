@@ -588,3 +588,46 @@ table.hub-users-table.hub-users-table--wide td {
   text-align: left;
   white-space: nowrap;
 }
+
+/* Panel table pager — E0001 route-table-pager parity */
+.hub-table-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0 6px;
+  padding: 0 2px;
+}
+
+.hub-table-pager-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hub-table-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(129, 140, 248, 0.28);
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.13);
+  color: #c7d2fe;
+  padding: 0;
+  cursor: pointer;
+}
+
+.hub-table-page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.hub-table-page-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.01em;
+}

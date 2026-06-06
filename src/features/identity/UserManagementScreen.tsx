@@ -12,7 +12,6 @@ import {
 import {
   HubResultCount,
   MiniBarChart,
-  MiniDonut,
   ViewToggle,
   UsersLoadingView,
   type BarItem,
@@ -652,7 +651,7 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
       <MiniBarChart title="By Role" items={charts.roleItems} />
       <MiniBarChart title="By Activity" items={charts.statusItems} />
       <MiniBarChart title="Tool access" items={charts.toolItems} />
-      <MiniDonut title="Activity Distribution" items={charts.activityItems} />
+      <MiniBarChart title="Activity Distribution" items={charts.activityItems} />
     </>
   );
 

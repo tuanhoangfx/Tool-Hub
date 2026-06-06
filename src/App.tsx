@@ -3,13 +3,16 @@ import {
   useEffect,
   useLayoutEffect,
   useMemo,
-  useRef,
   useState,
-  type CSSProperties,
 } from "react";
-import { createPortal } from "react-dom";
-import { FileText } from "lucide-react";
-import { useHubActiveScreenSync } from "@tool-workspace/hub-ui";
+import { Radio } from "lucide-react";
+import {
+  HubAppLogProvider,
+  HubLogButton,
+  resolveHubActiveScreenId,
+  useHubActiveScreenSync,
+  useHubAppLog,
+} from "@tool-workspace/hub-ui";
 import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
@@ -51,13 +54,6 @@ import { runWorkspaceRefresh } from "./services/workspace-scan";
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
 const ALL_APP_SCREENS: AppScreen[] = ["library", "users", "system"];
 type ScanStatus = "idle" | "scanning" | "success" | "error";
-
-type AppLogEntry = {
-  id: string;
-  at: number;
-  scope: string;
-  message: string;
-};
 
 function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: boolean; scope?: "tab" | "global" }) {
   const [screen, setScreen] = useState(() => readAppScreen());
@@ -115,144 +111,41 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
       showHeaderPin={isGlobal}
       showUsersTableColumns={!isGlobal && screen === "users"}
       generalExtras={isGlobal || screen === "library" ? <LocalHealthPollSettings /> : undefined}
+      generalSectionToc={
+        isGlobal || screen === "library"
+          ? [
+              {
+                id: "settings-local-health",
+                label: "Local health poll",
+                icon: <Radio size={compactIconSize(11)} className="text-emerald-400" />,
+              },
+            ]
+          : undefined
+      }
       sidebarRow={sidebarRow}
       scope={scope}
     />
   );
 }
 
-function AppLogButton({ logs }: { logs: AppLogEntry[] }) {
-  const [open, setOpen] = useState(false);
-  const [panelStyle, setPanelStyle] = useState<CSSProperties>({});
-  const ref = useRef<HTMLDivElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const formatter = useMemo(
-    () =>
-      new Intl.DateTimeFormat("vi-VN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }),
-    [],
-  );
-
-  useLayoutEffect(() => {
-    if (!open || !ref.current) return;
-
-    const update = () => {
-      const rect = ref.current?.getBoundingClientRect();
-      if (!rect) return;
-      const mainRect = document.querySelector(".hub-main")?.getBoundingClientRect();
-      const minLeft = Math.max(8, (mainRect?.left ?? 0) + 8);
-      const availableWidth = Math.max(160, window.innerWidth - minLeft - 8);
-      const width = Math.min(320, availableWidth);
-      const left = Math.min(Math.max(rect.right - width, minLeft), window.innerWidth - width - 8);
-      setPanelStyle({
-        position: "fixed",
-        left,
-        top: rect.bottom + 6,
-        width,
-        zIndex: 1100,
-        maxHeight: "min(70vh, 28rem)",
-      });
-    };
-
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("scroll", update, true);
-    return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("scroll", update, true);
-    };
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const onClick = (event: MouseEvent) => {
-      const target = event.target as Node;
-      if (ref.current?.contains(target)) return;
-      if (panelRef.current?.contains(target)) return;
-      setOpen(false);
-    };
-    document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, [open]);
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        type="button"
-        className="btn btn-ghost inline-flex items-center gap-1.5 px-2.5"
-        title="Usage log"
-        onClick={() => setOpen((value) => !value)}
-      >
-        <FileText size={compactIconSize(14)} className="text-cyan-300" aria-hidden />
-        <span className="hidden sm:inline">Log</span>
-      </button>
-      {open
-        ? createPortal(
-        <div
-          ref={panelRef}
-          style={panelStyle}
-          className="rounded-xl border border-white/10 bg-[var(--bg)] p-3 shadow-2xl shadow-black/40"
-        >
-          <div className="mb-2 flex items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-semibold text-[var(--text)]">Usage log</div>
-              <div className="text-[10px] text-[var(--muted)]">Runtime actions in this session</div>
-            </div>
-            <span className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-200">
-              {logs.length}
-            </span>
-          </div>
-          <div className="max-h-72 space-y-1 overflow-y-auto pr-1">
-            {logs.length > 0 ? (
-              logs.map((log) => (
-                <div key={log.id} className="rounded-lg border border-white/5 bg-white/[.025] px-2.5 py-2">
-                  <div className="flex items-center justify-between gap-2 text-[10px] text-[var(--muted)]">
-                    <span>{log.scope}</span>
-                    <span className="tabular-nums">{formatter.format(log.at)}</span>
-                  </div>
-                  <div className="mt-0.5 text-xs leading-snug text-[var(--text)]/90">{log.message}</div>
-                </div>
-              ))
-            ) : (
-              <div className="rounded-lg border border-dashed border-white/10 px-3 py-5 text-center text-xs text-[var(--muted)]">
-                Chưa có thao tác trong phiên này.
-              </div>
-            )}
-          </div>
-        </div>,
-        document.body,
-      )
-        : null}
-    </div>
-  );
-}
-
-function AppHeaderActions({ logs }: { logs: AppLogEntry[] }) {
+function AppHeaderActions() {
   return (
     <div className="flex shrink-0 items-center gap-1.5">
-      <AppLogButton logs={logs} />
+      <HubLogButton variant="tab" />
       <AppDisplayPrefs scope="tab" />
     </div>
   );
 }
 
-function App() {
-  const { state: urlState, update: updateUrl } = useUrlState();
-  const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
-  const [systemTab, setSystemTab] = useState(() => readSystemTab());
+type AppShellContentProps = {
+  screen: AppScreen;
+  setScreen: (screen: AppScreen) => void;
+  systemTab: ReturnType<typeof readSystemTab>;
+  setSystemTab: (tab: ReturnType<typeof readSystemTab>) => void;
+};
 
-  useEffect(() => {
-    const syncSystemTab = () => setSystemTab(readSystemTab());
-    window.addEventListener("popstate", syncSystemTab);
-    window.addEventListener("system-display-change", syncSystemTab);
-    return () => {
-      window.removeEventListener("popstate", syncSystemTab);
-      window.removeEventListener("system-display-change", syncSystemTab);
-    };
-  }, []);
+function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShellContentProps) {
+  const { state: urlState, update: updateUrl } = useUrlState();
 
   useHubActiveScreenSync(screen, systemTab);
   /** Eager keep-mounted — avoids blank main when URL is /system/* before visited effect runs. */
@@ -261,14 +154,8 @@ function App() {
   const [scanningWorkspace, setScanningWorkspace] = useState(false);
   const [scanStatus, setScanStatus] = useState<ScanStatus>("idle");
   const [scanMessage, setScanMessage] = useState("");
-  const [logs, setLogs] = useState<AppLogEntry[]>(() => [
-    {
-      id: `boot-${Date.now()}`,
-      at: Date.now(),
-      scope: "Tool",
-      message: "Tool Hub started",
-    },
-  ]);
+  const { pushLog } = useHubAppLog();
+  const activeScreenId = resolveHubActiveScreenId(screen, systemTab);
   const {
     selectedId,
     setSelectedId,
@@ -283,18 +170,6 @@ function App() {
   } = useRepositories();
 
   const hubView: HubViewMode = viewMode === "grid" ? "card" : "table";
-
-  const addLog = useCallback((scope: string, message: string) => {
-    setLogs((prev) => [
-      {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        at: Date.now(),
-        scope,
-        message,
-      },
-      ...prev,
-    ].slice(0, 30));
-  }, []);
 
   const settleScanStatus = useCallback((status: ScanStatus, message: string) => {
     setScanStatus(status);
@@ -336,15 +211,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const onLog = (event: Event) => {
-      const detail = (event as CustomEvent<{ scope?: string; message?: string }>).detail;
-      addLog(detail?.scope ?? "Tool", detail?.message ?? "Updated settings");
-    };
-    window.addEventListener("tool-hub-log", onLog);
-    return () => window.removeEventListener("tool-hub-log", onLog);
-  }, [addLog]);
-
-  useEffect(() => {
     if (!urlState.tool || resolvedTools.length === 0) return;
     if (resolvedTools.some((t) => t.id === urlState.tool) && urlState.tool !== selectedId) {
       setSelectedId(urlState.tool);
@@ -359,21 +225,21 @@ function App() {
   }, [refreshAll]);
 
   const handleSelectTool = (id: string) => {
-    addLog("Hub", `Opened ${id} detail`);
+    pushLog("Hub", `Opened ${id} detail`, "library");
     setSelectedId(id);
     updateUrl({ tool: id, detail: true });
     void prefetchRemote(id);
   };
 
   const handleCloseDetail = () => {
-    addLog("Hub", "Closed tool detail");
+    pushLog("Hub", "Closed tool detail", "library");
     updateUrl({ detail: false });
   };
 
   const navigate = (next: AppScreen) => {
     if (next !== screen) {
       const label = next === "system" ? "System" : next === "users" ? "Users" : "Hub";
-      addLog("Navigation", `Switched to ${label}`);
+      pushLog("Navigation", `Switched to ${label}`, resolveHubActiveScreenId(next, readSystemTab()));
     }
     setAppScreen(next);
     setScreen(next);
@@ -384,32 +250,32 @@ function App() {
     const systemTab = readSystemTab();
     if (screen === "system" && systemTab === "supabase-quota") {
       dispatchSupabaseQuotaRefresh();
-      addLog("System", "Supabase Quota refresh requested");
+      pushLog("System", "Supabase Quota refresh requested", activeScreenId);
       return;
     }
     if (screen === "system" && systemTab === "agent") {
       dispatchAgentManifestRefresh();
-      addLog("System", "Agent manifest refresh requested");
+      pushLog("System", "Agent manifest refresh requested", activeScreenId);
       return;
     }
     dispatchSupabaseQuotaRefresh();
     setScanningWorkspace(true);
     settleScanStatus("scanning", "Refreshing workspace + quota + agent manifest…");
-    addLog("Tool", "Workspace + quota + agent manifest refresh requested");
+    pushLog("Tool", "Workspace + quota + agent manifest refresh requested", activeScreenId);
     try {
       const result = await runWorkspaceRefresh();
       dispatchAgentManifestRefresh();
       if (!result.ok) {
         const message = `${result.message ?? "Workspace refresh failed"}; loaded existing registry if available`;
         settleScanStatus("error", message);
-        addLog("Tool", message);
+        pushLog("Tool", message, activeScreenId);
         await loadLocalRegistry();
         void refreshAll();
         return;
       }
       const message = "Workspace refresh completed; registry + agent manifest reloaded";
       settleScanStatus("success", message);
-      addLog("Tool", message);
+      pushLog("Tool", message, activeScreenId);
       await loadLocalRegistry();
       void refreshAll();
     } finally {
@@ -418,12 +284,12 @@ function App() {
   };
 
   const handleRefreshTool = (id: string) => {
-    addLog("Hub", `Refresh ${id} requested`);
+    pushLog("Hub", `Refresh ${id} requested`, "library");
     void refreshTool(id);
   };
 
   const handleViewModeChange = (next: HubViewMode) => {
-    addLog("Hub", `Switched view to ${next === "card" ? "Cards" : "Table"}`);
+    pushLog("Hub", `Switched view to ${next === "card" ? "Cards" : "Table"}`, "library");
     setViewMode(next === "card" ? "grid" : "table");
   };
 
@@ -432,7 +298,7 @@ function App() {
 
   const hubSelf = useMemo(() => resolvedTools.find((t) => t.code === "P0004"), [resolvedTools]);
   const versionRelease = useMemo(() => resolveVersionReleaseMeta(hubSelf), [hubSelf]);
-  const headerActions = <AppHeaderActions logs={logs} />;
+  const headerActions = <AppHeaderActions />;
 
   return (
     <div className="hub-app theme-hub flex h-full min-h-0 w-full overflow-hidden">
@@ -495,6 +361,41 @@ function App() {
         ) : null}
       </main>
     </div>
+  );
+}
+
+function App() {
+  const [screen, setScreen] = useState<AppScreen>(() => migrateAppUrl());
+  const [systemTab, setSystemTab] = useState(() => readSystemTab());
+
+  useLayoutEffect(() => {
+    const sync = () => {
+      setScreen(readAppScreen());
+      setSystemTab(readSystemTab());
+    };
+    sync();
+    window.addEventListener("popstate", sync);
+    window.addEventListener("system-display-change", sync);
+    return () => {
+      window.removeEventListener("popstate", sync);
+      window.removeEventListener("system-display-change", sync);
+    };
+  }, []);
+
+  const activeScreenId = resolveHubActiveScreenId(screen, systemTab);
+
+  return (
+    <HubAppLogProvider
+      activeScreen={activeScreenId}
+      bootLog={{ scope: "Tool", message: "Tool Hub started", screen: "library" }}
+    >
+      <AppShellContent
+        screen={screen}
+        setScreen={setScreen}
+        systemTab={systemTab}
+        setSystemTab={setSystemTab}
+      />
+    </HubAppLogProvider>
   );
 }
 

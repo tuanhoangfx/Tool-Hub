@@ -6,7 +6,6 @@ import {
   HubResultCount,
   HubTimeRangeSelect,
   MiniBarChart,
-  MiniDonut,
   ViewToggle,
   type FilterDef,
   type FilterValues,
@@ -132,8 +131,8 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
     () => ({
       health_bar: <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} />,
       category_bar: <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} />,
-      deploy_donut: <MiniDonut title="Deploy distribution" items={charts.deploy} />,
-      status_donut: <MiniDonut title="Status distribution" items={charts.status} />,
+      deploy_bar: <MiniBarChart title="Deploy distribution" items={charts.deploy} />,
+      status_bar: <MiniBarChart title="Status distribution" items={charts.status} />,
     }),
     [charts],
   );

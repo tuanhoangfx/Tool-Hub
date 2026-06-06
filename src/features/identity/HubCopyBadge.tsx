@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Copy, Fingerprint } from "lucide-react";
 import { compactIconSize } from "../../lib/ui-scale";
 
@@ -10,16 +10,22 @@ type HubCopyBadgeProps = {
   className?: string;
 };
 
+/** P0004 Users table ID copy badge — synced with @tool-workspace/hub-ui HubCopyBadge. */
 export function HubCopyBadge({ value, label, title, className = "" }: HubCopyBadgeProps) {
   const [copied, setCopied] = useState(false);
   const display = label ?? (value.length > 10 ? `${value.slice(0, 8)}…` : value);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1400);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
 
   async function copy(e: React.MouseEvent) {
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(value);
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 1500);
     } catch {
       // ignore
     }
@@ -34,11 +40,8 @@ export function HubCopyBadge({ value, label, title, className = "" }: HubCopyBad
     >
       <Fingerprint size={compactIconSize(10)} className="shrink-0 text-indigo-300/80" aria-hidden />
       <span className="truncate">{display}</span>
-      {copied ? (
-        <Check size={compactIconSize(10)} className="shrink-0 text-emerald-400" aria-hidden />
-      ) : (
-        <Copy size={compactIconSize(10)} className="shrink-0 opacity-60" aria-hidden />
-      )}
+      <Copy size={compactIconSize(10)} className="shrink-0 opacity-60" aria-hidden />
+      {copied ? <Check size={compactIconSize(10)} className="shrink-0 text-emerald-400" aria-hidden /> : null}
     </button>
   );
 }

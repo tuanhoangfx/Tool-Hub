@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, RefreshCcw } from "lucide-react";
+import { HubTablePager, useHubTablePagination } from "@tool-workspace/hub-ui";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
 import {
   resolveLinkGroupBadge,
@@ -130,6 +131,10 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
     [links, query, filterValues, healthState],
   );
 
+  const pagination = useHubTablePagination(filtered, {
+    resetKey: `${query}|${JSON.stringify(filterValues)}`,
+  });
+
   async function copyValue(link: ToolLinkRow) {
     try {
       await navigator.clipboard.writeText(link.value);
@@ -185,6 +190,16 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
         </p>
       ) : (
         <div className="rounded-lg border border-white/5 p-2">
+          <HubTablePager
+            pageIndex={pagination.pageIndex}
+            totalPages={pagination.totalPages}
+            rangeStart={pagination.rangeStart}
+            rangeEnd={pagination.rangeEnd}
+            totalCount={pagination.totalCount}
+            onPrev={pagination.goPrev}
+            onNext={pagination.goNext}
+            ariaLabel="Link table pages"
+          />
           <div className="overflow-x-auto rounded-md bg-black/10">
           <table className="w-full border-collapse text-left text-[12px]">
             <thead>
@@ -198,7 +213,7 @@ export function ToolLinksPanel({ links, toolCode }: ToolLinksPanelProps) {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((link) => (
+              {pagination.pageItems.map((link) => (
                 <tr key={`${link.id}-${link.value}`} className="border-b border-white/5 last:border-0 hover:bg-white/[.02]">
                   <td className="px-2 py-2 align-top">
                     <StatusBadge state={rowStatus(link)} />

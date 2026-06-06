@@ -60,17 +60,6 @@
   gap: 0.25rem;
 }
 
-/* Filter bar — embed view toggle */
-.filter-toolbar-row .view-toggle {
-  margin-left: 0.4rem;
-  flex-shrink: 0;
-}
-
-.filter-toolbar-row .toggle-btn {
-  padding: 0.3rem 0.55rem;
-  font-size: 0.7rem;
-}
-
 /* ===== Library — view toggle ===== */
 
 .view-toggle {

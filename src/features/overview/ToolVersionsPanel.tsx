@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Check, CheckCircle2, Circle, Copy, ExternalLink, GitCompare, MoreHorizontal } from "lucide-react";
+import { HubTablePager, useHubTablePagination } from "@tool-workspace/hub-ui";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
 import { compactIconSize } from "../../lib/ui-scale";
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
@@ -119,6 +120,10 @@ export function ToolVersionsPanel({
     [rows, query, filterValues],
   );
 
+  const pagination = useHubTablePagination(filtered, {
+    resetKey: `${query}|${JSON.stringify(filterValues)}`,
+  });
+
   async function copyValue(row: ToolVersionHistoryRow) {
     try {
       await navigator.clipboard.writeText(row.version);
@@ -185,6 +190,16 @@ export function ToolVersionsPanel({
         </p>
       ) : (
         <div className="rounded-lg border border-white/5 p-2">
+          <HubTablePager
+            pageIndex={pagination.pageIndex}
+            totalPages={pagination.totalPages}
+            rangeStart={pagination.rangeStart}
+            rangeEnd={pagination.rangeEnd}
+            totalCount={pagination.totalCount}
+            onPrev={pagination.goPrev}
+            onNext={pagination.goNext}
+            ariaLabel="Version table pages"
+          />
           <div className="overflow-x-auto rounded-md bg-black/10">
           <table className="w-full min-w-[var(--version-table-min-w)] border-collapse text-left text-[12px]">
             <thead>
@@ -206,7 +221,7 @@ export function ToolVersionsPanel({
               </tr>
             </thead>
             <tbody>
-              {filtered.map((row) => (
+              {pagination.pageItems.map((row) => (
                 <tr
                   key={row.id}
                   className={`border-b border-white/5 last:border-0 hover:bg-white/[.02] ${

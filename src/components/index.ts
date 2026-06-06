@@ -10,6 +10,5 @@ export { ToolAvatar } from "./ToolAvatar";
 export { EmptyState } from "./EmptyState";
 export { InfoItem } from "./InfoItem";
 export { Metric } from "./Metric";
-export { ToolFilterBar } from "./ToolFilterBar";
 export { RunningBadge } from "./RunningBadge";
 export { LocalDevBadge } from "./LocalDevBadge";

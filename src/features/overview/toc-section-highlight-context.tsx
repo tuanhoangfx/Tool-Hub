@@ -6,9 +6,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useHubTocSectionSpy } from "@tool-workspace/hub-ui";
 
 type TocSectionHighlightContextValue = {
   highlightedSectionId: string | null;
+  activeSectionId: string | null;
   sectionIds: string[];
   setHighlightedSectionId: (id: string | null) => void;
 };
@@ -17,15 +19,21 @@ const TocSectionHighlightContext = createContext<TocSectionHighlightContextValue
 
 export function TocSectionHighlightProvider({
   sectionIds,
+  scrollRootSelector,
   children,
 }: {
   sectionIds: string[];
+  scrollRootSelector?: string;
   children: ReactNode;
 }) {
   const [highlightedSectionId, setHighlightedSectionId] = useState<string | null>(null);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(() => sectionIds[0] ?? null);
+
+  useHubTocSectionSpy(sectionIds, scrollRootSelector, setActiveSectionId);
+
   const value = useMemo(
-    () => ({ highlightedSectionId, sectionIds, setHighlightedSectionId }),
-    [highlightedSectionId, sectionIds],
+    () => ({ highlightedSectionId, activeSectionId, sectionIds, setHighlightedSectionId }),
+    [activeSectionId, highlightedSectionId, sectionIds],
   );
 
   return <TocSectionHighlightContext.Provider value={value}>{children}</TocSectionHighlightContext.Provider>;
@@ -90,4 +98,11 @@ export function TocHighlightContent({
 export function useTocNavHighlight(sectionId: string) {
   const ctx = useContext(TocSectionHighlightContext);
   return ctx?.highlightedSectionId === sectionId;
+}
+
+export function useTocNavActive(sectionId: string) {
+  const ctx = useContext(TocSectionHighlightContext);
+  if (!ctx) return false;
+  if (ctx.highlightedSectionId) return false;
+  return ctx.activeSectionId === sectionId;
 }

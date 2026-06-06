@@ -1,10 +1,27 @@
 # Changelog
 
+## 2026-06-06 - Auto bump on commit
+
+- Version: `5.2.7`
+- Timestamp: 2026-06-06 21:53 (UTC+7)
+- Commit: `187b3ae`
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Synchronized version across package, manifest, and CHANGELOG.
+
+### Verification
+
+- pending
+
+---
 ## 2026-06-06 - Git commit version stamp
 
 - Version: `5.2.6`
 - Timestamp: 2026-06-06 21:46 (UTC+7)
-- Commit: pending
+- Commit: `e047baa`
 - Type: Patch
 - Status: Draft
 

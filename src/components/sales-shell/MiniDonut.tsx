@@ -2,7 +2,13 @@ import type { FilterIconMeta } from "../../lib/badge-registry";
 import { prepareChartItems } from "../../lib/chart-items";
 import { compactIconSize } from "../../lib/ui-scale";
 
-export type DonutItem = { label: string; value: number; color?: string; iconMeta?: FilterIconMeta | null };
+export type DonutItem = {
+  label: string;
+  value: number;
+  color?: string;
+  iconMeta?: FilterIconMeta | null;
+  iconSrc?: string;
+};
 
 const PALETTE = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e", "#facc15"];
 
@@ -81,7 +87,14 @@ export function MiniDonut({
 
         {slices.map((s, i) => (
           <span key={`${s.label}-label`} className="hub-chart-legend-label" title={s.label} style={{ gridRow: i + 1 }}>
-            {s.iconMeta ? (
+            {s.iconSrc ? (
+              <img
+                src={s.iconSrc}
+                alt=""
+                className="h-3.5 w-3.5 shrink-0 rounded-sm object-contain"
+                aria-hidden
+              />
+            ) : s.iconMeta ? (
               <s.iconMeta.icon size={compactIconSize(11)} className={`shrink-0 ${s.iconMeta.className}`} aria-hidden />
             ) : (
               <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: s.color }} aria-hidden />

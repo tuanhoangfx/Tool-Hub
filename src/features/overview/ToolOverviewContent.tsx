@@ -248,7 +248,10 @@ export function ToolOverviewContent({
         </>
       )}
 
-      <TocSectionHighlightProvider sectionIds={tocSectionIds}>
+      <TocSectionHighlightProvider
+        sectionIds={tocSectionIds}
+        scrollRootSelector={scrollRootSelector ?? ".hub-main"}
+      >
         <div className="grid gap-3 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
           <aside
             className={`relative z-10 w-[var(--overview-toc-w)] shrink-0 lg:sticky lg:self-start ${

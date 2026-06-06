@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { KpiTileData } from "@tool-workspace/hub-ui";
+import { resolveVisibleKpiKeys } from "@tool-workspace/hub-ui";
 import { readSystemTab, type SystemTab } from "./components/SystemTabs";
 import { readSystemTabDisplay, systemDisplayDefs } from "./system-display-prefs";
 
@@ -7,8 +8,8 @@ import { readSystemTabDisplay, systemDisplayDefs } from "./system-display-prefs"
 export const SYSTEM_CHART_SLOT_KEYS = [
   "health_bar",
   "category_bar",
-  "deploy_donut",
-  "status_donut",
+  "deploy_bar",
+  "status_bar",
 ] as const;
 
 export type SystemChartSlotKey = (typeof SYSTEM_CHART_SLOT_KEYS)[number];
@@ -42,7 +43,11 @@ export function useSystemTabDisplayState(tabId: SystemTab) {
     return readSystemTabDisplay(tabId);
   }, [tabId, displayTick]);
 
-  const visKpi = visibleSet(tabDisplay.kpi, displayDefs.defaultKpiKeys);
+  const visKpi = resolveVisibleKpiKeys(
+    tabDisplay.kpi,
+    displayDefs.defaultKpiKeys,
+    displayDefs.kpis ?? [],
+  );
   const visCharts = visibleSet(tabDisplay.charts, displayDefs.defaultChartKeys);
   const isActiveTab = stab === tabId;
 

@@ -1,7 +1,17 @@
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { X } from "lucide-react";
-import { compactIconSize } from "../../lib/ui-scale";
+import { useMemo } from "react";
+import {
+  HubToolDetailModal,
+  HUB_TOOL_DETAIL_SCROLL_ROOT,
+  HUB_TOOL_DETAIL_SECTIONS_CLASS,
+} from "@tool-workspace/hub-ui";
+import { MetricBadge } from "../../components/sales-shell";
+import { ToolAvatar } from "../../components/ToolAvatar";
+import { TocHighlightContent, TocSectionHighlightProvider } from "../overview/toc-section-highlight-context";
+import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
+import { SupabaseProjectToolBadges } from "./SupabaseProjectToolBadges";
+import { SupabaseDetailTocNav } from "./SupabaseDetailTocNav";
+import { SUPABASE_DETAIL_TOC } from "./supabase-detail-toc";
+import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";
 import type { OrgRow, ProjectRow } from "./SystemSupabaseQuotaPanel.types";
 import { SupabaseProjectDetailContent } from "./SupabaseProjectDetailContent";
 
@@ -12,45 +22,47 @@ export type SupabaseProjectDetailModalProps = {
   onClose: () => void;
 };
 
-/** Hub-style modal for one Supabase project (same shell classes as ToolDetailModal). */
+function refBadgeClass() {
+  return "border-emerald-400/35 bg-emerald-500/12 text-emerald-200";
+}
+
+/** Supabase project detail — golden HubToolDetailModal shell (TOC · sections · scroll). */
 export function SupabaseProjectDetailModal({ project, org, tools = [], onClose }: SupabaseProjectDetailModalProps) {
-  useEffect(() => {
-    if (!project) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    document.body.classList.add("hub-modal-open");
-    return () => {
-      window.removeEventListener("keydown", handler);
-      document.body.classList.remove("hub-modal-open");
-    };
-  }, [project, onClose]);
+  const idPrefix = project ? `sq-${project.projectRef}-` : "";
+  const tocSectionIds = useMemo(
+    () => (project ? SUPABASE_DETAIL_TOC.map(({ id }) => `${idPrefix}${id}`) : []),
+    [idPrefix, project],
+  );
 
   if (!project) return null;
 
-  return createPortal(
-    <div className="modal-backdrop modal-backdrop--tool-detail" role="presentation" onClick={onClose}>
-      <div
-        className="modal-shell modal-shell--tool-detail"
-        role="dialog"
-        aria-modal="true"
-        aria-label={`${project.projectName} details`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button type="button" className="modal-close modal-close--tool-detail" onClick={onClose} aria-label="Close">
-          <X size={compactIconSize(16)} />
-        </button>
-        <div className="modal-shell__scroll">
-          <SupabaseProjectDetailContent
-            project={project}
-            org={org}
-            tools={tools}
-            idPrefix={`sq-${project.projectRef}-`}
-          />
-        </div>
-      </div>
-    </div>,
-    document.body,
+  const metricsSource = resolveProjectMetricsSource(project);
+  const refShort = project.projectRef.slice(0, 8);
+
+  return (
+    <HubToolDetailModal
+      open
+      onClose={onClose}
+      title={project.projectName}
+      titleId={`supabase-detail-${project.projectRef}`}
+      ariaLabelledBy={`supabase-detail-${project.projectRef}`}
+      headerLeading={<ToolAvatar code="SB" iconName="cloud" size="sm" />}
+      headerTrailing={
+        <>
+          <MetricBadge label={refShort} mono variantClass={refBadgeClass()} />
+          <SupabaseMetricsSourceBadge source={metricsSource} />
+        </>
+      }
+      toc={<SupabaseDetailTocNav idPrefix={idPrefix} scrollRootSelector={HUB_TOOL_DETAIL_SCROLL_ROOT} />}
+    >
+      <TocSectionHighlightProvider sectionIds={tocSectionIds}>
+        <TocHighlightContent className={HUB_TOOL_DETAIL_SECTIONS_CLASS}>
+          <div className="pb-0.5">
+            <SupabaseProjectToolBadges tools={tools} bindings={project.toolBindings} />
+          </div>
+          <SupabaseProjectDetailContent project={project} org={org} tools={tools} idPrefix={idPrefix} />
+        </TocHighlightContent>
+      </TocSectionHighlightProvider>
+    </HubToolDetailModal>
   );
 }

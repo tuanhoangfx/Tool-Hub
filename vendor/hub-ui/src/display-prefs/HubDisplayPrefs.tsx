@@ -464,7 +464,8 @@ export function HubDisplayPrefs({
     <HubKeyboardShortcutsPanel className="-mx-1" />,
   );
 
-  const showSettingsToc = tocItems.length > 1;
+  /** Always show TOC when any section exists — matches Log / User access modals. */
+  const showSettingsToc = tocItems.length > 0;
 
   return (
     <div ref={ref} className={sidebarRow ? "relative w-full" : "relative"}>

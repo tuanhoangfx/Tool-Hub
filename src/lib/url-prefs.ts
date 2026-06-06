@@ -1,3 +1,4 @@
+import { migrateChartKeysWithPersist } from "@tool-workspace/hub-ui";
 import {
   DEFAULT_LOCAL_HEALTH_POLL,
   parseLocalHealthPoll,
@@ -69,11 +70,14 @@ export function readHubListPrefs(): HubListPrefs {
   const hpin = sp.get("hpin");
   const spin = sp.get("spin");
   const navicon = sp.get("navicon");
+  const charts = migrateChartKeysWithPersist(sp.get("charts"), (value) =>
+    patchHubListPrefs({ charts: value }),
+  );
   return {
     range: TIME_RANGES.some((r) => r.value === range) ? range : "30d",
     limit,
     kpi: parseSet(sp.get("kpi")),
-    charts: parseSet(sp.get("charts")),
+    charts,
     hubFilters: parseSet(sp.get("hfilt")),
     headerStats: parseSet(sp.get("hstat")),
     systemHeaderStats: parseSet(sp.get("sstat")),

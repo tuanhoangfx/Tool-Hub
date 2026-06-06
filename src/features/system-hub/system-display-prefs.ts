@@ -1,4 +1,5 @@
 import type { PrefItem } from "../../components/sales-shell/DisplayPrefs";
+import { migrateChartKeyList } from "@tool-workspace/hub-ui";
 import { DEFAULT_HUB_CHART_KEYS, HUB_CHART_DEFS, HUB_KPI_DEFS } from "../hub/hub-prefs";
 import { defaultKpiKeysFromDefs } from "../../lib/kpi-display-defaults";
 import type { SystemTab } from "./components/SystemTabs";
@@ -40,11 +41,11 @@ export const SYSTEM_TEMPLATE_KPI_DEFS: PrefItem[] = [
 ];
 
 export const SYSTEM_TEMPLATE_CHART_DEFS: PrefItem[] = [
-  { key: "status_donut", label: "Template status (donut)" },
+  { key: "status_bar", label: "Template status (bar)" },
 ];
 
 export const DEFAULT_SYSTEM_TEMPLATE_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_TEMPLATE_KPI_DEFS);
-export const DEFAULT_SYSTEM_TEMPLATE_CHART_KEYS = new Set(["status_donut"]);
+export const DEFAULT_SYSTEM_TEMPLATE_CHART_KEYS = new Set(["status_bar"]);
 
 export const SYSTEM_SUPABASE_QUOTA_KPI_DEFS: PrefItem[] = [
   { key: "total", label: "Projects (shown)" },
@@ -79,16 +80,16 @@ export const SYSTEM_AGENT_KPI_DEFS: PrefItem[] = [
 export const SYSTEM_AGENT_CHART_DEFS: PrefItem[] = [
   { key: "health_bar", label: "By kind (bar)" },
   { key: "category_bar", label: "By scope (bar)" },
-  { key: "deploy_donut", label: "Apply mode (donut)" },
-  { key: "status_donut", label: "Size (lines) (donut)" },
+  { key: "deploy_bar", label: "Apply mode (bar)" },
+  { key: "status_bar", label: "Size (lines) (bar)" },
 ];
 
 export const DEFAULT_SYSTEM_AGENT_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_AGENT_KPI_DEFS);
 export const DEFAULT_SYSTEM_AGENT_CHART_KEYS = new Set([
   "health_bar",
   "category_bar",
-  "deploy_donut",
-  "status_donut",
+  "deploy_bar",
+  "status_bar",
 ]);
 
 /** Overview: all KPI/chart defs available in Display prefs, hidden by default. */
@@ -180,9 +181,14 @@ export function readSystemTabDisplay(stab: SystemTab = readSystemTab()): {
   charts: Set<string> | null;
 } {
   const row = loadStored()[stab];
+  const rawCharts = row?.charts ?? null;
+  const { next: migratedCharts, changed } = migrateChartKeyList(rawCharts);
+  if (changed && migratedCharts) {
+    patchSystemTabDisplay(stab, { charts: migratedCharts });
+  }
   return {
     kpi: row?.kpi == null ? null : new Set(row.kpi),
-    charts: row?.charts == null ? null : new Set(row.charts),
+    charts: migratedCharts == null ? null : new Set(migratedCharts),
   };
 }
 

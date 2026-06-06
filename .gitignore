@@ -2,6 +2,7 @@ node_modules/
 dist/
 dev-server.log
 .dev-vite.pid
+.workspace-dev-start.json
 *.log
 .env
 .env.*

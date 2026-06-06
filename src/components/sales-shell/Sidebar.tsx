@@ -12,7 +12,7 @@ import type { AppScreen } from "../../lib/app-screen";
 import { prefetchAppScreen } from "../../lib/app-screen-prefetch";
 import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
-import { HubUiZoomControl } from "@tool-workspace/hub-ui";
+import { HubLogButton, HubUiZoomControl } from "@tool-workspace/hub-ui";
 import { SystemTabSubNav } from "./SystemTabSubNav";
 
 type SidebarProps = {
@@ -199,6 +199,7 @@ export function SalesSidebar({
           trailing={scanIndicator}
           title={scanMessage || "Scan local workspace, check GitHub dry-run, then refresh metadata"}
         />
+        <HubLogButton variant="global" />
         {displayPrefs}
         <HubUiZoomControl />
       </footer>

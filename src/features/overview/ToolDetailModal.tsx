@@ -1,9 +1,15 @@
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
-import { X } from "lucide-react";
-import { compactIconSize } from "../../lib/ui-scale";
+import { useMemo } from "react";
+import {
+  HubToolDetailModal,
+  HUB_TOOL_DETAIL_SCROLL_ROOT,
+} from "@tool-workspace/hub-ui";
+import { ToolAvatar } from "../../components/ToolAvatar";
+import { ToolCodeBadge } from "../hub/hub-tool-ui";
+import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
-import { ToolDetailContent } from "./ToolDetailContent";
+import { OverviewTocNav } from "./OverviewTocNav";
+import { OVERVIEW_TOC } from "./overview-toc";
+import { ToolDetailSections } from "./ToolDetailSections";
 import hubChangelogRaw from "../../../CHANGELOG.md?raw";
 
 export type ToolDetailModalProps = {
@@ -12,45 +18,48 @@ export type ToolDetailModalProps = {
   onRefreshTool?: (toolId: string) => void;
 };
 
-/** Hub modal for one tool, sized to the main System content area. */
+/** Hub modal for one tool — header · TOC left · sections right · golden Cookie Auto shell. */
 export function ToolDetailModal({ tool, onClose, onRefreshTool }: ToolDetailModalProps) {
-  useEffect(() => {
-    if (!tool) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    document.body.classList.add("hub-modal-open");
-    return () => {
-      window.removeEventListener("keydown", handler);
-      document.body.classList.remove("hub-modal-open");
-    };
-  }, [tool, onClose]);
+  const tocSectionIds = useMemo(
+    () => (tool ? OVERVIEW_TOC.map(({ id }) => `m-${tool.id}-${id}`) : []),
+    [tool],
+  );
 
   if (!tool) return null;
 
-  return createPortal(
-    <div className="modal-backdrop modal-backdrop--tool-detail" role="presentation" onClick={onClose}>
-      <div
-        className="modal-shell modal-shell--tool-detail"
-        role="dialog"
-        aria-modal="true"
-        aria-label={`${tool.name} details`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button type="button" className="modal-close modal-close--tool-detail" onClick={onClose} aria-label="Close">
-          <X size={compactIconSize(16)} />
-        </button>
-        <div className="modal-shell__scroll">
-          <ToolDetailContent
-            tool={tool}
-            hubChangelogRaw={hubChangelogRaw}
-            idPrefix={`m-${tool.id}-`}
-            onRefreshTool={onRefreshTool ? () => onRefreshTool(tool.id) : undefined}
-          />
-        </div>
-      </div>
-    </div>,
-    document.body,
+  const idPrefix = `m-${tool.id}-`;
+
+  return (
+    <HubToolDetailModal
+      open
+      onClose={onClose}
+      title={tool.name}
+      titleId={`tool-detail-${tool.id}`}
+      headerLeading={
+        <ToolAvatar
+          code={tool.code}
+          iconName={toolIconName(tool)}
+          svgSrc={toolSvgIcon(tool) ?? undefined}
+          size="sm"
+        />
+      }
+      headerTrailing={<ToolCodeBadge code={tool.code} category={tool.category} />}
+      toc={
+        <OverviewTocNav
+          code={tool.code}
+          idPrefix={idPrefix}
+          scrollRootSelector={HUB_TOOL_DETAIL_SCROLL_ROOT}
+        />
+      }
+      sectionIds={tocSectionIds}
+    >
+      <ToolDetailSections
+        tool={tool}
+        hubChangelogRaw={hubChangelogRaw}
+        idPrefix={idPrefix}
+        statsMode="tool"
+        onRefresh={onRefreshTool ? () => onRefreshTool(tool.id) : undefined}
+      />
+    </HubToolDetailModal>
   );
 }

@@ -13,7 +13,8 @@
   --hub-metric-badge-h: 20px;
   --hub-card-meta-min-h: 6.75rem;
   --hub-card-chip-row-min-h: 20px;
-  --overview-toc-w: 135px;
+  --overview-toc-w: 10.5rem;
+  --overview-toc-row-h: 2.125rem;
   --overview-toc-h: 263px;
   --overview-toc-row-h: 30px;
   --schema-graph-h: 414px;

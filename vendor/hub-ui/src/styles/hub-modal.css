@@ -506,7 +506,10 @@ body.hub-modal-open {
   --overview-toc-w: 14rem;
   --overview-toc-row-h: 2.125rem;
   --hub-settings-toc-icon: 11px;
-  max-height: min(88vh, 860px);
+  width: min(42rem, calc(100vw - var(--app-sidebar-width) - 2rem));
+  max-width: calc(100vw - var(--app-sidebar-width) - 2rem);
+  max-height: min(80vh, 42rem);
+  min-height: min(18rem, 52vh);
 }
 
 .hub-header-panel-modal .user-access-modal__header,
@@ -527,6 +530,13 @@ body.hub-modal-open {
 }
 
 @media (max-width: 640px) {
+  .modal-shell.hub-tool-detail-modal.hub-header-panel-modal,
+  .modal-shell.hub-tool-detail-modal.hub-settings-modal {
+    width: min(96vw, 42rem);
+    max-width: 96vw;
+    min-height: 0;
+  }
+
   .hub-header-panel-modal .hub-tool-detail-modal__layout,
   .hub-settings-modal .hub-tool-detail-modal__layout {
     grid-template-columns: minmax(0, 1fr);

@@ -4,7 +4,6 @@ import { AlertTriangle, BookOpen, Bot, Command, Layers, RefreshCw, ScrollText, S
 import {
   HubResultCount,
   MiniBarChart,
-  MiniDonut,
   ViewToggle,
   type HubViewMode,
   type FilterValues,
@@ -69,8 +68,8 @@ export function SystemAgentContextPanel() {
     () => ({
       health_bar: <MiniBarChart title="By kind" items={charts.kind.slice(0, 8)} />,
       category_bar: <MiniBarChart title="By scope" items={charts.scope.slice(0, 6)} />,
-      deploy_donut: <MiniDonut title="Apply mode" items={charts.apply} />,
-      status_donut: <MiniDonut title="Size (lines)" items={charts.size} />,
+      deploy_bar: <MiniBarChart title="Apply mode" items={charts.apply} />,
+      status_bar: <MiniBarChart title="Size (lines)" items={charts.size} />,
     }),
     [charts],
   );

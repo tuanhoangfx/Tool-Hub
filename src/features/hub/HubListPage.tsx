@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle, Boxes, Radio, RotateCcw } from "lucide-react";
+import { AlertTriangle, Boxes, Play, Radio, RotateCcw } from "lucide-react";
 import { buildHubKpiItems } from "./hub-kpi-items";
 import {
   HubResultCount,
   HubRowLimitSelect,
   HubTimeRangeSelect,
   MiniBarChart,
-  MiniDonut,
   ViewToggle,
   type FilterDef,
   type FilterValues,
@@ -32,9 +31,11 @@ import {
   DEFAULT_HUB_FILTER_KEYS,
   DEFAULT_HUB_HEADER_STAT_KEYS,
   DEFAULT_HUB_KPI_KEYS,
+  HUB_KPI_DEFS,
 } from "./hub-prefs";
 import { HubListChromeHeader } from "./HubListChromeHeader";
 import { HubToolCard } from "./HubToolCard";
+import { resolveVisibleKpiKeys } from "@tool-workspace/hub-ui";
 
 function visibleSet(set: Set<string> | null, defaults: Set<string>) {
   return set ?? defaults;
@@ -139,7 +140,7 @@ export function HubListPage({
   const charts = useMemo(() => hubCharts(filtered), [filtered]);
   const kpis = useMemo(() => hubKpis(filtered), [filtered]);
 
-  const visKpi = visibleSet(prefs.kpi, DEFAULT_HUB_KPI_KEYS);
+  const visKpi = resolveVisibleKpiKeys(prefs.kpi, DEFAULT_HUB_KPI_KEYS, HUB_KPI_DEFS);
   const visCharts = visibleSet(prefs.charts, DEFAULT_HUB_CHART_KEYS);
   const visFilterKeys = visibleSet(prefs.hubFilters, DEFAULT_HUB_FILTER_KEYS);
   const visHeaderStats = visibleSet(prefs.headerStats, DEFAULT_HUB_HEADER_STAT_KEYS);
@@ -185,7 +186,20 @@ export function HubListPage({
   const quotaVersion = useSupabaseQuotaVersion();
   const [localHealthBusy, setLocalHealthBusy] = useState(false);
   const [hubRecoverBusy, setHubRecoverBusy] = useState(false);
+  const [startAllDownBusy, setStartAllDownBusy] = useState(false);
+  const [startingDevCodes, setStartingDevCodes] = useState<Set<string>>(() => new Set());
+  const [devToast, setDevToast] = useState<{ message: string; tone: "ok" | "err" } | null>(null);
   const checkingLocal = localHealthBusy;
+
+  function showDevToast(message: string, tone: "ok" | "err" = "ok") {
+    setDevToast({ message, tone });
+    window.setTimeout(() => setDevToast(null), 8_000);
+  }
+
+  const localDownCount = useMemo(
+    () => localUrls.filter((u) => healthState[u] === "offline").length,
+    [localUrls, healthState],
+  );
 
   const hubLocalUrl = useMemo(
     () => allTools.find((t) => t.code === "P0004")?.localUrl ?? "http://127.0.0.1:5176/",
@@ -198,12 +212,88 @@ export function HubListPage({
     try {
       const res = await fetch("/api/hub-dev/recover", { method: "POST" });
       const body = (await res.json()) as { ok?: boolean; message?: string };
-      window.alert(body.message ?? (body.ok ? "Restarting Hub dev server…" : "Recover failed"));
+      showDevToast(body.message ?? (body.ok ? "Restarting Hub dev server…" : "Recover failed"), body.ok ? "ok" : "err");
       window.setTimeout(() => window.location.reload(), 12_000);
     } catch {
-      window.alert("Recover request failed. Run: corepack pnpm dev:recover in P0004-Tool-Hub");
+      showDevToast("Recover failed. Run: corepack pnpm dev:recover in P0004-Tool-Hub", "err");
     } finally {
       setHubRecoverBusy(false);
+    }
+  }
+
+  async function startProductDev(code: string) {
+    const targetUrl = allTools.find((t) => t.code === code)?.localUrl;
+    setStartingDevCodes((prev) => new Set(prev).add(code));
+    try {
+      const res = await fetch("/api/workspace-dev/start-product", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      const body = (await res.json()) as { ok?: boolean; message?: string };
+      if (!res.ok && res.status !== 202) {
+        showDevToast(body.message ?? `Start ${code} failed`, "err");
+        return;
+      }
+      showDevToast(body.message ?? `Starting ${code}…`);
+      if (!targetUrl) return;
+      for (let i = 0; i < 8; i += 1) {
+        await new Promise((r) => window.setTimeout(r, 4_000));
+        setLocalHealthBusy(true);
+        await recheckLocal();
+        setLocalHealthBusy(false);
+        const healthRes = await fetch(`/api/local-health?urls=${encodeURIComponent(targetUrl)}`, {
+          cache: "no-store",
+        });
+        if (healthRes.ok) {
+          const data = (await healthRes.json()) as { results?: Record<string, string> };
+          if (data.results?.[targetUrl] === "online") {
+            showDevToast(`${code} dev server is live.`);
+            break;
+          }
+        }
+      }
+    } catch {
+      showDevToast(`Start ${code} failed. Run: node Tool/scripts/ensure-dev-product.cjs ${code}`, "err");
+    } finally {
+      setStartingDevCodes((prev) => {
+        const next = new Set(prev);
+        next.delete(code);
+        return next;
+      });
+    }
+  }
+
+  async function startAllDownDevs() {
+    setStartAllDownBusy(true);
+    try {
+      const res = await fetch("/api/workspace-dev/start-down", { method: "POST" });
+      const body = (await res.json()) as { ok?: boolean; message?: string };
+      if (!res.ok && res.status !== 202) {
+        showDevToast(body.message ?? "Start all down failed", "err");
+        return;
+      }
+      showDevToast(body.message ?? "Starting workspace dev servers…");
+      for (let i = 0; i < 18; i += 1) {
+        await new Promise((r) => window.setTimeout(r, 8_000));
+        setLocalHealthBusy(true);
+        await recheckLocal();
+        setLocalHealthBusy(false);
+        const statusRes = await fetch("/api/workspace-dev/status");
+        const status = (await statusRes.json()) as { running?: boolean; exitCode?: number | null };
+        if (!status.running && i >= 2) {
+          const doneMsg =
+            status.exitCode === 0
+              ? "All down workspace dev servers started. Check Local health for live badges."
+              : "Workspace dev start finished (some tools may need manual start). See workspace-dev-start.log.";
+          showDevToast(doneMsg, status.exitCode === 0 ? "ok" : "err");
+          break;
+        }
+      }
+    } catch {
+      showDevToast("Request failed. Run: cd E:\\Dev\\Tool && corepack pnpm dev:stack:workspace", "err");
+    } finally {
+      setStartAllDownBusy(false);
     }
   }
 
@@ -212,15 +302,15 @@ export function HubListPage({
   const hasCharts =
     visCharts.has("health_bar") ||
     visCharts.has("category_bar") ||
-    visCharts.has("deploy_donut") ||
-    visCharts.has("status_donut");
+    visCharts.has("deploy_bar") ||
+    visCharts.has("status_bar");
 
   const chartsBand = hasCharts ? (
     <>
       {visCharts.has("health_bar") ? <MiniBarChart title="By Health" items={charts.health} /> : null}
       {visCharts.has("category_bar") ? <MiniBarChart title="By Category" items={charts.category} /> : null}
-      {visCharts.has("deploy_donut") ? <MiniDonut title="Deploy distribution" items={charts.deploy} /> : null}
-      {visCharts.has("status_donut") ? <MiniDonut title="Status distribution" items={charts.status} /> : null}
+      {visCharts.has("deploy_bar") ? <MiniBarChart title="Deploy distribution" items={charts.deploy} /> : null}
+      {visCharts.has("status_bar") ? <MiniBarChart title="Status distribution" items={charts.status} /> : null}
     </>
   ) : undefined;
 
@@ -292,20 +382,40 @@ export function HubListPage({
               Local health
             </button>
             {import.meta.env.DEV ? (
-              <button
-                type="button"
-                disabled={hubRecoverBusy}
-                onClick={() => void recoverHubDev()}
-                title="Kill port 5176, clear Vite cache, restart Hub dev (fixes esbuild crash overlay)"
-                className={`inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-                  hubDevDown
-                    ? "border-amber-400/40 bg-amber-500/15 text-amber-100 hover:bg-amber-500/25"
-                    : "border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10 hover:text-[var(--text)]"
-                }`}
-              >
-                <RotateCcw size={14} className={hubRecoverBusy ? "animate-spin" : ""} aria-hidden />
-                Restart Hub dev
-              </button>
+              <>
+                <button
+                  type="button"
+                  disabled={startAllDownBusy || checkingLocal || localUrls.length === 0}
+                  onClick={() => void startAllDownDevs()}
+                  title="Start every workspace tool that is down (ensure-dev --stack workspace --down-only). Does not open browser tabs."
+                  className={`inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                    localDownCount > 0
+                      ? "border-sky-400/40 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25"
+                      : "border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10 hover:text-[var(--text)]"
+                  }`}
+                >
+                  <Play size={14} className={startAllDownBusy ? "animate-pulse" : ""} aria-hidden />
+                  {startAllDownBusy
+                    ? "Starting…"
+                    : localDownCount > 0
+                      ? `Start all down (${localDownCount})`
+                      : "Start all down"}
+                </button>
+                <button
+                  type="button"
+                  disabled={hubRecoverBusy}
+                  onClick={() => void recoverHubDev()}
+                  title="Kill port 5176, clear Vite cache, restart Hub dev (fixes esbuild crash overlay)"
+                  className={`inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                    hubDevDown
+                      ? "border-amber-400/40 bg-amber-500/15 text-amber-100 hover:bg-amber-500/25"
+                      : "border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10 hover:text-[var(--text)]"
+                  }`}
+                >
+                  <RotateCcw size={14} className={hubRecoverBusy ? "animate-spin" : ""} aria-hidden />
+                  Restart Hub dev
+                </button>
+              </>
             ) : null}
             <HubToolBulkActionBar
               hasSelection={selectedIds.size > 0}
@@ -337,6 +447,8 @@ export function HubListPage({
                   healthState={tool.localUrl ? healthState[tool.localUrl] : undefined}
                   quotaVersion={quotaVersion}
                   onOpen={onSelect}
+                  onStartDev={import.meta.env.DEV ? startProductDev : undefined}
+                  startingDev={startingDevCodes.has(tool.code)}
                 />
               ))}
             </div>
@@ -362,11 +474,26 @@ export function HubListPage({
               }
             }}
             healthState={healthState}
+            onStartDev={import.meta.env.DEV ? startProductDev : undefined}
+            startingDevCodes={startingDevCodes}
           />
         )}
       </HubDirectoryScreen>
 
       <ToolDetailModal tool={modalTool} onClose={onCloseModal} onRefreshTool={onRefreshTool} />
+
+      {devToast ? (
+        <div
+          role="status"
+          className={`fixed bottom-4 left-1/2 z-[3000] max-w-md -translate-x-1/2 rounded-xl border px-4 py-3 text-sm font-medium shadow-lg shadow-black/40 ${
+            devToast.tone === "ok"
+              ? "border-emerald-400/40 bg-emerald-950/95 text-emerald-100"
+              : "border-amber-400/40 bg-amber-950/95 text-amber-100"
+          }`}
+        >
+          {devToast.message}
+        </div>
+      ) : null}
     </>
   );
 }

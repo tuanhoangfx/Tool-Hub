@@ -1,19 +1,6 @@
 import { useMemo, useState } from "react";
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  BookOpen,
-  CalendarDays,
-  Copy,
-  FileCode2,
-  FileText,
-  Hash,
-  Layers,
-  ScrollText,
-  Sparkles,
-  Star,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, BookOpen, CalendarDays } from "lucide-react";
+import { HubTableColumnHeader, type HubTableColumnRole } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../../lib/ui-scale";
 import { formatDate } from "../../../lib/tooling";
 import { HubCardAvatar } from "../../../components/HubCardAvatar";
@@ -21,7 +8,6 @@ import { QuietChip } from "../../hub/hub-tool-ui";
 import type { AgentContextItem } from "./types";
 import { AgentKindBadge, AgentScopeBadge } from "./AgentContextBadges";
 import { agentKindIcon, agentStatusDotColor } from "./agent-kind-icon";
-import "../../identity/hub-users-table.css";
 
 type AgentSortKey =
   | "kind"
@@ -41,27 +27,20 @@ type ColumnDef = {
   key: AgentSortKey;
   label: string;
   colClass: string;
-  icon: typeof ScrollText;
-  iconClass: string;
+  role: HubTableColumnRole;
 };
 
 const COLUMNS: ColumnDef[] = [
-  { key: "kind", label: "Kind", colClass: "hub-users-col--hub-code", icon: ScrollText, iconClass: "hub-users-th-icon--role" },
-  { key: "layer", label: "Layer", colClass: "hub-users-col--agent-layer", icon: Layers, iconClass: "hub-users-th-icon--tools" },
-  { key: "name", label: "Name", colClass: "hub-users-col--hub-project", icon: FileText, iconClass: "hub-users-th-icon--name" },
-  { key: "golden", label: "Golden", colClass: "hub-users-col--agent-golden", icon: Star, iconClass: "hub-users-th-icon--role" },
-  { key: "clone", label: "Clone", colClass: "hub-users-col--agent-clone", icon: Copy, iconClass: "hub-users-th-icon--tools" },
-  { key: "path", label: "Path", colClass: "hub-users-col--agent-path", icon: FileCode2, iconClass: "hub-users-th-icon--id" },
-  { key: "scope", label: "Scope", colClass: "hub-users-col--hub-version", icon: Layers, iconClass: "hub-users-th-icon--tools" },
-  { key: "lines", label: "Lines", colClass: "hub-users-col--agent-lines", icon: Hash, iconClass: "hub-users-th-icon--created" },
-  { key: "mode", label: "Mode", colClass: "hub-users-col--hub-status", icon: Sparkles, iconClass: "hub-users-th-icon--activity" },
-  {
-    key: "updated",
-    label: "Updated",
-    colClass: "hub-users-col--hub-updated",
-    icon: CalendarDays,
-    iconClass: "hub-users-th-icon--created",
-  },
+  { key: "kind", label: "Kind", colClass: "hub-users-col--hub-code", role: "kind" },
+  { key: "layer", label: "Layer", colClass: "hub-users-col--agent-layer", role: "layer" },
+  { key: "name", label: "Name", colClass: "hub-users-col--hub-project", role: "name" },
+  { key: "golden", label: "Golden", colClass: "hub-users-col--agent-golden", role: "golden" },
+  { key: "clone", label: "Clone", colClass: "hub-users-col--agent-clone", role: "clone" },
+  { key: "path", label: "Path", colClass: "hub-users-col--agent-path", role: "path" },
+  { key: "scope", label: "Scope", colClass: "hub-users-col--hub-version", role: "scope" },
+  { key: "lines", label: "Lines", colClass: "hub-users-col--agent-lines", role: "lines" },
+  { key: "mode", label: "Mode", colClass: "hub-users-col--hub-status", role: "mode" },
+  { key: "updated", label: "Updated", colClass: "hub-users-col--hub-updated", role: "updated" },
 ];
 
 function SortIndicator({ active, dir }: { active: boolean; dir: SortDir }) {
@@ -153,25 +132,21 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
       <table className="hub-users-table">
         <thead>
           <tr>
-            {COLUMNS.map((col) => {
-              const Icon = col.icon;
-              return (
-                <th key={col.key} className={col.colClass} scope="col">
-                  <button
-                    type="button"
-                    className="hub-users-th-btn"
-                    onClick={() => handleSort(col.key)}
-                    aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
-                  >
-                    <span className="hub-users-th-label">
-                      <Icon size={13} className={`hub-users-th-icon ${col.iconClass}`} aria-hidden />
-                      <span className="hub-users-th-text">{col.label}</span>
-                      <SortIndicator active={sortKey === col.key} dir={sortDir} />
-                    </span>
-                  </button>
-                </th>
-              );
-            })}
+            {COLUMNS.map((col) => (
+              <th key={col.key} className={col.colClass} scope="col">
+                <button
+                  type="button"
+                  className="hub-users-th-btn"
+                  onClick={() => handleSort(col.key)}
+                  aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                >
+                  <span className="hub-users-th-label">
+                    <HubTableColumnHeader label={col.label} role={col.role} />
+                    <SortIndicator active={sortKey === col.key} dir={sortDir} />
+                  </span>
+                </button>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>

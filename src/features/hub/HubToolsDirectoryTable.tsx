@@ -1,16 +1,5 @@
-import {
-  Activity,
-  AlertTriangle,
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  Boxes,
-  CalendarClock,
-  GitBranch,
-  Hash,
-  Link2,
-  Unlink,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Play } from "lucide-react";
+import { HubTableColumnHeader, type HubTableColumnRole } from "@tool-workspace/hub-ui";
 import { MaterialIcon } from "../../components";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { auditManifestLinks } from "../overview/manifest-link-audit";
@@ -28,7 +17,6 @@ import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { HealthState } from "../../hooks/useLocalHealth";
 import type { ResolvedTool } from "../../types";
-import "../identity/hub-users-table.css";
 
 export type HubTableSortKey = "code" | "name" | "version" | "status" | "drift" | "updated";
 
@@ -38,41 +26,16 @@ type ColumnDef = {
   key: HubTableSortKey;
   label: string;
   colClass: string;
-  icon: typeof Hash;
-  iconClass: string;
+  role: HubTableColumnRole;
 };
 
 const COLUMNS: ColumnDef[] = [
-  { key: "code", label: "Code", colClass: "hub-users-col--hub-code", icon: Hash, iconClass: "hub-users-th-icon--id" },
-  { key: "name", label: "Project", colClass: "hub-users-col--hub-project", icon: Boxes, iconClass: "hub-users-th-icon--name" },
-  {
-    key: "version",
-    label: "Version",
-    colClass: "hub-users-col--hub-version",
-    icon: GitBranch,
-    iconClass: "hub-users-th-icon--created",
-  },
-  {
-    key: "status",
-    label: "Status",
-    colClass: "hub-users-col--hub-status",
-    icon: Activity,
-    iconClass: "hub-users-th-icon--activity",
-  },
-  {
-    key: "drift",
-    label: "Drift",
-    colClass: "hub-users-col--hub-drift",
-    icon: AlertTriangle,
-    iconClass: "hub-users-th-icon--actions",
-  },
-  {
-    key: "updated",
-    label: "Updated",
-    colClass: "hub-users-col--hub-updated",
-    icon: CalendarClock,
-    iconClass: "hub-users-th-icon--created",
-  },
+  { key: "code", label: "Code", colClass: "hub-users-col--hub-code", role: "code" },
+  { key: "name", label: "Project", colClass: "hub-users-col--hub-project", role: "name" },
+  { key: "version", label: "Version", colClass: "hub-users-col--hub-version", role: "version" },
+  { key: "status", label: "Status", colClass: "hub-users-col--hub-status", role: "status" },
+  { key: "drift", label: "Drift", colClass: "hub-users-col--hub-drift", role: "drift" },
+  { key: "updated", label: "Updated", colClass: "hub-users-col--hub-updated", role: "updated" },
 ];
 
 function tryPort(url: string) {
@@ -120,6 +83,8 @@ export function HubToolsDirectoryTable({
   onSelect,
   onCopyPath,
   healthState,
+  onStartDev,
+  startingDevCodes,
 }: {
   tools: ResolvedTool[];
   sortKey: HubTableSortKey;
@@ -133,6 +98,8 @@ export function HubToolsDirectoryTable({
   onSelect: (id: string) => void;
   onCopyPath: (path: string) => void;
   healthState?: Record<string, HealthState>;
+  onStartDev?: (code: string) => void;
+  startingDevCodes?: Set<string>;
 }) {
   return (
     <div className="hub-users-table-wrap overflow-x-auto rounded-2xl border border-white/5">
@@ -161,38 +128,32 @@ export function HubToolsDirectoryTable({
                 />
               </label>
             </th>
-            {COLUMNS.map((col) => {
-              const Icon = col.icon;
-              return (
-                <th key={col.key} className={col.colClass} scope="col">
-                  <button
-                    type="button"
-                    className="hub-users-th-btn"
-                    onClick={() => onSort(col.key)}
-                    aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
-                  >
-                    <span className="hub-users-th-label">
-                      <Icon size={13} className={`hub-users-th-icon ${col.iconClass}`} aria-hidden />
-                      <span className="hub-users-th-text">{col.label}</span>
-                      <SortIndicator active={sortKey === col.key} dir={sortDir} />
-                    </span>
-                  </button>
-                </th>
-              );
-            })}
+            {COLUMNS.map((col) => (
+              <th key={col.key} className={col.colClass} scope="col">
+                <button
+                  type="button"
+                  className="hub-users-th-btn"
+                  onClick={() => onSort(col.key)}
+                  aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                >
+                  <span className="hub-users-th-label">
+                    <HubTableColumnHeader label={col.label} role={col.role} />
+                    <SortIndicator active={sortKey === col.key} dir={sortDir} />
+                  </span>
+                </button>
+              </th>
+            ))}
             <th className="hub-users-col--hub-manifest" scope="col">
               <span className="hub-users-th-btn hub-users-th-btn--static">
                 <span className="hub-users-th-label">
-                  <Unlink size={13} className="hub-users-th-icon hub-users-th-icon--actions" aria-hidden />
-                  <span className="hub-users-th-text">Manifest</span>
+                  <HubTableColumnHeader label="Manifest" role="manifest" />
                 </span>
               </span>
             </th>
             <th className="hub-users-col--hub-links" scope="col">
               <span className="hub-users-th-btn hub-users-th-btn--static">
                 <span className="hub-users-th-label">
-                  <Link2 size={13} className="hub-users-th-icon hub-users-th-icon--email" aria-hidden />
-                  <span className="hub-users-th-text">Links</span>
+                  <HubTableColumnHeader label="Links" role="links" />
                 </span>
               </span>
             </th>
@@ -369,6 +330,26 @@ export function HubToolsDirectoryTable({
                         tone={localHealth === "online" ? "ok" : "neutral"}
                         iconMeta={resolveLocalPortIcon(localHealth === "online")}
                       />
+                    ) : null}
+                    {import.meta.env.DEV &&
+                    tool.localUrl &&
+                    onStartDev &&
+                    localHealth === "offline" ? (
+                      <button
+                        type="button"
+                        className="icon-link"
+                        disabled={startingDevCodes?.has(tool.code)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onStartDev(tool.code);
+                        }}
+                        title={`Start ${tool.code} dev server`}
+                      >
+                        <Play
+                          size={compactIconSize(16)}
+                          className={startingDevCodes?.has(tool.code) ? "animate-pulse" : ""}
+                        />
+                      </button>
                     ) : null}
                   </div>
                 </td>

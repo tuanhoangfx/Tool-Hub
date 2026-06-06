@@ -6,3 +6,8 @@ export const SUPABASE_DETAIL_TOC = [
   { id: "health", label: "Health", emoji: "💚", chipClass: "border-rose-400/25 bg-rose-500/10 text-rose-200" },
   { id: "links", label: "Links", emoji: "🔗", chipClass: "border-indigo-400/25 bg-indigo-500/10 text-indigo-200" },
 ] as const;
+
+export function supabaseSectionTitle(id: (typeof SUPABASE_DETAIL_TOC)[number]["id"]): string {
+  const item = SUPABASE_DETAIL_TOC.find((t) => t.id === id);
+  return item ? `${item.emoji} ${item.label}` : id;
+}

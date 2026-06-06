@@ -1,23 +1,11 @@
-import {
-  Activity,
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  CalendarClock,
-  Fingerprint,
-  Hash,
-  Mail,
-  Package,
-  ShieldCheck,
-  UserRound,
-} from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Mail, Package } from "lucide-react";
+import { HubTableColumnHeader, type HubTableColumnRole } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import { HubCopyBadge } from "./HubCopyBadge";
 import { HubRoleBadge } from "./HubRoleBadge";
 import { HubUserAvatar } from "./HubUserAvatar";
 import type { UserTableColumnKey } from "./user-table-prefs";
 import type { UserManagementRow } from "./userManagementRepository";
-import "./hub-users-table.css";
 
 export type UserTableSortKey = UserTableColumnKey | "status";
 
@@ -27,19 +15,18 @@ type ColumnDef = {
   key: UserTableSortKey;
   label: string;
   colClass: string;
-  icon: typeof UserRound;
-  iconClass: string;
+  role: HubTableColumnRole;
 };
 
 const COLUMNS: ColumnDef[] = [
-  { key: "fullName", label: "Name", colClass: "hub-users-col--name", icon: UserRound, iconClass: "hub-users-th-icon--name" },
-  { key: "id", label: "ID", colClass: "hub-users-col--id", icon: Fingerprint, iconClass: "hub-users-th-icon--id" },
-  { key: "email", label: "Email", colClass: "hub-users-col--email", icon: Mail, iconClass: "hub-users-th-icon--email" },
-  { key: "role", label: "Role", colClass: "hub-users-col--role", icon: ShieldCheck, iconClass: "hub-users-th-icon--role" },
-  { key: "toolCount", label: "Tools", colClass: "hub-users-col--tools", icon: Package, iconClass: "hub-users-th-icon--tools" },
-  { key: "createdAt", label: "Created", colClass: "hub-users-col--created", icon: CalendarClock, iconClass: "hub-users-th-icon--created" },
-  { key: "lastActiveAt", label: "Latest activity", colClass: "hub-users-col--activity", icon: Activity, iconClass: "hub-users-th-icon--activity" },
-  { key: "activityCount", label: "Actions", colClass: "hub-users-col--actions", icon: Hash, iconClass: "hub-users-th-icon--actions" },
+  { key: "fullName", label: "Name", colClass: "hub-users-col--name", role: "name" },
+  { key: "id", label: "ID", colClass: "hub-users-col--id", role: "id" },
+  { key: "email", label: "Email", colClass: "hub-users-col--email", role: "email" },
+  { key: "role", label: "Role", colClass: "hub-users-col--role", role: "role" },
+  { key: "toolCount", label: "Tools", colClass: "hub-users-col--tools", role: "tools" },
+  { key: "createdAt", label: "Created", colClass: "hub-users-col--created", role: "created" },
+  { key: "lastActiveAt", label: "Latest activity", colClass: "hub-users-col--activity", role: "activity" },
+  { key: "activityCount", label: "Actions", colClass: "hub-users-col--actions", role: "actions" },
 ];
 
 function fmtDate(value: string | null): string {
@@ -228,25 +215,21 @@ export function UserDirectoryTable({
                 />
               </label>
             </th>
-            {visibleDefs.map((col) => {
-              const Icon = col.icon;
-              return (
-                <th key={col.key} className={col.colClass} scope="col">
-                  <button
-                    type="button"
-                    className="hub-users-th-btn"
-                    onClick={() => onSort(col.key)}
-                    aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
-                  >
-                    <span className="hub-users-th-label">
-                      <Icon size={13} className={`hub-users-th-icon ${col.iconClass}`} aria-hidden />
-                      <span className="hub-users-th-text">{col.label}</span>
-                      <SortIndicator active={sortKey === col.key} dir={sortDir} />
-                    </span>
-                  </button>
-                </th>
-              );
-            })}
+            {visibleDefs.map((col) => (
+              <th key={col.key} className={col.colClass} scope="col">
+                <button
+                  type="button"
+                  className="hub-users-th-btn"
+                  onClick={() => onSort(col.key)}
+                  aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                >
+                  <span className="hub-users-th-label">
+                    <HubTableColumnHeader label={col.label} role={col.role} />
+                    <SortIndicator active={sortKey === col.key} dir={sortDir} />
+                  </span>
+                </button>
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>

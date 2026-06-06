@@ -93,7 +93,14 @@ export {
 export { HubTabSectionRule } from "./shell/HubTabSectionRule";
 export { HubAlert } from "./content/HubAlert";
 export { HubDataTable, HubTableEmptyRow, type HubTableColumn } from "./content/HubDataTable";
+export { HubTablePager, type HubTablePagerProps } from "./content/HubTablePager";
 export { HubTableColumnHeader, type HubTableColumnHeaderProps } from "./content/HubTableColumnHeader";
+export {
+  HUB_TABLE_PAGE_SIZE,
+  paginateHubTableItems,
+  useHubTablePagination,
+  type HubTablePaginationState,
+} from "./table/hub-table-pagination";
 export {
   HUB_TABLE_COLUMN_META,
   resolveHubTableColumnMeta,

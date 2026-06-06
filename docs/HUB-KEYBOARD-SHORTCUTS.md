@@ -7,7 +7,7 @@ Synced across Hub tools via `@tool-workspace/hub-ui` (single source: `packages/h
 | **F** | Focus main tab search (FilterBar) | All Hub list tabs with FilterBar |
 | **Ctrl+Q** | Clear search query and all active filters | Same scope as **F** |
 | **N** | Add / create (primary row action) | Users → Add; screens with `onNew` handler |
-| **S** | Open tab header Settings panel | Tab chrome (not sidebar global Settings) |
+| **S** | Open tab header Settings panel | Tab chrome (not shown in Settings → Shortcuts tab) |
 | **E** | Edit selection (when rows checked) | Users → Edit; Hub → Refresh selected tools |
 | **Esc** | Blur FilterBar search when focused; otherwise close open modal | Search field after **F**; modals unchanged when search not focused |
 
@@ -62,6 +62,7 @@ After editing keyboard code: `node E:\Dev\Tool\scripts\sync-hub-ui-vendor.cjs` (
 | Agent | `system-agent` | Yes | Yes | — |
 | Design Template | `system-template` | — (no FilterBar) | Yes | — |
 
-## UI hint
+## UI reference
 
-- Search field shows **F** badge (replaces Ctrl+K)
+- Search field shows **F** badge.
+- Full list: **Settings → Shortcuts** tab (`HubKeyboardShortcutsPanel`). **S** is hidden there (opens Settings itself).

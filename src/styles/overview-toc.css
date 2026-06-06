@@ -1,6 +1,7 @@
 /* TOC label highlight — driven by pointer over matching content section */
 
-.overview-toc-nav__item.is-highlighted .overview-toc-nav__label {
+.overview-toc-nav__item.is-highlighted .overview-toc-nav__label,
+.overview-toc-nav__item.is-active .overview-toc-nav__label {
   color: rgb(224 231 255);
   background: linear-gradient(to right, rgba(99, 102, 241, 0.22), rgba(168, 85, 247, 0.08));
   box-shadow: inset 0 0 0 1px rgba(129, 140, 248, 0.2);

@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { createPortal } from "react-dom";
-import { Check, KeyRound, Package, UserRound, X } from "lucide-react";
+import { Check, KeyRound, Package, UserRound } from "lucide-react";
+import {
+  HubDataTable,
+  HubToolDetailModal,
+  HubToolDetailModalPrimaryAction,
+  HubToolDetailSection,
+  HUB_TOOL_DETAIL_SCROLL_ROOT,
+  HUB_TOOL_DETAIL_SECTIONS_CLASS,
+} from "@tool-workspace/hub-ui";
 import { HubConfirmDialog } from "../../components/HubConfirmDialog";
 import { FilterBar } from "../../components/sales-shell";
 import { HubSingleFilterDropdown } from "../../components/sales-shell/FilterBar";
@@ -23,9 +30,8 @@ import {
   toolAccessFiltersWithCounts,
 } from "./tool-access-filters";
 import { useToolAccessFilterPrefs } from "./use-tool-access-filter-prefs";
-import { TocHighlightContent, TocSectionHighlightProvider } from "../overview/toc-section-highlight-context";
-import { USER_ACCESS_TOC, userAccessSectionTitle } from "./user-access-toc";
 import { UserAccessTocNav } from "./UserAccessTocNav";
+import { USER_ACCESS_TOC, userAccessSectionTitle } from "./user-access-toc";
 
 export type UserAccessSavePayload = {
   fullName: string;
@@ -60,14 +66,6 @@ function fmtDate(value: string | null): string {
   }).format(date);
 }
 
-function DetailSection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
-  return (
-    <section id={id} className="scroll-mt-4 space-y-3 rounded-xl border border-white/5 bg-white/[.02] p-3">
-      <h3 className="border-b border-white/5 pb-2 text-[15px] font-semibold leading-snug text-[var(--text)]">{title}</h3>
-      {children}
-    </section>
-  );
-}
 
 const ROLE_OPTIONS: UserManagementRow["role"][] = ["admin", "manager", "user"];
 
@@ -128,19 +126,6 @@ export function UserAccessModal({
       setSelected(new Set(result.codes));
     });
   }, [user, isAdminUser, tools]);
-
-  useEffect(() => {
-    if (!user) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handler);
-    document.body.classList.add("hub-modal-open");
-    return () => {
-      window.removeEventListener("keydown", handler);
-      document.body.classList.remove("hub-modal-open");
-    };
-  }, [user, onClose]);
 
   const filterDefsBase = useMemo(() => {
     const categoryDef = buildToolCategoryFilterDef(tools);
@@ -294,53 +279,40 @@ export function UserAccessModal({
 
   return (
     <>
-      {createPortal(
-    <div className="modal-backdrop modal-backdrop--tool-detail" role="presentation" onClick={onClose}>
-      <div
-        className="modal-shell modal-shell--tool-detail"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="user-access-modal-title"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <header className="user-access-modal__header">
-          <div className="user-access-modal__header-main min-w-0 flex-1">
-            <HubRoleBadge role={canEditProfile ? role : user.role} />
-            <HubUserAvatar user={user} size="sm" className="user-access-modal__avatar" />
-            <h2
-              id="user-access-modal-title"
-              className="user-access-modal__header-name min-w-0 truncate text-sm font-semibold text-[var(--text)]"
-            >
-              {canEditProfile ? fullName || user.fullName : user.fullName}
-            </h2>
-            <HubEmailBadge email={canEditProfile ? email || user.email : user.email} className="min-w-0 shrink" />
-          </div>
-          <div className="user-access-modal__header-actions">
-            {canEdit || canEditProfile ? (
-              <button
-                type="button"
-                disabled={saving}
-                onClick={() => void handleSave()}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-400 disabled:opacity-60"
+      <HubToolDetailModal
+        open
+        onClose={onClose}
+        header={
+          <header className="user-access-modal__header">
+            <div className="user-access-modal__header-main min-w-0 flex-1">
+              <HubRoleBadge role={canEditProfile ? role : user.role} />
+              <HubUserAvatar user={user} size="sm" className="user-access-modal__avatar" />
+              <h2
+                id="user-access-modal-title"
+                className="user-access-modal__header-name min-w-0 truncate text-sm font-semibold text-[var(--text)]"
               >
-                <Package size={12} aria-hidden />
-                Save changes
-              </button>
-            ) : null}
-            <button type="button" className="modal-close modal-close--tool-detail-inline" onClick={onClose} aria-label="Close">
-              <X size={compactIconSize(16)} />
-            </button>
-          </div>
-        </header>
-        <div className="modal-shell__scroll modal-shell__scroll--user-access">
-          <TocSectionHighlightProvider sectionIds={tocSectionIds}>
-            <div className="grid gap-4 lg:grid-cols-[var(--overview-toc-w)_minmax(0,1fr)]">
-              <aside className="lg:sticky lg:top-0 lg:self-start">
-                <UserAccessTocNav idPrefix={idPrefix} />
-              </aside>
-
-              <TocHighlightContent className="min-w-0 space-y-4 p-1 sm:p-2">
-              <DetailSection id={`${idPrefix}user`} title={userAccessSectionTitle("user")}>
+                {canEditProfile ? fullName || user.fullName : user.fullName}
+              </h2>
+              <HubEmailBadge email={canEditProfile ? email || user.email : user.email} className="min-w-0 shrink" />
+            </div>
+          </header>
+        }
+        footer={
+          canEdit || canEditProfile ? (
+            <HubToolDetailModalPrimaryAction
+              label="Save changes"
+              icon={Package}
+              onClick={() => void handleSave()}
+              busy={saving}
+            />
+          ) : undefined
+        }
+        ariaLabelledBy="user-access-modal-title"
+        sectionIds={tocSectionIds}
+        toc={<UserAccessTocNav idPrefix={idPrefix} scrollRootSelector={HUB_TOOL_DETAIL_SCROLL_ROOT} />}
+      >
+              <div className={HUB_TOOL_DETAIL_SECTIONS_CLASS}>
+              <HubToolDetailSection id={`${idPrefix}user`} title={userAccessSectionTitle("user")}>
                 {canEditProfile ? (
                   <div className="user-access-modal__profile-row">
                     <label className="user-access-modal__profile-field min-w-0 flex-1">
@@ -425,9 +397,9 @@ export function UserAccessModal({
                     {resetMsg ? <p className="text-[10px] text-amber-100">{resetMsg}</p> : null}
                   </div>
                 ) : null}
-              </DetailSection>
+              </HubToolDetailSection>
 
-              <DetailSection id={`${idPrefix}tools`} title={userAccessSectionTitle("tools")}>
+              <HubToolDetailSection id={`${idPrefix}tools`} title={userAccessSectionTitle("tools")}>
                 {registryOnlyCount > 0 ? (
                   <p className="mb-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-[10px] text-amber-100">
                     {registryOnlyCount} item(s) from workspace scan are not in Hub DB yet. Saving grants
@@ -472,100 +444,122 @@ export function UserAccessModal({
                         No tools match search or filters.
                       </p>
                     ) : (
-                      <div className="overflow-x-auto rounded-lg border border-white/5 bg-black/10">
-                        <table className="w-full min-w-[480px] border-collapse text-left text-[12px]">
-                          <thead>
-                            <tr className="border-b border-white/5 bg-white/[.02] text-[10px] font-medium text-[var(--muted)]">
-                              {canEdit && !isAdminUser ? <th className="w-10 px-2 py-2" /> : null}
-                              <th className="px-3 py-2 font-medium">Tool</th>
-                              <th className="px-3 py-2 font-medium">Name</th>
-                              <th className="px-3 py-2 font-medium">Category</th>
-                              <th className="px-3 py-2 text-center font-medium">Access</th>
+                      <HubDataTable
+                        columns={[
+                          ...(canEdit && !isAdminUser
+                            ? [{ key: "select", label: "", className: "hub-users-col--select", header: <span aria-hidden /> }]
+                            : []),
+                          {
+                            key: "code",
+                            label: "Tool",
+                            className: "hub-users-col--hub-code",
+                            role: "code",
+                          },
+                          {
+                            key: "name",
+                            label: "Name",
+                            className: "hub-users-col--hub-project",
+                            role: "name",
+                          },
+                          {
+                            key: "category",
+                            label: "Category",
+                            className: "hub-users-col--hub-status",
+                            role: "category",
+                          },
+                          {
+                            key: "access",
+                            label: "Access",
+                            className: "hub-users-col--hub-version",
+                            role: "access",
+                          },
+                        ]}
+                      >
+                        {filteredTools.map((tool) => {
+                          const checked = selected.has(tool.tool_code);
+                          const meta = resolveCategoryDisplayIcon(tool.category ?? undefined);
+                          const Icon = meta.icon;
+                          return (
+                            <tr
+                              key={tool.tool_code}
+                              className={`hub-users-row${checked ? " is-selected" : ""}${
+                                canEdit && !isAdminUser ? " cursor-pointer" : ""
+                              }`}
+                              onClick={() => toggle(tool.tool_code)}
+                            >
+                              {canEdit && !isAdminUser ? (
+                                <td className="hub-users-col--select" onClick={(e) => e.stopPropagation()}>
+                                  <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => toggle(tool.tool_code)}
+                                    className="hub-checkbox"
+                                    aria-label={`Grant ${tool.tool_code}`}
+                                  />
+                                </td>
+                              ) : null}
+                              <td className="hub-users-col--hub-code font-mono text-indigo-200/90">
+                                {tool.tool_code}
+                                {tool.registryOnly ? (
+                                  <span className="ml-1 rounded bg-amber-500/15 px-1 text-[9px] font-sans text-amber-200">
+                                    unsynced
+                                  </span>
+                                ) : null}
+                              </td>
+                              <td className="hub-users-col--hub-project font-medium">{tool.name}</td>
+                              <td className="hub-users-col--hub-status">
+                                <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
+                                  <Icon size={compactIconSize(12)} className={meta.className} aria-hidden />
+                                  {tool.category ?? "—"}
+                                </span>
+                              </td>
+                              <td className="hub-users-col--hub-version text-center">
+                                {checked ? (
+                                  <Check size={14} className="inline text-emerald-400" aria-label="Granted" />
+                                ) : (
+                                  <span className="text-[var(--muted)]">—</span>
+                                )}
+                              </td>
                             </tr>
-                          </thead>
-                          <tbody>
-                            {filteredTools.map((tool) => {
-                              const checked = selected.has(tool.tool_code);
-                              const meta = resolveCategoryDisplayIcon(tool.category ?? undefined);
-                              const Icon = meta.icon;
-                              return (
-                                <tr
-                                  key={tool.tool_code}
-                                  className={`border-b border-white/5 last:border-0 ${
-                                    checked ? "bg-indigo-500/[.04]" : "hover:bg-white/[.02]"
-                                  } ${canEdit && !isAdminUser ? "cursor-pointer" : ""}`}
-                                  onClick={() => toggle(tool.tool_code)}
-                                >
-                                  {canEdit && !isAdminUser ? (
-                                    <td className="px-2 py-2" onClick={(e) => e.stopPropagation()}>
-                                      <input
-                                        type="checkbox"
-                                        checked={checked}
-                                        onChange={() => toggle(tool.tool_code)}
-                                        className="hub-checkbox"
-                                        aria-label={`Grant ${tool.tool_code}`}
-                                      />
-                                    </td>
-                                  ) : null}
-                                  <td className="px-3 py-2 font-mono text-indigo-200/90">
-                                    {tool.tool_code}
-                                    {tool.registryOnly ? (
-                                      <span className="ml-1 rounded bg-amber-500/15 px-1 text-[9px] font-sans text-amber-200">
-                                        unsynced
-                                      </span>
-                                    ) : null}
-                                  </td>
-                                  <td className="px-3 py-2 font-medium">{tool.name}</td>
-                                  <td className="px-3 py-2">
-                                    <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
-                                      <Icon size={compactIconSize(12)} className={meta.className} aria-hidden />
-                                      {tool.category ?? "—"}
-                                    </span>
-                                  </td>
-                                  <td className="px-3 py-2 text-center">
-                                    {checked ? (
-                                      <Check size={14} className="inline text-emerald-400" aria-label="Granted" />
-                                    ) : (
-                                      <span className="text-[var(--muted)]">—</span>
-                                    )}
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
+                          );
+                        })}
+                      </HubDataTable>
                     )}
                   </div>
                 )}
-              </DetailSection>
+              </HubToolDetailSection>
 
-              <DetailSection id={`${idPrefix}legacy`} title={userAccessSectionTitle("legacy")}>
+              <HubToolDetailSection id={`${idPrefix}legacy`} title={userAccessSectionTitle("legacy")}>
                 {user.projectNames.length === 0 ? (
                   <p className="text-xs text-[var(--muted)]">No legacy Todo projects linked.</p>
                 ) : (
-                  <div className="overflow-x-auto rounded-lg border border-white/5">
-                    <table className="w-full text-left text-xs">
-                      <thead className="bg-white/[.03] text-[10px] font-medium text-[var(--muted)]">
-                        <tr>
-                          <th className="px-3 py-2 font-medium">Project name</th>
-                          <th className="px-3 py-2 font-medium">Source</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-white/5">
-                        {user.projectNames.map((name) => (
-                          <tr key={name}>
-                            <td className="px-3 py-2">{name}</td>
-                            <td className="px-3 py-2 text-[var(--muted)]">Legacy Todo</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                  <HubDataTable
+                    columns={[
+                      {
+                        key: "name",
+                        label: "Project name",
+                        className: "hub-users-col--hub-project",
+                        role: "name",
+                      },
+                      {
+                        key: "source",
+                        label: "Source",
+                        className: "hub-users-col--hub-status",
+                        role: "source",
+                      },
+                    ]}
+                  >
+                    {user.projectNames.map((name) => (
+                      <tr key={name} className="hub-users-row">
+                        <td className="hub-users-col--hub-project">{name}</td>
+                        <td className="hub-users-col--hub-status text-[var(--muted)]">Legacy Todo</td>
+                      </tr>
+                    ))}
+                  </HubDataTable>
                 )}
-              </DetailSection>
+              </HubToolDetailSection>
 
-              <DetailSection id={`${idPrefix}summary`} title={userAccessSectionTitle("summary")}>
+              <HubToolDetailSection id={`${idPrefix}summary`} title={userAccessSectionTitle("summary")}>
                 <dl className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
                   <div className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-2">
                     <dt className="text-[10px] text-[var(--muted)]">Tools granted</dt>
@@ -586,7 +580,7 @@ export function UserAccessModal({
                     <dd className="mt-1 text-lg font-semibold tabular-nums">{user.activityCount}</dd>
                   </div>
                 </dl>
-              </DetailSection>
+              </HubToolDetailSection>
 
               {error ? (
                 <p className="rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-2 text-xs text-rose-200">{error}</p>
@@ -599,14 +593,8 @@ export function UserAccessModal({
                   {!canEdit ? " · view only" : null}
                 </span>
               </footer>
-              </TocHighlightContent>
-            </div>
-          </TocSectionHighlightProvider>
-        </div>
-      </div>
-    </div>,
-    document.body,
-      )}
+              </div>
+      </HubToolDetailModal>
 
       <HubConfirmDialog
         open={resetConfirmOpen}

@@ -1,5 +1,6 @@
 import { useMemo, type ReactNode } from "react";
 import { CheckCircle2, Layers } from "lucide-react";
+import { HubToolDetailSection, HubToolDetailSections } from "@tool-workspace/hub-ui";
 import { MetricBadge } from "../../components/sales-shell";
 import {
   resolveDeployTargetIcon,
@@ -62,9 +63,8 @@ export function ToolDetailSections({
     : `${currentName} is ${summary || "a workspace tool"}; this page collects important details such as version, operational links, stack, features, release roadmap, and health signals for quick review or sharing.`;
 
   return (
-    <>
-      <section id={sid("about")} className="scroll-mt-3 space-y-4">
-        <SectionHeading title={overviewSectionTitle("about")} />
+    <HubToolDetailSections>
+      <HubToolDetailSection id={sid("about")} title={overviewSectionTitle("about")}>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-2xl font-semibold">{currentName}</span>
           <ToolCodeBadge code={currentCode} category={tool.category ?? "other"} />
@@ -78,9 +78,9 @@ export function ToolDetailSections({
         <p className="max-w-5xl rounded-xl border border-indigo-300/10 bg-indigo-500/[.045] px-4 py-3 text-[14px] leading-relaxed text-[var(--text)]/90">
           {aboutIntro}
         </p>
-      </section>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("versions")} title={overviewSectionTitle("versions")}>
+      <HubToolDetailSection id={sid("versions")} title={overviewSectionTitle("versions")}>
         <p className="text-[12px] text-[var(--muted)]">
           Version history and CHANGELOG are merged into the table below.
         </p>
@@ -91,13 +91,13 @@ export function ToolDetailSections({
           needsActionCount={versionNeedsAction}
           onRefresh={onRefresh}
         />
-      </DetailSection>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("links")} title={overviewSectionTitle("links")}>
+      <HubToolDetailSection id={sid("links")} title={overviewSectionTitle("links")}>
         <ToolLinksPanel links={importantLinks} toolCode={currentCode} />
-      </DetailSection>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("stack")} title={overviewSectionTitle("stack")}>
+      <HubToolDetailSection id={sid("stack")} title={overviewSectionTitle("stack")}>
         <div className="flex flex-wrap gap-1.5">
           {stack.map((s) => (
             <MetricBadge
@@ -120,9 +120,9 @@ export function ToolDetailSections({
             {tool.branch ? ` @ ${tool.branch}` : null}
           </p>
         ) : null}
-      </DetailSection>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("features")} title={overviewSectionTitle("features")}>
+      <HubToolDetailSection id={sid("features")} title={overviewSectionTitle("features")}>
         <ul className="grid gap-1.5 md:grid-cols-2">
           {features.map((f, i) => (
             <li key={i} className="flex items-start gap-2 rounded-md border border-white/5 bg-white/[.02] px-2.5 py-1.5 text-[12px]">
@@ -131,13 +131,13 @@ export function ToolDetailSections({
             </li>
           ))}
         </ul>
-      </DetailSection>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("roadmap")} title={overviewSectionTitle("roadmap")}>
+      <HubToolDetailSection id={sid("roadmap")} title={overviewSectionTitle("roadmap")}>
         <RoadmapTimeline nodes={roadmapNodes} />
-      </DetailSection>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("runbook")} title={overviewSectionTitle("runbook")}>
+      <HubToolDetailSection id={sid("runbook")} title={overviewSectionTitle("runbook")}>
         {Object.keys(manifest.commands ?? {}).length > 0 ? (
           <div className="space-y-1.5">
             {Object.entries(manifest.commands ?? {}).map(([k, v]) => (
@@ -150,9 +150,9 @@ export function ToolDetailSections({
         ) : (
           <p className="text-[12px] text-[var(--muted)]">No commands in manifest.</p>
         )}
-      </DetailSection>
+      </HubToolDetailSection>
 
-      <DetailSection id={sid("health")} title={overviewSectionTitle("health")}>
+      <HubToolDetailSection id={sid("health")} title={overviewSectionTitle("health")}>
         <div className="grid gap-1.5 md:grid-cols-2">
           <HealthRow
             label="status"
@@ -176,21 +176,8 @@ export function ToolDetailSections({
             {manifest.health?.note ?? tool.driftAlerts[0]}
           </p>
         ) : null}
-      </DetailSection>
-    </>
-  );
-}
-
-function SectionHeading({ title }: { title: string }) {
-  return <h2 className="border-b border-white/5 pb-2 text-lg font-semibold">{title}</h2>;
-}
-
-function DetailSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
-  return (
-    <section id={id} className="scroll-mt-3 space-y-3">
-      <SectionHeading title={title} />
-      {children}
-    </section>
+      </HubToolDetailSection>
+    </HubToolDetailSections>
   );
 }
 
