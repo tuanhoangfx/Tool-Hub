@@ -9,7 +9,7 @@
     "diskGb": 77
   },
   "lastSnapshotAt": "2026-06-03T12:52:00.000Z",
-  "snapshotNote": "P0021 render local-only; autovideo VPS worker removed. P0005 retired — use P0006 only.",
+  "snapshotNote": "P0021 render local-only; autovideo VPS worker removed. Chat platform: P0016-ChatCenter (replaces P0005/P0006).",
   "metrics": {
     "ramUsedGi": 1.1,
     "ramAvailableGi": 2.7,
@@ -29,14 +29,14 @@
       "healthCheck": "GET /v1/models → 200"
     },
     {
-      "code": "P0006",
-      "name": "AIChatHub",
+      "code": "P0016",
+      "name": "Chat Center",
       "kind": "systemd",
       "path": "/opt/aichathub",
       "unit": "aichathub",
       "internalPort": 3921,
       "publicUrl": "https://chathub.infi.io.vn",
-      "healthCheck": "GET /api/health → ok"
+      "healthCheck": "GET /api/health → ok (product: P0016)"
     }
   ],
   "extras": [
@@ -72,17 +72,17 @@
   "localScripts": [
     {
       "label": "VPS status probe",
-      "path": "Tool/P0006-AIChatHub",
+      "path": "Tool/P0016-ChatCenter",
       "command": "node scripts/vps-status-probe.mjs"
     },
     {
       "label": "Cleanup extras (dry-run)",
-      "path": "Tool/P0006-AIChatHub",
+      "path": "Tool/P0016-ChatCenter",
       "command": "node scripts/vps-cleanup-extra-services.mjs"
     },
     {
       "label": "Enable 4G swap",
-      "path": "Tool/P0006-AIChatHub",
+      "path": "Tool/P0016-ChatCenter",
       "command": "node scripts/vps-setup-swap.mjs"
     }
   ]

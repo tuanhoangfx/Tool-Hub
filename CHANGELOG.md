@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-06-06 - Retire P0006; P0016 is canonical chat platform
+
+- Version: `5.1.6`
+- Type: Patch
+- Product: P0004
+- Prompt: Kiểm tra P0006→P0016 sync; xóa P0006-AIChatHub nếu đủ
+- Commit: `e3de518`
+- Status: Committed
+
+### Changes
+
+- Verified P0016 v1.1.3 self-contained (worker/engine/data identical file-set to P0006; UI ahead).
+- Deleted `P0006-AIChatHub`; removed port **5178** from `workspace-ports.json`.
+- Golden catalogs (`Tool/schemas/*`) → P0016 paths; hub-ui parity/css scripts target P0016.
+- Hub catalogs, `tools-launch.json`, `vps-inventory.json`, `supabase-workspace-map` cutover to P0016.
+
+### Verification
+
+- Chat platform: **P0016-ChatCenter** (:5186 console + :3921 worker).
+
+---
+
 ## 2026-06-05 - Git commit version stamp
 
 - Version: `5.1.5`

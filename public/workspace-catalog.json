@@ -164,53 +164,6 @@
       "assetKind": "project"
     },
     {
-      "id": "aichathub",
-      "code": "P0006",
-      "name": "AIChatHub",
-      "repo": "tuanhoangfx/aichathub",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "0.3.9",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Draft",
-      "summary": "Multi-channel chatbot platform — native Hub console (QR, groups, inbox), Zalo engine in packages/engine.",
-      "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
-      "tags": [
-        "React",
-        "TypeScript",
-        "Vite",
-        "Node.js",
-        "zca-js",
-        "9Router"
-      ],
-      "localUrl": "http://127.0.0.1:5178",
-      "deployTarget": "vps",
-      "usage": [
-        "Dev: node ../scripts/ensure-dev-product.cjs P0006",
-        "Build: pnpm build"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/apply-hub-seed.ps1",
-        "scripts/chathub-nginx-blocks.mjs",
-        "scripts/deploy-console-remote.mjs",
-        "scripts/deploy-remote.mjs",
-        "scripts/ensure-dev.cjs",
-        "scripts/load-vps-env.mjs"
-      ],
-      "workspaceRoot": "tool",
-      "assetKind": "project"
-    },
-    {
       "id": "9router-infra",
       "code": "P0007",
       "name": "9Router Infra",

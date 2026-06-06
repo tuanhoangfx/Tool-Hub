@@ -24,9 +24,9 @@
     "command": "node scripts/ensure-dev.cjs --open",
     "devUrl": "http://127.0.0.1:3000"
   },
-  "aichathub": {
-    "cwd": "E:\\Dev\\Tool\\P0006-AIChatHub",
+  "chat-center": {
+    "cwd": "E:\\Dev\\Tool\\P0016-ChatCenter",
     "command": "corepack pnpm open",
-    "devUrl": "http://127.0.0.1:5178"
+    "devUrl": "http://127.0.0.1:5186/inbox"
   }
 }

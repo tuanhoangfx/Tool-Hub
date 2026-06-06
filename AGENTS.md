@@ -11,7 +11,7 @@
 ```powershell
 cd E:\Dev\Tool\P0004-Tool-Hub
 pnpm hub-ui:stack                              # vendor + manifest
-node E:\Dev\Tool\scripts\hub-ui-stack.cjs P0006 overview   # + screen scaffold
+node E:\Dev\Tool\scripts\hub-ui-stack.cjs P0016 overview   # + screen scaffold
 ```
 
 Then: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.
@@ -31,7 +31,7 @@ Then: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-c
 
 **Refresh Agent tab:** `pnpm agent:manifest` or System → Agent → Refresh.  
 **Not in manifest:** Cursor Settings UI commands / bundled `electron-pro` subagents — see `.cursor/CURSOR-SETTINGS-CLEANUP.md`.
-| P0006 domain | `.cursor/rules/p0006-aichathub.mdc` (globs only) |
+| P0016 domain | `.cursor/rules/p0006-aichathub.mdc` (globs — rename when rule file updated) |
 
 ---
 
@@ -41,7 +41,7 @@ Then: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-c
 
 | Path | Vai trò |
 |------|---------|
-| **`E:\Dev\packages\hub-ui`** | Source chính (P0006 `workspace:*`) |
+| **`E:\Dev\packages\hub-ui`** | Source chính (P0016 `workspace:*`) |
 | `Tool/P0004-Tool-Hub/vendor/hub-ui` | Bản copy P0004/P0020 (`file:./vendor/hub-ui`) |
 
 **API:** `packages/hub-ui/README.md`
@@ -118,7 +118,7 @@ Content/components chỉ ở `packages/hub-ui` — script cũng fan-out từ đ�
 import { setupHubUi } from "./lib/hub-ui-setup"; // configureFilterIcons + chrome prefs
 ```
 
-Mẫu đầy đủ: `Tool/P0006-AIChatHub/apps/console` (`TabScreenChrome.tsx`, `hub-ui-setup.ts`).
+Mẫu đầy đủ: `Tool/P0016-ChatCenter/src` (`HubTabChrome`, `hub-ui-setup.ts`).
 
 ---
 
@@ -142,7 +142,7 @@ Doc: `docs/HUB-KEYBOARD-SHORTCUTS.md` · code: `packages/hub-ui/src/keyboard/` �
 | App | URL |
 |-----|-----|
 | P0004 Hub | http://127.0.0.1:5176/ |
-| P0006 | http://127.0.0.1:5178/ |
+| P0016 | http://127.0.0.1:5186/inbox |
 | P0020 | http://127.0.0.1:5177/ |
 
 Header, KPI `mt-5`, section-rule pill, filter sticky, `hub-users-table` row height.

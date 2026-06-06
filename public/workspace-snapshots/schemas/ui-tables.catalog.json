@@ -44,31 +44,31 @@
           "notes": "Same pattern — user/role columns"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "bots",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotsScreen.tsx",
-          "tablePath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotDirectoryTable.tsx",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/bots/BotsScreen.tsx",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/bots/BotDirectoryTable.tsx",
           "component": "inline"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "groups",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx",
-          "tablePath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/groups/GroupsScreen.tsx",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/groups/GroupsScreen.tsx",
           "component": "HubDataTable"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "logs",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx",
-          "tablePath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx",
           "component": "HubDataTable",
           "notes": "Monospace activity stream"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "channels",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/channels/ChannelsScreen.tsx",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/channels/ChannelsScreen.tsx",
           "notes": "Directory clone — card grid only (no table body yet)"
         },
         {

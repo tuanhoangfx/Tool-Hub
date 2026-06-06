@@ -29,21 +29,6 @@
       "ensureScript": "scripts/ensure-dev.cjs",
       "launcherPort": 5190
     },
-    "P0006": {
-      "name": "AIChatHub Console",
-      "root": "P0006-AIChatHub",
-      "port": 5178,
-      "probePath": "/",
-      "openPath": "/",
-      "stack": "vite-monorepo",
-      "ensureScript": "scripts/ensure-dev.cjs",
-      "cwd": "apps/console",
-      "dependsOn": [
-        "P0004"
-      ],
-      "workerPort": 3921,
-      "workerProbePath": "/api/health"
-    },
     "P0008": {
       "name": "Sales Console",
       "root": "P0008-Sales-Console",
@@ -100,7 +85,7 @@
       "root": "P0016-ChatCenter",
       "port": 5186,
       "probePath": "/",
-      "openPath": "/?screen=dashboard",
+      "openPath": "/inbox",
       "stack": "vite-monorepo",
       "ensureScript": "scripts/ensure-dev.cjs",
       "workerPort": 3921,

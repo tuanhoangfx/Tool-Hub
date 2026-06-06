@@ -88,30 +88,6 @@
           "ref": "fmnrafpzctuhxjaaomzt"
         },
         {
-          "toolId": "aichathub",
-          "toolCode": "P0006",
-          "toolName": "AIChatHub",
-          "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
-          "workspaceRoot": "tool",
-          "envFile": "apps/console/.env.example",
-          "envKey": "VITE_HUB_SUPABASE_URL",
-          "envLabel": "Hub identity",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
-          "toolId": "aichathub",
-          "toolCode": "P0006",
-          "toolName": "AIChatHub",
-          "localPath": "E:\\Dev\\Tool\\P0006-AIChatHub",
-          "workspaceRoot": "tool",
-          "envFile": "apps/console/.env.local",
-          "envKey": "VITE_HUB_SUPABASE_URL",
-          "envLabel": "Hub identity",
-          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
-          "ref": "fmnrafpzctuhxjaaomzt"
-        },
-        {
           "toolId": "sales-console",
           "toolCode": "P0008",
           "toolName": "Seller Center",

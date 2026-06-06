@@ -14,7 +14,7 @@
       "id": "inbox-split",
       "name": "Inbox master-detail",
       "reason": "Shell chưa chuẩn hóa — thêm lại khi có mẫu",
-      "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/inbox/InboxScreen.tsx"
+      "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxScreen.tsx"
     }
   ],
   "templates": [
@@ -97,7 +97,7 @@
         ]
       },
       {
-        "product": "P0006",
+        "product": "P0016",
         "role": "clone",
         "screens": [
           "bots → directory",
@@ -147,10 +147,10 @@
         "golden": "P0004/hub-list",
         "clones": [
           "P0004/users",
-          "P0006/bots",
-          "P0006/groups",
-          "P0006/logs",
-          "P0006/channels",
+          "P0016/bots",
+          "P0016/groups",
+          "P0016/logs",
+          "P0016/channels",
           "P0020/cookie",
           "P0020/twofa",
           "P0008/buyers",
@@ -209,46 +209,46 @@
         "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
       }
     ],
-    "P0006": [
+    "P0016": [
       {
         "screen": "dashboard",
         "template": "dashboard",
         "golden": "P0008/dashboard",
-        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/dashboard/DashboardScreen.tsx",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/dashboard/DashboardScreen.tsx",
         "notes": "Clone — golden source P0008/dashboard"
       },
       {
         "screen": "bots",
         "template": "directory",
         "golden": "P0004/hub-list",
-        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotsScreen.tsx",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/bots/BotsScreen.tsx",
         "notes": "Clone directory — HubListPage chrome + BotDirectoryTable"
       },
       {
         "screen": "groups",
         "template": "directory",
-        "golden": "P0006/groups",
-        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx"
+        "golden": "P0016/groups",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/groups/GroupsScreen.tsx"
       },
       {
         "screen": "channels",
         "template": "directory",
-        "golden": "P0006/channels",
-        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/channels/ChannelsScreen.tsx",
+        "golden": "P0016/channels",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/channels/ChannelsScreen.tsx",
         "notes": "Directory clone — card grid only (no table body yet)"
       },
       {
         "screen": "inbox",
         "template": "inbox-split",
         "golden": "P0020/notes",
-        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/inbox/InboxScreen.tsx",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxScreen.tsx",
         "notes": "shell only — keep split UI"
       },
       {
         "screen": "logs",
         "template": "directory",
-        "golden": "P0006/logs",
-        "goldenScreenPath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx",
+        "golden": "P0016/logs",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx",
         "notes": "logs-activity table golden"
       }
     ],

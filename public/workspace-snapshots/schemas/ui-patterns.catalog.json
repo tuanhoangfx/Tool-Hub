@@ -45,24 +45,24 @@
           "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserDirectoryTable.tsx"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "bots",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/bots/BotsScreen.tsx"
+          "screenPath": "Tool/P0016-ChatCenter/src/features/bots/BotsScreen.tsx"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "groups",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/groups/GroupsScreen.tsx"
+          "screenPath": "Tool/P0016-ChatCenter/src/features/groups/GroupsScreen.tsx"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "logs",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/logs/LogsScreen.tsx"
+          "screenPath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx"
         },
         {
-          "product": "P0006",
+          "product": "P0016",
           "screen": "channels",
-          "screenPath": "Tool/P0006-AIChatHub/apps/console/src/features/channels/ChannelsScreen.tsx",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/channels/ChannelsScreen.tsx",
           "notes": "Card grid only today — same directory pattern; add table + ViewToggle when needed"
         },
         {
@@ -213,7 +213,7 @@
         "auth"
       ]
     },
-    "P0006": {
+    "P0016": {
       "role": "clone",
       "screens": [
         "bots",

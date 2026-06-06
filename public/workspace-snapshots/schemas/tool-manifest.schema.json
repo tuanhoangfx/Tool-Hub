@@ -121,7 +121,7 @@
           },
           "golden": {
             "type": "string",
-            "description": "Golden clone reference, e.g. P0006/groups, P0004/users."
+            "description": "Golden clone reference, e.g. P0016/groups, P0004/users."
           },
           "notes": {
             "type": "string",

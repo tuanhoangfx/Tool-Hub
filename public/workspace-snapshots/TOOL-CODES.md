@@ -16,8 +16,6 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0004 | P0004-Tool-Hub | tuanhoangfx/Tool-Hub | **Tool Hub** — catalog |
 
-| P0006 | P0006-AIChatHub | tuanhoangfx/aichathub | **AIChatHub** — Zalo bot engine + console (replaces retired P0005) |
-
 | P0007 | P0007-9router-infra | tuanhoangfx/9router-infra | Infra |
 
 | P0008 | P0008-Sales-Console | tuanhoangfx/Sales-Console | Sales |
@@ -46,17 +44,15 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 
 
-| P0016 | P0016-ChatCenter | tuanhoangfx/chat-center | **Chat Center** — thin console :5186, P0006 worker API |
+| P0016 | P0016-ChatCenter | tuanhoangfx/chat-center | **Chat Center** — monorepo console :5186 + worker :3921 (Zalo/Messenger/Telegram) |
 
 **Mã tiếp theo:** P0025
 
 
 
-**P0005 (retired 2026-06):** Zalo bot consolidated into **P0006-AIChatHub** — code `P0005` no longer used in workspace.
+**P0005 / P0006 (retired 2026-06):** Zalo bot → **P0016-ChatCenter** (self-contained monorepo, v1.1.0+). Code `P0005`/`P0006` không còn folder local.
 
-**P0014 / P0017 / P0018 / P0024 (2026-06-05):** Đã gỡ folder local Hub Shell (:5184), ChatHubAI clones và AI Project Manager. Hub UI: **P0004**; chat/API: **P0006**; thin console: **P0016-ChatCenter**.
-
-**P0016 (2026-06-04):** Tái sử dụng mã cho **Chat Center** (P0004 shell + P0006 logic).
+**P0014 / P0017 / P0018 / P0024 (2026-06-05):** Đã gỡ folder local Hub Shell (:5184), ChatHubAI clones và AI Project Manager. Hub UI: **P0004**; chat platform: **P0016-ChatCenter**.
 
 **P0011 (2026-06-04):** Tái sử dụng mã cho **Infix1 Mail** (thay Tool-Control-Center đã gỡ 2026-05-22).
 
