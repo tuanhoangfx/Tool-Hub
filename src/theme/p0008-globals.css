@@ -4,7 +4,7 @@
 
 :root,
 .theme-hub {
-  --hub-user-zoom-pct: 100;
+  --hub-user-zoom-pct: 90;
   --hub-compact-scale: 0.9;
   --hub-control-h: 31px;
   --hub-card-min-h: 198px;
@@ -49,7 +49,7 @@
 }
 
 html {
-  font-size: calc(16px * var(--hub-user-zoom-pct, 100) / 100);
+  font-size: calc(16px * var(--hub-user-zoom-pct, 90) / 100);
 }
 
 /* Chart legend — wide enough for “Needs review”, bar flexes */
