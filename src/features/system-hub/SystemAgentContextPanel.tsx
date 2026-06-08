@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { prefetchAgentManifest } from "../../lib/hub-background-prefetch";
 import { AlertTriangle, BookOpen, Bot, Command, GitBranch, Layers, RefreshCw, ScrollText, Sparkles, Wand2, Zap } from "lucide-react";
 import {
@@ -22,6 +22,7 @@ import {
   matchesAgentContext,
 } from "./agent-context/agent-context-filters";
 import { AGENT_KEYWORD_PRESETS, AGENT_ONBOARDING_PRESET } from "./agent-context/agent-context-filter-defs";
+import { pickAgentSearchOpenItem } from "./agent-context/agent-context-search";
 import { sortAgentContextItems } from "./agent-context/agent-context-sort";
 import type { AgentContextItem } from "./agent-context/types";
 import { useAgentManifest } from "./agent-context/useAgentManifest";
@@ -31,7 +32,9 @@ export function SystemAgentContextPanel() {
   const [query, setQuery] = useState("");
   const [filterValues, setFilterValues] = useState<FilterValues>({});
   const [detail, setDetail] = useState<AgentContextItem | null>(null);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:agent:viewMode", "table");
+  const searchDebounceRef = useRef<number | null>(null);
 
   useEffect(() => {
     prefetchAgentManifest();
@@ -48,6 +51,23 @@ export function SystemAgentContextPanel() {
     () => sortedItems.filter((item) => matchesAgentContext(item, query, filterValues)),
     [sortedItems, query, filterValues],
   );
+
+  useEffect(() => {
+    if (searchDebounceRef.current) window.clearTimeout(searchDebounceRef.current);
+    const q = query.trim();
+    if (q.length < 2) {
+      setHighlightId(null);
+      return;
+    }
+    searchDebounceRef.current = window.setTimeout(() => {
+      const pick = pickAgentSearchOpenItem(filtered, q);
+      setHighlightId(pick?.id ?? filtered[0]?.id ?? null);
+      if (pick) setDetail(pick);
+    }, 420);
+    return () => {
+      if (searchDebounceRef.current) window.clearTimeout(searchDebounceRef.current);
+    };
+  }, [query, filtered]);
 
   const kpis = useMemo(() => agentContextKpis(filtered), [filtered]);
   const charts = useMemo(() => agentContextCharts(filtered), [filtered]);
@@ -174,7 +194,7 @@ export function SystemAgentContextPanel() {
           No agent manifest items. Use sidebar <strong>Refresh</strong> or the toolbar button (rebuilds manifest in dev).
         </p>
       ) : filtered.length === 0 ? null : viewMode === "table" ? (
-        <AgentContextTableView items={filtered} onOpen={setDetail} />
+        <AgentContextTableView items={filtered} highlightId={highlightId} onOpen={setDetail} />
       ) : (
         <HubPaginatedCardGrid
           items={filtered}

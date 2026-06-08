@@ -23,7 +23,7 @@ Then: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-c
 | Layer | Path |
 |-------|------|
 | Rule | `.cursor/rules/dev-workspace-compact.mdc` (Always Apply) |
-| Commands | `.cursor/commands/*.md` → `/ship`, `/onboard-tool`, `/bump-version`, `/design-5` |
+| Commands | `.cursor/commands/*.md` → `/onboard-tool`, `/bump-version`, `/design-5` |
 | Skills | `.cursor/skills/*/SKILL.md` — `ship-until-done`, `p00xx-ship-keywords`, `p00xx-clone-hub-shell`, `p00xx-tool-onboard` |
 | Subagents | `.cursor/agents/*.md` (2) |
 | Playbooks | `Tool/docs/playbooks/*.md` |
@@ -160,6 +160,6 @@ Header, KPI `mt-5`, section-rule pill, filter sticky, `hub-users-table` row heig
 Sau `pnpm agent:manifest` hoặc `pnpm hub-ui:stack`:
 
 - Search **`hub-ui`** — scripts, `AGENTS.md`, `packages/hub-ui/README.md`
-- Ship: **`/ship`** or keyword `Release P0004`
+- Ship: prompt **`Deploy P0004`** / **`Release P0004`** (no `/ship` command)
 
 *Không có panel bundle riêng trên UI — command rows trong bảng là đủ.*

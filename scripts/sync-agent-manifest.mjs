@@ -97,6 +97,39 @@ function infraTags(extra = []) {
   return ["infrastructure", ...extra];
 }
 
+/** Reading mode fields for SKILL.md rows (onboarding skills). */
+function buildSkillContentFields(body, fm, folder) {
+  const fields = [{ label: "Skill", value: folder, variant: "code" }];
+  if (fm.description) fields.push({ label: "When to use", value: fm.description, variant: "text" });
+  if (fm.name && fm.name !== folder) fields.push({ label: "Package name", value: fm.name, variant: "code" });
+
+  const sectionTitles = [...body.matchAll(/^##\s+(.+)$/gm)].map((m) => m[1].trim()).slice(0, 8);
+  if (sectionTitles.length) {
+    fields.push({ label: "Sections", value: sectionTitles.join(" · "), variant: "text" });
+  }
+
+  const ps = body.match(/```powershell\r?\n([\s\S]*?)```/);
+  if (ps) {
+    const lines = ps[1].trim().split(/\r?\n/).filter(Boolean);
+    fields.push({
+      label: "Script entry",
+      value: lines[0],
+      variant: "code",
+      copy: true,
+    });
+    if (lines.length > 1) {
+      fields.push({ label: "Script variants", value: lines.slice(1, 4).join("\n"), variant: "multiline" });
+    }
+  }
+
+  const bash = body.match(/```bash\r?\n([\s\S]*?)```/);
+  if (bash && !ps) {
+    fields.push({ label: "Command", value: bash[1].trim().split(/\r?\n/)[0], variant: "code", copy: true });
+  }
+
+  return fields;
+}
+
 function hubGoldenLabel(golden) {
   if (!golden || typeof golden !== "object") return "—";
   return golden.ref || golden.label || "—";
@@ -164,6 +197,7 @@ function scanSkills(items, skillsDir, scope) {
       trigger: fm.description || "",
       summary: String(fm.description || body.slice(0, 200)).slice(0, 240),
       bodyPreview: body.slice(0, 1200),
+      contentFields: buildSkillContentFields(body, fm, folder),
       lines: body.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
       tags: isOnboarding

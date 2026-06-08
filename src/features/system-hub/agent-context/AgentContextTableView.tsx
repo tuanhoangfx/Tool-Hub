@@ -12,6 +12,7 @@ import { formatDate } from "../../../lib/tooling";
 import { HubCardAvatar } from "../../../components/HubCardAvatar";
 import { QuietChip } from "../../hub/hub-tool-ui";
 import type { AgentContextItem } from "./types";
+import { agentKeywordGroupLabel } from "./agent-context-search";
 import { AgentKindBadge, AgentScopeBadge } from "./AgentContextBadges";
 import { agentKindIcon, agentStatusDotColor } from "./agent-kind-icon";
 
@@ -19,6 +20,7 @@ type AgentSortKey =
   | "kind"
   | "layer"
   | "name"
+  | "kwGroup"
   | "golden"
   | "clone"
   | "path"
@@ -38,6 +40,7 @@ const COLUMNS: ColumnDef[] = [
   { key: "kind", label: "Kind", colClass: "hub-users-col--hub-code", role: "kind" },
   { key: "layer", label: "Layer", colClass: "hub-users-col--agent-layer", role: "layer" },
   { key: "name", label: "Name", colClass: "hub-users-col--hub-project", role: "name" },
+  { key: "kwGroup", label: "Kw group", colClass: "hub-users-col--hub-version", role: "scope" },
   { key: "golden", label: "Golden", colClass: "hub-users-col--agent-golden", role: "golden" },
   { key: "clone", label: "Clone", colClass: "hub-users-col--agent-clone", role: "clone" },
   { key: "path", label: "Path", colClass: "hub-users-col--agent-path", role: "path" },
@@ -78,6 +81,8 @@ function sortableValue(item: AgentContextItem, key: AgentSortKey): string | numb
       return item.layer ?? "";
     case "name":
       return item.name;
+    case "kwGroup":
+      return item.keywordGroup ?? "";
     case "golden":
       return item.golden ?? "";
     case "clone":
@@ -109,10 +114,11 @@ function sortItems(items: AgentContextItem[], sortKey: AgentSortKey, sortDir: Hu
 
 type AgentContextTableViewProps = {
   items: AgentContextItem[];
+  highlightId?: string | null;
   onOpen: (item: AgentContextItem) => void;
 };
 
-export function AgentContextTableView({ items, onOpen }: AgentContextTableViewProps) {
+export function AgentContextTableView({ items, highlightId, onOpen }: AgentContextTableViewProps) {
   const [sortKey, setSortKey] = useState<AgentSortKey>("kind");
   const [sortDir, setSortDir] = useState<HubSortDir>("asc");
 
@@ -152,7 +158,11 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
         </thead>
         <tbody>
           {pageItems.map((item) => (
-            <tr key={item.id} className="hub-users-row" onClick={() => onOpen(item)}>
+            <tr
+              key={item.id}
+              className={`hub-users-row${highlightId === item.id ? " is-highlighted" : ""}`}
+              onClick={() => onOpen(item)}
+            >
               <td className="hub-users-col--hub-code">
                 <AgentKindBadge kind={item.kind} className="rounded-full px-2" />
               </td>
@@ -180,6 +190,13 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
                     ) : null}
                   </div>
                 </div>
+              </td>
+              <td className="hub-users-col--hub-version">
+                {item.keywordGroup ? (
+                  <QuietChip label={agentKeywordGroupLabel(item.keywordGroup)} tone="neutral" />
+                ) : (
+                  <span className="hub-users-cell-muted text-[11px]">—</span>
+                )}
               </td>
               <td className="hub-users-col--agent-golden">
                 {item.golden && item.golden !== "—" ? (

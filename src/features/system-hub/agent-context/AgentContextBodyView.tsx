@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { BookOpen, Check, Code2, Copy } from "lucide-react";
 import { compactIconSize } from "../../../lib/ui-scale";
 import { useSessionState } from "../../../hooks/useSessionState";
+import { AgentGitPipelineWizard } from "./agent-git-pipeline-wizard";
+import { AgentKeywordAxisBanner } from "./agent-keyword-axis-banner";
 import type { AgentContentField, AgentContextItem, AgentGuideSection } from "./types";
 import {
   looksLikeSourceCode,
@@ -81,6 +83,8 @@ function StructuredFieldsView({ fields }: { fields: AgentContentField[] }) {
     "Summary",
     "Prompt mẫu",
     "Skill",
+    "Pipeline (gồm)",
+    "Ship script",
     "Lệnh agent",
     "Gate command",
     "Pattern ID",
@@ -370,7 +374,11 @@ export function AgentContextBodyView({ item }: AgentContextBodyViewProps) {
           <pre className="whitespace-pre-wrap break-words font-mono text-[11px] leading-relaxed text-slate-300">
             {text}
           </pre>
-        ) : item.guideSections?.length ? (
+        ) : (
+          <div className="space-y-3">
+            <AgentKeywordAxisBanner item={item} />
+            <AgentGitPipelineWizard item={item} />
+            {item.guideSections?.length ? (
               <KeywordGuideSectionsView sections={item.guideSections} />
             ) : item.contentFields?.length ? (
               <StructuredFieldsView fields={item.contentFields} />
@@ -388,6 +396,8 @@ export function AgentContextBodyView({ item }: AgentContextBodyViewProps) {
                 ))}
               </div>
             )}
+          </div>
+        )}
       </div>
     </div>
   );

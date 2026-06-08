@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-07T21:56:01.327Z",
+  "generatedAt": "2026-06-08T07:43:11.357Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -29,9 +29,9 @@
       "agentRequestable": true,
       "trigger": ">-",
       "summary": ">-",
-      "bodyPreview": "Read `.cursor/skills/p00xx-tool-onboard/SKILL.md` and follow Phase A–C.\n\nShip handoff: `p00xx-ship-keywords` or `/ship` when user asks Git/Push/Release.",
+      "bodyPreview": "Read `.cursor/skills/p00xx-tool-onboard/SKILL.md` and follow Phase A–C.\n\nShip handoff: prompt `Deploy P00xx` / `Release P00xx` (skill `p00xx-ship-keywords` auto).",
       "lines": 3,
-      "updatedAt": "2026-06-04T17:28:36.114Z",
+      "updatedAt": "2026-06-08T07:42:38.378Z",
       "tags": [
         "agent",
         "cursor",
@@ -83,27 +83,9 @@
       "commandId": "onboard-tool",
       "agentRequestable": true,
       "summary": "Onboard tool (import → P00xx)",
-      "bodyPreview": "# Onboard tool (import → P00xx)\n\nRead **`.cursor/skills/p00xx-tool-onboard/SKILL.md`** (full checklist).\n\nQuick start:\n\n1. `Tool/TOOL-CODES.md` → next code\n2. `Tool/scripts/onboard-preflight.ps1 -Slug {Slug}`\n3. Clone + scaffold + `Tool/scripts/validate-tool-manifest.ps1`\n4. P0004 `scan:local` for catalog\n\n**Not for:** Git/Push/Release → `/ship` or `Release P00xx`.\n\nPitfalls: `.cursor/skills/p00xx-tool-onboard/pitfalls.md`\n",
+      "bodyPreview": "# Onboard tool (import → P00xx)\n\nRead **`.cursor/skills/p00xx-tool-onboard/SKILL.md`** (full checklist).\n\nQuick start:\n\n1. `Tool/TOOL-CODES.md` → next code\n2. `Tool/scripts/onboard-preflight.ps1 -Slug {Slug}`\n3. Clone + scaffold + `Tool/scripts/validate-tool-manifest.ps1`\n4. P0004 `scan:local` for catalog\n\n**Not for:** Git/Push/Release → prompt `Deploy P00xx` or `Release P00xx`.\n\nPitfalls: `.cursor/skills/p00xx-tool-onboard/pitfalls.md`\n",
       "lines": 15,
-      "updatedAt": "2026-06-04T17:28:37.059Z",
-      "tags": [
-        "hub-ui",
-        "command",
-        "cursor"
-      ]
-    },
-    {
-      "id": "cursor-commands-ship-md",
-      "kind": "command",
-      "name": "/ship",
-      "path": ".cursor\\commands\\ship.md",
-      "scope": "workspace",
-      "commandId": "ship",
-      "agentRequestable": true,
-      "summary": "Ship — Git · Push · Deploy · Release",
-      "bodyPreview": "# Ship — Git · Push · Deploy · Release\n\nKeywords: **`Git P0004`**, **`Commit P0004`**, **`Push P0020`**, **`Deploy P0004`**, **`Release E0001`**.\n\n## Run\n\n1. Read `.cursor/skills/p00xx-ship-keywords/SKILL.md` for the 4-tier pipeline.\n2. Pick keyword by intent:\n\n| Intent | Keyword |\n|--------|---------|\n| Backup Git local | **Git** / **Commit** |\n| Push GitHub | **Push** |\n| Production verify (smoke / VPS) | **Deploy** |\n| Official publish + tag | **Release** |\n\n```powershell\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Deploy\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Release\n```\n\nReport the ship block from `p00xx-ship-keywords` when done.\n",
-      "lines": 23,
-      "updatedAt": "2026-06-05T00:17:13.350Z",
+      "updatedAt": "2026-06-08T07:42:37.383Z",
       "tags": [
         "hub-ui",
         "command",
@@ -190,7 +172,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -209,7 +191,7 @@
       "agentRequestable": true,
       "trigger": "p00xx-ship-keywords + ship-until-done",
       "summary": "Push + production smoke; gate `--intent deploy` (+ prod MCP hint)",
-      "bodyPreview": "# Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gate:** `--intent deploy` (prod MCP hint Supabase SPA).\n**Không** tạo GitHub Release — dùng Release keyword.\n\n**Example:** `Deploy P0016`\n\n**Skill:** p00xx-ship-keywords + ship-until-done\n\n**Tier:** production\n\n**Command:**\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy\n```",
+      "bodyPreview": "# Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gồm (cumulative):** auto-commit → push → production smoke (`ship-product.ps1 -Keyword Deploy`).\n**Gate:** `--intent deploy` (prod MCP hint). **Không** tạo GitHub Release — dùng Release keyword.\n\n**Example:** `Deploy P0016`\n\n**Skill:** p00xx-ship-keywords + ship-until-done\n\n**Tier:** production\n\n**Command:**\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy\n```",
       "contentFields": [
         {
           "label": "Keyword",
@@ -228,9 +210,20 @@
           "variant": "text"
         },
         {
+          "label": "Pipeline (gồm)",
+          "value": "Push + production smoke (auto-commit → push → verify prod)",
+          "variant": "text"
+        },
+        {
           "label": "Khi nào",
           "value": "Xác nhận production sống + smoke pass.",
           "variant": "text"
+        },
+        {
+          "label": "Ship script",
+          "value": "powershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Deploy",
+          "variant": "code",
+          "copy": true
         },
         {
           "label": "Lệnh agent",
@@ -251,7 +244,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -322,7 +315,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -378,7 +371,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -416,9 +409,20 @@
           "variant": "text"
         },
         {
+          "label": "Pipeline (gồm)",
+          "value": "build → commit local (+ CHANGELOG Minor)",
+          "variant": "text"
+        },
+        {
           "label": "Khi nào",
           "value": "Backup snapshot Git",
           "variant": "text"
+        },
+        {
+          "label": "Ship script",
+          "value": "powershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Git",
+          "variant": "code",
+          "copy": true
         },
         {
           "label": "Lệnh agent",
@@ -434,7 +438,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -490,7 +494,7 @@
       ],
       "keywordGroup": "hub-ui",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -596,7 +600,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -657,7 +661,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -713,7 +717,7 @@
       ],
       "keywordGroup": "supabase",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -784,7 +788,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -855,7 +859,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -874,7 +878,7 @@
       "agentRequestable": true,
       "trigger": "p00xx-ship-keywords",
       "summary": "Git + push origin",
-      "bodyPreview": "# Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm:** Git tier + push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n**Example:** `Push P0020`\n\n**Skill:** p00xx-ship-keywords\n\n**Tier:** github\n\n**Command:**\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev\n```",
+      "bodyPreview": "# Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm (cumulative):** auto-commit WIP (nếu version triple + CHANGELOG sẵn) → push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n**Example:** `Push P0020`\n\n**Skill:** p00xx-ship-keywords\n\n**Tier:** github\n\n**Command:**\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev\n```",
       "contentFields": [
         {
           "label": "Keyword",
@@ -893,9 +897,20 @@
           "variant": "text"
         },
         {
+          "label": "Pipeline (gồm)",
+          "value": "Git + auto-commit (nếu WIP sẵn) → push origin",
+          "variant": "text"
+        },
+        {
           "label": "Khi nào",
           "value": "Đồng bộ GitHub; Vercel thường build sau push main.",
           "variant": "text"
+        },
+        {
+          "label": "Ship script",
+          "value": "powershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Push",
+          "variant": "code",
+          "copy": true
         },
         {
           "label": "Lệnh agent",
@@ -911,7 +926,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -949,9 +964,20 @@
           "variant": "text"
         },
         {
+          "label": "Pipeline (gồm)",
+          "value": "Deploy + Major bump + gh release + post-release",
+          "variant": "text"
+        },
+        {
           "label": "Khi nào",
           "value": "Phát hành chính thức — tag GitHub, catalog, audit.",
           "variant": "text"
+        },
+        {
+          "label": "Ship script",
+          "value": "powershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Release",
+          "variant": "code",
+          "copy": true
         },
         {
           "label": "Lệnh agent",
@@ -967,7 +993,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1023,7 +1049,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1041,8 +1067,8 @@
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
       "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Deploy / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Deploy\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Deploy\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try",
-      "lines": 281,
-      "updatedAt": "2026-06-05T01:16:46.254Z",
+      "lines": 282,
+      "updatedAt": "2026-06-08T07:30:43.691Z",
       "tags": [
         "infrastructure",
         "ship",
@@ -1097,7 +1123,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1219,7 +1245,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1238,7 +1264,7 @@
       "summary": "Agent keyword guide (ưu tiên prompt 1 dòng)",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-ver",
       "lines": 231,
-      "updatedAt": "2026-06-07T21:56:01.214Z",
+      "updatedAt": "2026-06-08T07:42:10.443Z",
       "tags": [
         "playbook",
         "workspace"
@@ -1252,9 +1278,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "16 keywords · verify · git · pattern · migrate · screensByProduct · tiếng Việt",
-      "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent loop`\n- **Gate intent:** `loop`\n\n### Fix P00xx\n\n**Khi nào:** Bug UI/layout/API surface đã biết.\n**Agent:** sửa tối thiểu → cùng ladder Ship.\n**Mẹo:** nêu rõ màn + hành vi mong đợi trong 1 dòng.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Fix P0004 — modal Settings hẹp, loop đến khi pass`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Smoke P00xx\n\n**Khi nào:** Code đã xong, chỉ cần regression / contract browser.\n**Agent:** không thêm feature; chỉ gate + smoke steps.\n**Sau deploy:** có thể kết hợp Deploy keyword.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Smoke P0004 — hub-ui browser contract Settings/Log/User`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 2. Git / Production pipeline\n\n### Git / Commit P00xx\n\n**Khi nào:** Backup snapshot Git **trên máy** — chưa cần GitHub/production.\n**Version:** Minor bump + CHANGELOG block đầy đủ.\n**Script:** `ship-product.ps1 -Keyword Git`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Git P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm:** Git tier + push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Push P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gate:** `--intent deploy` (prod MCP hint Supabase SPA).\n**Không** tạo GitHub Release — dùng Release keyword.\n\n- **Skill:** p00xx-ship-keywords + ship-until-done\n- **Prompt mẫu:** `Deploy P0016`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy`\n- **Gate intent:** `deploy`\n\n### Release E00xx\n\n**Khi nào:** Phát hành chính thức — tag GitHub, catalog, audit.\n**Version:** Major bump.\n**Gồm:** Deploy + `gh release create`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Release E0001`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 3. Hub UI — full shell\n\n### Hub P00xx\n\n**Khi nào:** Tool mới hoặc migrate **cả console** hub-ui.\n**Khác Directory/Inbox:** không chỉ 1 tab — full shell.\n**Sau clone:** bắt buộc Ship/Loop verify.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Hub P0017 — clone toàn bộ hub-ui shell từ P0004`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 4. Hub UI — clone từng pattern (tab)\n\n### Directory P00xx\n\n**Khi nào:** Thêm/sửa **1 tab dạng directory** (list + filter + card/table).\n**Lệnh:** `hub-ui-stack.cjs P00xx <tab>` — thay `<tab>` bằng tên screen (bots, users…).\n**Golden:** P0004 HubListPage. **Catalog id:** `directory`.\n**Luôn kết thúc:** Ship hoặc Smoke verify tab vừa clone.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Directory P0017 bots — tab bots directory golden P0004 Hub`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx <tab>`\n- **Pattern catalog:** `directory` · golden `P0004/hub-list`\n- **Tab gợi ý:** P0004→hub|users · P0016→bots|groups|logs|channels · P0020→cookie|twofa · P0008→buyers|orders|products\n\n### Inbox P00xx\n\n**Khi nào:** Màn chat/inbox 3 cột (list thread + nội dung).\n**Lệnh:** `hub-ui-stack.cjs P00xx inbox` — screen luôn là `inbox`.\n**Golden:** P0016 InboxHubChrome. **Catalog id:** `inbox-split`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Inbox P0017 — clone inbox split giống P0016`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx inbox`\n- **Pattern catalog:** `inbox-split` · golden `P0016/inbox`\n- **Tab gợi ý:** P0004→inbox · P0016→inbox · P0020→inbox · P0008→inbox\n\n### Dashboard P00xx\n\n**Khi nào:** Tab analytics/KPI + biểu đồ nhỏ.\n**Lệnh:** `hub-ui-stack.cjs P00xx dashboard`.\n**Golden:** P0004 DashboardListPage. **Catalog id:** `dashboard`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Dashboard P0017 — KPI dashboard tab`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx dashboard`\n- **Pattern catalog:** `dashboard` · golden `P0004/dashboard`\n- **Tab gợi ý:** P0004→dashboard · P0016→dashboard · P0020→dashboard · P0008→dashboard\n\n### Overview P00xx\n\n**Khi nào:** Tab Overview/TOC + bảng link tool (chuẩn P0004 tab Overview).\n**Lệnh:** `hub-ui-stack.cjs P00xx overview`.\n**Catalog id:** `document-toc`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Overview",
+      "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent loop`\n- **Gate intent:** `loop`\n\n### Fix P00xx\n\n**Khi nào:** Bug UI/layout/API surface đã biết.\n**Agent:** sửa tối thiểu → cùng ladder Ship.\n**Mẹo:** nêu rõ màn + hành vi mong đợi trong 1 dòng.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Fix P0004 — modal Settings hẹp, loop đến khi pass`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Smoke P00xx\n\n**Khi nào:** Code đã xong, chỉ cần regression / contract browser.\n**Agent:** không thêm feature; chỉ gate + smoke steps.\n**Sau deploy:** có thể kết hợp Deploy keyword.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Smoke P0004 — hub-ui browser contract Settings/Log/User`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 2. Git / Production pipeline\n\n### Git / Commit P00xx\n\n**Khi nào:** Backup snapshot Git **trên máy** — chưa cần GitHub/production.\n**Version:** Minor bump + CHANGELOG block đầy đủ.\n**Script:** `ship-product.ps1 -Keyword Git`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Git P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm (cumulative):** auto-commit WIP (nếu version triple + CHANGELOG sẵn) → push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Push P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gồm (cumulative):** auto-commit → push → production smoke (`ship-product.ps1 -Keyword Deploy`).\n**Gate:** `--intent deploy` (prod MCP hint). **Không** tạo GitHub Release — dùng Release keyword.\n\n- **Skill:** p00xx-ship-keywords + ship-until-done\n- **Prompt mẫu:** `Deploy P0016`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy`\n- **Gate intent:** `deploy`\n\n### Release E00xx\n\n**Khi nào:** Phát hành chính thức — tag GitHub, catalog, audit.\n**Version:** Major bump.\n**Gồm:** Deploy + `gh release create`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Release E0001`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 3. Hub UI — full shell\n\n### Hub P00xx\n\n**Khi nào:** Tool mới hoặc migrate **cả console** hub-ui.\n**Khác Directory/Inbox:** không chỉ 1 tab — full shell.\n**Sau clone:** bắt buộc Ship/Loop verify.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Hub P0017 — clone toàn bộ hub-ui shell từ P0004`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 4. Hub UI — clone từng pattern (tab)\n\n### Directory P00xx\n\n**Khi nào:** Thêm/sửa **1 tab dạng directory** (list + filter + card/table).\n**Lệnh:** `hub-ui-stack.cjs P00xx <tab>` — thay `<tab>` bằng tên screen (bots, users…).\n**Golden:** P0004 HubListPage. **Catalog id:** `directory`.\n**Luôn kết thúc:** Ship hoặc Smoke verify tab vừa clone.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Directory P0017 bots — tab bots directory golden P0004 Hub`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx <tab>`\n- **Pattern catalog:** `directory` · golden `P0004/hub-list`\n- **Tab gợi ý:** P0004→hub|users · P0016→bots|groups|logs|channels · P0020→cookie|twofa · P0008→buyers|orders|products\n\n### Inbox P00xx\n\n**Khi nào:** Màn chat/inbox 3 cột (list thread + nội dung).\n**Lệnh:** `hub-ui-stack.cjs P00xx inbox` — screen luôn là `inbox`.\n**Golden:** P0016 InboxHubChrome. **Catalog id:** `inbox-split`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Inbox P0017 — clone inbox split giống P0016`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx inbox`\n- **Pattern catalog:** `inbox-split` · golden `P0016/inbox`\n- **Tab gợi ý:** P0004→inbox · P0016→inbox · P0020→inbox · P0008→inbox\n\n### Dashboard P00xx\n\n**Khi nào:** Tab analytics/KPI + biểu đồ nhỏ.\n**Lệnh:** `hub-ui-stack.cjs P00xx dashboard`.\n**Golden:** P0004 DashboardListPage. **Catalog id:** `dashboard`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Dashboard P0017 — KPI dashboard tab`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx dashboard`\n- **Pattern catalog:** `dashboard` · golden `P0004/dashboard`\n- **Tab gợi ý:** P0004→dashboard · P0016→dashboard · P0020→dashboard · P0008→dashboard\n\n### Overview P00xx\n\n**Khi nào:** Tab Overview/TOC + bảng link tool (chuẩn P0004 tab Overview).\n**Lệnh:** `hub-u",
       "lines": 231,
-      "updatedAt": "2026-06-07T21:56:01.322Z",
+      "updatedAt": "2026-06-08T07:43:11.350Z",
       "tags": [
         "infrastructure",
         "keyword",
@@ -1538,9 +1564,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "P0004 Hub UI + agent stack catalog; /hub-ui bundle entry",
-      "bodyPreview": "# P0004 Tool Hub — Agent catalog (Hub UI + workspace agent context)\n\n**Design source:** this repo (`src/components/sales-shell`, `features/hub`).  \n**UI trong app:** System → **Agent** (`pnpm agent:manifest` → `public/agent-manifest.json`).  \n**Hub UI doc:** `packages/hub-ui/README.md` — scripts only, no Cursor sync-ui skill/rule.\n\n---\n\n## Hub UI — one command\n\n```powershell\ncd E:\\Dev\\Tool\\P0004-Tool-Hub\npnpm hub-ui:stack                              # vendor + manifest\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0016 overview   # + screen scaffold\n```\n\nThen: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n\n---\n\n## Workspace agent stack (repo = source of truth)\n\n| Layer | Path |\n|-------|------|\n| Rule | `.cursor/rules/dev-workspace-compact.mdc` (Always Apply) |\n| Commands | `.cursor/commands/*.md` → `/ship`, `/onboard-tool`, `/bump-version`, `/design-5` |\n| Skills | `.cursor/skills/*/SKILL.md` — `ship-until-done`, `p00xx-ship-keywords`, `p00xx-clone-hub-shell`, `p00xx-tool-onboard` |\n| Subagents | `.cursor/agents/*.md` (2) |\n| Playbooks | `Tool/docs/playbooks/*.md` |\n| Ship script | `Tool/scripts/ship-product.ps1` |\n\n**Refresh Agent tab:** `pnpm a",
+      "bodyPreview": "# P0004 Tool Hub — Agent catalog (Hub UI + workspace agent context)\n\n**Design source:** this repo (`src/components/sales-shell`, `features/hub`).  \n**UI trong app:** System → **Agent** (`pnpm agent:manifest` → `public/agent-manifest.json`).  \n**Hub UI doc:** `packages/hub-ui/README.md` — scripts only, no Cursor sync-ui skill/rule.\n\n---\n\n## Hub UI — one command\n\n```powershell\ncd E:\\Dev\\Tool\\P0004-Tool-Hub\npnpm hub-ui:stack                              # vendor + manifest\nnode E:\\Dev\\Tool\\scripts\\hub-ui-stack.cjs P0016 overview   # + screen scaffold\n```\n\nThen: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n\n---\n\n## Workspace agent stack (repo = source of truth)\n\n| Layer | Path |\n|-------|------|\n| Rule | `.cursor/rules/dev-workspace-compact.mdc` (Always Apply) |\n| Commands | `.cursor/commands/*.md` → `/onboard-tool`, `/bump-version`, `/design-5` |\n| Skills | `.cursor/skills/*/SKILL.md` — `ship-until-done`, `p00xx-ship-keywords`, `p00xx-clone-hub-shell`, `p00xx-tool-onboard` |\n| Subagents | `.cursor/agents/*.md` (2) |\n| Playbooks | `Tool/docs/playbooks/*.md` |\n| Ship script | `Tool/scripts/ship-product.ps1` |\n\n**Refresh Agent tab:** `pnpm agent:mani",
       "lines": 166,
-      "updatedAt": "2026-06-07T18:55:09.767Z",
+      "updatedAt": "2026-06-08T07:42:48.463Z",
       "tags": [
         "hub-ui",
         "catalog",
@@ -1731,7 +1757,7 @@
         }
       ],
       "lines": 49,
-      "updatedAt": "2026-06-07T20:52:25.971Z",
+      "updatedAt": "2026-06-08T07:30:47.662Z",
       "tags": [
         "infrastructure",
         "ship",
@@ -1749,7 +1775,7 @@
       "summary": "Bảng nhanh — chi tiết xem Agent keyword guide",
       "bodyPreview": "# Ship keywords (quick)\n\n**Chi tiết:** mở doc **Agent keyword guide** cùng tab Agent.\n\n| Keyword | Skill | Example |\n|---------|-------|--------|\n| **Ship P00xx** | ship-until-done | Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại |\n| **Loop P00xx** | ship-until-done | Loop P0016 — Messenger parity Zalo, unlimited turns |\n| **Fix P00xx** | ship-until-done | Fix P0004 — modal Settings hẹp, loop đến khi pass |\n| **Smoke P00xx** | ship-until-done | Smoke P0004 — hub-ui browser contract Settings/Log/User |\n| **Git / Commit P00xx** | p00xx-ship-keywords | Git P0020 |\n| **Push P00xx** | p00xx-ship-keywords | Push P0020 |\n| **Deploy P00xx** | p00xx-ship-keywords + ship-until-done | Deploy P0016 |\n| **Release E00xx** | p00xx-ship-keywords | Release E0001 |\n| **Hub P00xx** | p00xx-clone-hub-shell + ship-until-done | Hub P0017 — clone toàn bộ hub-ui shell từ P0004 |\n| **Migrate P00xx** | p00xx-supabase-ops | Migrate P0020 — thêm cột can_edit note_shares |\n| **Directory P00xx** | p00xx-clone-hub-shell + ship-until-done · `directory` | Directory P0017 bots — tab bots directory golden P0004 Hub |\n| **Inbox P00xx** | p00xx-clone-hub-shell + ship-until-done · `inbox-split` | Inbox P0017 — clone inbox split giống P0016 |\n| **Dashboard P00xx** | p00xx-clone-hub-shell + ship-until-done · `dashboard` | Dashboard P0017 — KPI dashboard tab |\n| **Overview P00xx** | p00xx-clone-hub-shell + ship-until-done · `document-toc` | Overview P0017 — tab Overview chuẩn P0004 |\n| **System P00xx** | p00xx-clone-hub-shell + ship-until-done · `system-panels` | System P0020 — panel System giống P0004 |\n| **Notes P00xx** | p00xx-clone-hub-shell + ship-until-done · `workspace-composer` | Notes P0017 — split editor giống P0020 Notes |\n\nGate:\n`node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`",
       "lines": 24,
-      "updatedAt": "2026-06-07T21:56:01.324Z",
+      "updatedAt": "2026-06-08T07:43:11.352Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1768,7 +1794,7 @@
       "summary": "Single source for Ship/Loop/Deploy keywords - rule table + Agent manifest",
       "bodyPreview": "{\n  \"schemaVersion\": 3,\n  \"priorityNote\": \"Ưu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\",\n  \"gate\": {\n    \"base\": \"node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev\",\n    \"intents\": {\n      \"loop\": \"--intent loop\",\n      \"deploy\": \"--intent deploy\"\n    }\n  },\n  \"promptExamples\": {\n    \"loop\": \"Loop P0020 — 2FA KPI responsive, không hỏi lại\",\n    \"ship\": \"Ship P0004 — modal Settings 72rem\",\n    \"directory\": \"Directory P0017 bots — clone tab directory từ P0004 Hub\",\n    \"inbox\": \"Inbox P0017 — master-detail giống P0016\",\n    \"migrate\": \"Migrate P0020 — thêm cột can_edit note_shares\"\n  },\n  \"keywords\": [\n    {\n      \"id\": \"keyword-ship\",\n      \"name\": \"Ship P00xx\",\n      \"group\": \"verify\",\n      \"skill\": \"ship-until-done\",\n      \"tier\": \"verify\",\n      \"behavior\": \"`agent-verify-gate.mjs --mark-active` → ladder static/stack/browser → loop fix\",\n      \"example\": \"Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại\",\n      \"summary\": \"Full loop: agent-verify-gate → static → stack → browser MCP until pass\",\n      \"gateIntent\": null,\n      \"guideVi\": \"**Khi nào:** Task code",
       "lines": 265,
-      "updatedAt": "2026-06-07T20:52:25.971Z",
+      "updatedAt": "2026-06-08T07:30:47.662Z",
       "tags": [
         "infrastructure",
         "keyword",
@@ -2797,7 +2823,7 @@
       "summary": "Dev workspace E:\\Dev — policy duy nhất (Always Apply)",
       "bodyPreview": "# Dev workspace (E:\\Dev)\n\n## Giao tiếp & mỗi câu trả lời\n\n- Trao đổi với user bằng **tiếng Việt**; mọi **chuỗi UI** Tool/Extension bằng **tiếng Anh**.\n- **Luôn** kết thúc bằng **3 đề xuất** đánh số `1.` `2.` `3.` (kể cả trả lời ngắn / xong việc).\n- **Tự động** thực hiện các đề xuất (setup, migration, verify browser, script…) — **không** chờ `ok 1` trừ khi user nói rõ chỉ tư vấn / không làm.\n- Dòng cuối: `Version: X.Y.Z → A.B.C` hoặc `Version: no bump (lý do)`.\n- **Không** xóa dữ liệu quan trọng; **không** commit secret; commit/push/release chỉ khi user yêu cầu rõ.\n- Hooks kiểm tra format — xem Settings → Hooks → Execution Log nếu thiếu 3 đề xuất / Version.\n\n## P0004 golden pattern (Hub · Users · Overview)\n\n- **P0004 Tool Hub** — tab **Hub / Users / Overview** là chuẩn layout & typography cho mọi P00xx.\n- Tuân thủ **format text/UI P004** (title case có chừng mực, không ALL CAPS lung tung; copy UI English).\n- Clone shell: `packages/hub-ui/README.md` · `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` · verify `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n- Design source: `Tool/P0004-Tool-Hub` (`HubListPage`, `UserDirectoryTable`, Overview TOC). Dùng `@tool-workspace/hub-ui`, ",
       "lines": 85,
-      "updatedAt": "2026-06-07T21:56:01.213Z",
+      "updatedAt": "2026-06-08T07:33:50.033Z",
       "tags": [
         "rule",
         "cursor",
@@ -2813,6 +2839,34 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# P00xx clone Hub shell\n\nPlaybook distilled from **P0016 Chat Center** (shell P0004 + inbox golden P0020 Notes + API P0006).\n\n**Golden sources:** `Tool/P0004-Tool-Hub` (chrome) · `Tool/P0020-Data-Box` (notes split) · `packages/hub-ui/README.md`\n\n**Companion:** skill `ship-until-done` (mandatory after UI edits) · skill `p00xx-tool-onboard` (import before clone)\n\n**Templates:** [templates/](templates/) · **Checklist:** [checklist.md](checklist.md) · **Pitfalls:** [pitfalls.md](pitfalls.md) · **Manifest fields:** [manifest-fields.md](manifest-fields.md)\n\n## Command (ưu tiên — không cần đọc checklist dài)\n\n**Screen là tùy chọn.** Chỉ ghi khi fix **một tab**; clone cả console thì bỏ qua.\n\n```powershell\n# Cả shell P0016 → P0017 (không cần screen)\nFix P0016 theo P0017\n.\\Tool\\scripts\\Fix-HubShell.ps1 P0016 theo P0017\n\n# Một tab — bots golden từ Hub P0004 vào P0017\nFix Bot Hub P0004 theo P0017\n\n# Một tab — inbox từ P0016 sang P0017\nFix Inbox P0016 theo P0017\n\n# Repair — sửa bots trong P0016 theo golden Hub\nFix Bot P0016 theo Hub P0004\n\n# Dry-run\nFix P0016 theo P0017 --dry-run\n```\n\n`Hub` = **P0004** (directory chrome). `Inbox`/`Notes` dùng golden **P0020/notes** từ manifest nguồn.\n\nFlags: `-",
+      "contentFields": [
+        {
+          "label": "Skill",
+          "value": "p00xx-clone-hub-shell",
+          "variant": "code"
+        },
+        {
+          "label": "When to use",
+          "value": ">-",
+          "variant": "text"
+        },
+        {
+          "label": "Sections",
+          "value": "Command (ưu tiên — không cần đọc checklist dài) · When to use · Golden screen map (pick before coding) · Execution order (do not skip) · Phase 0 — Manifest & deps · Phase 1 — hub-ui bootstrap · Phase 2 — Header contract (P0004 — non-negotiable) · Phase 3 — Tab chrome body",
+          "variant": "text"
+        },
+        {
+          "label": "Script entry",
+          "value": "# Cả shell P0016 → P0017 (không cần screen)",
+          "variant": "code",
+          "copy": true
+        },
+        {
+          "label": "Script variants",
+          "value": "Fix P0016 theo P0017\n.\\Tool\\scripts\\Fix-HubShell.ps1 P0016 theo P0017\n# Một tab — bots golden từ Hub P0004 vào P0017",
+          "variant": "multiline"
+        }
+      ],
       "lines": 243,
       "updatedAt": "2026-06-07T18:54:33.995Z",
       "tags": [
@@ -2831,9 +2885,37 @@
       "scope": "workspace",
       "trigger": ">-",
       "summary": ">-",
-      "bodyPreview": "# P00xx ship keywords (Git · Push · Deploy · Release)\n\n## Parse the command\n\nPattern: **`{Git|Commit|Push|Deploy|Release} {CODE}`**\n\n| User says | Alias | Resolve path |\n|-----------|-------|--------------|\n| `Git P0004` / `Commit P0004` | **Commit = Git** | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | — | Match folder by code prefix; read `tool.manifest.json` |\n| `Deploy P0004` | — | Same |\n| `Release E0001` | — | Same |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n---\n\n## Bốn tầng (cumulative)\n\nMỗi tầng **gồm hết tầng trước**. Dùng đúng từ khóa = agent chạy đủ bước, không hỏi từng bước.\n\n| # | Keyword | Bạn muốn | Pipeline | Version |\n|---|---------|----------|----------|---------|\n| 1 | **Git** (Commit) | **Backup Git local** — lưu snapshot trên máy | build → commit → stamp CHANGELOG | **Minor** (`MINOR+1`, `PATCH=1`) |\n| 2 | **Push** | **Đẩy lên GitHub** — remote có code mới | Git + push `origin` | Giữ Minor (không Major) |\n| 3 | **Deploy** | **Production sống + verify** — site/service chạy thật, smoke pass | Push + deploy/smoke theo `deployTarget` | Giữ Minor (không `gh release`) |\n| 4 | **Release** | **Phát ",
+      "bodyPreview": "# P00xx ship keywords (Git · Push · Deploy · Release)\n\n## Parse the command\n\nPattern: **`{Git|Commit|Push|Deploy|Release} {CODE}`**\n\n| User says | Alias | Resolve path |\n|-----------|-------|--------------|\n| `Git P0004` / `Commit P0004` | **Commit = Git** | `Tool/P0004-*` or `Extension/E0001-*` under `E:\\Dev` |\n| `Push P0020` | — | Match folder by code prefix; read `tool.manifest.json` |\n| `Deploy P0004` | — | Same |\n| `Release E0001` | — | Same |\n\nIf multiple folders match, pick the canonical name from manifest `code` or ask once.\n\n---\n\n## Bốn tầng (cumulative)\n\nMỗi tầng **gồm hết tầng trước**. Dùng đúng từ khóa = agent chạy đủ bước, không hỏi từng bước.\n\n| # | Keyword | Bạn muốn | Pipeline | Version |\n|---|---------|----------|----------|---------|\n| 1 | **Git** (Commit) | **Backup Git local** — lưu snapshot trên máy | build → commit → stamp CHANGELOG | **Minor** (`MINOR+1`, `PATCH=1`) |\n| 2 | **Push** | **Đẩy lên GitHub** — remote có code mới | auto-commit WIP (nếu sẵn) + push `origin` | Giữ Minor (không Major) |\n| 3 | **Deploy** | **Production sống + verify** — site/service chạy thật, smoke pass | Push + production smoke theo `deployTarget` | Giữ Minor (không `gh release`) |\n|",
+      "contentFields": [
+        {
+          "label": "Skill",
+          "value": "p00xx-ship-keywords",
+          "variant": "code"
+        },
+        {
+          "label": "When to use",
+          "value": ">-",
+          "variant": "text"
+        },
+        {
+          "label": "Sections",
+          "value": "Parse the command · Bốn tầng (cumulative) · Script (autonomous) · Step detail · Push auth (workspace standard) · Safety (always) · Final report (required) · Related",
+          "variant": "text"
+        },
+        {
+          "label": "Script entry",
+          "value": "powershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Git",
+          "variant": "code",
+          "copy": true
+        },
+        {
+          "label": "Script variants",
+          "value": "powershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Push\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Deploy\npowershell -File E:\\Dev\\Tool\\scripts\\ship-product.ps1 -Code P00xx -Keyword Release",
+          "variant": "multiline"
+        }
+      ],
       "lines": 118,
-      "updatedAt": "2026-06-07T18:44:14.496Z",
+      "updatedAt": "2026-06-08T07:42:34.595Z",
       "tags": [
         "infrastructure",
         "skill",
@@ -2851,6 +2933,23 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# P00xx Supabase ops\n\nSchema / RLS / function changes **without** manual Dashboard SQL.\n\n## Trigger\n\n| Keyword | Example |\n|---------|---------|\n| **Migrate P00xx** | `Migrate P0020 — thêm cột can_edit note_shares` |\n\n**Companion:** if migration affects UI/API surface → finish with **Ship P00xx** (skill `ship-until-done`).\n\n---\n\n## Parse command\n\nPattern: **`Migrate {CODE}`** + one-line schema intent.\n\nResolve product root: `Tool/P00xx-*` or `Extension/E00xx-*` under `E:\\Dev`.\n\n---\n\n## Read first (order)\n\n1. `{productRoot}/tool.manifest.json` → `supabase` block (projectRef, migrationsDir, docs)\n2. `{productRoot}/package.json` → scripts matching `db:migrate*`, `apply:*:api`, `twofa:db:*`\n3. Product docs: `docs/DATABOX-MIGRATION.md`, `docs/IDENTITY.md`, `docs/TWOFA-SUPABASE.md` when linked from manifest\n4. Shared lib: `Tool/scripts/lib/supabase-mgmt-query.mjs`\n\n**Credentials:** `E:\\Dev\\.env.shared` (never commit; never print secrets in report).\n\n---\n\n## Migration ladder\n\n```\n1. PLAN    — SQL file in supabase/migrations/ or documented apply-*.sql\n2. APPLY   — prefer Management API scripts (apply-*-api.mjs, db:migrate:api)\n3. VERIFY  — query schema / smoke API / RLS probe\n4. SHIP    — ",
+      "contentFields": [
+        {
+          "label": "Skill",
+          "value": "p00xx-supabase-ops",
+          "variant": "code"
+        },
+        {
+          "label": "When to use",
+          "value": ">-",
+          "variant": "text"
+        },
+        {
+          "label": "Sections",
+          "value": "Trigger · Parse command · Read first (order) · Migration ladder · Rules (mandatory) · Final report · Related",
+          "variant": "text"
+        }
+      ],
       "lines": 87,
       "updatedAt": "2026-06-07T20:51:46.516Z",
       "tags": [
@@ -2870,6 +2969,34 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# P00xx tool onboard\n\nBring an external repo into `E:\\Dev\\Tool` with workspace conventions. **Ship later:** skill `p00xx-ship-keywords` or `Release P00xx` → `Tool/scripts/ship-product.ps1`.\n\n**Not in scope:** Git/Push/Release during import — hand off when user asks.\n\nMirror (short): `Tool/docs/playbooks/tool-onboard.md` · Pitfalls: `pitfalls.md` in this folder.\n\n---\n\n## Parse intent\n\n| User says | Phase |\n|-----------|-------|\n| Pull / clone / sync repo | A |\n| Gán P00xx, onboard, chuẩn hóa | A + catalog |\n| Rename, domain, Tailwind, code-split | B (only if asked) |\n| Git / Push / Release | **Stop** → `p00xx-ship-keywords` |\n\nConfirm when unclear: GitHub URL, display name, slug (`id` kebab-case), stack type, deploy target (vercel / vps / local-only).\n\n---\n\n## Phase A — Import\n\n```\n- [ ] A1 Assign P00xx + folder Tool/{CODE}-{Slug}\n- [ ] A2 Preflight + clone\n- [ ] A3 Scaffold manifest, CHANGELOG, RELEASE, port in workspace-ports.json\n- [ ] A4 pnpm install + build\n- [ ] A5 validate-tool-manifest.ps1 (no BOM)\n- [ ] A6 P0004 scan:local — commit registry JSON only\n```\n\n### A1 — Code\n\nRead `E:\\Dev\\Tool\\TOOL-CODES.md` → next code. Folder: `E:\\Dev\\Tool\\{CODE}-{Slug}`. Append row to `TOOL-CO",
+      "contentFields": [
+        {
+          "label": "Skill",
+          "value": "p00xx-tool-onboard",
+          "variant": "code"
+        },
+        {
+          "label": "When to use",
+          "value": ">-",
+          "variant": "text"
+        },
+        {
+          "label": "Sections",
+          "value": "Parse intent · Phase A — Import · Phase B — Hardening (user asked only) · Phase C — Ship (user asked only) · Report",
+          "variant": "text"
+        },
+        {
+          "label": "Script entry",
+          "value": "powershell -NoProfile -File E:\\Dev\\Tool\\scripts\\onboard-preflight.ps1 -Slug \"{Slug}\"",
+          "variant": "code",
+          "copy": true
+        },
+        {
+          "label": "Script variants",
+          "value": "# Optional: -Code P0024 -Port 3024\ngit clone https://github.com/{owner}/{repo}.git \"E:\\Dev\\Tool\\{CODE}-{Slug}\"",
+          "variant": "multiline"
+        }
+      ],
       "lines": 110,
       "updatedAt": "2026-06-04T23:52:39.327Z",
       "tags": [
@@ -2889,6 +3016,29 @@
       "trigger": ">-",
       "summary": ">-",
       "bodyPreview": "# Ship until done\n\nFull autonomous loop until **feature/fix is verified** — not just code written.\n\n## Trigger keywords (auto-read this skill)\n\n| Keyword | Meaning | Extra skills |\n|---------|---------|--------------|\n| **Ship P00xx** | Full loop until verified (local gates + browser MCP) | this skill |\n| **Loop P00xx** | Same as Ship — **unlimited turns/hypotheses** until done (feature lớn, parity lâu) | this skill |\n| **Fix P00xx** | Bug fix + ship loop | this skill |\n| **Smoke P00xx** | Verify only (no feature scope) | this skill |\n| **Git/Commit/Push/Deploy/Release P00xx** | Ship pipeline | `p00xx-ship-keywords` + this skill for Deploy/Release |\n| **Hub P00xx** | Clone/migrate hub-ui shell | `p00xx-clone-hub-shell` + this skill |\n\n**First command every Ship/Fix/Smoke/Loop task:**\n\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev\n```\n\n**Loop P00xx** (task lớn — unlimited turns, stop hook 12 nudges):\n\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent loop\n```\n\n**Deploy / Release** (auto prod MCP hint for Supabase SPA):\n\n```bash\nnode Tool/scripts/agent-verify-gate.mjs --code P00xx -",
+      "contentFields": [
+        {
+          "label": "Skill",
+          "value": "ship-until-done",
+          "variant": "code"
+        },
+        {
+          "label": "When to use",
+          "value": ">-",
+          "variant": "text"
+        },
+        {
+          "label": "Sections",
+          "value": "Trigger keywords (auto-read this skill) · When this applies · Acceptance Contract (mandatory at task start) · Ship ladder (run in order) · Browser (Cursor IDE MCP only) · Fix loop · Final report (required — hooks enforce) · Related",
+          "variant": "text"
+        },
+        {
+          "label": "Command",
+          "value": "node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev",
+          "variant": "code",
+          "copy": true
+        }
+      ],
       "lines": 150,
       "updatedAt": "2026-06-07T20:04:54.492Z",
       "tags": [
