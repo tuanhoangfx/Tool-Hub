@@ -2,13 +2,12 @@ import { useMemo } from "react";
 import {
   HubToolDetailModal,
   HubToolDetailSection,
-  HUB_TOOL_DETAIL_SCROLL_ROOT,
   HUB_TOOL_DETAIL_SECTIONS_CLASS,
 } from "@tool-workspace/hub-ui";
 import { HubCardAvatar } from "../../../components/HubCardAvatar";
-import { TocSectionNav } from "../../overview/TocSectionNav";
 import { TocHighlightContent, TocSectionHighlightProvider } from "../../overview/toc-section-highlight-context";
-import { AGENT_CONTEXT_DETAIL_TOC, agentContextSectionTitle } from "./agent-context-detail-toc";
+import { AgentContextTocNav, AGENT_CONTEXT_SECTION_IDS, agentContextSectionTitle } from "./agent-context-toc-nav";
+import { AgentContextBodyView } from "./AgentContextBodyView";
 import { agentKindIcon, agentStatusDotColor } from "./agent-kind-icon";
 import type { AgentContextItem } from "./types";
 
@@ -21,7 +20,7 @@ type AgentContextDetailModalProps = {
 export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: AgentContextDetailModalProps) {
   const idPrefix = item ? `ac-${item.id}-` : "";
   const tocSectionIds = useMemo(
-    () => (item ? AGENT_CONTEXT_DETAIL_TOC.map(({ id }) => `${idPrefix}${id}`) : []),
+    () => (item ? AGENT_CONTEXT_SECTION_IDS.map((id) => `${idPrefix}${id}`) : []),
     [idPrefix, item],
   );
 
@@ -46,13 +45,7 @@ export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: 
       headerTrailing={
         <span className="truncate font-mono text-[10px] text-[var(--muted)]">{item.kind}</span>
       }
-      toc={
-        <TocSectionNav
-          items={AGENT_CONTEXT_DETAIL_TOC}
-          idPrefix={idPrefix}
-          scrollRootSelector={HUB_TOOL_DETAIL_SCROLL_ROOT}
-        />
-      }
+      toc={<AgentContextTocNav idPrefix={idPrefix} />}
     >
       <TocSectionHighlightProvider sectionIds={tocSectionIds}>
         <TocHighlightContent className={HUB_TOOL_DETAIL_SECTIONS_CLASS}>
@@ -91,9 +84,7 @@ export function AgentContextDetailModal({ item, manifestGeneratedAt, onClose }: 
           </HubToolDetailSection>
 
           <HubToolDetailSection id={`${idPrefix}content`} title={agentContextSectionTitle("content")}>
-            <pre className="max-h-64 overflow-auto rounded-lg border border-white/5 bg-[#0d1117] p-3 font-mono text-[11px] leading-relaxed text-slate-300">
-              {item.bodyPreview}
-            </pre>
+            <AgentContextBodyView item={item} />
           </HubToolDetailSection>
 
           <HubToolDetailSection id={`${idPrefix}paths`} title={agentContextSectionTitle("paths")}>

@@ -24,7 +24,7 @@ Then: finish layer 3 in target app · `hub-ui-css-check.mjs` · `hub-ui-parity-c
 |-------|------|
 | Rule | `.cursor/rules/dev-workspace-compact.mdc` (Always Apply) |
 | Commands | `.cursor/commands/*.md` → `/ship`, `/onboard-tool`, `/bump-version`, `/design-5` |
-| Skills | `.cursor/skills/*/SKILL.md` (3) |
+| Skills | `.cursor/skills/*/SKILL.md` — `ship-until-done`, `p00xx-ship-keywords`, `p00xx-clone-hub-shell`, `p00xx-tool-onboard` |
 | Subagents | `.cursor/agents/*.md` (2) |
 | Playbooks | `Tool/docs/playbooks/*.md` |
 | Ship script | `Tool/scripts/ship-product.ps1` |

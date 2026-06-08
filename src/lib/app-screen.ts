@@ -6,6 +6,7 @@ import { buildSystemUrl, readSystemRoute } from "./system-path";
 export type { AppScreen };
 
 const LEGACY_SCREEN_MAP: Record<string, AppScreen> = {
+  dashboard: "dashboard",
   library: "library",
   hub: "library",
   users: "users",
@@ -13,7 +14,7 @@ const LEGACY_SCREEN_MAP: Record<string, AppScreen> = {
 };
 
 export function readAppScreen(): AppScreen {
-  if (typeof window === "undefined") return "library";
+  if (typeof window === "undefined") return "dashboard";
 
   const pathScreen = pathnameToAppScreen(window.location.pathname);
   if (pathScreen) return pathScreen;
@@ -24,7 +25,7 @@ export function readAppScreen(): AppScreen {
   const tab = new URLSearchParams(window.location.search).get("tab");
   if (tab === "system") return "system";
 
-  return "library";
+  return "dashboard";
 }
 
 /** Normalize legacy URLs → path routes (`/system/overview`, …). */

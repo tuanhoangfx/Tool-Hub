@@ -1,24 +1,26 @@
-import { MaterialIcon } from "../../components";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { auditManifestLinks } from "../overview/manifest-link-audit";
 import {
+  CatalogVersionMeta,
   LinkManifestFooter,
   QuietChip,
+  StaticPortChip,
+  ToolCatalogLinkStrip,
   ToolCodeBadge,
+  VersionSyncChip,
 } from "../hub/hub-tool-ui";
+import { resolveCatalogVersionSync } from "../hub/tool-catalog-status";
 import { healthDotColor } from "../hub/hub-tool-ui-utils";
-import { deployLabel, folderName, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
+import { deployLabel, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import {
   resolveDeployTargetIcon,
   resolveDriftChipIcon,
   resolveDriftCleanIcon,
   resolveHealthStatusIcon,
   resolveLocalOnlyIcon,
-  resolveLocalPortIcon,
 } from "../../lib/badge-registry";
 import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
-import type { HealthState } from "../../hooks/useLocalHealth";
 import type { ResolvedTool } from "../../types";
 
 type TableViewProps = {
@@ -26,7 +28,6 @@ type TableViewProps = {
   selectedId: string;
   onSelect: (id: string) => void;
   onCopyPath: (path: string) => void;
-  healthState?: Record<string, HealthState>;
 };
 
 function tryPort(url: string) {
@@ -37,7 +38,12 @@ function tryPort(url: string) {
   }
 }
 
-export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState }: TableViewProps) {
+export function TableView({
+  tools,
+  selectedId,
+  onSelect,
+  onCopyPath,
+}: TableViewProps) {
   return (
     <div className="table-view">
       <table className="lib-table">
@@ -57,8 +63,7 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
             const fresh = freshnessLevel(tool.updatedAt);
             const linkGaps = auditManifestLinks(tool);
             const port = tool.localUrl ? tryPort(tool.localUrl) : null;
-            const localHealth = tool.localUrl ? healthState?.[tool.localUrl] : undefined;
-            const dot = healthDotColor(tool, localHealth, linkGaps.length);
+            const dot = healthDotColor(tool, linkGaps.length);
             const healthLabel = tool.healthLabel || tool.status;
             const driftWarn = resolveDriftChipIcon();
             const driftOk = resolveDriftCleanIcon();
@@ -100,20 +105,23 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                           tone="neutral"
                           iconMeta={resolveDeployTargetIcon(tool.deployTarget)}
                         />
-                        {port ? (
-                          <QuietChip
-                            label={localHealth === "online" ? `:${port} online` : `:${port}`}
-                            tone={localHealth === "online" ? "ok" : "neutral"}
-                            iconMeta={resolveLocalPortIcon(localHealth === "online")}
-                          />
-                        ) : null}
+                        {port ? <StaticPortChip port={port} localUrl={tool.localUrl} /> : null}
                       </div>
                     </div>
                   </div>
                 </td>
                 <td className="col-version align-top">
-                  <span className="mini-stat">v{tool.version}</span>
+                  <div className="mini-stat text-xs">
+                    <CatalogVersionMeta tool={tool} />
+                  </div>
                   {tool.branch ? <div className="text-[10px] text-[var(--muted)]">{tool.branch}</div> : null}
+                  <div className="mt-1">
+                    <VersionSyncChip
+                      syncStatus={resolveCatalogVersionSync(tool).syncStatus}
+                      title={resolveCatalogVersionSync(tool).syncNote}
+                      showAligned={tool.remoteEnabled !== false && Boolean(tool.remote)}
+                    />
+                  </div>
                 </td>
                 <td className="col-status align-top">
                   <QuietChip
@@ -151,65 +159,8 @@ export function TableView({ tools, selectedId, onSelect, onCopyPath, healthState
                 </td>
                 <td className="col-links align-top" onClick={(e) => e.stopPropagation()}>
                   <LinkManifestFooter linkGaps={linkGaps} />
-                  <div className="link-row mt-1">
-                    {tool.appUrl ? (
-                      <a
-                        className="icon-link tone-app"
-                        href={tool.appUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        title={`Production: ${tool.appUrl}`}
-                      >
-                        <MaterialIcon name="public" size={compactIconSize(16)} />
-                      </a>
-                    ) : null}
-                    {tool.localUrl ? (
-                      <a
-                        className={`icon-link tone-local ${
-                          localHealth === "online"
-                            ? "health-online"
-                            : localHealth === "offline"
-                              ? "health-offline"
-                              : localHealth === "checking"
-                                ? "health-checking"
-                                : "health-unknown"
-                        }`}
-                        href={tool.localUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        title={
-                          localHealth === "online"
-                            ? `Local live: ${tool.localUrl}`
-                            : localHealth === "offline"
-                              ? `Local down: ${tool.localUrl}`
-                              : `Local: ${tool.localUrl}`
-                        }
-                      >
-                        <MaterialIcon name="dns" size={compactIconSize(16)} />
-                        <span className="health-dot" aria-hidden="true" />
-                      </a>
-                    ) : null}
-                    {tool.repo ? (
-                      <a
-                        className="icon-link"
-                        href={tool.repoUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        title={`Repo: ${tool.repo}`}
-                      >
-                        <MaterialIcon name="hub" size={compactIconSize(16)} />
-                      </a>
-                    ) : null}
-                    {tool.localPath ? (
-                      <button
-                        className="icon-link"
-                        type="button"
-                        onClick={() => onCopyPath(tool.localPath)}
-                        title={`${folderName(tool.localPath)} — copy path`}
-                      >
-                        <MaterialIcon name="folder" size={compactIconSize(16)} />
-                      </button>
-                    ) : null}
+                  <div className="mt-1">
+                    <ToolCatalogLinkStrip tool={tool} linkGaps={linkGaps} onCopyPath={onCopyPath} />
                   </div>
                 </td>
               </tr>

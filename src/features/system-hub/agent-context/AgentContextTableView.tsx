@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, BookOpen, CalendarDays } from "lucide-react";
-import { HubTableColumnHeader, type HubTableColumnRole } from "@tool-workspace/hub-ui";
+import { BookOpen, CalendarDays } from "lucide-react";
+import {
+  HubPaginatedTableShell,
+  HubSortIndicator,
+  HubTableColumnHeader,
+  type HubSortDir,
+  type HubTableColumnRole,
+} from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../../lib/ui-scale";
 import { formatDate } from "../../../lib/tooling";
 import { HubCardAvatar } from "../../../components/HubCardAvatar";
@@ -21,8 +27,6 @@ type AgentSortKey =
   | "mode"
   | "updated";
 
-type SortDir = "asc" | "desc";
-
 type ColumnDef = {
   key: AgentSortKey;
   label: string;
@@ -42,11 +46,6 @@ const COLUMNS: ColumnDef[] = [
   { key: "mode", label: "Mode", colClass: "hub-users-col--hub-status", role: "mode" },
   { key: "updated", label: "Updated", colClass: "hub-users-col--hub-updated", role: "updated" },
 ];
-
-function SortIndicator({ active, dir }: { active: boolean; dir: SortDir }) {
-  const Icon = !active ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
-  return <Icon size={13} className={`hub-users-sort${active ? " is-active" : ""}`} aria-hidden />;
-}
 
 function applyModeLabel(item: AgentContextItem) {
   if (item.alwaysApply) return "Always apply";
@@ -98,7 +97,7 @@ function sortableValue(item: AgentContextItem, key: AgentSortKey): string | numb
   }
 }
 
-function sortItems(items: AgentContextItem[], sortKey: AgentSortKey, sortDir: SortDir) {
+function sortItems(items: AgentContextItem[], sortKey: AgentSortKey, sortDir: HubSortDir) {
   const dir = sortDir === "asc" ? 1 : -1;
   return [...items].sort((a, b) => {
     const av = sortableValue(a, sortKey);
@@ -115,7 +114,7 @@ type AgentContextTableViewProps = {
 
 export function AgentContextTableView({ items, onOpen }: AgentContextTableViewProps) {
   const [sortKey, setSortKey] = useState<AgentSortKey>("kind");
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [sortDir, setSortDir] = useState<HubSortDir>("asc");
 
   const sorted = useMemo(() => sortItems(items, sortKey, sortDir), [items, sortKey, sortDir]);
 
@@ -128,6 +127,8 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
   };
 
   return (
+    <HubPaginatedTableShell items={sorted} ariaLabel="Agent context table pages">
+      {(pageItems) => (
     <div className="hub-users-table-wrap overflow-x-auto rounded-2xl border border-white/5">
       <table className="hub-users-table">
         <thead>
@@ -142,7 +143,7 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
                 >
                   <span className="hub-users-th-label">
                     <HubTableColumnHeader label={col.label} role={col.role} />
-                    <SortIndicator active={sortKey === col.key} dir={sortDir} />
+                    <HubSortIndicator active={sortKey === col.key} dir={sortDir} />
                   </span>
                 </button>
               </th>
@@ -150,7 +151,7 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
           </tr>
         </thead>
         <tbody>
-          {sorted.map((item) => (
+          {pageItems.map((item) => (
             <tr key={item.id} className="hub-users-row" onClick={() => onOpen(item)}>
               <td className="hub-users-col--hub-code">
                 <AgentKindBadge kind={item.kind} className="rounded-full px-2" />
@@ -237,5 +238,7 @@ export function AgentContextTableView({ items, onOpen }: AgentContextTableViewPr
         </tbody>
       </table>
     </div>
+      )}
+    </HubPaginatedTableShell>
   );
 }

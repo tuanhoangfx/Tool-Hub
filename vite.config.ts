@@ -6,9 +6,10 @@ import { createRequire } from "node:module";
 import { loadEnv } from "vite";
 
 const toolRoot = path.dirname(fileURLToPath(import.meta.url));
-const hubUiRoot = path.resolve(toolRoot, "vendor/hub-ui/src");
-const hubIdentityRoot = path.resolve(toolRoot, "vendor/hub-identity/src");
+const hubUiRoot = path.resolve(toolRoot, "../../packages/hub-ui/src");
+const hubIdentityRoot = path.resolve(toolRoot, "../../packages/hub-identity/src");
 const hubLoadRoot = path.resolve(toolRoot, "vendor/hub-load/src");
+const devRoot = path.resolve(toolRoot, "../..");
 
 const require = createRequire(import.meta.url);
 
@@ -62,9 +63,6 @@ export default defineConfig(({ mode }) => {
             require("./scripts/lib/hub-dev-recover-proxy.cjs").createHubDevRecoverMiddleware(),
           );
           server.middlewares.use(
-            require("./scripts/lib/hub-workspace-dev-proxy.cjs").createHubWorkspaceDevMiddleware(),
-          );
-          server.middlewares.use(
             require("./scripts/lib/hub-create-users-proxy.cjs").createHubCreateUsersMiddleware({
               cwd: process.cwd(),
               mode,
@@ -83,15 +81,20 @@ export default defineConfig(({ mode }) => {
       host: "127.0.0.1",
       port: 5176,
       strictPort: true,
+      fs: {
+        allow: [toolRoot, hubUiRoot, hubIdentityRoot, hubLoadRoot, devRoot],
+      },
     },
     optimizeDeps: {
       include: ["react", "react-dom", "lucide-react"],
+      exclude: ["@tool-workspace/hub-ui"],
       holdUntilCrawlEnd: false,
     },
     esbuild: {
       target: "es2022",
     },
     resolve: {
+      dedupe: ["react", "react-dom"],
       alias: {
         "@dev/hub-load": hubLoadRoot,
         "@tool-workspace/hub-ui": hubUiRoot,

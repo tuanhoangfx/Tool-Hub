@@ -1,17 +1,8 @@
 {
   "$schema": "./tool-manifest.schema.json",
-  "description": "Unified Hub UI clone patterns — Agent kind=pattern only for ready goldens. Deferred: dashboard, inbox-split (see deferredPatterns).",
+  "description": "Unified Hub UI clone patterns — Agent kind=pattern only for ready goldens.",
   "packageDoc": "packages/hub-ui/UI_PATTERNS.md",
-  "deferredPatterns": [
-    {
-      "id": "dashboard",
-      "reason": "Chưa có golden chuẩn — gộp analytics/sales sau khi có mẫu P0008"
-    },
-    {
-      "id": "inbox-split",
-      "reason": "Inbox master-detail chưa chuẩn hóa — thêm lại khi có mẫu"
-    }
-  ],
+  "deferredPatterns": [],
   "patterns": [
     {
       "id": "directory",
@@ -22,14 +13,18 @@
       "skin": "hub-users-table",
       "summary": "Directory screen: FilterBar, ViewToggle (card ↔ table), KPI, HubDirectoryCard / HubDataTable. One golden HubListPage — card and table are views, not separate patterns.",
       "composed": [
+        "HubListChromeHeader",
         "AppTabHeader",
         "FilterBar",
         "ViewToggle",
         "DisplayPrefs",
         "KpiStrip",
-        "HubResultCount"
+        "ChartsBand",
+        "HubResultCount",
+        "HubCopyBadge",
+        "HubPaginatedTableShell"
       ],
-      "preferredClone": "HubDataTable",
+      "preferredClone": "HubPaginatedTableShell",
       "scaffold": "packages/hub-ui/examples/GoldenDirectoryScreen.tsx",
       "verify": "hub-ui-parity-check.mjs --template directory; :5176 Hub tab",
       "golden": {
@@ -78,18 +73,48 @@
         },
         {
           "product": "P0008",
-          "screen": "buyers",
-          "status": "migrate"
+          "screen": "buyers"
         },
         {
           "product": "P0008",
-          "screen": "orders",
-          "status": "migrate"
+          "screen": "orders"
         },
         {
           "product": "P0008",
-          "screen": "products",
-          "status": "migrate"
+          "screen": "products"
+        }
+      ]
+    },
+    {
+      "id": "dashboard",
+      "name": "Dashboard",
+      "layer": "screen",
+      "screenTemplate": "dashboard",
+      "status": "ready",
+      "summary": "KPI strip + mini charts + FilterBar — golden P0004 Dashboard (P0016 clone).",
+      "composed": [
+        "HubDirectoryScreen",
+        "FilterBar",
+        "KpiStrip",
+        "ChartsBand",
+        "MiniBarChart",
+        "ViewToggle",
+        "HubDirectoryTableShell",
+        "HubDirectoryCard"
+      ],
+      "scaffold": "packages/hub-ui/examples/GoldenAnalyticsScreen.tsx",
+      "verify": "hub-ui-parity-check.mjs --template dashboard --code P0004 --screen dashboard",
+      "golden": {
+        "ref": "P0004/dashboard",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardListPage.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardScreensTable.tsx",
+        "cardPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardTabCard.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0016",
+          "screen": "dashboard",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/dashboard/DashboardScreen.tsx"
         }
       ]
     },
@@ -124,6 +149,7 @@
         "HubPanel",
         "FilterBar",
         "KpiStrip",
+        "ChartsBand",
         "SystemAgentContextPanel",
         "SystemSupabaseQuotaPanel",
         "AgentContextDetailModal"
@@ -161,12 +187,41 @@
       "layer": "screen",
       "screenTemplate": "workspace-composer",
       "status": "ready",
-      "summary": "Split notes / editor (P0020).",
+      "summary": "Split notes / editor (P0020) — HubSplitWorkspaceScreen + bodyFlex.",
+      "composed": [
+        "HubSplitWorkspaceScreen",
+        "FilterBar",
+        "WorkspaceTabHeader"
+      ],
       "golden": {
         "ref": "P0020/notes",
         "screenPath": "Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx"
       },
       "clones": []
+    },
+    {
+      "id": "inbox-split",
+      "name": "Inbox master-detail",
+      "layer": "screen",
+      "screenTemplate": "inbox-split",
+      "status": "ready",
+      "summary": "Hub chrome + threads rail + message panel — HubSplitWorkspaceScreen shell.",
+      "composed": [
+        "HubSplitWorkspaceScreen",
+        "DirectorySearchToolbar",
+        "FilterBar"
+      ],
+      "verify": "hub-ui-parity-check.mjs --template inbox-split",
+      "golden": {
+        "ref": "P0016/inbox",
+        "screenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxHubChrome.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0016",
+          "screen": "inbox"
+        }
+      ]
     },
     {
       "id": "auth-gate",
@@ -193,13 +248,332 @@
       "name": "User access modal",
       "layer": "modal",
       "status": "ready",
-      "summary": "Users tab — tool access editor modal.",
+      "summary": "Tool-detail modal — HubToolDetailModal: header identity · TOC left · content right · footer action (Cookie Auto download FAB golden).",
       "golden": {
-        "ref": "P0004/users",
-        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx",
-        "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserAccessModal.tsx"
+        "ref": "P0020/cookie",
+        "screenPath": "Tool/P0020-Data-Box/src/features/cookie/CookieExtensionDownloadConfirm.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserAccessModal.tsx",
+        "componentPath": "packages/hub-ui/src/shell/HubToolDetailModal.tsx"
       },
       "clones": []
+    },
+    {
+      "id": "panel-table-pager",
+      "name": "Table pager",
+      "layer": "table-part",
+      "status": "ready",
+      "skin": "hub-table-pager",
+      "summary": "25 rows/page prev-next pager (E0001 route-table-pager parity). Use HubPaginatedDataTable or HubPaginatedTableShell on every hub-users-table.",
+      "composed": [
+        "HubTablePager",
+        "useHubTablePagination",
+        "HubPaginatedTableShell",
+        "HubPaginatedDataTable"
+      ],
+      "preferredClone": "HubPaginatedTableShell",
+      "scaffold": "packages/hub-ui/examples/GoldenDirectoryScreen.tsx",
+      "verify": "hub-users-table.css .hub-table-pager; rows ≤ 25 with next/prev when filtered > 25",
+      "golden": {
+        "ref": "P0004/overview-links-pager",
+        "componentPath": "packages/hub-ui/src/content/HubPaginatedTableShell.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/overview/ToolLinksTable.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screen": "hub",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/hub/HubToolsDirectoryTable.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "users",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserDirectoryTable.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "system",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/system-hub/agent-context/AgentContextTableView.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "bots",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/bots/BotDirectoryTable.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "groups",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/groups/GroupDirectoryTable.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "channels",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/channels/ChannelDirectoryTable.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "logs",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx"
+        },
+        {
+          "product": "P0020",
+          "screen": "cookie",
+          "tablePath": "Tool/P0020-Data-Box/src/features/cookie/CookieAutoSyncTable.tsx"
+        },
+        {
+          "product": "P0020",
+          "screen": "twofa",
+          "tablePath": "Tool/P0020-Data-Box/src/features/twofa/TwofaAccountsTable.tsx"
+        },
+        {
+          "product": "P0020",
+          "screen": "notes",
+          "tablePath": "Tool/P0020-Data-Box/src/features/notes/NotesFoldersDirectoryTable.tsx"
+        }
+      ]
+    },
+    {
+      "id": "directory-table-sort",
+      "name": "Directory table sort",
+      "layer": "table-part",
+      "status": "ready",
+      "summary": "HubSortIndicator + useDirectoryTableSort for hub-users-table column headers.",
+      "composed": [
+        "HubSortIndicator",
+        "useDirectoryTableSort",
+        "HubTableColumnHeader"
+      ],
+      "golden": {
+        "ref": "P0004/hub-list",
+        "componentPath": "packages/hub-ui/src/table/HubSortIndicator.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/hub/HubToolsDirectoryTable.tsx"
+        },
+        {
+          "product": "P0004",
+          "tablePath": "Tool/P0004-Tool-Hub/src/features/identity/UserDirectoryTable.tsx"
+        },
+        {
+          "product": "P0016",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/bots/BotDirectoryTable.tsx"
+        },
+        {
+          "product": "P0016",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/groups/GroupDirectoryTable.tsx"
+        },
+        {
+          "product": "P0016",
+          "tablePath": "Tool/P0016-ChatCenter/src/features/channels/ChannelDirectoryTable.tsx"
+        },
+        {
+          "product": "P0020",
+          "tablePath": "Tool/P0020-Data-Box/src/features/notes/NotesFoldersDirectoryTable.tsx"
+        }
+      ]
+    },
+    {
+      "id": "sidebar-footer",
+      "name": "Sidebar footer button",
+      "layer": "shell-part",
+      "status": "ready",
+      "summary": "HubSidebarFooterButton + HUB_SIDEBAR_FOOTER_BTN_CLASS for workspace sidebars.",
+      "composed": [
+        "HubSidebarFooterButton",
+        "HUB_SIDEBAR_FOOTER_BTN_CLASS"
+      ],
+      "golden": {
+        "ref": "P0004/sidebar",
+        "componentPath": "packages/hub-ui/src/shell/HubSidebarFooterButton.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screenPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx"
+        },
+        {
+          "product": "P0016",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/HubShellSidebar.tsx"
+        },
+        {
+          "product": "P0020",
+          "screenPath": "Tool/P0020-Data-Box/src/components/sales-shell/WorkspaceSidebar.tsx"
+        },
+        {
+          "product": "P0021",
+          "screenPath": "Tool/P0021-AutoVideo-Studio/app/src/components/workspace/WorkspaceShell.tsx"
+        }
+      ]
+    },
+    {
+      "id": "tool-avatar",
+      "name": "Tool avatar",
+      "layer": "component",
+      "status": "ready",
+      "summary": "HubToolAvatar — initials + Lucide or custom glyph overlay.",
+      "composed": [
+        "HubToolAvatar"
+      ],
+      "golden": {
+        "ref": "P0004/avatar",
+        "componentPath": "packages/hub-ui/src/shell/HubToolAvatar.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screenPath": "Tool/P0004-Tool-Hub/src/components/ToolAvatar.tsx"
+        },
+        {
+          "product": "P0016",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/ToolAvatar.tsx"
+        },
+        {
+          "product": "P0020",
+          "screenPath": "Tool/P0020-Data-Box/src/components/ToolAvatar.tsx"
+        }
+      ]
+    },
+    {
+      "id": "entity-list-screen",
+      "name": "Entity list screen",
+      "layer": "screen",
+      "screenTemplate": "directory",
+      "status": "ready",
+      "summary": "Next.js list pages: ListDirectoryLayout + KPI + charts + FilterBar (P0008 buyers/orders/products).",
+      "composed": [
+        "HubTabChrome",
+        "AppTabHeader",
+        "KpiStrip",
+        "ChartsBand",
+        "MiniBarChart",
+        "MiniDonut",
+        "FilterBar",
+        "HubDisplayPrefs"
+      ],
+      "golden": {
+        "ref": "P0008/buyers",
+        "screenPath": "Tool/P0008-Sales-Console/app/src/app/buyers/page.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0008",
+          "screen": "buyers"
+        },
+        {
+          "product": "P0008",
+          "screen": "orders"
+        },
+        {
+          "product": "P0008",
+          "screen": "products"
+        }
+      ]
+    },
+    {
+      "id": "design-template-empty",
+      "name": "Design template empty",
+      "layer": "screen-part",
+      "status": "ready",
+      "summary": "HubDesignTemplateEmpty — System design tab empty state.",
+      "composed": [
+        "HubDesignTemplateEmpty"
+      ],
+      "golden": {
+        "ref": "P0004/system-template",
+        "componentPath": "packages/hub-ui/src/content/HubDesignTemplateEmpty.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/design-template/DesignTemplateEmpty.tsx"
+        },
+        {
+          "product": "P0020",
+          "screenPath": "Tool/P0020-Data-Box/src/features/system/design-template/DesignTemplatePage.tsx"
+        },
+        {
+          "product": "P0008",
+          "screenPath": "Tool/P0008-Sales-Console/app/src/features/design-template/DesignTemplatePage.tsx"
+        }
+      ]
+    },
+    {
+      "id": "analytics-band",
+      "name": "Analytics band (KPI + Charts)",
+      "layer": "shell-part",
+      "status": "ready",
+      "summary": "KPI max 8, Charts max 4 — fixed slot grid (1–3 → ¼ row, 4+ full row). Use KpiStrip + ChartsBand via HubTabScreenBody; never inline hub-charts-band.",
+      "composed": [
+        "KpiStrip",
+        "ChartsBand",
+        "HubTabScreenBody",
+        "ANALYTICS_BAND_MAX",
+        "resolveKpiStripCount",
+        "resolveChartsBandCount",
+        "countAnalyticsBandSlots",
+        "HubDisplayPrefs"
+      ],
+      "analyticsBandMax": {
+        "kpi": 8,
+        "chart": 4
+      },
+      "scaffold": "packages/hub-ui/src/content/HubTabScreenBody.tsx",
+      "verify": "hub-ui-duplication-check.mjs; Settings KPI (n/8) Charts (n/4); data-kpi-count / data-chart-count",
+      "golden": {
+        "ref": "packages/hub-ui/analytics-band",
+        "kpiPath": "packages/hub-ui/src/shell/KpiStrip.tsx",
+        "chartsPath": "packages/hub-ui/src/shell/ChartsBand.tsx",
+        "cssPath": "packages/hub-ui/src/styles/hub-shell-layout.css",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screen": "hub",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubListPage.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "dashboard",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardListPage.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "users",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserManagementScreen.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "system",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SystemHubShell.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "bots",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/bots/BotListPage.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "dashboard",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/dashboard/DashboardScreen.tsx"
+        },
+        {
+          "product": "P0020",
+          "screen": "cookie",
+          "screenPath": "Tool/P0020-Data-Box/src/features/cookie/CookieAutoSyncTable.tsx"
+        },
+        {
+          "product": "P0020",
+          "screen": "twofa",
+          "screenPath": "Tool/P0020-Data-Box/src/features/twofa/TwofaManagerScreen.tsx"
+        },
+        {
+          "product": "P0008",
+          "screen": "orders",
+          "screenPath": "Tool/P0008-Sales-Console/app/src/app/orders/page.tsx"
+        }
+      ]
     }
   ],
   "toolsWithHubUi": {
@@ -223,7 +597,7 @@
       ]
     },
     "P0008": {
-      "role": "clone-migrate",
+      "role": "clone",
       "screens": [
         "buyers",
         "orders",
@@ -239,21 +613,41 @@
         "auth",
         "system"
       ]
+    },
+    "P0021": {
+      "role": "clone-partial",
+      "screens": [
+        "studio",
+        "system"
+      ]
     }
   },
   "toolsNoHubUiYet": [
     "P0001",
     "P0002",
     "P0007",
-    "P0009",
     "P0010",
     "P0011",
     "P0012",
     "P0013",
-    "P0015",
-    "P0019",
-    "P0021",
-    "P0022",
-    "P0023"
-  ]
+    "P0015"
+  ],
+  "toolsHubUiScaffold": {
+    "P0009": {
+      "role": "scaffold",
+      "template": "dashboard"
+    },
+    "P0019": {
+      "role": "scaffold",
+      "template": "dashboard"
+    },
+    "P0022": {
+      "role": "scaffold",
+      "template": "directory"
+    },
+    "P0023": {
+      "role": "scaffold",
+      "template": "directory"
+    }
+  }
 }

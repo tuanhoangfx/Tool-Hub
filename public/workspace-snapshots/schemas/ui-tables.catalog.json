@@ -183,6 +183,25 @@
         "component": "inline"
       },
       "clones": []
+    },
+    {
+      "id": "panel-table-pager",
+      "name": "Table pager",
+      "skin": "hub-table-pager",
+      "status": "ready",
+      "summary": "25 rows/page — HubPaginatedTableShell / HubPaginatedDataTable + E0001-style prev/next. Required on all hub-users-table clones.",
+      "features": [
+        "pagination",
+        "filter-reset"
+      ],
+      "verify": ".hub-table-pager above table; Page X of Y label",
+      "golden": {
+        "ref": "P0004/overview-links-pager",
+        "label": "Overview + directory pager",
+        "componentPath": "packages/hub-ui/src/content/HubPaginatedTableShell.tsx",
+        "tablePath": "Tool/P0004-Tool-Hub/src/features/overview/ToolLinksTable.tsx"
+      },
+      "clones": []
     }
   ]
 }

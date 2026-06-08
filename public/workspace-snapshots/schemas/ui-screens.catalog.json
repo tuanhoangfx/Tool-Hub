@@ -2,21 +2,7 @@
   "$schema": "./tool-manifest.schema.json",
   "description": "Screen templates + uiScreens defaults. Agent patterns: ui-patterns.catalog.json (ready only).",
   "packageDoc": "packages/hub-ui/UI_TEMPLATES.md",
-  "deferredTemplates": [
-    {
-      "id": "dashboard",
-      "name": "Dashboard",
-      "reason": "Chưa có golden chuẩn — thêm lại Agent pattern khi P0008 mẫu xong",
-      "goldenScreenPath": "Tool/P0008-Sales-Console/app/src/app/dashboard/page.tsx",
-      "scaffold": "packages/hub-ui/examples/GoldenAnalyticsScreen.tsx"
-    },
-    {
-      "id": "inbox-split",
-      "name": "Inbox master-detail",
-      "reason": "Shell chưa chuẩn hóa — thêm lại khi có mẫu",
-      "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxScreen.tsx"
-    }
-  ],
+  "deferredTemplates": [],
   "templates": [
     {
       "id": "directory",
@@ -34,6 +20,25 @@
       ],
       "scaffold": "packages/hub-ui/examples/GoldenDirectoryScreen.tsx",
       "verify": "hub-ui-parity-check.mjs --template directory"
+    },
+    {
+      "id": "dashboard",
+      "name": "Dashboard (KPI + charts + directory body)",
+      "golden": "P0004/dashboard",
+      "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardListPage.tsx",
+      "goldenScreenAlt": "Tool/P0016-ChatCenter/src/features/dashboard/DashboardScreen.tsx",
+      "goldenTablePath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardScreensTable.tsx",
+      "goldenCardPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardTabCard.tsx",
+      "packageExports": [
+        "HubDashboardScreen",
+        "HubPaginatedTableShell",
+        "HubDirectoryCard",
+        "KpiStrip",
+        "MiniBarChart",
+        "ViewToggle"
+      ],
+      "scaffold": "packages/hub-ui/examples/GoldenAnalyticsScreen.tsx",
+      "verify": "hub-ui-parity-check.mjs --template dashboard --code P0004 --screen dashboard"
     },
     {
       "id": "document-toc",
@@ -65,11 +70,25 @@
       "golden": "P0020/notes",
       "goldenScreenPath": "Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx",
       "packageExports": [
+        "HubSplitWorkspaceScreen",
         "FilterBar",
         "WorkspaceTabHeader"
       ],
       "scaffold": null,
       "verify": "P0020 notes split pane"
+    },
+    {
+      "id": "inbox-split",
+      "name": "Inbox master-detail",
+      "golden": "P0016/inbox",
+      "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxHubChrome.tsx",
+      "packageExports": [
+        "HubSplitWorkspaceScreen",
+        "DirectorySearchToolbar",
+        "FilterBar"
+      ],
+      "scaffold": null,
+      "verify": "hub-ui-parity-check.mjs --template inbox-split; P0016 Inbox tab"
     },
     {
       "id": "auth-gate",
@@ -89,6 +108,7 @@
         "product": "P0004",
         "role": "golden-source",
         "screens": [
+          "dashboard",
           "hub (directory golden)",
           "users",
           "overview",
@@ -173,11 +193,25 @@
       "document-toc": {
         "golden": "P0004/overview-toc",
         "clones": []
+      },
+      "dashboard": {
+        "golden": "P0004/dashboard",
+        "clones": [
+          "P0016/dashboard"
+        ]
       }
     }
   },
   "defaults": {
     "P0004": [
+      {
+        "screen": "dashboard",
+        "template": "dashboard",
+        "golden": "P0004/dashboard",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardListPage.tsx",
+        "goldenTablePath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardScreensTable.tsx",
+        "goldenCardPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardTabCard.tsx"
+      },
       {
         "screen": "users",
         "template": "directory",
@@ -212,10 +246,10 @@
     "P0016": [
       {
         "screen": "dashboard",
-        "template": "dashboard",
+        "template": "analytics-dashboard",
         "golden": "P0008/dashboard",
         "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/dashboard/DashboardScreen.tsx",
-        "notes": "Clone — golden source P0008/dashboard"
+        "notes": "KPI/analytics dashboard — no ViewToggle/table (P0004 directory dashboard is separate golden)"
       },
       {
         "screen": "bots",
@@ -249,7 +283,14 @@
         "template": "directory",
         "golden": "P0016/logs",
         "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx",
-        "notes": "logs-activity table golden"
+        "notes": "HubDirectoryTableShell + HubTablePager (tpage from Settings); hub-checkbox live toggle"
+      },
+      {
+        "screen": "fanpages",
+        "template": "directory",
+        "golden": "P0004/users",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/fanpages/FanpagesScreen.tsx",
+        "notes": "HubDirectoryTableShell + hubDirectoryListResetKey on all sub-views; card N/A"
       }
     ],
     "P0008": [

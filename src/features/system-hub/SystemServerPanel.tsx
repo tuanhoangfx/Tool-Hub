@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Gauge, Server } from "lucide-react";
+import { HubPaginatedCardGrid, HubPaginatedTableShell } from "@tool-workspace/hub-ui";
 import {
   HubResultCount,
   MiniBarChart,
@@ -45,6 +46,8 @@ const DEPLOY_TABLE_COLUMNS = ["Provider", "Host", "Deployment", "Tools", "Region
 
 function DeployTable({ rows, onOpen }: { rows: HostingDeployRow[]; onOpen: (id: string) => void }) {
   return (
+    <HubPaginatedTableShell items={rows} ariaLabel="Deployments table pages">
+      {(pageRows) => (
     <div className="hub-users-table-wrap overflow-x-auto">
       <table className="hub-users-table hub-users-table--wide min-w-[960px]">
         <thead>
@@ -57,7 +60,7 @@ function DeployTable({ rows, onOpen }: { rows: HostingDeployRow[]; onOpen: (id: 
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
+          {pageRows.map((row) => (
             <tr key={row.id} className="hub-users-row" onClick={() => onOpen(row.id)}>
               <td className="align-top text-[11px] text-[var(--text)]">{row.providerLabel}</td>
               <td className="align-top font-mono text-[11px] text-indigo-200/90">{row.hostSlug}</td>
@@ -89,6 +92,8 @@ function DeployTable({ rows, onOpen }: { rows: HostingDeployRow[]; onOpen: (id: 
         </tbody>
       </table>
     </div>
+      )}
+    </HubPaginatedTableShell>
   );
 }
 
@@ -225,11 +230,13 @@ export function SystemServerPanel({ tools }: { tools: ResolvedTool[] }) {
       rowsFiltered.length === 0 ? (
         <EmptyState />
       ) : (
-        <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {rowsFiltered.map((row) => (
-            <HostingDeployCard key={row.id} row={row} onOpen={openRow} />
-          ))}
-        </div>
+        <HubPaginatedCardGrid
+          items={rowsFiltered}
+          resetKey={`${query}|${JSON.stringify(filterValues)}`}
+          ariaLabel="Deployments card pages"
+        >
+          {(pageRows) => pageRows.map((row) => <HostingDeployCard key={row.id} row={row} onOpen={openRow} />)}
+        </HubPaginatedCardGrid>
       )
     ) : (
       <DeployTable rows={rowsFiltered} onOpen={openRow} />

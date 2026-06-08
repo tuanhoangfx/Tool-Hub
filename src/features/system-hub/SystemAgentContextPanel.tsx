@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { prefetchAgentManifest } from "../../lib/hub-background-prefetch";
-import { AlertTriangle, BookOpen, Bot, Command, Layers, RefreshCw, ScrollText, Sparkles, Wand2 } from "lucide-react";
+import { AlertTriangle, BookOpen, Bot, Command, GitBranch, Layers, RefreshCw, ScrollText, Sparkles, Wand2, Zap } from "lucide-react";
 import {
   HubResultCount,
   MiniBarChart,
@@ -9,6 +9,7 @@ import {
   type FilterValues,
   type KpiTileData,
 } from "../../components/sales-shell";
+import { HubPaginatedCardGrid } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import { useSessionState } from "../../hooks/useSessionState";
 import { SystemHubShell } from "./SystemHubShell";
@@ -20,6 +21,7 @@ import {
   agentFiltersWithCounts,
   matchesAgentContext,
 } from "./agent-context/agent-context-filters";
+import { AGENT_KEYWORD_PRESETS, AGENT_ONBOARDING_PRESET } from "./agent-context/agent-context-filter-defs";
 import { sortAgentContextItems } from "./agent-context/agent-context-sort";
 import type { AgentContextItem } from "./agent-context/types";
 import { useAgentManifest } from "./agent-context/useAgentManifest";
@@ -74,10 +76,70 @@ export function SystemAgentContextPanel() {
     [charts],
   );
 
+  const applyKeywordPreset = (preset: (typeof AGENT_KEYWORD_PRESETS)[keyof typeof AGENT_KEYWORD_PRESETS]) => {
+    setFilterValues({ ...preset });
+    setQuery("");
+  };
+
   const toolbar = useMemo(
     () => (
       <>
         <ViewToggle value={viewMode} onChange={setViewMode} />
+        <button
+          type="button"
+          onClick={() => {
+            setFilterValues({ ...AGENT_ONBOARDING_PRESET });
+            setQuery("");
+          }}
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-100 hover:bg-emerald-500/20"
+          title="Keyword guide + infra stack + 5 core skills"
+        >
+          <BookOpen size={compactIconSize(14)} />
+          Onboarding
+        </button>
+        <button
+          type="button"
+          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.allKeywords)}
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
+          title="All 16 ship/pattern keywords"
+        >
+          <Command size={compactIconSize(13)} />
+          Keywords
+        </button>
+        <button
+          type="button"
+          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.verify)}
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
+          title="Ship · Loop · Fix · Smoke"
+        >
+          Verify
+        </button>
+        <button
+          type="button"
+          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.git)}
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
+          title="Git · Push · Deploy · Release"
+        >
+          <GitBranch size={compactIconSize(13)} />
+          Git
+        </button>
+        <button
+          type="button"
+          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.pattern)}
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
+          title="Directory · Inbox · Dashboard · …"
+        >
+          Pattern
+        </button>
+        <button
+          type="button"
+          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.supabase)}
+          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
+          title="Migrate P00xx"
+        >
+          <Zap size={compactIconSize(13)} />
+          Supabase
+        </button>
         <HubResultCount icon={Bot} shown={filtered.length} total={items.length} />
         <button
           type="button"
@@ -90,7 +152,7 @@ export function SystemAgentContextPanel() {
         </button>
       </>
     ),
-    [filtered.length, items.length, loading, reload, viewMode, setViewMode],
+    [filtered.length, items.length, loading, reload, viewMode, setViewMode, setFilterValues, setQuery],
   );
 
   const body = (
@@ -114,11 +176,13 @@ export function SystemAgentContextPanel() {
       ) : filtered.length === 0 ? null : viewMode === "table" ? (
         <AgentContextTableView items={filtered} onOpen={setDetail} />
       ) : (
-        <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filtered.map((item) => (
-            <AgentContextCard key={item.id} item={item} onOpen={setDetail} />
-          ))}
-        </div>
+        <HubPaginatedCardGrid
+          items={filtered}
+          resetKey={`${query}|${JSON.stringify(filterValues)}`}
+          ariaLabel="Agent context card pages"
+        >
+          {(pageItems) => pageItems.map((item) => <AgentContextCard key={item.id} item={item} onOpen={setDetail} />)}
+        </HubPaginatedCardGrid>
       )}
     </>
   );
@@ -128,7 +192,7 @@ export function SystemAgentContextPanel() {
       <SystemHubShell
         tabId="agent"
         sectionRuleLabel="Agent context"
-        placeholder="Search rules, skills, paths, triggers…"
+        placeholder="Search keyword, skill, example, golden, clone, path…"
         filters={filters}
         query={query}
         onQueryChange={setQuery}

@@ -1,39 +1,27 @@
-import { useEffect } from "react";
-import { createPortal } from "react-dom";
+import { UserPlus } from "lucide-react";
+import { HubToolDetailModal } from "@tool-workspace/hub-ui";
 import { UserAddForm, type UserAddFormProps } from "./UserAddForm";
 
-type Props = Pick<
-  UserAddFormProps,
-  "onClose" | "onCreateSingle" | "onCreateMany"
->;
+type Props = Pick<UserAddFormProps, "onClose" | "onCreateSingle" | "onCreateMany"> & { open: boolean };
 
-export function UserAddModal({ open, onClose, onCreateSingle, onCreateMany }: Props & { open: boolean }) {
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-    document.body.classList.add("hub-modal-open");
-    return () => {
-      window.removeEventListener("keydown", onKey);
-      document.body.classList.remove("hub-modal-open");
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  return createPortal(
-    <div className="auth-gate-root" role="presentation">
-      <div className="auth-gate-backdrop" aria-hidden onClick={onClose} />
+export function UserAddModal({ open, onClose, onCreateSingle, onCreateMany }: Props) {
+  return (
+    <HubToolDetailModal
+      open={open}
+      onClose={onClose}
+      title="Add users"
+      titleId="user-add-modal-title"
+      headerIcon={UserPlus}
+      headerIconClassName="text-emerald-300"
+      ariaLabelledBy="user-add-modal-title"
+    >
       <UserAddForm
-        active
-        variant="modal"
+        active={open}
+        variant="embedded"
         onClose={onClose}
         onCreateSingle={onCreateSingle}
         onCreateMany={onCreateMany}
       />
-    </div>,
-    document.body,
+    </HubToolDetailModal>
   );
 }

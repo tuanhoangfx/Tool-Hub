@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User, Users } from "lucide-react";
+import { Gauge, LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User, Users } from "lucide-react";
 import { HubUserModal } from "../../features/identity/HubUserModal";
 import { useExtensionIdentityRelay } from "../../features/identity/useExtensionIdentityRelay";
 import { useHubReturnToRelay } from "../../features/identity/useHubReturnToRelay";
@@ -12,7 +12,7 @@ import type { AppScreen } from "../../lib/app-screen";
 import { prefetchAppScreen } from "../../lib/app-screen-prefetch";
 import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
-import { HubLogButton, HubUiZoomControl } from "@tool-workspace/hub-ui";
+import { HubLogButton, HubSidebarFooterButton, HubUiZoomControl } from "@tool-workspace/hub-ui";
 import { SystemTabSubNav } from "./SystemTabSubNav";
 
 type SidebarProps = {
@@ -29,52 +29,17 @@ type SidebarProps = {
 };
 
 const items: { screen: AppScreen; label: string; icon: typeof LayoutGrid }[] = [
+  { screen: "dashboard", label: "Dashboard", icon: Gauge },
   { screen: "library", label: "Hub", icon: LayoutGrid },
   { screen: "users", label: "Users", icon: Users },
   { screen: "system", label: "System", icon: Settings2 },
 ];
 
-const footerBtn =
-  "flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-60";
 const SYSTEM_SUBNAV_OPEN_KEY = "tool-hub:system-subnav-open";
 
 function readSystemSubnavOpen() {
   if (typeof window === "undefined") return true;
   return window.sessionStorage.getItem(SYSTEM_SUBNAV_OPEN_KEY) !== "0";
-}
-
-function SidebarFooterButton({
-  icon: Icon,
-  label,
-  iconClass,
-  onClick,
-  disabled,
-  loading,
-  title,
-  trailing,
-}: {
-  icon: typeof Upload;
-  label: string;
-  iconClass: string;
-  onClick?: () => void;
-  disabled?: boolean;
-  loading?: boolean;
-  title?: string;
-  trailing?: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      className={footerBtn}
-      onClick={onClick}
-      disabled={disabled}
-      title={title}
-    >
-      <Icon size={compactIconSize(15)} className={`shrink-0 ${iconClass} ${loading ? "anim-spin" : ""}`} />
-      <span className="flex-1 text-left">{label}</span>
-      {trailing}
-    </button>
-  );
 }
 
 export function SalesSidebar({
@@ -179,7 +144,7 @@ export function SalesSidebar({
       </nav>
 
       <footer className="mt-2 shrink-0 space-y-0.5 overflow-visible border-t border-white/5 pt-2.5">
-        <SidebarFooterButton
+        <HubSidebarFooterButton
           icon={User}
           iconClass="text-violet-400"
           label="User"
@@ -189,7 +154,7 @@ export function SalesSidebar({
             <span className="max-w-[108px] truncate text-xs font-medium text-[var(--text)]/80">{footerUserLabel}</span>
           }
         />
-        <SidebarFooterButton
+        <HubSidebarFooterButton
           icon={RefreshCcw}
           iconClass="text-indigo-300"
           label="Refresh"

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import {
+  HubToolDetailIdentityHeader,
   HubToolDetailModal,
   HUB_TOOL_DETAIL_SCROLL_ROOT,
 } from "@tool-workspace/hub-ui";
@@ -33,17 +34,22 @@ export function ToolDetailModal({ tool, onClose, onRefreshTool }: ToolDetailModa
     <HubToolDetailModal
       open
       onClose={onClose}
-      title={tool.name}
-      titleId={`tool-detail-${tool.id}`}
-      headerLeading={
-        <ToolAvatar
-          code={tool.code}
-          iconName={toolIconName(tool)}
-          svgSrc={toolSvgIcon(tool) ?? undefined}
-          size="sm"
+      header={
+        <HubToolDetailIdentityHeader
+          titleId={`tool-detail-${tool.id}`}
+          title={tool.name}
+          leading={
+            <ToolAvatar
+              code={tool.code}
+              iconName={toolIconName(tool)}
+              svgSrc={toolSvgIcon(tool) ?? undefined}
+              size="sm"
+            />
+          }
+          trailing={<ToolCodeBadge code={tool.code} category={tool.category} />}
         />
       }
-      headerTrailing={<ToolCodeBadge code={tool.code} category={tool.category} />}
+      ariaLabelledBy={`tool-detail-${tool.id}`}
       toc={
         <OverviewTocNav
           code={tool.code}

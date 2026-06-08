@@ -159,6 +159,70 @@
   transform: translateY(-1px);
 }
 
+.icon-link.link-configured {
+  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text, #e2e8f0);
+}
+
+.icon-link.link-gap {
+  opacity: 0.38;
+  border-style: dashed;
+  border-color: rgba(245, 158, 11, 0.35);
+  cursor: default;
+}
+
+.icon-link.link-gap:hover {
+  transform: none;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: var(--color-text-muted, #aaa);
+}
+
+/* Catalog link reachability — manual probe only (Hub "Check links") */
+.link-health-wrap {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.link-health-dot {
+  position: absolute;
+  right: -2px;
+  top: -2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  border: 1.5px solid var(--panel, #0f1117);
+  pointer-events: none;
+}
+
+.link-health-online .link-health-dot {
+  background: #34d399;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.55);
+}
+
+.link-health-offline .link-health-dot {
+  background: #f87171;
+  box-shadow: 0 0 4px rgba(248, 113, 113, 0.4);
+}
+
+.link-health-checking .link-health-dot {
+  background: #38bdf8;
+  animation: link-health-pulse 1s ease-in-out infinite;
+}
+
+@keyframes link-health-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
 /* Table view */
 .table-view {
   background: rgba(255, 255, 255, 0.02);

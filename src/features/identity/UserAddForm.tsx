@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { UserPlus, X } from "lucide-react";
 import { HubSingleFilterDropdown } from "../../components/sales-shell/FilterBar";
 import { hubRoleLabel } from "./hubUserDisplay";
 import type { UserManagementRow } from "./userManagementRepository";
@@ -16,7 +15,8 @@ const ROLE_OPTIONS: UserManagementRow["role"][] = ["admin", "manager", "user"];
 
 export type UserAddFormProps = {
   active: boolean;
-  variant: "modal";
+  /** Body-only — shell via HubToolDetailModal in UserAddModal. */
+  variant: "embedded";
   onClose: () => void;
   onCreateSingle: (draft: UserCreateDraft) => Promise<{ ok: boolean; error: string | null }>;
   onCreateMany: (drafts: UserCreateDraft[]) => Promise<{
@@ -114,27 +114,9 @@ export function UserAddForm({
     }
   };
 
-  const panel = (
-    <div
-      className="auth-gate-modal auth-gate-modal--wide"
-      role={variant === "modal" ? "dialog" : undefined}
-      aria-modal={variant === "modal" ? true : undefined}
-      aria-labelledby="user-add-title"
-    >
-      <button type="button" className="auth-gate-close" onClick={onClose} aria-label="Close">
-        <X size={16} />
-      </button>
-
-      <div className="auth-gate-brand">
-        <div className="auth-gate-icon" aria-hidden>
-          <UserPlus size={20} />
-        </div>
-      </div>
-
-      <h2 id="user-add-title" className="auth-gate-title">
-        Add users
-      </h2>
-      <p className="auth-gate-subtitle">
+  return (
+    <div className="space-y-3 px-1">
+      <p className="text-center text-xs text-[var(--muted)]">
         User ID + password, or email. Optional contact email. Admin only (service role on dev server).
       </p>
 
@@ -256,6 +238,4 @@ export function UserAddForm({
       </div>
     </div>
   );
-
-  return panel;
 }

@@ -1,6 +1,7 @@
 import { AlertTriangle, CheckCircle2, Link2, Rocket } from "lucide-react";
 import type { TabHeaderStatItem } from "../../components/sales-shell/AppTabHeader";
 import { HUB_HEADER_STAT_DEFS, type HubHeaderStatKey } from "./hub-prefs";
+
 export type HubHeaderKpi = {
   ready: number;
   drift: number;
@@ -19,15 +20,14 @@ const STAT_DEFS: Record<
 };
 
 export function buildHubHeaderStats(visibleKeys: Set<string>, kpi: HubHeaderKpi): TabHeaderStatItem[] {
-  return HUB_HEADER_STAT_DEFS.filter((h) => visibleKeys.has(h.key))
-    .map((h) => {
-      const def = STAT_DEFS[h.key as HubHeaderStatKey];
-      return {
-        key: h.key,
-        icon: def.icon,
-        label: def.label,
-        value: def.pick(kpi),
-        toneClass: def.toneClass,
-      };
-    });
+  return HUB_HEADER_STAT_DEFS.filter((h) => visibleKeys.has(h.key)).map((h) => {
+    const def = STAT_DEFS[h.key as HubHeaderStatKey];
+    return {
+      key: h.key,
+      icon: def.icon,
+      label: def.label,
+      value: def.pick(kpi),
+      toneClass: def.toneClass,
+    };
+  });
 }

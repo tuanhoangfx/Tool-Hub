@@ -62,6 +62,12 @@ import type { LinkGroup } from "../features/overview/tool-link-filters";
 import type { Mode } from "./hub-schema-spec";
 import { deployLabel } from "./tooling";
 import type { MetricBadgeTone } from "../components/sales-shell/MetricBadge";
+import {
+  HUB_APP_TAB_GROUP_META,
+  HUB_UI_TEMPLATE_META,
+  resolveHubAppTabGroupBadge,
+  resolveHubUiTemplateBadge,
+} from "@tool-workspace/hub-ui";
 
 export type FilterIconMeta = {
   icon: ElementType<{ size?: number; className?: string }>;
@@ -176,6 +182,7 @@ const FILTER_ALL: Record<string, FilterIconMeta> = {
   tool: { icon: Package, className: "text-indigo-300" },
   entity: { icon: Database, className: "text-indigo-300" },
   group: { icon: Layers, className: "text-indigo-300" },
+  template: { icon: LayoutTemplate, className: "text-violet-300" },
   kind: { icon: Link2, className: "text-cyan-300" },
   agentKind: { icon: Shield, className: "text-emerald-300" },
   agentScope: { icon: FolderOpen, className: "text-cyan-300" },
@@ -399,7 +406,12 @@ export function resolveFilterOptionIcon(filterKey: string, option: FilterOption)
     case "plan":
       return { icon: CreditCard, className: "text-amber-300" };
     case "group":
+      if (option.value === "hub" || option.value === "users" || option.value === "system") {
+        return resolveHubAppTabGroupBadge(option.value).iconMeta;
+      }
       return resolveLinkGroupBadge(option.value as LinkGroup).iconMeta;
+    case "template":
+      return resolveHubUiTemplateBadge(option.value).iconMeta;
     case "kind":
       return resolveLinkKindBadge(option.value).iconMeta;
     case "grant":
@@ -482,6 +494,17 @@ export function resolveChartLegendIcon(label: string): FilterIconMeta | null {
 
   for (const mode of Object.keys(SCHEMA_MODE) as Mode[]) {
     if (MODE_LABEL_SHORT[mode] === key || mode === key) return SCHEMA_MODE[mode];
+  }
+
+  for (const meta of Object.values(HUB_UI_TEMPLATE_META)) {
+    if (meta.label === key || meta.id === key) {
+      return { icon: meta.icon, className: meta.iconClassName };
+    }
+  }
+  for (const meta of Object.values(HUB_APP_TAB_GROUP_META)) {
+    if (meta.label === key || meta.id === key) {
+      return { icon: meta.icon, className: meta.iconClassName };
+    }
   }
 
   return (

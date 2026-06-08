@@ -425,7 +425,8 @@
       "@tool-workspace/hub-ui"
     ],
     "localUrl": "http://127.0.0.1:5186",
-    "deployTarget": "vercel",
+    "appUrl": "https://chathub.infi.io.vn",
+    "deployTarget": "vps",
     "usage": [
       "Dev: node ../scripts/ensure-dev-product.cjs P0016",
       "Build: corepack pnpm build"

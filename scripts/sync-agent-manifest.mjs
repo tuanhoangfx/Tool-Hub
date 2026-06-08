@@ -4,6 +4,17 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  loadShipKeywords,
+  gateCmdForKeyword,
+  formatCheatSheetTable,
+  generateAgentKeywordGuide,
+  allKeywordRows,
+  pickScreensForPattern,
+  enrichScreensFromCatalog,
+  buildKeywordContentFields,
+  buildGuideSections,
+} from "../../scripts/lib/ship-keywords-lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const hubRoot = path.resolve(__dirname, "..");
@@ -72,6 +83,20 @@ function hubUiTags(extra = []) {
   return ["hub-ui", ...extra];
 }
 
+const INFRA_SKILL_NAMES = new Set(["ship-until-done", "p00xx-ship-keywords", "p00xx-supabase-ops"]);
+
+const ONBOARDING_SKILL_NAMES = new Set([
+  "ship-until-done",
+  "p00xx-ship-keywords",
+  "p00xx-clone-hub-shell",
+  "p00xx-tool-onboard",
+  "p00xx-supabase-ops",
+]);
+
+function infraTags(extra = []) {
+  return ["infrastructure", ...extra];
+}
+
 function hubGoldenLabel(golden) {
   if (!golden || typeof golden !== "object") return "—";
   return golden.ref || golden.label || "—";
@@ -128,6 +153,8 @@ function scanSkills(items, skillsDir, scope) {
     const isHubUi =
       String(fm.description || "").toLowerCase().includes("hub ui") ||
       String(fm.description || "").toLowerCase().includes("p0004 hub");
+    const isInfra = INFRA_SKILL_NAMES.has(folder);
+    const isOnboarding = ONBOARDING_SKILL_NAMES.has(folder);
     addItem(items, {
       id: slugId(rel),
       kind: "skill",
@@ -139,7 +166,13 @@ function scanSkills(items, skillsDir, scope) {
       bodyPreview: body.slice(0, 1200),
       lines: body.split(/\r?\n/).length,
       updatedAt: fs.statSync(file).mtime.toISOString(),
-      tags: isHubUi ? hubUiTags(["skill", "cursor"]) : ["skill", "cursor", scope],
+      tags: isOnboarding
+        ? infraTags(["skill", "cursor", "onboarding", isInfra ? "ship" : "hub-ui"])
+        : isInfra
+          ? infraTags(["skill", "cursor", "ship"])
+          : isHubUi
+            ? hubUiTags(["skill", "cursor"])
+            : ["skill", "cursor", scope],
     });
   }
 }
@@ -253,8 +286,57 @@ function scanShipScript(items) {
     bodyPreview: raw.slice(0, 1200),
     lines: raw.split(/\r?\n/).length,
     updatedAt: fs.statSync(file).mtime.toISOString(),
-    tags: ["ship", "workspace", "script"],
+    tags: infraTags(["ship", "workspace", "script"]),
   });
+}
+
+function scanInfraScripts(items) {
+  const scripts = [
+    {
+      file: "agent-verify-gate.mjs",
+      summary: "Ship verify gate — machine-readable acceptance checklist (ship-until-done)",
+    },
+    {
+      file: "hub-ui-browser-smoke.mjs",
+      summary: "Browser MCP smoke contract per product (ship-until-done ladder)",
+    },
+  ];
+  for (const row of scripts) {
+    const file = path.join(toolRoot, "scripts", row.file);
+    if (!fs.existsSync(file)) continue;
+    const raw = fs.readFileSync(file, "utf8");
+    addItem(items, {
+      id: slugId(relWorkspace(file)),
+      kind: "command",
+      name: row.file,
+      path: relWorkspace(file),
+      scope: "workspace",
+      agentRequestable: true,
+      summary: row.summary,
+      bodyPreview: raw.slice(0, 1200),
+      lines: raw.split(/\r?\n/).length,
+      updatedAt: fs.statSync(file).mtime.toISOString(),
+      tags: infraTags(["script", "ship", "gate"]),
+    });
+  }
+
+  const ssotPath = path.join(toolRoot, "scripts", "lib", "ship-keywords.json");
+  if (fs.existsSync(ssotPath)) {
+    const raw = fs.readFileSync(ssotPath, "utf8");
+    addItem(items, {
+      id: "ship-keywords-ssot",
+      kind: "doc",
+      name: "ship-keywords.json (SSOT)",
+      path: relWorkspace(ssotPath),
+      scope: "workspace",
+      agentRequestable: true,
+      summary: "Single source for Ship/Loop/Deploy keywords - rule table + Agent manifest",
+      bodyPreview: raw.slice(0, 1200),
+      lines: raw.split(/\r?\n/).length,
+      updatedAt: fs.statSync(ssotPath).mtime.toISOString(),
+      tags: infraTags(["keyword", "ship", "ssot"]),
+    });
+  }
 }
 
 function scanHubScripts(items) {
@@ -324,28 +406,6 @@ function scanHubUiPackage(_items) {
   /* hub-ui README omitted — UI_PATTERNS.md covers package entry */
 }
 
-function formatCatalogBodyPreview(entry, extra = {}) {
-  const lines = [
-    `# ${entry.name}`,
-    "",
-    `Golden: ${entry.golden}`,
-    ...(entry.goldenScreenPath ? [`Golden screen: ${entry.goldenScreenPath}`] : []),
-    ...(extra.category ? [`Category: ${extra.category}`] : []),
-    ...(entry.product ? [`Product: ${entry.product}`] : []),
-    ...(entry.screenTemplate ? [`Screen template: ${entry.screenTemplate}`] : []),
-    ...(entry.skin ? [`Skin: ${entry.skin}`] : []),
-    ...(entry.component ? [`Component: ${entry.component}`] : []),
-    `Status: ${entry.status}`,
-    "",
-    entry.summary,
-    "",
-    entry.features?.length ? `Features: ${entry.features.join(", ")}` : "",
-    entry.verify ? `Verify: ${entry.verify}` : "",
-    entry.sourcePath ? `Source: ${entry.sourcePath}` : "",
-  ].filter(Boolean);
-  return lines.join("\n");
-}
-
 function formatUnifiedPatternBody(row) {
   const g = row.golden ?? {};
   const cloneLines = (row.clones ?? []).map((c) => {
@@ -377,6 +437,78 @@ function formatUnifiedPatternBody(row) {
     ...cloneLines,
   ].filter(Boolean);
   return lines.join("\n");
+}
+
+function buildPatternContentFields(row) {
+  const g = row.golden ?? {};
+  const fields = [
+    { label: "Pattern ID", value: row.id, variant: "code" },
+    { label: "Layer", value: row.layer ?? "screen", variant: "text" },
+    { label: "Golden", value: g.ref ?? "—", variant: "code" },
+    { label: "Golden screen", value: g.screenPath ?? "—", variant: "code" },
+  ];
+  if (g.tablePath) fields.push({ label: "Golden table", value: g.tablePath, variant: "code" });
+  if (row.screenTemplate) fields.push({ label: "Screen template", value: row.screenTemplate, variant: "code" });
+  if (row.parentPattern) fields.push({ label: "Parent pattern", value: row.parentPattern, variant: "code" });
+  if (row.summary) fields.push({ label: "Summary", value: String(row.summary), variant: "text" });
+  if (row.verify) fields.push({ label: "Verify", value: String(row.verify), variant: "text" });
+  if ((row.panels ?? []).length) {
+    fields.push({
+      label: "Panels",
+      value: row.panels.map((p) => `${p.id}${p.skin ? ` (${p.skin})` : ""}`).join(", "),
+      variant: "text",
+    });
+  }
+  const clones = row.clones ?? [];
+  if (clones.length) {
+    fields.push({
+      label: "Clones",
+      value: clones
+        .map((c) => `${c.product}/${c.screen}${c.status ? ` [${c.status}]` : ""}${c.notes ? ` — ${c.notes}` : ""}`)
+        .join("\n"),
+      variant: "multiline",
+    });
+  }
+  return fields;
+}
+
+function buildInfraShipStackContentFields(links) {
+  return [
+    {
+      label: "Flow",
+      value:
+        "Prompt keyword (SSOT) → skill → agent-verify-gate.mjs → static parity + dev stack → browser MCP smoke → stop hooks",
+      variant: "text",
+    },
+    { label: "Keywords SSOT", value: "Tool/scripts/lib/ship-keywords.json", variant: "code" },
+    { label: "Human guide", value: "Tool/docs/playbooks/agent-keyword-guide.md", variant: "code" },
+    { label: "Verify loop skill", value: "ship-until-done", variant: "code" },
+    { label: "Hub clone skill", value: "p00xx-clone-hub-shell", variant: "code" },
+    { label: "Git/Deploy skill", value: "p00xx-ship-keywords", variant: "code" },
+    { label: "Supabase skill", value: "p00xx-supabase-ops", variant: "code" },
+    {
+      label: "Gate command",
+      value: "node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev",
+      variant: "code",
+      copy: true,
+    },
+    {
+      label: "Browser smoke",
+      value: "node Tool/scripts/hub-ui-browser-smoke.mjs",
+      variant: "code",
+      copy: true,
+    },
+    {
+      label: "Linked paths",
+      value: links.map((l) => `${l.label}: ${l.path}`).join("\n"),
+      variant: "multiline",
+    },
+    {
+      label: "Priority",
+      value: "Dùng keyword prompt (Agent keyword guide) — không gắn skill thủ công.",
+      variant: "text",
+    },
+  ];
 }
 
 function patternPathMeta(row, catalogPath, catalogMtime) {
@@ -418,6 +550,7 @@ function scanHubPatterns(items) {
       clone: hubCloneLabel(clones),
       cloneTooltip: hubCloneTooltip(clones),
       bodyPreview: body.slice(0, 1200),
+      contentFields: buildPatternContentFields(row),
       lines: body.split(/\r?\n/).length,
       updatedAt,
       tags: hubUiTags(["pattern", row.layer, row.id, row.status ?? "ready"]),
@@ -448,6 +581,7 @@ function scanHubPatterns(items) {
       golden: row.golden ?? "—",
       clone: hubCloneLabel([], { exception: row.status ?? "exception" }),
       bodyPreview: body.slice(0, 1200),
+      contentFields: buildPatternContentFields(row),
       lines: body.split(/\r?\n/).length,
       updatedAt,
       tags: hubUiTags(["pattern", "exception", row.parentPattern ?? "directory"]),
@@ -477,6 +611,331 @@ function scanHubPatterns(items) {
       lines: raw.split(/\r?\n/).length,
       updatedAt: fs.statSync(uiPatternsMd).mtime.toISOString(),
       tags: hubUiTags(["pattern", "catalog"]),
+    });
+  }
+}
+
+function scanCursorHooksProfile(items) {
+  const cursorDir = path.join(cursorRoot, ".cursor");
+  const activePath = path.join(cursorDir, "hooks.json");
+  const offFlag = path.join(cursorDir, "hooks", "telegram-hooks.off");
+
+  function profileStats(filePath) {
+    if (!fs.existsSync(filePath)) return null;
+    try {
+      const j = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      const hooks = j.hooks || {};
+      const events = Object.keys(hooks);
+      const commandCount = events.reduce((n, key) => n + (hooks[key]?.length ?? 0), 0);
+      return {
+        profile: j.profile || path.basename(filePath, ".json"),
+        notes: j.notes || "",
+        events: events.length,
+        commandCount,
+        hasSessionStart: events.includes("sessionStart") && (hooks.sessionStart?.length ?? 0) > 0,
+        eventNames: events,
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  const lite = profileStats(path.join(cursorDir, "hooks-lite.json"));
+  const full = profileStats(path.join(cursorDir, "hooks-full.json"));
+  const active = profileStats(activePath);
+  const telegramOff = fs.existsSync(offFlag);
+  const telegramEnv = process.env.CURSOR_TELEGRAM_HOOKS === "1";
+  const telegramStatus = telegramOff ? "OFF (telegram-hooks.off)" : telegramEnv ? "ON (CURSOR_TELEGRAM_HOOKS=1)" : "OFF (default)";
+
+  const row = (label, p) =>
+    p
+      ? `| **${label}** | ${p.events} | ${p.commandCount} | ${p.hasSessionStart ? "yes" : "no"} | ${p.eventNames.join(", ")} |`
+      : `| **${label}** | — | — | — | — |`;
+
+  const bodyPreview = `# Cursor hooks profile
+
+**Active file:** \`.cursor/hooks.json\` → profile **${active?.profile ?? "unknown"}**
+**Telegram wrapper:** ${telegramStatus}
+
+| Profile | Events | Commands | sessionStart | Events list |
+|---------|--------|----------|--------------|-------------|
+${row("lite (default)", lite)}
+${row("full (+ Telegram)", full)}
+${row("active", active)}
+
+## Switch profile
+
+\`\`\`powershell
+powershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Lite
+powershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Full   # + CURSOR_TELEGRAM_HOOKS=1
+\`\`\`
+
+Lite: audit (afterAgentResponse) + stop ship gates only — **no sessionStart** (faster new chat).
+Full: sessionStart + Telegram on every prompt/response (heavier).
+
+Reload Cursor after switching.`;
+
+  addItem(items, {
+    id: "cursor-hooks-profile",
+    kind: "doc",
+    name: "Cursor hooks profile (lite / full)",
+    path: relWorkspace(activePath),
+    scope: "workspace",
+    agentRequestable: true,
+    summary: `Active: ${active?.profile ?? "?"} · Telegram ${telegramStatus} · lite=${lite?.commandCount ?? "?"} cmds, no sessionStart`,
+    bodyPreview,
+    lines: bodyPreview.split("\n").length,
+    updatedAt: fs.existsSync(activePath) ? fs.statSync(activePath).mtime.toISOString() : new Date().toISOString(),
+    tags: infraTags(["cursor", "hooks", "workspace"]),
+  });
+}
+
+function scanCursorStopHooks(items) {
+  const cursorDir = path.join(cursorRoot, ".cursor");
+  const hooksPath = path.join(cursorDir, "hooks.json");
+  const hookScripts = {
+    "verify-working-rules-on-stop.ps1": {
+      role: "Format gate",
+      checks: "Version line + 3 numbered proposals (dev-workspace §1)",
+      loopLimit: 2,
+      dynamicLimit: false,
+    },
+    "verify-ship-gate-on-stop.ps1": {
+      role: "Ship verify gate",
+      checks: "Verified at + Result block; runs agent-verify-gate.mjs --json gate diff",
+      loopLimit: 2,
+      dynamicLimit: true,
+      loopModeLimit: 12,
+    },
+    "verify-version-bump-on-stop.ps1": {
+      role: "Version / CHANGELOG",
+      checks: "Product code changed without version files or CHANGELOG block",
+      loopLimit: 2,
+      dynamicLimit: false,
+    },
+  };
+
+  let stopHooks = [];
+  if (fs.existsSync(hooksPath)) {
+    try {
+      const hooks = JSON.parse(fs.readFileSync(hooksPath, "utf8"));
+      stopHooks = hooks.hooks?.stop ?? [];
+    } catch {
+      stopHooks = [];
+    }
+  }
+
+  const rows = stopHooks.map((h, i) => {
+    const script = path.basename(String(h.command ?? "").replace(/.*\\/, ""));
+    const meta = hookScripts[script] ?? { role: "—", checks: "—", loopLimit: h.loop_limit ?? "—" };
+    const limit =
+      meta.dynamicLimit && meta.loopModeLimit
+        ? `${meta.loopLimit} (loop intent: ${meta.loopModeLimit})`
+        : String(meta.loopLimit ?? h.loop_limit ?? "—");
+    return `| ${i + 1} | \`${script}\` | ${meta.role} | ${limit} | ${meta.checks} |`;
+  });
+
+  const bodyPreview = `# Cursor stop hooks (ship enforcement)
+
+**Event:** \`stop\` — runs when agent tries to end turn (profile: active \`.cursor/hooks.json\`)
+
+| # | Script | Role | loop_limit | Checks |
+|---|--------|------|------------|--------|
+${rows.join("\n")}
+
+## Ship gate diff (verify-ship-gate-on-stop)
+
+When \`working-rules-audit.json\` reports missing ship verify block:
+
+1. Reads \`ship-gate-active.json\` for code + intent (loop → 12 nudges)
+2. Runs \`agent-verify-gate.mjs --json --ensure-dev\`
+3. Injects **Gate diff** — pending acceptance items into \`followup_message\`
+
+## Related
+
+- \`audit-agent-response.ps1\` (afterAgentResponse) — writes audit state
+- SSOT keywords: \`Tool/scripts/lib/ship-keywords.json\`
+- Sync rule table: \`node Tool/scripts/sync-ship-keywords.mjs\``;
+
+  addItem(items, {
+    id: "cursor-stop-hooks",
+    kind: "doc",
+    name: "Cursor stop hooks (ship enforcement)",
+    path: relWorkspace(hooksPath),
+    scope: "workspace",
+    agentRequestable: true,
+    summary: `3 stop hooks · ship gate diff · loop_limit 2 (loop intent: 12)`,
+    bodyPreview,
+    lines: bodyPreview.split("\n").length,
+    updatedAt: fs.existsSync(hooksPath) ? fs.statSync(hooksPath).mtime.toISOString() : new Date().toISOString(),
+    tags: infraTags(["cursor", "hooks", "ship", "workspace"]),
+  });
+}
+
+function scanInfraShipStackBundle(items) {
+  const guidePath = path.join(toolRoot, "docs", "playbooks", "agent-keyword-guide.md");
+  const ssotPath = path.join(toolRoot, "scripts", "lib", "ship-keywords.json");
+  const hubUiReadme = path.join(devRoot, "packages", "hub-ui", "README.md");
+
+  const links = [
+    { label: "Keywords SSOT", path: relWorkspace(ssotPath) },
+    { label: "Agent keyword guide (human)", path: relWorkspace(guidePath) },
+    { label: "ship-until-done skill", path: relWorkspace(path.join(cursorRoot, ".cursor", "skills", "ship-until-done", "SKILL.md")) },
+    { label: "p00xx-clone-hub-shell skill", path: relWorkspace(path.join(cursorRoot, ".cursor", "skills", "p00xx-clone-hub-shell", "SKILL.md")) },
+    { label: "p00xx-ship-keywords skill", path: relWorkspace(path.join(cursorRoot, ".cursor", "skills", "p00xx-ship-keywords", "SKILL.md")) },
+    { label: "p00xx-supabase-ops skill", path: relWorkspace(path.join(cursorRoot, ".cursor", "skills", "p00xx-supabase-ops", "SKILL.md")) },
+    { label: "p00xx-tool-onboard skill", path: relWorkspace(path.join(cursorRoot, ".cursor", "skills", "p00xx-tool-onboard", "SKILL.md")) },
+    { label: "agent-verify-gate.mjs", path: relWorkspace(path.join(toolRoot, "scripts", "agent-verify-gate.mjs")) },
+    { label: "hub-ui-browser-smoke.mjs", path: relWorkspace(path.join(toolRoot, "scripts", "hub-ui-browser-smoke.mjs")) },
+    { label: "cursor-stop-hooks doc", path: "manifest:cursor-stop-hooks" },
+    { label: "cursor-hooks-profile doc", path: "manifest:cursor-hooks-profile" },
+    { label: "hub-ui package", path: fs.existsSync(hubUiReadme) ? relWorkspace(hubUiReadme) : "packages/hub-ui/README.md" },
+    { label: "ui-patterns.catalog.json", path: relWorkspace(path.join(toolRoot, "schemas", "ui-patterns.catalog.json")) },
+  ];
+
+  const bodyPreview = `# Infra ship stack (onboarding bundle)
+
+**Start here** for Ship/Loop/Fix/Smoke/Hub UI clone / **Migrate** tasks.
+
+## Flow
+
+\`\`\`
+Prompt keyword (SSOT)
+  → skill (ship-until-done | clone-hub-shell | ship-keywords)
+  → agent-verify-gate.mjs --json --mark-active
+  → static parity + dev stack + browser MCP smoke
+  → stop hooks enforce Verified at + Result
+\`\`\`
+
+## Stack map
+
+| Layer | Artifact |
+|-------|----------|
+| Keywords | \`Tool/scripts/lib/ship-keywords.json\` |
+| Human guide | \`Tool/docs/playbooks/agent-keyword-guide.md\` |
+| Verify loop | \`.cursor/skills/ship-until-done/SKILL.md\` |
+| Hub clone | \`.cursor/skills/p00xx-clone-hub-shell/SKILL.md\` |
+| Git/Deploy | \`.cursor/skills/p00xx-ship-keywords/SKILL.md\` + \`ship-product.ps1\` |
+| Supabase | \`.cursor/skills/p00xx-supabase-ops/SKILL.md\` · keyword \`Migrate P00xx\` |
+| Gate JSON | \`Tool/scripts/agent-verify-gate.mjs\` |
+| Browser contract | \`Tool/scripts/hub-ui-browser-smoke.mjs\` |
+| Enforcement | \`cursor-stop-hooks\` + \`cursor-hooks-profile\` (Agent tab) |
+| UI patterns | \`Tool/schemas/ui-patterns.catalog.json\` + Kind=Pattern |
+| Shared UI | \`packages/hub-ui\` (\`@tool-workspace/hub-ui\`) |
+
+## Linked paths
+
+${links.map((l) => `- **${l.label}:** \`${l.path}\``).join("\n")}
+
+## Priority
+
+Use **keyword prompts** (see **Agent keyword guide**) — not manual skill attach.`;
+
+  addItem(items, {
+    id: "infra-ship-stack",
+    kind: "doc",
+    name: "Infra ship stack (start here)",
+    path: relWorkspace(ssotPath),
+    scope: "workspace",
+    agentRequestable: true,
+    summary: "Onboarding bundle: SSOT keywords → skills → gate → smoke → hooks → hub-ui",
+    bodyPreview,
+    contentFields: buildInfraShipStackContentFields(links),
+    lines: bodyPreview.split("\n").length,
+    updatedAt: fs.existsSync(ssotPath) ? fs.statSync(ssotPath).mtime.toISOString() : new Date().toISOString(),
+    tags: infraTags(["ship", "onboarding", "workspace"]),
+  });
+}
+
+function loadKeywordCatalog() {
+  const catalogPath = path.join(toolRoot, "schemas", "ui-patterns.catalog.json");
+  return enrichScreensFromCatalog(loadShipKeywords(), catalogPath);
+}
+
+function addAgentKeywordGuide(items) {
+  const catalog = loadKeywordCatalog();
+  const guidePath = path.join(toolRoot, "docs", "playbooks", "agent-keyword-guide.md");
+  const guideMd = generateAgentKeywordGuide(catalog);
+  fs.mkdirSync(path.dirname(guidePath), { recursive: true });
+  fs.writeFileSync(guidePath, guideMd, "utf8");
+
+  const totalKw = (catalog.keywords?.length ?? 0) + (catalog.patternKeywords?.length ?? 0);
+  const guideSections = buildGuideSections(catalog);
+  addItem(items, {
+    id: "agent-keyword-guide",
+    kind: "doc",
+    name: "Agent keyword guide (ưu tiên prompt)",
+    path: relWorkspace(guidePath),
+    scope: "workspace",
+    agentRequestable: true,
+    summary: `${totalKw} keywords · verify · git · pattern · migrate · screensByProduct · tiếng Việt`,
+    bodyPreview: guideMd.slice(0, 6000),
+    lines: guideMd.split("\n").length,
+    updatedAt: fs.statSync(guidePath).mtime.toISOString(),
+    tags: infraTags(["keyword", "ship", "guide", "onboarding"]),
+    guideSections,
+  });
+}
+
+function addShipKeywordCheatSheet(items) {
+  const now = new Date().toISOString();
+  const rulePath = relWorkspace(path.join(cursorRoot, ".cursor", "rules", "dev-workspace-compact.mdc"));
+  const catalog = loadKeywordCatalog();
+  const rows = allKeywordRows(catalog);
+  const table = formatCheatSheetTable(catalog);
+  const gateBase = catalog.gate.base;
+
+  addItem(items, {
+    id: "keyword-ship-cheatsheet",
+    kind: "doc",
+    name: "Ship keywords cheat sheet (quick table)",
+    path: rulePath,
+    scope: "workspace",
+    agentRequestable: true,
+    summary: "Bảng nhanh — chi tiết xem Agent keyword guide",
+    bodyPreview: `# Ship keywords (quick)\n\n**Chi tiết:** mở doc **Agent keyword guide** cùng tab Agent.\n\n| Keyword | Skill | Example |\n|---------|-------|--------|\n${table}\n\nGate:\n\`${gateBase}\``,
+    lines: rows.length + 8,
+    updatedAt: now,
+    tags: infraTags(["cursor", "keyword", "ship", "onboarding"]),
+  });
+
+  for (const row of rows) {
+    const gateCmd = gateCmdForKeyword(row, catalog);
+    const isPattern = Boolean(row.patternId);
+    const isMigrate = row.group === "supabase";
+    const tags = infraTags([
+      "cursor",
+      "keyword",
+      isPattern ? "pattern" : "ship",
+      isMigrate ? "supabase" : row.tier,
+    ]);
+    let screenBlock = "";
+    if (isPattern && row.patternId) {
+      const hints = ["P0004", "P0016", "P0020", "P0008", "P0021"]
+        .map((code) => {
+          const tabs = pickScreensForPattern(catalog, row.patternId, code);
+          return tabs.length ? `${code}: ${tabs.join(", ")}` : null;
+        })
+        .filter(Boolean)
+        .join("\n");
+      if (hints) screenBlock = `\n\n**screensByProduct (gợi ý tab):**\n${hints}`;
+    }
+    addItem(items, {
+      id: row.id,
+      kind: "command",
+      name: row.name,
+      path: rulePath,
+      scope: "workspace",
+      commandId: row.id.replace(/^keyword-/, ""),
+      agentRequestable: true,
+      trigger: row.skill,
+      summary: row.summary,
+      bodyPreview: `# ${row.name}\n\n${row.guideVi ? row.guideVi + "\n\n" : ""}**Example:** \`${row.example}\`\n\n**Skill:** ${row.skill}\n\n**Tier:** ${row.tier}${row.patternId ? `\n\n**Pattern:** \`${row.patternId}\` · golden \`${row.goldenRef ?? "—"}\`` : ""}\n\n**Command:**\n\`\`\`bash\n${gateCmd}\n\`\`\`${screenBlock}${row.commonScreens ? `\n\n**Tabs (legacy):** ${row.commonScreens}` : ""}`,
+      contentFields: buildKeywordContentFields(row, catalog),
+      keywordGroup: row.group ?? undefined,
+      lines: 20,
+      updatedAt: now,
+      tags,
     });
   }
 }
@@ -515,11 +974,17 @@ function main() {
   scanCursorAgents(items);
   scanPlaybooks(items);
   scanShipScript(items);
+  scanInfraScripts(items);
   scanHubScripts(items);
   scanHubKeyboardDoc(items);
   scanAgentsCatalog(items);
   scanHubUiPackage(items);
   scanHubPatterns(items);
+  scanCursorHooksProfile(items);
+  scanCursorStopHooks(items);
+  scanInfraShipStackBundle(items);
+  addAgentKeywordGuide(items);
+  addShipKeywordCheatSheet(items);
   scanHubContracts(items);
 
   const manifest = {

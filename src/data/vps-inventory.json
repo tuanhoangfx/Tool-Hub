@@ -67,7 +67,7 @@
       "note": "Server admin panel — optional if you use SSH only."
     }
   ],
-  "nginxSites": ["9router", "chathub", "infix1-legacy-redirect", "zaloai-admin"],
+  "nginxSites": ["9router", "chathub", "infix1-legacy-redirect"],
   "firewallPorts": [22, 80, 443],
   "localScripts": [
     {

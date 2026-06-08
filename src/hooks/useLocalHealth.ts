@@ -53,7 +53,13 @@ export function useLocalHealth(urls: string[], pollIntervalMs: number | null) {
         return next;
       });
     }
+    const t0 = performance.now();
     const results = await pingAll(targets);
+    if (import.meta.env.DEV) {
+      const ms = Math.round(performance.now() - t0);
+      const online = Object.values(results).filter((s) => s === "online").length;
+      console.debug(`[local-health] ${targets.length} urls · ${ms}ms · ${online} online`);
+    }
     setState((s) => ({ ...s, ...results }));
   }, [urls]);
 

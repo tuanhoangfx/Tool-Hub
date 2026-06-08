@@ -1,15 +1,13 @@
-import { ArrowDown, ArrowUp, ArrowUpDown, Mail, Package } from "lucide-react";
-import { HubTableColumnHeader, type HubTableColumnRole } from "@tool-workspace/hub-ui";
+import { Mail, Package } from "lucide-react";
+import { HubDirectoryTableShell, type HubSortDir, type HubTableColumnRole } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
-import { HubCopyBadge } from "./HubCopyBadge";
+import { HubCopyBadge } from "@tool-workspace/hub-ui";
 import { HubRoleBadge } from "./HubRoleBadge";
 import { HubUserAvatar } from "./HubUserAvatar";
 import type { UserTableColumnKey } from "./user-table-prefs";
 import type { UserManagementRow } from "./userManagementRepository";
 
 export type UserTableSortKey = UserTableColumnKey | "status";
-
-type SortDir = "asc" | "desc";
 
 type ColumnDef = {
   key: UserTableSortKey;
@@ -40,11 +38,6 @@ function fmtDate(value: string | null): string {
     hour: "2-digit",
     minute: "2-digit",
   }).format(date);
-}
-
-function SortIndicator({ active, dir }: { active: boolean; dir: SortDir }) {
-  const Icon = !active ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
-  return <Icon size={13} className={`hub-users-sort${active ? " is-active" : ""}`} aria-hidden />;
 }
 
 function RoleCell({ user }: { user: UserManagementRow }) {
@@ -125,9 +118,7 @@ function renderBodyCell(key: UserTableSortKey, user: UserManagementRow) {
           >
             <Mail size={12} className="hub-users-th-icon hub-users-th-icon--email shrink-0" aria-hidden />
             <span className="line-clamp-1">
-              {user.loginId ? (
-                <span className="text-indigo-200/90">@{user.loginId}</span>
-              ) : null}
+              {user.loginId ? <span className="text-indigo-200/90">@{user.loginId}</span> : null}
               {user.loginId && user.email ? " · " : null}
               {user.email || (!user.loginId ? "—" : "")}
             </span>
@@ -187,7 +178,7 @@ export function UserDirectoryTable({
 }: {
   users: UserManagementRow[];
   sortKey: UserTableSortKey;
-  sortDir: SortDir;
+  sortDir: HubSortDir;
   onSort: (key: UserTableSortKey) => void;
   selectedIds: Set<string>;
   onToggleSelect: (userId: string) => void;
@@ -200,66 +191,26 @@ export function UserDirectoryTable({
   const visibleDefs = COLUMNS.filter((col) => visibleColumns.has(col.key as UserTableColumnKey));
 
   return (
-    <div className="hub-users-table-wrap overflow-hidden rounded-2xl border border-white/5">
-      <table className="hub-users-table">
-        <thead>
-          <tr>
-            <th className="hub-users-col--select" scope="col">
-              <label className="hub-users-select-all">
-                <input
-                  type="checkbox"
-                  className="hub-checkbox"
-                  checked={users.length > 0 && allVisibleSelected}
-                  onChange={onToggleSelectAll}
-                  aria-label="Select all visible users"
-                />
-              </label>
-            </th>
-            {visibleDefs.map((col) => (
-              <th key={col.key} className={col.colClass} scope="col">
-                <button
-                  type="button"
-                  className="hub-users-th-btn"
-                  onClick={() => onSort(col.key)}
-                  aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
-                >
-                  <span className="hub-users-th-label">
-                    <HubTableColumnHeader label={col.label} role={col.role} />
-                    <SortIndicator active={sortKey === col.key} dir={sortDir} />
-                  </span>
-                </button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => {
-            const selected = selectedIds.has(user.id);
-            const isDetail = detailUserId === user.id;
-            return (
-              <tr
-                key={user.id}
-                className={`hub-users-row${selected ? " is-selected" : ""}${isDetail ? " is-detail" : ""}`}
-                onClick={() => onOpenUser(user)}
-              >
-                <td className="hub-users-col--select" onClick={(e) => e.stopPropagation()}>
-                  <label className="hub-users-select-row">
-                    <input
-                      type="checkbox"
-                      className="hub-checkbox"
-                      checked={selected}
-                      onChange={() => onToggleSelect(user.id)}
-                      aria-label={`Select ${user.fullName}`}
-                    />
-                  </label>
-                </td>
-                {visibleDefs.map((col) => renderBodyCell(col.key as UserTableColumnKey, user))}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      {users.length === 0 ? <div className="hub-users-empty">No users match the current filters.</div> : null}
-    </div>
+    <HubDirectoryTableShell
+      items={users}
+      ariaLabel="Users table pages"
+      wrapClassName="overflow-hidden"
+      columns={visibleDefs}
+      sortKey={sortKey}
+      sortDir={sortDir}
+      onSort={onSort}
+      getRowKey={(user) => user.id}
+      onRowClick={onOpenUser}
+      selectedIds={selectedIds}
+      onToggleSelect={onToggleSelect}
+      onToggleSelectAll={onToggleSelectAll}
+      allVisibleSelected={allVisibleSelected}
+      selectAllLabel="Select all visible users"
+      emptyMessage="No users match the current filters."
+      getRowClassName={(user) => (detailUserId === user.id ? " is-detail" : "")}
+      renderRowCells={(user) => (
+        <>{visibleDefs.map((col) => renderBodyCell(col.key as UserTableColumnKey, user))}</>
+      )}
+    />
   );
 }

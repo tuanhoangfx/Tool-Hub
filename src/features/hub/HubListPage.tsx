@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { AlertTriangle, Boxes, Play, Radio, RotateCcw } from "lucide-react";
+import { AlertTriangle, Boxes, Radio, RotateCcw } from "lucide-react";
 import { buildHubKpiItems } from "./hub-kpi-items";
 import {
   HubResultCount,
@@ -12,10 +12,10 @@ import {
   type HubViewMode,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { HubDirectoryScreen, useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import { HubDirectoryScreen, HubPaginatedCardGrid, useHubPageShortcuts } from "@tool-workspace/hub-ui";
 import { useLocalHealth, useSupabaseQuotaVersion } from "../../hooks";
+import { catalogReachabilityUrls } from "./catalog-reachability";
 import { compactIconSize } from "../../lib/ui-scale";
-import { formatLocalHealthPollInterval, resolveLocalHealthPollMs } from "../../lib/local-health-prefs";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { ToolDetailModal } from "../overview/ToolDetailModal";
@@ -177,35 +177,18 @@ export function HubListPage({
     [allTools, hubFiltersBase, query, filterValues, prefs.range],
   );
 
-  const localUrls = useMemo(() => filtered.map((t) => t.localUrl).filter((u): u is string => Boolean(u)), [filtered]);
-  const localHealthPollMs = useMemo(
-    () => resolveLocalHealthPollMs(prefs.localHealthPoll),
-    [prefs.localHealthPoll],
-  );
-  const { state: healthState, check: recheckLocal } = useLocalHealth(localUrls, localHealthPollMs);
   const quotaVersion = useSupabaseQuotaVersion();
-  const [localHealthBusy, setLocalHealthBusy] = useState(false);
+  const reachabilityUrls = useMemo(() => catalogReachabilityUrls(allTools), [allTools]);
+  const { state: linkHealth, check: checkReachability } = useLocalHealth(reachabilityUrls, null);
+  const reachabilityChecking = reachabilityUrls.some((u) => linkHealth[u] === "checking");
+  const reachabilityOnline = reachabilityUrls.filter((u) => linkHealth[u] === "online").length;
   const [hubRecoverBusy, setHubRecoverBusy] = useState(false);
-  const [startAllDownBusy, setStartAllDownBusy] = useState(false);
-  const [startingDevCodes, setStartingDevCodes] = useState<Set<string>>(() => new Set());
   const [devToast, setDevToast] = useState<{ message: string; tone: "ok" | "err" } | null>(null);
-  const checkingLocal = localHealthBusy;
 
   function showDevToast(message: string, tone: "ok" | "err" = "ok") {
     setDevToast({ message, tone });
     window.setTimeout(() => setDevToast(null), 8_000);
   }
-
-  const localDownCount = useMemo(
-    () => localUrls.filter((u) => healthState[u] === "offline").length,
-    [localUrls, healthState],
-  );
-
-  const hubLocalUrl = useMemo(
-    () => allTools.find((t) => t.code === "P0004")?.localUrl ?? "http://127.0.0.1:5176/",
-    [allTools],
-  );
-  const hubDevDown = healthState[hubLocalUrl] === "offline";
 
   async function recoverHubDev() {
     setHubRecoverBusy(true);
@@ -218,82 +201,6 @@ export function HubListPage({
       showDevToast("Recover failed. Run: corepack pnpm dev:recover in P0004-Tool-Hub", "err");
     } finally {
       setHubRecoverBusy(false);
-    }
-  }
-
-  async function startProductDev(code: string) {
-    const targetUrl = allTools.find((t) => t.code === code)?.localUrl;
-    setStartingDevCodes((prev) => new Set(prev).add(code));
-    try {
-      const res = await fetch("/api/workspace-dev/start-product", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-      const body = (await res.json()) as { ok?: boolean; message?: string };
-      if (!res.ok && res.status !== 202) {
-        showDevToast(body.message ?? `Start ${code} failed`, "err");
-        return;
-      }
-      showDevToast(body.message ?? `Starting ${code}…`);
-      if (!targetUrl) return;
-      for (let i = 0; i < 8; i += 1) {
-        await new Promise((r) => window.setTimeout(r, 4_000));
-        setLocalHealthBusy(true);
-        await recheckLocal();
-        setLocalHealthBusy(false);
-        const healthRes = await fetch(`/api/local-health?urls=${encodeURIComponent(targetUrl)}`, {
-          cache: "no-store",
-        });
-        if (healthRes.ok) {
-          const data = (await healthRes.json()) as { results?: Record<string, string> };
-          if (data.results?.[targetUrl] === "online") {
-            showDevToast(`${code} dev server is live.`);
-            break;
-          }
-        }
-      }
-    } catch {
-      showDevToast(`Start ${code} failed. Run: node Tool/scripts/ensure-dev-product.cjs ${code}`, "err");
-    } finally {
-      setStartingDevCodes((prev) => {
-        const next = new Set(prev);
-        next.delete(code);
-        return next;
-      });
-    }
-  }
-
-  async function startAllDownDevs() {
-    setStartAllDownBusy(true);
-    try {
-      const res = await fetch("/api/workspace-dev/start-down", { method: "POST" });
-      const body = (await res.json()) as { ok?: boolean; message?: string };
-      if (!res.ok && res.status !== 202) {
-        showDevToast(body.message ?? "Start all down failed", "err");
-        return;
-      }
-      showDevToast(body.message ?? "Starting workspace dev servers…");
-      for (let i = 0; i < 18; i += 1) {
-        await new Promise((r) => window.setTimeout(r, 8_000));
-        setLocalHealthBusy(true);
-        await recheckLocal();
-        setLocalHealthBusy(false);
-        const statusRes = await fetch("/api/workspace-dev/status");
-        const status = (await statusRes.json()) as { running?: boolean; exitCode?: number | null };
-        if (!status.running && i >= 2) {
-          const doneMsg =
-            status.exitCode === 0
-              ? "All down workspace dev servers started. Check Local health for live badges."
-              : "Workspace dev start finished (some tools may need manual start). See workspace-dev-start.log.";
-          showDevToast(doneMsg, status.exitCode === 0 ? "ok" : "err");
-          break;
-        }
-      }
-    } catch {
-      showDevToast("Request failed. Run: cd E:\\Dev\\Tool && corepack pnpm dev:stack:workspace", "err");
-    } finally {
-      setStartAllDownBusy(false);
     }
   }
 
@@ -364,58 +271,33 @@ export function HubListPage({
         }
         filterRowActions={
           <>
-            <button
-              type="button"
-              disabled={checkingLocal || localUrls.length === 0}
-              onClick={() => {
-                setLocalHealthBusy(true);
-                void recheckLocal().finally(() => setLocalHealthBusy(false));
-              }}
-              title={
-                localHealthPollMs === null
-                  ? "Check local dev servers now (background poll off — Settings)"
-                  : `Check now · background poll ${formatLocalHealthPollInterval(prefs.localHealthPoll)}`
-              }
-              className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-100 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              <Radio size={14} className={checkingLocal ? "animate-pulse" : ""} aria-hidden />
-              Local health
-            </button>
+            {reachabilityUrls.length > 0 ? (
+              <button
+                type="button"
+                disabled={reachabilityChecking}
+                onClick={() => void checkReachability()}
+                title={`Probe local dev + production URLs (${reachabilityUrls.length} targets). No auto poll.`}
+                className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 text-xs font-semibold text-[var(--muted)] transition-colors hover:bg-white/10 hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <Radio size={14} className={reachabilityChecking ? "animate-pulse text-cyan-300" : ""} aria-hidden />
+                {reachabilityChecking
+                  ? "Checking links…"
+                  : Object.keys(linkHealth).length > 0
+                    ? `Links ${reachabilityOnline}/${reachabilityUrls.length}`
+                    : "Check links"}
+              </button>
+            ) : null}
             {import.meta.env.DEV ? (
-              <>
-                <button
-                  type="button"
-                  disabled={startAllDownBusy || checkingLocal || localUrls.length === 0}
-                  onClick={() => void startAllDownDevs()}
-                  title="Start every workspace tool that is down (ensure-dev --stack workspace --down-only). Does not open browser tabs."
-                  className={`inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-                    localDownCount > 0
-                      ? "border-sky-400/40 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25"
-                      : "border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10 hover:text-[var(--text)]"
-                  }`}
-                >
-                  <Play size={14} className={startAllDownBusy ? "animate-pulse" : ""} aria-hidden />
-                  {startAllDownBusy
-                    ? "Starting…"
-                    : localDownCount > 0
-                      ? `Start all down (${localDownCount})`
-                      : "Start all down"}
-                </button>
-                <button
-                  type="button"
-                  disabled={hubRecoverBusy}
-                  onClick={() => void recoverHubDev()}
-                  title="Kill port 5176, clear Vite cache, restart Hub dev (fixes esbuild crash overlay)"
-                  className={`inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border px-3 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-                    hubDevDown
-                      ? "border-amber-400/40 bg-amber-500/15 text-amber-100 hover:bg-amber-500/25"
-                      : "border-white/10 bg-white/5 text-[var(--muted)] hover:bg-white/10 hover:text-[var(--text)]"
-                  }`}
-                >
-                  <RotateCcw size={14} className={hubRecoverBusy ? "animate-spin" : ""} aria-hidden />
-                  Restart Hub dev
-                </button>
-              </>
+              <button
+                type="button"
+                disabled={hubRecoverBusy}
+                onClick={() => void recoverHubDev()}
+                title="Kill port 5176, clear Vite cache, restart Hub dev (fixes esbuild crash overlay)"
+                className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 text-xs font-semibold text-[var(--muted)] transition-colors hover:bg-white/10 hover:text-[var(--text)] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <RotateCcw size={14} className={hubRecoverBusy ? "animate-spin" : ""} aria-hidden />
+                Restart Hub dev
+              </button>
             ) : null}
             <HubToolBulkActionBar
               hasSelection={selectedIds.size > 0}
@@ -439,19 +321,23 @@ export function HubListPage({
 
         {viewMode === "card" ? (
           filtered.length === 0 ? null : (
-            <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((tool) => (
-                <HubToolCard
-                  key={tool.id}
-                  tool={tool}
-                  healthState={tool.localUrl ? healthState[tool.localUrl] : undefined}
-                  quotaVersion={quotaVersion}
-                  onOpen={onSelect}
-                  onStartDev={import.meta.env.DEV ? startProductDev : undefined}
-                  startingDev={startingDevCodes.has(tool.code)}
-                />
-              ))}
-            </div>
+            <HubPaginatedCardGrid
+              items={filtered}
+              resetKey={`${query}|${JSON.stringify(filterValues)}|${sortKey}|${sortDir}`}
+              ariaLabel="Tools card pages"
+            >
+              {(pageTools) =>
+                pageTools.map((tool) => (
+                  <HubToolCard
+                    key={tool.id}
+                    tool={tool}
+                    quotaVersion={quotaVersion}
+                    onOpen={onSelect}
+                    linkHealth={linkHealth}
+                  />
+                ))
+              }
+            </HubPaginatedCardGrid>
           )
         ) : sortedFiltered.length === 0 ? null : (
           <HubToolsDirectoryTable
@@ -465,6 +351,7 @@ export function HubListPage({
             allVisibleSelected={allVisibleSelected}
             detailToolId={modalOpen ? selectedId : null}
             onSelect={onSelect}
+            linkHealth={linkHealth}
             onCopyPath={async (path) => {
               if (!path) return;
               try {
@@ -473,9 +360,6 @@ export function HubListPage({
                 /* ignore */
               }
             }}
-            healthState={healthState}
-            onStartDev={import.meta.env.DEV ? startProductDev : undefined}
-            startingDevCodes={startingDevCodes}
           />
         )}
       </HubDirectoryScreen>

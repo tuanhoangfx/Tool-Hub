@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Archive, Bot, Eye, FileStack, Layers, LayoutGrid, Lock, Sparkles } from "lucide-react";
 import type { KpiTileData } from "../../../components/sales-shell";
-import { DesignTemplateEmpty } from "./DesignTemplateEmpty";
+import { HubDesignTemplateEmpty } from "@tool-workspace/hub-ui";
 import { SystemHubShell } from "../SystemHubShell";
 
 /** Design previews removed after Agent context locked to V2 (System → Agent tab). */
@@ -22,7 +22,7 @@ export function DesignTemplatePage() {
 
   return (
     <SystemHubShell tabId="template" showFilter={false} sectionRuleLabel="Design Template" kpiItems={kpiItems}>
-      <DesignTemplateEmpty />
+      <HubDesignTemplateEmpty />
     </SystemHubShell>
   );
 }

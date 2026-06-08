@@ -16,6 +16,7 @@ import {
   HubDisplayPrefs,
   type HubDisplayPrefsProps,
   type PrefItem,
+  type SubTabDisplayConfig,
 } from "@tool-workspace/hub-ui";
 
 export type { PrefItem };
@@ -25,25 +26,37 @@ type DisplayPrefsProps = Omit<
   | "readPrefs"
   | "patchPrefs"
   | "getScreen"
-  | "getSystemTab"
-  | "systemDisplay"
+  | "getSubTab"
+  | "subTabDisplay"
   | "tablePanel"
   | "tableActiveCount"
   | "onLog"
 > & {
   showUsersTableColumns?: boolean;
+  /** @deprecated Prefer `displayExtras`. */
   generalExtras?: ReactNode;
-  generalSectionToc?: HubDisplayPrefsProps["generalSectionToc"];
+  displayExtras?: ReactNode;
 };
 
 /** Match P0020 Cookie Auto header Settings panel (width, tabs, max height). */
 const P0020_SETTINGS_PANEL_WIDTH = 420;
 const P0020_SETTINGS_MAX_PANEL_HEIGHT = "min(80vh, 42rem)";
 
+const SYSTEM_SUBTAB_CFG: SubTabDisplayConfig = {
+  screens: ["system"],
+  adapter: {
+    read: (tab) => readSystemTabDisplay(tab as ReturnType<typeof readSystemTab>),
+    patch: (tab, patch) => patchSystemTabDisplay(tab as ReturnType<typeof readSystemTab>, patch),
+    reset: (tab) => resetSystemTabDisplay(tab as ReturnType<typeof readSystemTab>),
+  },
+  changeEvent: "system-display-change",
+  logScope: (tab) => `System / ${tab}`,
+};
+
 export function DisplayPrefs({
   showUsersTableColumns = false,
   generalExtras,
-  generalSectionToc,
+  displayExtras,
   panelWidth = P0020_SETTINGS_PANEL_WIDTH,
   maxPanelHeight = P0020_SETTINGS_MAX_PANEL_HEIGHT,
   ...props
@@ -64,17 +77,13 @@ export function DisplayPrefs({
       panelWidth={panelWidth}
       maxPanelHeight={maxPanelHeight}
       {...props}
-      generalExtras={generalExtras}
-      generalSectionToc={generalSectionToc}
+      displayExtras={displayExtras ?? generalExtras}
       readPrefs={readHubListPrefs}
       patchPrefs={(patch) => patchHubListPrefs(patch)}
       getScreen={() => readAppScreen()}
       getSystemTab={() => readSystemTab()}
-      systemDisplay={{
-        read: (tab) => readSystemTabDisplay(tab as ReturnType<typeof readSystemTab>),
-        patch: (tab, patch) => patchSystemTabDisplay(tab as ReturnType<typeof readSystemTab>, patch),
-        reset: (tab) => resetSystemTabDisplay(tab as ReturnType<typeof readSystemTab>),
-      }}
+      getSubTab={() => (readAppScreen() === "system" ? readSystemTab() : "")}
+      subTabDisplay={SYSTEM_SUBTAB_CFG}
       tablePanel={showUsersTableColumns ? <UserTableColumnsSettings /> : undefined}
       tableSectionActions={showUsersTableColumns ? <UserTableColumnsResetAction /> : undefined}
       tableActiveCount={hiddenUserCols}

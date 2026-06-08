@@ -19,6 +19,12 @@
   ],
   "uiScreens": [
     {
+      "screen": "dashboard",
+      "template": "dashboard",
+      "golden": "P0004/dashboard",
+      "notes": "Default landing — scans Hub/Users/System sub-tabs"
+    },
+    {
       "screen": "users",
       "template": "directory",
       "golden": "P0004/users"
@@ -37,6 +43,11 @@
       "screen": "system",
       "template": "system-panels",
       "golden": "P0004/system"
+    },
+    {
+      "screen": "auth",
+      "template": "auth-gate",
+      "golden": "P0004/auth"
     }
   ],
   "commands": {
@@ -61,7 +72,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "5.2.7",
+    "version": "5.2.16",
     "readiness": [
       "build",
       "lint",

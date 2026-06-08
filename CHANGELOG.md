@@ -1,5 +1,140 @@
 # Changelog
 
+## 2026-06-07 - Dashboard console phases 1–3 (parity, registry, preview)
+
+- Version: `5.2.16`
+- Timestamp: 2026-06-07 21:00 (UTC+7)
+- Type: Patch
+- Status: Committed
+
+### Changes
+
+- **Phase 1:** `dfilt` prefs tách Hub; filter option counts; empty state; card `HubAppTabGroupBadge` + status chip.
+- **Phase 2:** Registry từ `ui-screens.catalog` (golden/template); cột Status live; runtime meta đủ 9 screens (+ Dashboard home).
+- **Phase 3:** Preview drawer (`HubToolDetailModal`); bulk Open all tabs / Copy paths / Pin selected; session pin sort.
+
+### Verification
+
+- `tsc --noEmit` dashboard files OK
+- `hub-ui-parity-check.mjs --code P0004 --screen dashboard`
+
+---
+## 2026-06-07 - KPI meta sync, catalog golden, HubDirectoryTableShell migration
+
+- Version: `5.2.13`
+- Timestamp: 2026-06-07 20:00 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Dashboard KPI + charts: icon/label/tone từ `HUB_UI_TEMPLATE_META` + `HUB_APP_TAB_GROUP_META` (một nguồn với badge/filter).
+- `ui-patterns.catalog.json`: golden `dashboard` → `P0004/dashboard` (+ table/card paths); P0016 là clone.
+- `HubToolsDirectoryTable` + `UserDirectoryTable` migrate sang `HubDirectoryTableShell` (colgroup, `is-detail`, wrap class).
+- hub-ui shell: `colgroup`, `wrapClassName`, `getRowClassName` props.
+- Parity `directory` template: checks `HubDirectoryTableShell` + checkbox.
+
+### Verification
+
+- `hub-ui-parity-check.mjs --code P0004 --screen dashboard|hub|users` — template checks OK
+
+---
+## 2026-06-07 - Dashboard template/group icon badges (hub-ui meta)
+
+- Version: `5.2.12`
+- Timestamp: 2026-06-07 19:15 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- hub-ui: `hub-ui-template-meta`, `hub-app-tab-group-meta`, `HubUiTemplateBadge`, `HubAppTabGroupBadge`, `HubDirectoryTableShell` — export + vendor sync.
+- Dashboard table/cards: Template + Group cells use golden badges (Directory = LayoutGrid emerald, Document TOC = BookOpen amber, System panels = Settings2 violet).
+- Filter dropdown + mini charts: `badge-registry` resolves template/group icons from hub-ui meta (aligned with Agent `ui-patterns.catalog`).
+- Wire `DashboardBulkActionBar` (`Open selected`) on filter row.
+
+### Verification
+
+- `hub-ui-parity-check.mjs --code P0004 --screen dashboard` — 11/11 template checks OK
+- Browser: Table badges + Template filter dropdown icons verified at `:5176`
+
+---
+## 2026-06-07 - Dashboard flat directory clone (hub-ui shared)
+
+- Version: `5.2.11`
+- Timestamp: 2026-06-07 16:00 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Remove Hub/Users/System group bands — flat card grid like Hub catalog.
+- Cards: shared `HubDirectoryCard` from hub-ui (no custom article shell).
+- Table: `hub-checkbox` select column + `HubTableColumnHeader` + `hub-users-row` (clone `HubToolsDirectoryTable`).
+- Drop custom Open column / group badge pills — row click opens screen.
+
+### Verification
+
+- `hub-ui-parity-check.mjs --code P0004 --screen dashboard --template dashboard`
+
+---
+## 2026-06-07 - Dashboard golden parity (card/table + runtime meta)
+
+- Version: `5.2.10`
+- Timestamp: 2026-06-07 14:00 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Dashboard table: `HubPaginatedTableShell` + `hub-users-table--dashboard-screens` (same golden as Hub/Users).
+- Dashboard cards: `HubToolCard` article shell + `HubTabSectionRule` group bands (Hub / Users / System).
+- Runtime meta: user count, agent manifest items, Supabase project/error counts on cards.
+- Golden registry: `P0004/dashboard` in `ui-screens.catalog.json`, `packages/hub-ui` `GOLDEN_SOURCES.dashboard`.
+
+### Verification
+
+- `tsc --noEmit` P0004
+- `hub-ui-parity-check.mjs --code P0004 --screen dashboard --template dashboard`
+
+---
+## 2026-06-07 - Dashboard tab (default landing)
+
+- Version: `5.2.9`
+- Timestamp: 2026-06-07 12:00 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- New **Dashboard** tab — default route `/`; scans Hub, Users, and all System sub-tabs with basic metadata.
+- Hub catalog moved to `/hub`; sidebar order: Dashboard → Hub → Users → System.
+- `uiScreens[]`: `dashboard` entry (template `dashboard`, golden `P0004/dashboard`).
+
+### Verification
+
+- `pnpm typecheck` P0004
+- Browser verify Dashboard + navigation to child tabs
+
+---
+## 2026-06-06 - HubUserModal → shared HubFullUserAccountModal
+
+- Version: `5.2.8`
+- Timestamp: 2026-06-06 00:50 (UTC+7)
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- `HubUserModal`: thin Supabase wrapper around `HubFullUserAccountModal` from `@tool-workspace/hub-ui`.
+- `HubAuthGate`: thin wrapper around shared `HubAuthGate` (auth gate CSS + modal shell canonical in hub-ui).
+- Vendor sync: `hub-identity` session labels, full auth modal stack in vendor hub-ui.
+
+### Verification
+
+- `pnpm build` P0004 — passed (41 tests, vite)
+
+---
 ## 2026-06-06 - Auto bump on commit
 
 - Version: `5.2.7`

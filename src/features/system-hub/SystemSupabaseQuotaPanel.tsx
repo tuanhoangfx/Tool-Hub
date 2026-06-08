@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertTriangle, Gauge, RefreshCcw } from "lucide-react";
+import { HubPaginatedCardGrid, HubPaginatedTableShell } from "@tool-workspace/hub-ui";
 import { SUPABASE_QUOTA_REFRESH_EVENT } from "./supabase-quota-events";
 import {
   HubResultCount,
@@ -135,6 +136,8 @@ const PROJECT_TABLE_COLUMNS = [
 
 function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow[]; onOpen: (ref: string) => void }) {
   return (
+    <HubPaginatedTableShell items={rows} ariaLabel="Supabase projects table pages">
+      {(pageRows) => (
     <div className="hub-users-table-wrap overflow-x-auto">
       <table className="hub-users-table hub-users-table--wide min-w-[1100px]">
           <thead>
@@ -147,7 +150,7 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
             </tr>
           </thead>
           <tbody>
-            {rows.map((p) => {
+            {pageRows.map((p) => {
               const org = orgForProject(orgs, p);
               const plans = resolvePlanDisplay(p, org);
               const orgPlanLabel = normLabel(plans.orgPlan);
@@ -234,6 +237,8 @@ function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow
           </tbody>
         </table>
     </div>
+      )}
+    </HubPaginatedTableShell>
   );
 }
 
@@ -658,17 +663,23 @@ export function SystemSupabaseQuotaPanel() {
           projectsFiltered.length === 0 ? (
             <EmptyState />
           ) : (
-            <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {projectsFiltered.map((p) => (
-                <SupabaseProjectCard
-                  key={`${p.orgSlug}-${p.projectRef}`}
-                  project={p}
-                  org={organizations.find((o) => o.slug === p.orgSlug) ?? null}
-                  tools={resolveProjectToolCodes(p, toolCodesByRef)}
-                  onOpen={openProject}
-                />
-              ))}
-            </div>
+            <HubPaginatedCardGrid
+              items={projectsFiltered}
+              resetKey={`${query}|${JSON.stringify(filterValues)}`}
+              ariaLabel="Supabase projects card pages"
+            >
+              {(pageProjects) =>
+                pageProjects.map((p) => (
+                  <SupabaseProjectCard
+                    key={`${p.orgSlug}-${p.projectRef}`}
+                    project={p}
+                    org={organizations.find((o) => o.slug === p.orgSlug) ?? null}
+                    tools={resolveProjectToolCodes(p, toolCodesByRef)}
+                    onOpen={openProject}
+                  />
+                ))
+              }
+            </HubPaginatedCardGrid>
           )
         ) : (
           <ProjectTable rows={projectsFiltered} orgs={organizations} onOpen={openProject} />

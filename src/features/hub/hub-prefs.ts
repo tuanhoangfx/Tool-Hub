@@ -37,7 +37,7 @@ export const HUB_FILTER_DEFS: PrefItem[] = [
   { key: "links", label: "Manifest links" },
 ];
 
-export const DEFAULT_HUB_HEADER_STAT_KEYS = new Set(["ready", "releases"]);
+export const DEFAULT_HUB_HEADER_STAT_KEYS = new Set<HubHeaderStatKey>(["ready", "releases", "drift"]);
 /** 4 of 4 Hub KPIs on by default. */
 export const DEFAULT_HUB_KPI_KEYS = defaultKpiKeysFromDefs(HUB_KPI_DEFS);
 export const DEFAULT_HUB_CHART_KEYS = new Set(["health_bar", "category_bar", "deploy_bar", "status_bar"]);

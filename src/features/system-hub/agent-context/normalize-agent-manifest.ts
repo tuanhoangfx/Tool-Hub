@@ -1,4 +1,11 @@
-import type { AgentContextItem, AgentContextKind, AgentManifest } from "./types";
+import type {
+  AgentContentAnchor,
+  AgentContentField,
+  AgentContextItem,
+  AgentContextKind,
+  AgentGuideSection,
+  AgentManifest,
+} from "./types";
 
 const VALID_KINDS = new Set<AgentContextKind>(["rule", "skill", "pattern", "command", "doc", "agent"]);
 
@@ -24,6 +31,81 @@ function asString(value: unknown, fallback = ""): string {
 function normalizeKind(raw: string): AgentContextKind {
   if (VALID_KINDS.has(raw as AgentContextKind)) return raw as AgentContextKind;
   return LEGACY_KIND_MAP[raw] ?? "doc";
+}
+
+function normalizeContentFields(raw: unknown): AgentContentField[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const fields = raw
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const row = entry as Partial<AgentContentField>;
+      const label = asString(row.label);
+      const value = asString(row.value);
+      if (!label || !value) return null;
+      const variant =
+        row.variant === "code" || row.variant === "text" || row.variant === "multiline" ? row.variant : undefined;
+      return { label, value, variant, copy: row.copy === true };
+    })
+    .filter((f) => f != null) as AgentContentField[];
+  return fields.length ? fields : undefined;
+}
+
+function normalizeGuideSections(raw: unknown): AgentGuideSection[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const sections = raw
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const row = entry as Partial<AgentGuideSection>;
+      if (row.type === "group") {
+        const anchor = asString(row.anchor);
+        const title = asString(row.title);
+        return anchor && title ? ({ type: "group", anchor, title } as AgentGuideSection) : null;
+      }
+      if (row.type === "keyword") {
+        const anchor = asString(row.anchor);
+        const keyword = asString(row.keyword);
+        if (!anchor || !keyword) return null;
+        return {
+          type: "keyword",
+          anchor,
+          group: asString(row.group),
+          keyword,
+          example: asString(row.example),
+          skill: asString(row.skill),
+          summary: asString(row.summary),
+          when: asString(row.when),
+          command: asString(row.command),
+          patternId: typeof row.patternId === "string" ? row.patternId : null,
+          goldenRef: typeof row.goldenRef === "string" ? row.goldenRef : null,
+          tabHint: typeof row.tabHint === "string" ? row.tabHint : null,
+          gateIntent: typeof row.gateIntent === "string" ? row.gateIntent : null,
+        } as AgentGuideSection;
+      }
+      return null;
+    })
+    .filter((s): s is AgentGuideSection => s != null);
+  return sections.length ? sections : undefined;
+}
+
+const KEYWORD_GROUPS = new Set(["verify", "git", "hub-ui", "pattern", "supabase"]);
+
+function normalizeKeywordGroup(raw: unknown): AgentContextItem["keywordGroup"] | undefined {
+  return typeof raw === "string" && KEYWORD_GROUPS.has(raw) ? (raw as AgentContextItem["keywordGroup"]) : undefined;
+}
+
+function normalizeContentAnchors(raw: unknown): AgentContentAnchor[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const anchors = raw
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const row = entry as Partial<AgentContentAnchor>;
+      const id = asString(row.id);
+      const label = asString(row.label);
+      const level = row.level === 2 || row.level === 3 ? row.level : 3;
+      return id && label ? ({ id, label, level } as AgentContentAnchor) : null;
+    })
+    .filter((a): a is AgentContentAnchor => a != null);
+  return anchors.length ? anchors : undefined;
 }
 
 function normalizeItem(raw: unknown, index: number): AgentContextItem | null {
@@ -60,6 +142,10 @@ function normalizeItem(raw: unknown, index: number): AgentContextItem | null {
     cloneTooltip:
       typeof row.cloneTooltip === "string" && row.cloneTooltip.trim() ? row.cloneTooltip.trim() : undefined,
     layer: layer as AgentContextItem["layer"] | undefined,
+    contentFields: normalizeContentFields(row.contentFields),
+    guideSections: normalizeGuideSections(row.guideSections),
+    contentAnchors: normalizeContentAnchors(row.contentAnchors),
+    keywordGroup: normalizeKeywordGroup(row.keywordGroup),
   };
 }
 

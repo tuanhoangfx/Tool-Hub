@@ -1,10 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { configureChartLegend, configureFilterIcons, configureHubChromePrefs } from "@tool-workspace/hub-ui";
+import { configureChartLegend, configureFilterIcons, configureHubChromePrefs, initHubUserZoom, mountHubApp } from "@tool-workspace/hub-ui";
 import App from "./App";
-import { hideBootLoader } from "./lib/hide-boot-loader";
 import { resolveChartLegendIcon, resolveFilterAllIcon, resolveFilterOptionIcon } from "./lib/badge-registry";
-import { initHubUserZoom } from "@tool-workspace/hub-ui";
 import { readHubListPrefs } from "./lib/url-prefs";
 
 initHubUserZoom();
@@ -32,12 +30,10 @@ if (!rootEl) {
   throw new Error("#root not found");
 }
 
-createRoot(rootEl).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
-
-requestAnimationFrame(() => {
-  hideBootLoader();
+mountHubApp(rootEl, () => {
+  createRoot(rootEl).render(
+    <StrictMode>
+      <App />
+    </StrictMode>,
+  );
 });

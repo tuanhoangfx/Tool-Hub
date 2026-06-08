@@ -3,30 +3,33 @@ import {
   FolderOpen,
   GitBranch,
   Pencil,
-  Play,
   Tag,
   User2,
   type LucideIcon,
 } from "lucide-react";
 import { auditManifestLinks } from "../overview/manifest-link-audit";
 import { ToolAvatar } from "../../components/ToolAvatar";
-import type { HealthState } from "../../hooks/useLocalHealth";
 import { deployLabel, folderName, formatDate, freshnessLabel, freshnessLevel } from "../../lib/tooling";
 import {
   resolveDeployTargetIcon,
   resolveDriftChipIcon,
   resolveHealthStatusIcon,
   resolveLinkGapChipIcon,
-  resolveLocalPortIcon,
 } from "../../lib/badge-registry";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
+import type { HealthState } from "../../hooks/useLocalHealth";
 import {
+  CatalogVersionMeta,
   LinkManifestFooter,
   QuietChip,
+  StaticPortChip,
+  ToolCatalogLinkStrip,
   ToolCodeBadge,
+  VersionSyncChip,
 } from "./hub-tool-ui";
 import { healthDotColor } from "./hub-tool-ui-utils";
+import { resolveCatalogVersionSync } from "./tool-catalog-status";
 import { HubSupabaseQuotaChip } from "./HubSupabaseQuotaChip";
 import { compactIconSize } from "../../lib/ui-scale";
 
@@ -40,28 +43,18 @@ const META: Record<string, { Icon: LucideIcon; tint: string }> = {
 
 type HubToolCardProps = {
   tool: ResolvedTool;
-  healthState?: HealthState;
   quotaVersion: number;
   onOpen: (id: string) => void;
-  onStartDev?: (code: string) => void;
-  startingDev?: boolean;
+  linkHealth?: Record<string, HealthState>;
 };
 
-export function HubToolCard({
-  tool,
-  healthState,
-  quotaVersion,
-  onOpen,
-  onStartDev,
-  startingDev = false,
-}: HubToolCardProps) {
+export function HubToolCard({ tool, quotaVersion, onOpen, linkHealth }: HubToolCardProps) {
   const fresh = freshnessLevel(tool.updatedAt);
   const port = tool.localUrl ? tryPort(tool.localUrl) : null;
   const linkGaps = auditManifestLinks(tool);
-  const statusDot = healthDotColor(tool, healthState, linkGaps.length);
+  const versionSync = resolveCatalogVersionSync(tool);
+  const statusDot = healthDotColor(tool, linkGaps.length);
   const healthLabel = tool.healthLabel || tool.status;
-  const showStartDev =
-    import.meta.env.DEV && Boolean(tool.localUrl && onStartDev && healthState === "offline");
 
   return (
     <article className="group flex h-full min-h-[var(--hub-card-min-h)] w-full flex-col rounded-xl border border-white/5 bg-[var(--panel)] transition-[border-color,box-shadow,background-color] duration-200 hover:border-indigo-500/40 hover:bg-white/[0.02] hover:shadow-[0_8px_24px_rgba(99,102,241,0.12)]">
@@ -82,7 +75,10 @@ export function HubToolCard({
             <span
               className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ring-2 ring-[var(--panel)]"
               style={{ background: statusDot }}
-              title={tool.healthLabel || tool.status}
+              title={
+                tool.driftAlerts[0] ??
+                (linkGaps.length > 0 ? linkGaps.map((g) => g.label).join(", ") : versionSync.syncNote)
+              }
             />
           </div>
           <div className="min-w-0">
@@ -103,8 +99,7 @@ export function HubToolCard({
           <span className="truncate">{tool.repo?.split("/")[1] ?? "—"}</span>
         </MetaRow>
         <MetaRow kind="version">
-          <span className="font-medium text-[var(--text)]">v{tool.version}</span>
-          {tool.branch ? <span className="ml-1 text-[10px]">· {tool.branch}</span> : null}
+          <CatalogVersionMeta tool={tool} />
         </MetaRow>
         <MetaRow kind="folder">
           <span className="truncate">{tool.localPath ? folderName(tool.localPath) : "—"}</span>
@@ -130,27 +125,20 @@ export function HubToolCard({
             label={deployLabel(tool.deployTarget)}
             tone="neutral"
             iconMeta={resolveDeployTargetIcon(tool.deployTarget)}
+            title={tool.appUrl ? `Deploy: ${deployLabel(tool.deployTarget)} · ${tool.appUrl}` : deployLabel(tool.deployTarget)}
           />
-          {port ? (
-            <QuietChip
-              label={
-                healthState === "online"
-                  ? `:${port} live`
-                  : healthState === "offline"
-                    ? `:${port} down`
-                    : healthState === "checking"
-                      ? `:${port} …`
-                      : `:${port}`
-              }
-              tone={healthState === "online" ? "ok" : healthState === "offline" ? "bad" : "neutral"}
-              iconMeta={resolveLocalPortIcon(healthState === "online")}
-            />
-          ) : null}
+          {port ? <StaticPortChip port={port} localUrl={tool.localUrl} /> : null}
+          <VersionSyncChip
+            syncStatus={versionSync.syncStatus}
+            title={versionSync.syncNote}
+            showAligned={tool.remoteEnabled !== false && Boolean(tool.remote)}
+          />
           {tool.driftAlerts.length > 0 ? (
             <QuietChip
               label={`${tool.driftAlerts.length} drift`}
               tone="bad"
               iconMeta={resolveDriftChipIcon()}
+              title={tool.driftAlerts.join("\n")}
             />
           ) : null}
           {linkGaps.length > 0 ? (
@@ -163,25 +151,12 @@ export function HubToolCard({
           ) : null}
           <HubSupabaseQuotaChip toolCode={tool.code} quotaVersion={quotaVersion} />
         </div>
+        <div className="mt-2 shrink-0">
+          <ToolCatalogLinkStrip tool={tool} linkGaps={linkGaps} size="sm" linkHealth={linkHealth} />
+        </div>
         <LinkManifestFooter linkGaps={linkGaps} />
       </div>
       </button>
-      {showStartDev ? (
-        <div className="border-t border-white/5 px-4 py-2.5">
-          <button
-            type="button"
-            disabled={startingDev}
-            onClick={() => onStartDev?.(tool.code)}
-            title={`Start ${tool.code} dev server (ensure-dev ${tool.code})`}
-            className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-sky-400/40 bg-sky-500/15 px-3 py-1.5 text-xs font-semibold text-sky-100 transition-colors hover:bg-sky-500/25 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <Play size={13} className={startingDev ? "animate-pulse" : ""} aria-hidden />
-            {startingDev
-              ? `Starting${port ? ` :${port}` : ` ${tool.code}`}…`
-              : `Start${port ? ` :${port}` : ` ${tool.code}`}`}
-          </button>
-        </div>
-      ) : null}
     </article>
   );
 }

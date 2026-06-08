@@ -1,10 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, KeyRound, Package, UserRound } from "lucide-react";
 import {
-  HubDataTable,
+  HubModalDirectoryEmptyFiltered,
+  HubModalDirectorySection,
+  HubPaginatedDataTable,
+  HubToolDetailIdentityHeader,
   HubToolDetailModal,
   HubToolDetailModalPrimaryAction,
   HubToolDetailSection,
+  HubUserToolsDirectoryTable,
+  HubUserToolsDirectoryTableSkeleton,
   HUB_TOOL_DETAIL_SCROLL_ROOT,
   HUB_TOOL_DETAIL_SECTIONS_CLASS,
 } from "@tool-workspace/hub-ui";
@@ -283,19 +288,22 @@ export function UserAccessModal({
         open
         onClose={onClose}
         header={
-          <header className="user-access-modal__header">
-            <div className="user-access-modal__header-main min-w-0 flex-1">
-              <HubRoleBadge role={canEditProfile ? role : user.role} />
-              <HubUserAvatar user={user} size="sm" className="user-access-modal__avatar" />
-              <h2
-                id="user-access-modal-title"
-                className="user-access-modal__header-name min-w-0 truncate text-sm font-semibold text-[var(--text)]"
-              >
-                {canEditProfile ? fullName || user.fullName : user.fullName}
-              </h2>
-              <HubEmailBadge email={canEditProfile ? email || user.email : user.email} className="min-w-0 shrink" />
-            </div>
-          </header>
+          <HubToolDetailIdentityHeader
+            titleId="user-access-modal-title"
+            title={canEditProfile ? fullName || user.fullName : user.fullName}
+            leading={
+              <>
+                <HubRoleBadge role={canEditProfile ? role : user.role} />
+                <HubUserAvatar user={user} size="sm" className="user-access-modal__avatar" />
+              </>
+            }
+            trailing={
+              <HubEmailBadge
+                email={canEditProfile ? email || user.email : user.email}
+                className="min-w-0 shrink"
+              />
+            }
+          />
         }
         footer={
           canEdit || canEditProfile ? (
@@ -400,140 +408,116 @@ export function UserAccessModal({
               </HubToolDetailSection>
 
               <HubToolDetailSection id={`${idPrefix}tools`} title={userAccessSectionTitle("tools")}>
-                {registryOnlyCount > 0 ? (
-                  <p className="mb-2 rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-[10px] text-amber-100">
-                    {registryOnlyCount} item(s) from workspace scan are not in Hub DB yet. Saving grants
-                    will sync the catalog automatically when needed.
-                  </p>
-                ) : null}
-                {loading ? <p className="text-xs text-[var(--muted)]">Loading grants…</p> : null}
-                {!loading && tools.length === 0 ? (
-                  <p className="text-xs text-[var(--muted)]">
-                    No tools in catalog. Admin: Refresh workspace on Hub, then Refresh users.
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    <FilterBar
-                      layout="inline"
-                      placeholder="Search tools by code, name, category…"
-                      filters={filters}
-                      query={query}
-                      onQueryChange={setQuery}
-                      values={filterValues}
-                      onValuesChange={setFilterValues}
-                      trailing={
-                        <>
-                          {canEdit && !isAdminUser && filteredTools.length > 0 ? (
-                            <button
-                              type="button"
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[var(--panel-2)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-white/5"
-                              onClick={toggleAllFiltered}
-                            >
-                              {allFilteredGranted ? "Clear filtered" : "Grant filtered"}
-                            </button>
-                          ) : null}
-                          <span className="hidden text-[10px] text-[var(--muted)] sm:inline">
-                            {filteredTools.length}/{tools.length}
-                          </span>
-                        </>
-                      }
-                    />
-
-                    {filteredTools.length === 0 ? (
-                      <p className="rounded-lg border border-white/5 bg-white/[.02] px-3 py-6 text-center text-[12px] text-[var(--muted)]">
-                        No tools match search or filters.
+                <HubModalDirectorySection
+                  banner={
+                    registryOnlyCount > 0 ? (
+                      <p className="rounded-lg border border-amber-500/20 bg-amber-500/10 px-2 py-1.5 text-[10px] text-amber-100">
+                        {registryOnlyCount} item(s) from workspace scan are not in Hub DB yet. Saving grants
+                        will sync the catalog automatically when needed.
                       </p>
-                    ) : (
-                      <HubDataTable
-                        columns={[
-                          ...(canEdit && !isAdminUser
-                            ? [{ key: "select", label: "", className: "hub-users-col--select", header: <span aria-hidden /> }]
-                            : []),
-                          {
-                            key: "code",
-                            label: "Tool",
-                            className: "hub-users-col--hub-code",
-                            role: "code",
-                          },
-                          {
-                            key: "name",
-                            label: "Name",
-                            className: "hub-users-col--hub-project",
-                            role: "name",
-                          },
-                          {
-                            key: "category",
-                            label: "Category",
-                            className: "hub-users-col--hub-status",
-                            role: "category",
-                          },
-                          {
-                            key: "access",
-                            label: "Access",
-                            className: "hub-users-col--hub-version",
-                            role: "access",
-                          },
-                        ]}
-                      >
-                        {filteredTools.map((tool) => {
-                          const checked = selected.has(tool.tool_code);
+                    ) : undefined
+                  }
+                  loading={
+                    loading ? (
+                      <HubUserToolsDirectoryTableSkeleton
+                        showSelect={canEdit && !isAdminUser}
+                        rows={5}
+                      />
+                    ) : undefined
+                  }
+                  empty={
+                    !loading && tools.length === 0 ? (
+                      <p className="text-xs text-[var(--muted)]">
+                        No tools in catalog. Admin: Refresh workspace on Hub, then Refresh users.
+                      </p>
+                    ) : undefined
+                  }
+                  filterBar={
+                    !loading && tools.length > 0 ? (
+                      <FilterBar
+                        layout="inline"
+                        placeholder="Search tools by code, name, category…"
+                        filters={filters}
+                        query={query}
+                        onQueryChange={setQuery}
+                        values={filterValues}
+                        onValuesChange={setFilterValues}
+                        trailing={
+                          <>
+                            {canEdit && !isAdminUser && filteredTools.length > 0 ? (
+                              <button
+                                type="button"
+                                className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-[var(--panel-2)] px-3 py-1.5 text-xs text-[var(--text)] hover:bg-white/5"
+                                onClick={toggleAllFiltered}
+                              >
+                                {allFilteredGranted ? "Clear filtered" : "Grant filtered"}
+                              </button>
+                            ) : null}
+                            <span className="hidden text-[10px] text-[var(--muted)] sm:inline">
+                              {filteredTools.length}/{tools.length}
+                            </span>
+                          </>
+                        }
+                      />
+                    ) : undefined
+                  }
+                  emptyFiltered={
+                    !loading && tools.length > 0 && filteredTools.length === 0 ? (
+                      <HubModalDirectoryEmptyFiltered>
+                        No tools match search or filters.
+                      </HubModalDirectoryEmptyFiltered>
+                    ) : undefined
+                  }
+                  table={
+                    !loading && tools.length > 0 && filteredTools.length > 0 ? (
+                      <HubUserToolsDirectoryTable
+                        items={filteredTools}
+                        resetKey={`${query}|${JSON.stringify(filterValues)}`}
+                        getRowKey={(tool) => tool.tool_code}
+                        getToolCode={(tool) => tool.tool_code}
+                        getToolName={(tool) => tool.name}
+                        showSelectColumn={canEdit && !isAdminUser}
+                        isSelected={(tool) => selected.has(tool.tool_code)}
+                        onToggleSelect={(tool) => toggle(tool.tool_code)}
+                        onRowClick={canEdit && !isAdminUser ? (tool) => toggle(tool.tool_code) : undefined}
+                        selectAriaLabel={(tool) => `Grant ${tool.tool_code}`}
+                        renderCodeSuffix={(tool) =>
+                          tool.registryOnly ? (
+                            <span className="ml-1 rounded bg-amber-500/15 px-1 text-[9px] font-sans text-amber-200">
+                              unsynced
+                            </span>
+                          ) : null
+                        }
+                        renderCategoryCell={(tool) => {
                           const meta = resolveCategoryDisplayIcon(tool.category ?? undefined);
                           const Icon = meta.icon;
                           return (
-                            <tr
-                              key={tool.tool_code}
-                              className={`hub-users-row${checked ? " is-selected" : ""}${
-                                canEdit && !isAdminUser ? " cursor-pointer" : ""
-                              }`}
-                              onClick={() => toggle(tool.tool_code)}
-                            >
-                              {canEdit && !isAdminUser ? (
-                                <td className="hub-users-col--select" onClick={(e) => e.stopPropagation()}>
-                                  <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={() => toggle(tool.tool_code)}
-                                    className="hub-checkbox"
-                                    aria-label={`Grant ${tool.tool_code}`}
-                                  />
-                                </td>
-                              ) : null}
-                              <td className="hub-users-col--hub-code font-mono text-indigo-200/90">
-                                {tool.tool_code}
-                                {tool.registryOnly ? (
-                                  <span className="ml-1 rounded bg-amber-500/15 px-1 text-[9px] font-sans text-amber-200">
-                                    unsynced
-                                  </span>
-                                ) : null}
-                              </td>
-                              <td className="hub-users-col--hub-project font-medium">{tool.name}</td>
-                              <td className="hub-users-col--hub-status">
-                                <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
-                                  <Icon size={compactIconSize(12)} className={meta.className} aria-hidden />
-                                  {tool.category ?? "—"}
-                                </span>
-                              </td>
-                              <td className="hub-users-col--hub-version text-center">
-                                {checked ? (
-                                  <Check size={14} className="inline text-emerald-400" aria-label="Granted" />
-                                ) : (
-                                  <span className="text-[var(--muted)]">—</span>
-                                )}
-                              </td>
-                            </tr>
+                            <span className="inline-flex items-center gap-1.5 text-[var(--muted)]">
+                              <Icon size={compactIconSize(12)} className={meta.className} aria-hidden />
+                              {tool.category ?? "—"}
+                            </span>
                           );
-                        })}
-                      </HubDataTable>
-                    )}
-                  </div>
-                )}
+                        }}
+                        renderAccessCell={(tool) =>
+                          selected.has(tool.tool_code) ? (
+                            <Check size={14} className="inline text-emerald-400" aria-label="Granted" />
+                          ) : (
+                            <span className="text-[var(--muted)]">—</span>
+                          )
+                        }
+                      />
+                    ) : undefined
+                  }
+                />
               </HubToolDetailSection>
 
               <HubToolDetailSection id={`${idPrefix}legacy`} title={userAccessSectionTitle("legacy")}>
                 {user.projectNames.length === 0 ? (
                   <p className="text-xs text-[var(--muted)]">No legacy Todo projects linked.</p>
                 ) : (
-                  <HubDataTable
+                  <HubPaginatedDataTable
+                    items={user.projectNames}
+                    ariaLabel="Legacy projects table pages"
                     columns={[
                       {
                         key: "name",
@@ -548,14 +532,13 @@ export function UserAccessModal({
                         role: "source",
                       },
                     ]}
-                  >
-                    {user.projectNames.map((name) => (
+                    renderRow={(name) => (
                       <tr key={name} className="hub-users-row">
                         <td className="hub-users-col--hub-project">{name}</td>
                         <td className="hub-users-col--hub-status text-[var(--muted)]">Legacy Todo</td>
                       </tr>
-                    ))}
-                  </HubDataTable>
+                    )}
+                  />
                 )}
               </HubToolDetailSection>
 

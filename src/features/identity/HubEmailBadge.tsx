@@ -1,5 +1,5 @@
 import { Mail } from "lucide-react";
-import { CopyMetaChip, HUB_EMAIL_COPY_CHIP_CLASS } from "../../components/CopyMetaChip";
+import { CopyMetaChip, HUB_EMAIL_COPY_CHIP_CLASS } from "@tool-workspace/hub-ui";
 
 /** Email badge — 100% P0020 2FA Account chip (Mail + sky pill, click to copy). */
 export function HubEmailBadge({ email, className = "" }: { email: string; className?: string }) {

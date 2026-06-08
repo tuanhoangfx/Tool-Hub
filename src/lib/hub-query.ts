@@ -53,7 +53,12 @@ export function sanitizeQueryForScreen(screen: AppScreen, search = ""): URLSearc
   for (const k of LEGACY_DROP) p.delete(k);
   normalizeDesignQuery(p);
 
-  if (screen === "library") {
+  if (screen === "dashboard") {
+    for (const k of ["tool", "detail"] as const) p.delete(k);
+    for (const k of DESIGN_QUERY_KEYS) p.delete(k);
+    p.delete("table");
+    p.delete("sstat");
+  } else if (screen === "library") {
     for (const k of DESIGN_QUERY_KEYS) p.delete(k);
     p.delete("table");
     p.delete("sstat");

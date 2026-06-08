@@ -5,7 +5,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Radio } from "lucide-react";
 import {
   HubAppLogProvider,
   HubLogButton,
@@ -40,7 +39,18 @@ import {
   defaultSystemHeaderStatKeys,
   systemHeaderStatDefs,
 } from "./features/system-hub/system-header-metrics";
-import { HubListPage, LocalHealthPollSettings } from "./features/hub";
+import { DashboardListPage } from "./features/dashboard";
+import { HubListPage } from "./features/hub";
+import {
+  DEFAULT_DASHBOARD_CHART_KEYS,
+  DEFAULT_DASHBOARD_FILTER_KEYS,
+  DEFAULT_DASHBOARD_HEADER_STAT_KEYS,
+  DEFAULT_DASHBOARD_KPI_KEYS,
+  DASHBOARD_CHART_DEFS,
+  DASHBOARD_FILTER_DEFS,
+  DASHBOARD_HEADER_STAT_DEFS,
+  DASHBOARD_KPI_DEFS,
+} from "./features/dashboard/dashboard-prefs";
 
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
 import { migrateAppUrl, readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
@@ -52,7 +62,7 @@ import { compactIconSize } from "./lib/ui-scale";
 import { runWorkspaceRefresh } from "./services/workspace-scan";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
-const ALL_APP_SCREENS: AppScreen[] = ["library", "users", "system"];
+const ALL_APP_SCREENS: AppScreen[] = ["dashboard", "library", "users", "system"];
 type ScanStatus = "idle" | "scanning" | "success" | "error";
 
 function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: boolean; scope?: "tab" | "global" }) {
@@ -74,54 +84,64 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
 
   const isGlobal = scope === "global";
   const defs =
-    !isGlobal && screen === "system"
-      ? systemDisplayDefs(systemTab)
-      : !isGlobal && screen === "users"
-        ? { kpis: USER_KPI_DEFS, charts: undefined, defaultKpiKeys: DEFAULT_USER_KPI_KEYS, defaultChartKeys: undefined }
-        : null;
+    !isGlobal && screen === "dashboard"
+      ? {
+          kpis: DASHBOARD_KPI_DEFS,
+          charts: DASHBOARD_CHART_DEFS,
+          defaultKpiKeys: DEFAULT_DASHBOARD_KPI_KEYS,
+          defaultChartKeys: DEFAULT_DASHBOARD_CHART_KEYS,
+        }
+      : !isGlobal && screen === "system"
+        ? systemDisplayDefs(systemTab)
+        : !isGlobal && screen === "users"
+          ? { kpis: USER_KPI_DEFS, charts: undefined, defaultKpiKeys: DEFAULT_USER_KPI_KEYS, defaultChartKeys: undefined }
+          : null;
   const headerStats =
     isGlobal || screen === "library"
       ? HUB_HEADER_STAT_DEFS
-      : screen === "users"
-        ? USER_HEADER_STAT_DEFS
-        : screen === "system"
-          ? systemHeaderStatDefs(systemTab)
-          : [];
+      : screen === "dashboard"
+        ? DASHBOARD_HEADER_STAT_DEFS
+        : screen === "users"
+          ? USER_HEADER_STAT_DEFS
+          : screen === "system"
+            ? systemHeaderStatDefs(systemTab)
+            : [];
   const defaultHeaderStatKeys =
     isGlobal || screen === "library"
       ? DEFAULT_HUB_HEADER_STAT_KEYS
-      : screen === "users"
-        ? DEFAULT_USER_HEADER_STAT_KEYS
-        : screen === "system"
-          ? defaultSystemHeaderStatKeys(systemTab)
-          : undefined;
+      : screen === "dashboard"
+        ? DEFAULT_DASHBOARD_HEADER_STAT_KEYS
+        : screen === "users"
+          ? DEFAULT_USER_HEADER_STAT_KEYS
+          : screen === "system"
+            ? defaultSystemHeaderStatKeys(systemTab)
+            : undefined;
+
+  const isDashboard = !isGlobal && screen === "dashboard";
 
   return (
     <DisplayPrefs
       kpis={isGlobal ? undefined : defs?.kpis ?? HUB_KPI_DEFS}
       charts={isGlobal ? undefined : defs?.charts ?? HUB_CHART_DEFS}
-      filters={isGlobal || screen === "system" ? undefined : HUB_FILTER_DEFS}
+      filters={
+        isGlobal || screen === "system"
+          ? undefined
+          : isDashboard
+            ? DASHBOARD_FILTER_DEFS
+            : HUB_FILTER_DEFS
+      }
+      filterParam={isDashboard ? "dfilt" : "hfilt"}
+      filtersFromUrl={isDashboard}
       headerStats={isGlobal ? undefined : headerStats}
       defaultHeaderStatKeys={defaultHeaderStatKeys}
       defaultKpiKeys={defs?.defaultKpiKeys ?? DEFAULT_HUB_KPI_KEYS}
       defaultChartKeys={defs?.defaultChartKeys ?? DEFAULT_HUB_CHART_KEYS}
-      defaultFilterKeys={DEFAULT_HUB_FILTER_KEYS}
+      defaultFilterKeys={screen === "dashboard" ? DEFAULT_DASHBOARD_FILTER_KEYS : DEFAULT_HUB_FILTER_KEYS}
       showRange={false}
       showLimit={false}
       showHeaderPin={isGlobal}
       showUsersTableColumns={!isGlobal && screen === "users"}
-      generalExtras={isGlobal || screen === "library" ? <LocalHealthPollSettings /> : undefined}
-      generalSectionToc={
-        isGlobal || screen === "library"
-          ? [
-              {
-                id: "settings-local-health",
-                label: "Local health poll",
-                icon: <Radio size={compactIconSize(11)} className="text-emerald-400" />,
-              },
-            ]
-          : undefined
-      }
+      displayExtras={undefined}
       sidebarRow={sidebarRow}
       scope={scope}
     />
@@ -238,7 +258,8 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
 
   const navigate = (next: AppScreen) => {
     if (next !== screen) {
-      const label = next === "system" ? "System" : next === "users" ? "Users" : "Hub";
+      const label =
+        next === "system" ? "System" : next === "users" ? "Users" : next === "dashboard" ? "Dashboard" : "Hub";
       pushLog("Navigation", `Switched to ${label}`, resolveHubActiveScreenId(next, readSystemTab()));
     }
     setAppScreen(next);
@@ -316,6 +337,17 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
 
       <main className="hub-main flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden">
         <HubLoaderRoot />
+        {visitedScreens.has("dashboard") ? (
+          <div className={screen !== "dashboard" ? "hidden" : undefined} aria-hidden={screen !== "dashboard"}>
+            <DashboardListPage
+              allTools={resolvedTools}
+              registryLive={registryLive}
+              registryLabel={registryLabel}
+              versionReleaseDate={versionRelease.shortLabel}
+              headerActions={headerActions}
+            />
+          </div>
+        ) : null}
         {visitedScreens.has("library") ? (
           <div className={screen !== "library" ? "hidden" : undefined} aria-hidden={screen !== "library"}>
             <HubListPage
@@ -387,7 +419,7 @@ function App() {
   return (
     <HubAppLogProvider
       activeScreen={activeScreenId}
-      bootLog={{ scope: "Tool", message: "Tool Hub started", screen: "library" }}
+      bootLog={{ scope: "Tool", message: "Tool Hub started", screen: "dashboard" }}
     >
       <AppShellContent
         screen={screen}

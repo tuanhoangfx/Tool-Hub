@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/icons/tools/gallery.html",
-      "destination": "/?screen=library",
+      "destination": "/hub",
       "permanent": true
     }
   ],

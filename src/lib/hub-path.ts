@@ -1,11 +1,13 @@
 import { buildSystemUrl, migrateSystemUrl, parseSystemRoute, readSystemRoute } from "./system-path";
 import { sanitizeQueryForScreen } from "./hub-query";
 
-export type AppScreen = "library" | "system" | "users";
+export type AppScreen = "dashboard" | "library" | "system" | "users";
 
 export function pathnameToAppScreen(pathname: string): AppScreen | null {
   const normalized = pathname.replace(/\/+$/, "") || "/";
-  if (normalized === "/" || normalized === "") return "library";
+  if (normalized === "/" || normalized === "") return "dashboard";
+  if (normalized === "/dashboard" || normalized.startsWith("/dashboard/")) return "dashboard";
+  if (normalized === "/hub" || normalized.startsWith("/hub/")) return "library";
   if (normalized === "/users" || normalized.startsWith("/users/")) return "users";
   if (normalized === "/system" || normalized.startsWith("/system/")) return "system";
   return null;
@@ -18,7 +20,7 @@ function parseSearch(search = ""): URLSearchParams {
 
 export function searchWithoutScreenParam(search = ""): string {
   const screen =
-    pathnameToAppScreen(typeof window !== "undefined" ? window.location.pathname : "/") ?? "library";
+    pathnameToAppScreen(typeof window !== "undefined" ? window.location.pathname : "/") ?? "dashboard";
   return sanitizeQueryForScreen(screen, search).toString();
 }
 
@@ -34,7 +36,8 @@ export function buildAppUrl(screen: AppScreen, search = ""): string {
     return buildSystemUrl(route, sanitizeQueryForScreen("system", search).toString());
   }
 
-  const base = screen === "users" ? "/users" : "/";
+  const base =
+    screen === "users" ? "/users" : screen === "library" ? "/hub" : screen === "dashboard" ? "/" : "/";
   const q = sanitizeQueryForScreen(screen, search).toString();
   return q ? `${base}?${q}` : base;
 }

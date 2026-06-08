@@ -21,7 +21,7 @@ import {
   type HubViewMode,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { HubDirectoryScreen, useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import { HubDirectoryScreen, HubPaginatedTableShell, useHubPageShortcuts } from "@tool-workspace/hub-ui";
 import { UserListChromeHeader } from "./UserListChromeHeader";
 import {
   buildUserHeaderStats,
@@ -30,6 +30,7 @@ import {
 import { readHubListPrefs } from "../../lib/url-prefs";
 import { DEFAULT_USER_KPI_KEYS } from "./user-display-prefs";
 import { buildUserKpiItems } from "./user-kpi-items";
+import { pushUsersLog } from "../../lib/users-log";
 
 function visibleKpiSet(set: Set<string> | null, defaults: Set<string>) {
   return set ?? defaults;
@@ -138,7 +139,7 @@ function UserCards({
   detailUserId,
   onOpenUser,
 }: {
-  users: UserManagementRow[];
+  users: readonly UserManagementRow[];
   selectedIds: Set<string>;
   onToggleSelect: (userId: string) => void;
   detailUserId: string | null;
@@ -294,9 +295,11 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
           );
         }
         setDataWarning(warnParts.join(" · ") || null);
+        pushUsersLog("Refresh", `Loaded ${result.rows.length} user(s), ${mergedTools.length} tool(s)`);
       } catch (error) {
         const message = error instanceof Error ? error.message : "Unable to load users";
         if (rows.length === 0 && !readUserManagementStaleCache()) setDataWarning(message);
+        pushUsersLog("Refresh", message);
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -375,11 +378,14 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
       ),
     );
     setRoleMessage("User updated.");
+    const label = payload.loginId || payload.fullName || userId.slice(0, 8);
+    pushUsersLog("Access", `Updated ${label} · role ${payload.role} · ${payload.toolCodes.length} tool(s)`);
   }, []);
 
   const handleAddUserOpen = useCallback(() => {
     setRoleMessage(null);
     setAddUserOpen(true);
+    pushUsersLog("Users", "Opened add user dialog");
   }, []);
 
   const handleCreateUsers = useCallback(
@@ -391,6 +397,7 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
       if (result.created > 0) {
         await refresh();
         setRoleMessage(`Created ${result.created} user(s).`);
+        pushUsersLog("Users", `Created ${result.created} user(s)`);
       }
       const firstFail = result.results.find((r) => !r.ok);
       return {
@@ -415,6 +422,10 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
     const catalog = await loadWorkspaceToolCatalog();
     const { tools } = await fetchHubTools();
     setHubTools(mergeHubToolCatalog(tools, catalog));
+    pushUsersLog(
+      "Catalog",
+      sync.ok ? `Synced ${sync.count} workspace tool(s) into Hub DB` : (sync.error ?? "Catalog sync failed"),
+    );
     return { ok: sync.ok, error: sync.error };
   }, [syncWorkspaceTools]);
 
@@ -480,7 +491,10 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
 
   const handleBulkEdit = useCallback(() => {
     const target = selectedUsers[0] ?? null;
-    if (target) setAccessUser(target);
+    if (target) {
+      setAccessUser(target);
+      pushUsersLog("Access", `Opened access editor for ${target.loginId || target.fullName || target.id.slice(0, 8)}`);
+    }
   }, [selectedUsers]);
 
   useHubPageShortcuts("users", {
@@ -519,6 +533,7 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
     );
     setSelectedIds(new Set());
     setRoleMessage(`Cleared tool access for ${nonAdmins.length} user(s).`);
+    pushUsersLog("Access", `Cleared tool access for ${nonAdmins.length} user(s)`);
   }, [pendingClearUsers]);
 
   const stats = useMemo(() => {
@@ -674,7 +689,13 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
         filterShortcutScope="users"
         filterToolbar={
           <>
-            <ViewToggle value={viewMode} onChange={setViewMode} />
+            <ViewToggle
+              value={viewMode}
+              onChange={(next) => {
+                pushUsersLog("View", `Switched to ${next === "card" ? "Cards" : "Table"}`);
+                setViewMode(next);
+              }}
+            />
             <HubResultCount icon={Users} shown={filteredRows.length} total={rows.length} />
             <button
               type="button"
@@ -729,13 +750,24 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
               <p className="py-10 text-center text-sm text-[var(--muted)]">Loading users in background…</p>
             ) : null}
             {rows.length > 0 && viewMode === "card" ? (
-              <UserCards
-                users={sortedRows}
-                selectedIds={selectedIds}
-                onToggleSelect={toggleSelect}
-                detailUserId={accessUser?.id ?? null}
-                onOpenUser={setAccessUser}
-              />
+              <HubPaginatedTableShell
+                items={sortedRows}
+                resetKey={`${query}|${JSON.stringify(filterValues)}|${sortKey}|${sortDir}`}
+                ariaLabel="Users card pages"
+              >
+                {(pageUsers) => (
+                  <UserCards
+                    users={pageUsers}
+                    selectedIds={selectedIds}
+                    onToggleSelect={toggleSelect}
+                    detailUserId={accessUser?.id ?? null}
+                    onOpenUser={(user) => {
+                      setAccessUser(user);
+                      pushUsersLog("Access", `Opened ${user.loginId || user.fullName || user.id.slice(0, 8)}`);
+                    }}
+                  />
+                )}
+              </HubPaginatedTableShell>
             ) : null}
             {rows.length > 0 && viewMode === "table" ? (
               <UserDirectoryTable
@@ -748,7 +780,10 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
                 onToggleSelectAll={toggleSelectAll}
                 allVisibleSelected={allVisibleSelected}
                 detailUserId={accessUser?.id ?? null}
-                onOpenUser={setAccessUser}
+                onOpenUser={(user) => {
+                  setAccessUser(user);
+                  pushUsersLog("Access", `Opened ${user.loginId || user.fullName || user.id.slice(0, 8)}`);
+                }}
                 visibleColumns={visibleColumns}
               />
             ) : null}
