@@ -19,6 +19,7 @@
     "agent:manifest": "node ../scripts/sync-ship-keywords.mjs && node scripts/sync-agent-manifest.mjs",
     "hub-ui:stack": "node ../scripts/hub-ui-stack.cjs",
     "build": "node scripts/build-supabase-quota-snapshot.mjs && node ../scripts/sync-ship-keywords.mjs && node scripts/sync-agent-manifest.mjs && tsc --noEmit && vitest run --passWithNoTests && vite build",
+    "build:vercel": "node scripts/build-supabase-quota-snapshot.mjs && node scripts/sync-agent-manifest.mjs && tsc --noEmit && vite build",
     "lint": "eslint src && node ../scripts/hub-ui-parity-check.mjs --code P0004 && node ../scripts/hub-vendor-hash-check.mjs --code P0004 && node ../scripts/hub-load-vendor-hash-check.mjs --code P0004",
     "parity:modal": "node ../scripts/hub-ui-parity-check.mjs --code P0004",
     "deadcode": "knip --no-config-hints",
