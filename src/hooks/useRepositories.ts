@@ -5,7 +5,7 @@ import {
   sanitizeHubRemoteStates,
   writeHubCatalogCache,
 } from "../lib/hub-catalog-client-cache";
-import { clearCache } from "../lib/cache";
+import { clearCache } from "../lib/github-api-cache";
 import { mergeRepos, resolveTool } from "../lib/tooling";
 import { hydrateRepository, repoUrl } from "../services/github";
 import type { LocalRegistry, ToolRemoteState, ToolRepository } from "../types";

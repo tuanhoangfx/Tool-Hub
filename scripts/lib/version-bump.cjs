@@ -3,6 +3,9 @@
  */
 const fs = require("node:fs");
 const path = require("node:path");
+const {
+  syncToolManifestReleaseVersion,
+} = require(path.join(__dirname, "..", "..", "..", "scripts", "lib", "version-sync-lib.cjs"));
 
 function parseSemver(v) {
   const m = String(v || "")
@@ -120,7 +123,6 @@ function updateChangelogCommitHash(cwd, version, commitHash) {
  */
 function bumpAndSyncDocs(cwd, opts = {}) {
   const pkgPath = path.join(cwd, "package.json");
-  const manifestPath = path.join(cwd, "tool.manifest.json");
   const pkg = readJson(pkgPath) || { version: "0.1.0" };
   const changelogVersion = readLatestChangelogVersion(cwd);
   const previousVersion = (changelogVersion || pkg.version || "0.1.0").trim();
@@ -129,13 +131,7 @@ function bumpAndSyncDocs(cwd, opts = {}) {
   pkg.version = version;
   writeJson(pkgPath, pkg);
 
-  const manifest = readJson(manifestPath);
-  if (manifest) {
-    manifest.release = manifest.release || {};
-    manifest.release.version = version;
-    manifest.manifestUpdatedAt = new Date().toISOString();
-    writeJson(manifestPath, manifest);
-  }
+  syncToolManifestReleaseVersion(cwd, version, { write: true });
 
   prependChangelog(cwd, version, {
     title: opts.title,

@@ -6,6 +6,8 @@ import {
   HubToolDetailModalSecondaryAction,
   HubToolDetailSection,
   HubUiTemplateBadge,
+  navIconClass,
+  navMetaTextClass,
 } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import { navigateToDashboardTab } from "./dashboard-nav";
@@ -35,6 +37,7 @@ export function DashboardScreenPreviewModal({
       title={entry.label}
       titleId="dashboard-screen-preview-title"
       headerIcon={Icon}
+      headerIconClassName={navIconClass(entry.iconTone, true)}
       headerTrailing={
         <span className="truncate font-mono text-[10px] text-[var(--muted)]">{entry.goldenRef ?? entry.path}</span>
       }
@@ -63,7 +66,7 @@ export function DashboardScreenPreviewModal({
         </div>
         <HubToolDetailSection id="dash-preview-summary" title="Summary">
           <p className="text-sm leading-relaxed text-[var(--muted)]">{entry.description}</p>
-          {entry.meta ? <p className="mt-2 text-xs font-medium text-indigo-300/85">{entry.meta}</p> : null}
+          {entry.meta ? <p className={`mt-2 text-xs font-medium ${navMetaTextClass(entry.iconTone)}`}>{entry.meta}</p> : null}
         </HubToolDetailSection>
         <HubToolDetailSection id="dash-preview-route" title="Route">
           <code className="font-mono text-xs text-[var(--text)]">{entry.path}</code>

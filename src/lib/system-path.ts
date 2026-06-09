@@ -8,7 +8,7 @@ export type SystemRoute = {
   tab: SystemTab;
   schemaEntity?: SchemaEntity;
   design?: {
-    template: "tool-access" | "agent-context" | "hub-chrome-spacing";
+    template: "tool-access" | "agent-context" | "auth-gate" | "hub-chrome-spacing";
     variant: number;
     live: boolean;
   };
@@ -41,7 +41,14 @@ function clampVariant(n: number) {
 function parseTemplateVariant(segments: string[], p: URLSearchParams): number {
   const seg = segments[2];
   if (seg && /^[1-5]$/.test(seg)) return clampVariant(Number(seg));
-  if ((seg === "tool-access" || seg === "ta") && segments[3]) {
+  const namedTemplate =
+    seg === "tool-access" ||
+    seg === "ta" ||
+    seg === "auth-gate" ||
+    seg === "auth" ||
+    seg === "agent-context" ||
+    seg === "agent";
+  if (namedTemplate && segments[3] && /^[1-5]$/.test(segments[3])) {
     return clampVariant(Number(segments[3]));
   }
   const qv = p.get("qv") ?? p.get("sqv")?.replace(/^V/i, "");
@@ -76,11 +83,21 @@ export function parseSystemRoute(pathname: string, search = ""): SystemRoute {
       }
       if (tab === "template") {
         const tplSeg = segments[2];
-        const template =
-          tplSeg === "agent-context" || tplSeg === "agent" ? "agent-context" : "agent-context";
+        let template: NonNullable<SystemRoute["design"]>["template"] = "tool-access";
+        let variantSegments = segments;
+        if (tplSeg === "agent-context" || tplSeg === "agent") {
+          template = "agent-context";
+        } else if (tplSeg === "tool-access" || tplSeg === "ta") {
+          template = "tool-access";
+        } else if (tplSeg === "auth-gate" || tplSeg === "auth") {
+          template = "auth-gate";
+          variantSegments = ["system", "template", "auth-gate", ...segments.slice(3)];
+        } else if (/^[1-5]$/.test(tplSeg ?? "")) {
+          template = "auth-gate";
+        }
         design = {
           template,
-          variant: parseTemplateVariant(segments, p),
+          variant: parseTemplateVariant(variantSegments, p),
           live: false,
         };
       }
@@ -90,7 +107,7 @@ export function parseSystemRoute(pathname: string, search = ""): SystemRoute {
     if (segments.length <= 1 && stab && SEGMENT_TAB[stab]) {
       tab = SEGMENT_TAB[stab];
       if (tab === "template") {
-        design = { template: "agent-context", variant: parseTemplateVariant(segments, p), live: false };
+        design = { template: "tool-access", variant: parseTemplateVariant(segments, p), live: false };
       }
     }
   }
@@ -103,7 +120,7 @@ export function parseSystemRoute(pathname: string, search = ""): SystemRoute {
   }
 
   if (tab === "template" && !design) {
-    design = { template: "agent-context", variant: 1, live: false };
+    design = { template: "tool-access", variant: 1, live: false };
   }
 
   return { tab, schemaEntity, design };
@@ -122,8 +139,17 @@ export function buildSystemUrl(route: SystemRoute, search = ""): string {
     path += `/${route.schemaEntity}`;
   }
 
-  if (route.tab === "template" && route.design && route.design.variant > 1) {
-    path += `/${route.design.variant}`;
+  if (route.tab === "template" && route.design) {
+    if (route.design.template === "auth-gate") {
+      path += "/auth-gate";
+    } else if (route.design.template === "agent-context") {
+      path += "/agent-context";
+    } else if (route.design.template === "tool-access") {
+      path += "/tool-access";
+    }
+    if (route.design.variant > 1) {
+      path += `/${route.design.variant}`;
+    }
   }
 
   const p = new URLSearchParams(search);

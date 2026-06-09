@@ -13,12 +13,14 @@ import {
 import { prefetchSupabaseQuotaCatalog } from "../../lib/hub-background-prefetch";
 import { SUPABASE_QUOTA_UPDATED_EVENT } from "./supabase-quota-events";
 import { AGENT_MANIFEST_REFRESH_EVENT } from "./agent-manifest-events";
-import { DesignTemplateHub } from "./design-template/DesignTemplateHub";
-import { SystemOverviewPanel } from "./SystemOverviewPanel";
-import { SystemSchemaPanel } from "./SystemSchemaPanel";
-import { SystemSupabaseQuotaPanel } from "./SystemSupabaseQuotaPanel";
-import { SystemAgentContextPanel } from "./SystemAgentContextPanel";
-import { SystemServerPanel } from "./SystemServerPanel";
+import {
+  LazyDesignTemplateHub,
+  LazySystemAgentContextPanel,
+  LazySystemOverviewPanel,
+  LazySystemSchemaPanel,
+  LazySystemServerPanel,
+  LazySystemSupabaseQuotaPanel,
+} from "./system-lazy-panels";
 
 type SystemHubScreenProps = {
   tools: ResolvedTool[];
@@ -141,23 +143,23 @@ export function SystemHubScreen({
         <HubTabChrome header={header} filterBar={filterBar}>
           <div className="hub-tab-content-zone relative z-0">
           <TabPanel tabId="overview" activeTab={tab} visited={visited}>
-            <SystemOverviewPanel tools={tools} />
+            <LazySystemOverviewPanel tools={tools} />
           </TabPanel>
           <TabPanel tabId="schema" activeTab={tab} visited={visited}>
-            <SystemSchemaPanel />
+            <LazySystemSchemaPanel />
           </TabPanel>
           <TabPanel tabId="supabase-quota" activeTab={tab} visited={visited}>
-            <SystemSupabaseQuotaPanel />
+            <LazySystemSupabaseQuotaPanel />
           </TabPanel>
           <TabPanel tabId="server" activeTab={tab} visited={visited}>
-            <SystemServerPanel tools={tools} />
+            <LazySystemServerPanel tools={tools} />
           </TabPanel>
           <TabPanel tabId="agent" activeTab={tab} visited={visited}>
-            <SystemAgentContextPanel />
+            <LazySystemAgentContextPanel />
           </TabPanel>
           {visited.has("template") ? (
             <div className={tab === "template" ? undefined : "hidden"} aria-hidden={tab !== "template"}>
-              <DesignTemplateHub />
+              <LazyDesignTemplateHub />
             </div>
           ) : null}
           </div>

@@ -1,10 +1,5 @@
-@import "@tool-workspace/hub-ui/styles/hub-check-indicator.css";
-@import "@tool-workspace/hub-ui/styles/hub-fields.css";
-@import "@tool-workspace/hub-ui/styles/hub-shell-layout.css";
-@import "@tool-workspace/hub-ui/styles/hub-app-tab-header.css";
-@import "@tool-workspace/hub-ui/styles/hub-users-table.css";
-@import "@tool-workspace/hub-ui/styles/hub-modal.css";
-@import "@tool-workspace/hub-ui/styles/hub-auth-gate.css";
+@import "./styles/hub-ui-styles.css";
+@import "../../vendor/hub-ui/src/styles/hub-users-table.css";
 @import "./styles/base.css";
 @import "./theme/hub-appearance.css";
 @import "./styles/layout.css";

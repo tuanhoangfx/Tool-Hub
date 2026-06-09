@@ -31,7 +31,7 @@ async function main() {
          updated_at = now()
      from auth.users u
      where p.id = u.id
-       and lower(u.email) like '%@id.hub.x1z10.local'
+       and (lower(u.email) like '%@infix1.io.vn' or lower(u.email) like '%@id.hub.x1z10.local')
        and (p.login_id is null or p.login_id = '');
      select count(*)::int as profiles_with_login_id from public.profiles where login_id is not null;`,
   );

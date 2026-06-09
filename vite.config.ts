@@ -4,10 +4,12 @@ import { configDefaults, defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { createRequire } from "node:module";
 import { loadEnv } from "vite";
+// @ts-expect-error shared chunk helper (JS module)
+import { createHubManualChunks } from "../scripts/vite-hub-chunks.mjs";
 
 const toolRoot = path.dirname(fileURLToPath(import.meta.url));
-const hubUiRoot = path.resolve(toolRoot, "../../packages/hub-ui/src");
-const hubIdentityRoot = path.resolve(toolRoot, "../../packages/hub-identity/src");
+const hubUiSrc = path.resolve(toolRoot, "vendor/hub-ui/src");
+const hubIdentitySrc = path.resolve(toolRoot, "vendor/hub-identity/src");
 const hubLoadRoot = path.resolve(toolRoot, "vendor/hub-load/src");
 const devRoot = path.resolve(toolRoot, "../..");
 
@@ -82,7 +84,7 @@ export default defineConfig(({ mode }) => {
       port: 5176,
       strictPort: true,
       fs: {
-        allow: [toolRoot, hubUiRoot, hubIdentityRoot, hubLoadRoot, devRoot],
+        allow: [toolRoot, hubUiSrc, hubIdentitySrc, hubLoadRoot, devRoot],
       },
     },
     optimizeDeps: {
@@ -90,16 +92,32 @@ export default defineConfig(({ mode }) => {
       exclude: ["@tool-workspace/hub-ui"],
       holdUntilCrawlEnd: false,
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: createHubManualChunks({
+            features: {
+              "features/dashboard": "feature-dashboard",
+              "features/hub": "feature-hub",
+              "features/identity": "feature-users",
+              "features/system-hub": "feature-system",
+            },
+          }),
+        },
+      },
+    },
     esbuild: {
       target: "es2022",
     },
     resolve: {
       dedupe: ["react", "react-dom"],
-      alias: {
-        "@dev/hub-load": hubLoadRoot,
-        "@tool-workspace/hub-ui": hubUiRoot,
-        "@tool-workspace/hub-identity": hubIdentityRoot,
-      },
+      alias: [
+        { find: /^@tool-workspace\/hub-ui\/(.+)$/, replacement: `${hubUiSrc}/$1` },
+        { find: "@tool-workspace/hub-ui", replacement: path.join(hubUiSrc, "index.ts") },
+        { find: /^@tool-workspace\/hub-identity\/(.+)$/, replacement: `${hubIdentitySrc}/$1` },
+        { find: "@tool-workspace/hub-identity", replacement: path.join(hubIdentitySrc, "index.ts") },
+        { find: "@dev/hub-load", replacement: hubLoadRoot },
+      ],
     },
     test: {
       exclude: [...configDefaults.exclude, "scripts/**/*.test.cjs", "vendor/**"],

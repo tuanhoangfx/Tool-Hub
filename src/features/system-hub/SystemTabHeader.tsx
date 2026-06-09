@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { AppTabHeader, type TabHeaderStatItem } from "@tool-workspace/hub-ui";
 import { buildVersionMetaItems } from "../../lib/hub-tab-header-meta";
+import { navIconClass } from "@tool-workspace/hub-ui";
 import { readSystemTab, SYSTEM_TAB_ITEMS } from "./components/SystemTabs";
 
 type SystemTabHeaderProps = {
@@ -28,7 +29,7 @@ export function SystemTabHeader({
     <AppTabHeader
       ariaLabel={`${item.label} header`}
       titleIcon={Icon}
-      titleIconClass="text-violet-400"
+      titleIconClass={navIconClass(item.iconTone, true)}
       title={item.label}
       pinSticky={pinSticky}
       dividerBelow={dividerBelow}

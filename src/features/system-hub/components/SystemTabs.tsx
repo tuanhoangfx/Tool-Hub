@@ -1,18 +1,19 @@
 import { Bot, Database, Gauge, LayoutGrid, Palette, Server } from "lucide-react";
 import { readAppScreen, setAppScreen } from "../../../lib/app-screen";
+import type { NavIconTone } from "@tool-workspace/hub-ui";
 import { buildSystemUrl, readSystemRoute } from "../../../lib/system-path";
 import { sanitizeQueryForScreen } from "../../../lib/hub-query";
 import type { SchemaEntity } from "../../../lib/system-path";
 
 export type SystemTab = "overview" | "schema" | "supabase-quota" | "server" | "agent" | "template";
 
-const tabs: { id: SystemTab; label: string; icon: typeof LayoutGrid }[] = [
-  { id: "overview", label: "Overview", icon: LayoutGrid },
-  { id: "schema", label: "Schema", icon: Database },
-  { id: "supabase-quota", label: "Supabase Quota", icon: Gauge },
-  { id: "server", label: "Server", icon: Server },
-  { id: "agent", label: "Agent", icon: Bot },
-  { id: "template", label: "Design Template", icon: Palette },
+const tabs: { id: SystemTab; label: string; icon: typeof LayoutGrid; iconTone: NavIconTone }[] = [
+  { id: "overview", label: "Overview", icon: LayoutGrid, iconTone: "indigo" },
+  { id: "schema", label: "Schema", icon: Database, iconTone: "cyan" },
+  { id: "supabase-quota", label: "Supabase Quota", icon: Gauge, iconTone: "sky" },
+  { id: "server", label: "Server", icon: Server, iconTone: "blue" },
+  { id: "agent", label: "Agent", icon: Bot, iconTone: "violet" },
+  { id: "template", label: "Design Template", icon: Palette, iconTone: "fuchsia" },
 ];
 
 export function readSystemTab(): SystemTab {
@@ -35,7 +36,7 @@ export function setSystemTab(id: SystemTab) {
 
   if (id === "template") {
     route.design = {
-      template: route.design?.template ?? "agent-context",
+      template: route.design?.template ?? "tool-access",
       variant: route.design?.variant ?? 1,
       live: false,
     };

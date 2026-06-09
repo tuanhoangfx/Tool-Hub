@@ -1,0 +1,8 @@
+/* Relative hub-ui CSS — postcss-import cannot resolve @tool-workspace/hub-ui/styles via Vite alias. */
+@import "../../vendor/hub-ui/src/styles/hub-check-indicator.css";
+@import "../../vendor/hub-ui/src/styles/hub-fields.css";
+@import "../../vendor/hub-ui/src/styles/hub-shell-layout.css";
+@import "../../vendor/hub-ui/src/styles/hub-app-tab-header.css";
+@import "../../vendor/hub-ui/src/styles/hub-users-table.css";
+@import "../../vendor/hub-ui/src/styles/hub-modal.css";
+@import "../../vendor/hub-ui/src/styles/hub-auth-gate.css";

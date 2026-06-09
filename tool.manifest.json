@@ -47,7 +47,8 @@
     {
       "screen": "auth",
       "template": "auth-gate",
-      "golden": "P0004/auth"
+      "golden": "hub-ui/auth",
+      "authVariant": "standard"
     }
   ],
   "commands": {
@@ -72,7 +73,7 @@
     "manifestPath": "tool.manifest.json"
   },
   "release": {
-    "version": "5.2.16",
+    "version": "5.2.18",
     "readiness": [
       "build",
       "lint",
@@ -112,7 +113,7 @@
       "migrateDoc": "docs/IDENTITY.md"
     }
   },
-  "manifestUpdatedAt": "2026-06-08T08:45:37.385Z",
+  "manifestUpdatedAt": "2026-06-09T06:30:17.878Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infi.io.vn). Library-only catalog."

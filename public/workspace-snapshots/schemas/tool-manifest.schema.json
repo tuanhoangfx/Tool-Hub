@@ -121,7 +121,15 @@
           },
           "golden": {
             "type": "string",
-            "description": "Golden clone reference, e.g. P0016/groups, P0004/users."
+            "description": "Golden clone reference. Auth gate: always hub-ui/auth (adapters vary by authVariant)."
+          },
+          "authVariant": {
+            "type": "string",
+            "enum": [
+              "standard",
+              "anonymous-dual"
+            ],
+            "description": "Auth-gate wiring variant (see ui-patterns.catalog.json auth-gate.authVariants). Omit for non-auth screens."
           },
           "notes": {
             "type": "string",

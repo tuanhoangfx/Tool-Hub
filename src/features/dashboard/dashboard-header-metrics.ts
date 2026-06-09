@@ -1,15 +1,40 @@
-import { FolderTree, LayoutGrid, Settings2 } from "lucide-react";
+import {
+  HUB_APP_TAB_GROUP_META,
+  HUB_UI_TEMPLATE_META,
+  navBadgeIconClass,
+  type NavIconTone,
+} from "@tool-workspace/hub-ui";
 import type { TabHeaderStatItem } from "../../components/sales-shell/AppTabHeader";
 import { DASHBOARD_HEADER_STAT_DEFS, type DashboardHeaderStatKey } from "./dashboard-prefs";
 import type { DashboardKpis } from "./dashboard-aggregates";
 
 const STAT_DEFS: Record<
   DashboardHeaderStatKey,
-  { icon: typeof LayoutGrid; label: string; toneClass: string; pick: (k: DashboardKpis) => number }
+  {
+    label: string;
+    iconTone: NavIconTone;
+    icon: (typeof HUB_UI_TEMPLATE_META)["dashboard"]["icon"];
+    pick: (k: DashboardKpis) => number;
+  }
 > = {
-  total: { icon: LayoutGrid, label: "Screens", toneClass: "text-indigo-300", pick: (k) => k.total },
-  system: { icon: Settings2, label: "System tabs", toneClass: "text-violet-300", pick: (k) => k.system },
-  directory: { icon: FolderTree, label: "Directory", toneClass: "text-emerald-300", pick: (k) => k.directory },
+  total: {
+    label: "Screens",
+    iconTone: HUB_UI_TEMPLATE_META.dashboard.iconTone,
+    icon: HUB_UI_TEMPLATE_META.dashboard.icon,
+    pick: (k) => k.total,
+  },
+  system: {
+    label: "System tabs",
+    iconTone: HUB_APP_TAB_GROUP_META.system.iconTone,
+    icon: HUB_APP_TAB_GROUP_META.system.icon,
+    pick: (k) => k.system,
+  },
+  directory: {
+    label: "Directory",
+    iconTone: HUB_UI_TEMPLATE_META.directory.iconTone,
+    icon: HUB_UI_TEMPLATE_META.directory.icon,
+    pick: (k) => k.directory,
+  },
 };
 
 export function buildDashboardHeaderStats(visibleKeys: Set<string>, kpi: DashboardKpis): TabHeaderStatItem[] {
@@ -20,7 +45,7 @@ export function buildDashboardHeaderStats(visibleKeys: Set<string>, kpi: Dashboa
       icon: def.icon,
       label: def.label,
       value: def.pick(kpi),
-      toneClass: def.toneClass,
+      toneClass: navBadgeIconClass(def.iconTone),
     };
   });
 }

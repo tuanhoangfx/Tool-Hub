@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Gauge, LayoutGrid, Minus, Plus, RefreshCcw, Settings2, Upload, User, Users } from "lucide-react";
+import { Gauge, LayoutGrid, RefreshCcw, Settings2, Upload, Users } from "lucide-react";
 import { HubUserModal } from "../../features/identity/HubUserModal";
+import { hubSessionLabels } from "@tool-workspace/hub-identity";
 import { useExtensionIdentityRelay } from "../../features/identity/useExtensionIdentityRelay";
 import { useHubReturnToRelay } from "../../features/identity/useHubReturnToRelay";
 import { useHubAuth } from "../../features/identity/useHubAuth";
@@ -12,7 +13,21 @@ import type { AppScreen } from "../../lib/app-screen";
 import { prefetchAppScreen } from "../../lib/app-screen-prefetch";
 import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
-import { HubLogButton, HubSidebarFooterButton, HubUiZoomControl } from "@tool-workspace/hub-ui";
+import {
+  HubLogButton,
+  HubSidebarFooterButton,
+  HubSidebarNavGroup,
+  HubUiZoomControl,
+  HubWorkspaceUserShell,
+  resolveWorkspaceRoleKey,
+  navActiveBarClass,
+  navActiveBgClass,
+  navActiveTextClass,
+  navIconClass,
+  navGroupSubnavOpenKey,
+  subscribeHubListPrefs,
+  type NavIconTone,
+} from "@tool-workspace/hub-ui";
 import { SystemTabSubNav } from "./SystemTabSubNav";
 
 type SidebarProps = {
@@ -28,18 +43,18 @@ type SidebarProps = {
   displayPrefs: ReactNode;
 };
 
-const items: { screen: AppScreen; label: string; icon: typeof LayoutGrid }[] = [
-  { screen: "dashboard", label: "Dashboard", icon: Gauge },
-  { screen: "library", label: "Hub", icon: LayoutGrid },
-  { screen: "users", label: "Users", icon: Users },
-  { screen: "system", label: "System", icon: Settings2 },
-];
+const NAV_SUBNAV_PREFIX = "tool-hub";
 
-const SYSTEM_SUBNAV_OPEN_KEY = "tool-hub:system-subnav-open";
+const items: { screen: AppScreen; label: string; icon: typeof LayoutGrid; iconTone: NavIconTone }[] = [
+  { screen: "dashboard", label: "Dashboard", icon: Gauge, iconTone: "sky" },
+  { screen: "library", label: "Hub", icon: LayoutGrid, iconTone: "indigo" },
+  { screen: "users", label: "Users", icon: Users, iconTone: "emerald" },
+  { screen: "system", label: "System", icon: Settings2, iconTone: "amber" },
+];
 
 function readSystemSubnavOpen() {
   if (typeof window === "undefined") return true;
-  return window.sessionStorage.getItem(SYSTEM_SUBNAV_OPEN_KEY) !== "0";
+  return window.sessionStorage.getItem(navGroupSubnavOpenKey(NAV_SUBNAV_PREFIX, "system")) !== "0";
 }
 
 export function SalesSidebar({
@@ -56,24 +71,24 @@ export function SalesSidebar({
   const { session } = useHubAuth();
   useExtensionIdentityRelay(session);
   useHubReturnToRelay(session);
-  const [userModalOpen, setUserModalOpen] = useState(false);
   const [systemTab, setSystemTab] = useState<SystemTab>(() => readSystemTab());
   const [systemSubnavOpen, setSystemSubnavOpen] = useState(readSystemSubnavOpen);
   const [showSubnavToggleIcon, setShowSubnavToggleIcon] = useState(() => readHubListPrefs().navToggleIcon);
-  const footerUserLabel =
-    session?.user?.email?.trim() || (session?.user?.id ? session.user.id.slice(0, 8) : "Sign in");
+  const labels = hubSessionLabels(session);
 
   useEffect(() => {
-    const sync = () => {
-      setSystemTab(readSystemTab());
-      setShowSubnavToggleIcon(readHubListPrefs().navToggleIcon);
-    };
+    const sync = () => setSystemTab(readSystemTab());
     window.addEventListener("popstate", sync);
     return () => window.removeEventListener("popstate", sync);
   }, []);
 
+  useEffect(() => subscribeHubListPrefs(() => setShowSubnavToggleIcon(readHubListPrefs().navToggleIcon)), []);
+
   useEffect(() => {
-    window.sessionStorage.setItem(SYSTEM_SUBNAV_OPEN_KEY, systemSubnavOpen ? "1" : "0");
+    window.sessionStorage.setItem(
+      navGroupSubnavOpenKey(NAV_SUBNAV_PREFIX, "system"),
+      systemSubnavOpen ? "1" : "0",
+    );
   }, [systemSubnavOpen]);
 
   const scanIndicator = buildScanIndicator(scanStatus, scanMessage, lastScanAt);
@@ -94,69 +109,72 @@ export function SalesSidebar({
       </div>
 
       <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-        {items.map(({ screen: id, label, icon: Icon }) => {
-          const active = screen === id;
-          const systemSubnavActive = id === "system" && active && systemSubnavOpen;
-          const menuActive = active && !systemSubnavActive;
-          const ToggleIcon = systemSubnavOpen ? Minus : Plus;
-          return (
-            <div key={id}>
-              <button
-                type="button"
-                aria-expanded={id === "system" ? systemSubnavOpen : undefined}
+        {items.map(({ screen: id, label, icon: Icon, iconTone }) => {
+          if (id === "system") {
+            const systemActive = screen === "system";
+            return (
+              <HubSidebarNavGroup
+                key={id}
+                label={label}
+                icon={Icon}
+                iconTone={iconTone}
+                active={systemActive}
+                subnavOpen={systemSubnavOpen}
+                showToggleIcon={showSubnavToggleIcon}
                 onMouseEnter={() => prefetchAppScreen(id)}
                 onFocus={() => prefetchAppScreen(id)}
                 onClick={() => {
-                  if (id === "system" && screen === "system") {
+                  if (systemActive) {
                     setSystemSubnavOpen((v) => !v);
                     return;
                   }
                   onNavigate(id);
-                  if (id === "system") setSystemSubnavOpen(true);
+                  setSystemSubnavOpen(true);
                 }}
-                className={`group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all ${
-                  menuActive
-                    ? "bg-gradient-to-r from-indigo-500/20 to-purple-500/5 text-indigo-100"
-                    : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
-                }`}
-              >
-                {menuActive ? (
-                  <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r bg-indigo-400" />
-                ) : null}
-                <Icon size={compactIconSize(16)} className={menuActive ? "text-indigo-300" : ""} />
-                <span className="flex-1 text-left">{label}</span>
-                {id === "system" && showSubnavToggleIcon ? (
-                  <ToggleIcon
-                    size={compactIconSize(13)}
-                    strokeWidth={2.3}
-                    className={`shrink-0 transition-colors ${
-                      systemSubnavOpen
-                        ? "text-amber-300 group-hover:text-amber-200"
-                        : "text-cyan-300 group-hover:text-cyan-200"
-                    }`}
-                  />
-                ) : null}
-              </button>
-              {id === "system" && systemSubnavOpen ? <SystemTabSubNav activeTab={screen === "system" ? systemTab : null} /> : null}
-            </div>
+                subnav={<SystemTabSubNav activeTab={systemActive ? systemTab : null} />}
+              />
+            );
+          }
+
+          const active = screen === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              onMouseEnter={() => prefetchAppScreen(id)}
+              onFocus={() => prefetchAppScreen(id)}
+              onClick={() => onNavigate(id)}
+              className={`group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all ${
+                active
+                  ? `${navActiveBgClass(iconTone)} ${navActiveTextClass(iconTone)}`
+                  : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
+              }`}
+            >
+              {active ? (
+                <span
+                  className={`absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r ${navActiveBarClass(iconTone)}`}
+                />
+              ) : null}
+              <Icon size={compactIconSize(16)} className={`shrink-0 ${navIconClass(iconTone, active)}`} />
+              <span className="flex-1 text-left">{label}</span>
+            </button>
           );
         })}
       </nav>
 
       <footer className="mt-2 shrink-0 space-y-0.5 overflow-visible border-t border-white/5 pt-2.5">
-        <HubSidebarFooterButton
-          icon={User}
-          iconClass="text-violet-400"
-          label="User"
-          title="Account & sign out"
-          onClick={() => setUserModalOpen(true)}
-          trailing={
-            <span className="max-w-[108px] truncate text-xs font-medium text-[var(--text)]/80">{footerUserLabel}</span>
-          }
+        <HubWorkspaceUserShell
+          session={session}
+          labels={labels}
+          roleKey={resolveWorkspaceRoleKey(session, session ? "user" : "anonymous")}
+          footerGuestLabel="Sign in"
+          renderModal={({ open, onClose }) => (
+            <HubUserModal open={open} onClose={onClose} session={session} />
+          )}
         />
         <HubSidebarFooterButton
           icon={RefreshCcw}
-          iconClass="text-indigo-300"
+          iconClass="text-emerald-300"
           label="Refresh"
           onClick={onRefreshAll}
           disabled={scanningWorkspace || loadingAll}
@@ -168,7 +186,6 @@ export function SalesSidebar({
         {displayPrefs}
         <HubUiZoomControl />
       </footer>
-      <HubUserModal open={userModalOpen} onClose={() => setUserModalOpen(false)} session={session} />
     </aside>
   );
 }

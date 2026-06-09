@@ -229,17 +229,56 @@
       "layer": "modal",
       "screenTemplate": "auth-gate",
       "status": "ready",
-      "summary": "Sign-in modal (hub-auth.css). Golden HubAuthGate.",
-      "scaffold": "packages/hub-ui/examples/GoldenAuthGateScreen.tsx",
+      "summary": "Modal-only auth gate V2 — Sign In / Sign Up / Anonymous (optional). Canonical UI in packages/hub-ui; tools ship thin adapters only.",
+      "scaffold": "packages/hub-ui/examples/GoldenAuthGateAdapter.tsx",
+      "scaffoldPreview": "packages/hub-ui/examples/GoldenAuthGateScreen.tsx",
+      "verify": "node Tool/scripts/hub-auth-migration-check.mjs",
       "golden": {
-        "ref": "P0004/auth",
-        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
+        "ref": "hub-ui/auth",
+        "screenPath": "packages/hub-ui/src/auth/HubAuthGateGoldenPreview.tsx",
+        "componentPath": "packages/hub-ui/src/auth/HubAuthGateModal.tsx",
+        "factoryPath": "packages/hub-ui/src/auth/WorkspaceAuthGate.tsx"
+      },
+      "authVariants": {
+        "standard": {
+          "anonymousTab": false,
+          "dismissible": false,
+          "adapters": [
+            "P0004/auth",
+            "P0016/auth"
+          ],
+          "notes": "Single Hub Supabase via hub-identity; app-level or tab gate"
+        },
+        "anonymous-dual": {
+          "anonymousTab": true,
+          "dismissible": true,
+          "adapters": [
+            "P0020/auth"
+          ],
+          "notes": "Anonymous offline mode + dual Hub/Data Box signInWorkspaceDual"
+        }
       },
       "clones": [
         {
+          "product": "P0004",
+          "screen": "auth",
+          "authVariant": "standard",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
+          "notes": "HubAuthGate — Users tab only; non-dismissible"
+        },
+        {
+          "product": "P0016",
+          "screen": "auth",
+          "authVariant": "standard",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/auth/ChatCenterAuthGate.tsx",
+          "notes": "ChatCenterAuthGate — app-level gate"
+        },
+        {
           "product": "P0020",
           "screen": "auth",
-          "notes": "NotesAuthGate"
+          "authVariant": "anonymous-dual",
+          "screenPath": "Tool/P0020-Data-Box/src/features/notes/NotesAuthGate.tsx",
+          "notes": "NotesAuthGate — per-screen gate + onAnonymous"
         }
       ]
     },
@@ -499,6 +538,92 @@
       ]
     },
     {
+      "id": "sidebar-nav-tones",
+      "name": "Sidebar nav tones",
+      "layer": "shell-part",
+      "status": "ready",
+      "summary": "Per-menu iconTone palette — icon, dot, rail, active bar/bg/text for Hub sidebars and Dashboard screen registry.",
+      "composed": [
+        "navIconClass",
+        "navDotClass",
+        "navRailClass",
+        "navActiveBarClass",
+        "navActiveBgClass",
+        "navActiveTextClass",
+        "HubSidebarNavGroup",
+        "NavGroupSubNav"
+      ],
+      "scaffold": "packages/hub-ui/src/shell/sidebar-nav-tones.ts",
+      "verify": "hub-ui-duplication-check.mjs; no local sidebar-nav-tones copies",
+      "golden": {
+        "ref": "packages/hub-ui/sidebar-nav-tones",
+        "modulePath": "packages/hub-ui/src/shell/sidebar-nav-tones.ts",
+        "screenPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx",
+        "subnavPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/SystemTabSubNav.tsx",
+        "navGroupPath": "packages/hub-ui/src/shell/HubSidebarNavGroup.tsx",
+        "navRegistryPath": "packages/hub-ui/src/shell/nav-sidebar-structure.ts",
+        "registryPath": "Tool/P0004-Tool-Hub/src/features/dashboard/dashboard-tab-registry.ts"
+      },
+      "clones": [
+        {
+          "product": "P0020",
+          "screen": "workspace",
+          "screenPath": "Tool/P0020-Data-Box/src/components/sales-shell/WorkspaceSidebar.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "shell",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/HubShellSidebar.tsx"
+        },
+        {
+          "product": "P0008",
+          "screen": "shell",
+          "screenPath": "Tool/P0008-Sales-Console/app/src/components/layout/Sidebar.tsx"
+        },
+        {
+          "product": "P0021",
+          "screen": "workspace",
+          "screenPath": "Tool/P0021-AutoVideo-Studio/app/src/components/workspace/WorkspaceShell.tsx"
+        }
+      ]
+    },
+    {
+      "id": "sidebar-nav-group",
+      "name": "Sidebar nav group",
+      "layer": "shell-part",
+      "status": "ready",
+      "summary": "Expandable sidebar group — HubSidebarNavGroup + NavGroupSubNav. Registry: NavScreenGroupConfig (AppScreen children) vs NavViewGroupConfig (URL sub-view children).",
+      "composed": [
+        "HubSidebarNavGroup",
+        "HubSidebarNavGroupHeader",
+        "NavGroupSubNav",
+        "NavScreenGroupConfig",
+        "NavViewGroupConfig",
+        "navGroupSubnavOpenKey",
+        "flatMapNavScreenItems",
+        "navScreenGroupSubNavItems",
+        "navViewGroupSubNavItems"
+      ],
+      "scaffold": "packages/hub-ui/src/shell/nav-sidebar-structure.ts",
+      "verify": "hub-ui-duplication-check.mjs; P0004 SalesSidebar System group; P0016 multi-group shell",
+      "golden": {
+        "ref": "packages/hub-ui/sidebar-nav-group",
+        "modulePath": "packages/hub-ui/src/shell/HubSidebarNavGroup.tsx",
+        "registryPath": "packages/hub-ui/src/shell/nav-sidebar-structure.ts",
+        "screenPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx",
+        "subnavPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/SystemTabSubNav.tsx",
+        "navStructurePath": "Tool/P0016-ChatCenter/src/lib/nav-structure.ts"
+      },
+      "clones": [
+        {
+          "product": "P0016",
+          "screen": "shell",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/HubShellSidebar.tsx",
+          "notes": "Chatbot + Zalo (screen groups) + Facebook (view group)"
+        }
+      ]
+    },
+    {
       "id": "analytics-band",
       "name": "Analytics band (KPI + Charts)",
       "layer": "shell-part",
@@ -593,7 +718,8 @@
         "bots",
         "groups",
         "logs",
-        "channels"
+        "channels",
+        "auth"
       ]
     },
     "P0008": {

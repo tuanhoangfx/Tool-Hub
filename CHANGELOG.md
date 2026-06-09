@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-06-09 - AppTabHeader golden layout restore + version timestamp
+
+- Version: `5.2.18`
+- Timestamp: 2026-06-09 13:30 (UTC+7)
+- Type: Patch
+- Status: Committed
+- Release: https://infi.io.vn
+
+### Changes
+
+- **Header:** Khôi phục Golden Pattern `title · session · version · center stats · actions` — Session về cột trái; center stats luôn hiện; grid `1fr auto 1fr`.
+- **Timestamp:** `resolveVersionReleaseMeta` fallback CHANGELOG mới nhất khi GitHub/manifest thiếu semver hiện tại.
+- **CI:** `hub-ui-parity-check.mjs` — assert `AppTabHeader` layout + vendor sync across tools.
+- **Docs:** `UI_PATTERNS.md` — Tab header golden contract.
+
+### Verification
+
+- `node Tool/scripts/hub-ui-parity-check.mjs --code P0004 --screen dashboard`
+- `node Tool/scripts/sync-hub-ui-vendor.cjs`
+
+---
 ## 2026-06-07 - Dashboard console phases 1–3 (parity, registry, preview)
 
 - Version: `5.2.16`

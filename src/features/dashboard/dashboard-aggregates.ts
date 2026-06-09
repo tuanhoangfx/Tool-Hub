@@ -1,19 +1,10 @@
-import { HUB_APP_TAB_GROUP_META, HUB_UI_TEMPLATE_META } from "@tool-workspace/hub-ui";
+import { HUB_APP_TAB_GROUP_META, HUB_UI_TEMPLATE_META, navChartColor } from "@tool-workspace/hub-ui";
 import type { BarItem, FilterDef, FilterValues } from "../../components/sales-shell";
 import { enrichFilterDefs } from "../../lib/filter-option-counts";
 import type { DashboardTabEntry } from "./dashboard-tab-registry";
 
-const GROUP_CHART_COLOR: Record<string, string> = {
-  hub: "#818cf8",
-  users: "#38bdf8",
-  system: "#a78bfa",
-};
-
-const TEMPLATE_CHART_COLOR: Record<string, string> = {
-  directory: "#34d399",
-  "system-panels": "#a78bfa",
-  "document-toc": "#fbbf24",
-};
+const DASHBOARD_GROUP_IDS = ["hub", "users", "system"] as const;
+const DASHBOARD_TEMPLATE_IDS = ["directory", "system-panels", "document-toc"] as const;
 
 export type DashboardKpis = {
   total: number;
@@ -45,16 +36,16 @@ export function dashboardKpis(entries: DashboardTabEntry[]): DashboardKpis {
 
 export function dashboardCharts(entries: DashboardTabEntry[]) {
   const kpis = dashboardKpis(entries);
-  const group: BarItem[] = (["hub", "users", "system"] as const).map((id) => ({
+  const group: BarItem[] = DASHBOARD_GROUP_IDS.map((id) => ({
     label: HUB_APP_TAB_GROUP_META[id].label,
     value: id === "hub" ? kpis.hub : id === "users" ? kpis.users : kpis.system,
-    color: GROUP_CHART_COLOR[id],
+    color: navChartColor(HUB_APP_TAB_GROUP_META[id].iconTone),
   }));
-  const template: BarItem[] = (["directory", "system-panels", "document-toc"] as const).map((id) => ({
+  const template: BarItem[] = DASHBOARD_TEMPLATE_IDS.map((id) => ({
     label: HUB_UI_TEMPLATE_META[id].label,
     value:
       id === "directory" ? kpis.directory : id === "system-panels" ? kpis.systemPanels : kpis.documentToc,
-    color: TEMPLATE_CHART_COLOR[id],
+    color: navChartColor(HUB_UI_TEMPLATE_META[id].iconTone),
   }));
   return { group, template };
 }

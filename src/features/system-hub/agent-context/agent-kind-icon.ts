@@ -1,32 +1,11 @@
-import {
-  BookOpen,
-  Bot,
-  FileText,
-  LayoutTemplate,
-  ScrollText,
-  Sparkles,
-  Terminal,
-  type LucideIcon,
-} from "lucide-react";
+import { FileText, type LucideIcon } from "lucide-react";
+import { AGENT_KIND_SEMANTIC, resolveSemanticIcon } from "@tool-workspace/hub-ui";
 import type { AgentContextItem, AgentContextKind } from "./types";
 
 export function agentKindIcon(kind: AgentContextKind): LucideIcon {
-  switch (kind) {
-    case "rule":
-      return ScrollText;
-    case "skill":
-      return Sparkles;
-    case "pattern":
-      return LayoutTemplate;
-    case "command":
-      return Terminal;
-    case "doc":
-      return BookOpen;
-    case "agent":
-      return Bot;
-    default:
-      return FileText;
-  }
+  const key = AGENT_KIND_SEMANTIC[kind];
+  if (key) return resolveSemanticIcon(key).icon as LucideIcon;
+  return FileText;
 }
 
 export function agentStatusDotColor(item: Pick<AgentContextItem, "alwaysApply" | "agentRequestable">): string {

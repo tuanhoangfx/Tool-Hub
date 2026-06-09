@@ -1,9 +1,14 @@
 /** Internal auth email domain for User ID sign-in (Supabase requires an email). */
-export const HUB_ID_EMAIL_DOMAIN = "@id.hub.x1z10.local";
+export const HUB_ID_EMAIL_DOMAIN = "@infix1.io.vn";
+
+/** Legacy synthetic domain — kept for matching existing auth.users rows. */
+export const HUB_ID_EMAIL_LEGACY_DOMAIN = "@id.hub.x1z10.local";
+
+export const HUB_ID_EMAIL_DOMAINS = [HUB_ID_EMAIL_DOMAIN, HUB_ID_EMAIL_LEGACY_DOMAIN] as const;
 
 export function isHubSyntheticEmail(email: string | null | undefined): boolean {
   const v = String(email ?? "").trim().toLowerCase();
-  return v.endsWith(HUB_ID_EMAIL_DOMAIN);
+  return HUB_ID_EMAIL_DOMAINS.some((domain) => v.endsWith(domain));
 }
 
 export function loginIdFromSyntheticEmail(email: string | null | undefined): string | null {
@@ -16,6 +21,14 @@ export function looksLikeEmail(input: string): boolean {
   return input.includes("@");
 }
 
+/** Trim + NFKC — avoids invisible chars breaking User ID sign-in. */
+export function sanitizeHubLoginInput(input: string): string {
+  return String(input ?? "")
+    .normalize("NFKC")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .trim();
+}
+
 /** Workspace user ID: 3–32 chars, lowercase letter/digit/._- */
 export function normalizeLoginId(raw: string): string | null {
   const id = raw.trim().toLowerCase();
@@ -23,12 +36,35 @@ export function normalizeLoginId(raw: string): string | null {
   return id;
 }
 
+/** Canonical synthetic auth email for a User ID or email input. */
 export function hubAuthEmailFromLogin(input: string): string {
-  const trimmed = input.trim().toLowerCase();
-  if (looksLikeEmail(trimmed)) return trimmed;
+  return hubAuthEmailsFromLogin(input)[0];
+}
+
+/** Primary + legacy synthetic emails for sign-in fallback on migrated Hub accounts. */
+export function hubAuthEmailsFromLogin(input: string): string[] {
+  const trimmed = sanitizeHubLoginInput(input).toLowerCase();
+  if (!trimmed) throw new Error("Enter your user ID or email");
+  if (looksLikeEmail(trimmed)) return hubAuthEmailsForSignIn(trimmed);
   const loginId = normalizeLoginId(trimmed);
   if (!loginId) throw new Error("Invalid user ID (use 3–32 letters, numbers, . _ -)");
-  return `${loginId}${HUB_ID_EMAIL_DOMAIN}`;
+  return [`${loginId}${HUB_ID_EMAIL_DOMAIN}`, `${loginId}${HUB_ID_EMAIL_LEGACY_DOMAIN}`];
+}
+
+/** All auth emails to try for password sign-in (User ID, synthetic, or real email). */
+export function hubAuthEmailsForSignIn(input: string): string[] {
+  const trimmed = sanitizeHubLoginInput(input).toLowerCase();
+  if (!trimmed) return [];
+  if (!looksLikeEmail(trimmed)) {
+    const loginId = normalizeLoginId(trimmed);
+    if (!loginId) return [];
+    return [`${loginId}${HUB_ID_EMAIL_DOMAIN}`, `${loginId}${HUB_ID_EMAIL_LEGACY_DOMAIN}`];
+  }
+  const loginId = loginIdFromSyntheticEmail(trimmed);
+  if (loginId) {
+    return [`${loginId}${HUB_ID_EMAIL_DOMAIN}`, `${loginId}${HUB_ID_EMAIL_LEGACY_DOMAIN}`];
+  }
+  return [trimmed];
 }
 
 export type ResolvedLogin = {
@@ -38,7 +74,7 @@ export type ResolvedLogin = {
 };
 
 export function resolveHubLogin(input: string): ResolvedLogin {
-  const trimmed = input.trim().toLowerCase();
+  const trimmed = sanitizeHubLoginInput(input).toLowerCase();
   if (!trimmed) throw new Error("Enter your user ID or email");
   if (looksLikeEmail(trimmed)) {
     return { authEmail: trimmed, loginId: null, isEmailLogin: true };

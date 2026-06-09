@@ -1,5 +1,5 @@
 import { ArrowUpRight, Star } from "lucide-react";
-import { HubAppTabGroupBadge, HubUiTemplateBadge } from "@tool-workspace/hub-ui";
+import { HubAppTabGroupBadge, HubUiTemplateBadge, navIconClass, navMetaTextClass } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import type { DashboardTabEntry } from "./dashboard-tab-registry";
 import { DashboardStatusBadge } from "./DashboardStatusBadge";
@@ -30,7 +30,7 @@ export function DashboardTabCard({ entry, pinned, onOpen, onPreview, onTogglePin
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="relative shrink-0">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03]">
-                <Icon size={compactIconSize(16)} className="text-indigo-300" aria-hidden />
+                <Icon size={compactIconSize(16)} className={navIconClass(entry.iconTone, true)} aria-hidden />
               </span>
               {dot ? (
                 <span
@@ -51,7 +51,7 @@ export function DashboardTabCard({ entry, pinned, onOpen, onPreview, onTogglePin
 
         <div className="min-h-0 flex-1 space-y-1.5 text-xs text-[var(--muted)]">
           <p className="line-clamp-3 text-sm leading-snug">{entry.description}</p>
-          {entry.meta ? <p className="text-[11px] font-medium text-indigo-300/85">{entry.meta}</p> : null}
+          {entry.meta ? <p className={`text-[11px] font-medium ${navMetaTextClass(entry.iconTone)}`}>{entry.meta}</p> : null}
         </div>
 
         <div className="mt-auto shrink-0 pt-3">

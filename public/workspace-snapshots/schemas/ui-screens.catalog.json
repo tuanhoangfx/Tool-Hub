@@ -93,11 +93,18 @@
     {
       "id": "auth-gate",
       "name": "Auth gate",
-      "golden": "P0004/auth",
-      "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
-      "packageExports": [],
-      "scaffold": "packages/hub-ui/examples/GoldenAuthGateScreen.tsx",
-      "verify": "Compare P0004 Users gate vs P0020 NotesAuthGate"
+      "golden": "hub-ui/auth",
+      "goldenScreenPath": "packages/hub-ui/src/auth/HubAuthGateModal.tsx",
+      "goldenAdapterPath": "packages/hub-ui/src/auth/WorkspaceAuthGate.tsx",
+      "goldenPreviewPath": "packages/hub-ui/src/auth/HubAuthGateGoldenPreview.tsx",
+      "packageExports": [
+        "WorkspaceAuthGate",
+        "createWorkspaceAuthGate",
+        "HubAuthGateModal"
+      ],
+      "scaffold": "packages/hub-ui/examples/GoldenAuthGateAdapter.tsx",
+      "scaffoldPreview": "packages/hub-ui/examples/GoldenAuthGateScreen.tsx",
+      "verify": "node Tool/scripts/hub-auth-migration-check.mjs"
     }
   ],
   "hubUiCloneRegistry": {
@@ -123,7 +130,8 @@
           "bots → directory",
           "groups → directory",
           "logs → directory",
-          "channels → directory"
+          "channels → directory",
+          "auth → auth-gate (ChatCenterAuthGate)"
         ]
       },
       {
@@ -179,9 +187,21 @@
         ]
       },
       "auth-gate": {
-        "golden": "P0004/auth",
+        "golden": "hub-ui/auth",
+        "goldenComponentPath": "packages/hub-ui/src/auth/HubAuthGateModal.tsx",
         "clones": [
-          "P0020/auth"
+          {
+            "ref": "P0004/auth",
+            "authVariant": "standard"
+          },
+          {
+            "ref": "P0016/auth",
+            "authVariant": "standard"
+          },
+          {
+            "ref": "P0020/auth",
+            "authVariant": "anonymous-dual"
+          }
         ]
       },
       "system-panels": {
@@ -239,8 +259,10 @@
       {
         "screen": "auth",
         "template": "auth-gate",
-        "golden": "P0004/auth",
-        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
+        "golden": "hub-ui/auth",
+        "authVariant": "standard",
+        "goldenScreenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
+        "goldenAdapterPath": "packages/hub-ui/src/auth/WorkspaceAuthGate.tsx"
       }
     ],
     "P0016": [
@@ -291,6 +313,14 @@
         "golden": "P0004/users",
         "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/fanpages/FanpagesScreen.tsx",
         "notes": "HubDirectoryTableShell + hubDirectoryListResetKey on all sub-views; card N/A"
+      },
+      {
+        "screen": "auth",
+        "template": "auth-gate",
+        "golden": "hub-ui/auth",
+        "authVariant": "standard",
+        "goldenScreenPath": "Tool/P0016-ChatCenter/src/features/auth/ChatCenterAuthGate.tsx",
+        "goldenAdapterPath": "packages/hub-ui/src/auth/WorkspaceAuthGate.tsx"
       }
     ],
     "P0008": [
@@ -346,9 +376,11 @@
       {
         "screen": "auth",
         "template": "auth-gate",
-        "golden": "P0004/auth",
+        "golden": "hub-ui/auth",
+        "authVariant": "anonymous-dual",
         "goldenScreenPath": "Tool/P0020-Data-Box/src/features/notes/NotesAuthGate.tsx",
-        "notes": "Clone auth-gate from HubAuthGate"
+        "goldenAdapterPath": "packages/hub-ui/src/auth/WorkspaceAuthGate.tsx",
+        "notes": "Extended adapter — onAnonymous + signInWorkspaceDual; same HubAuthGateModal UI"
       }
     ]
   }

@@ -95,19 +95,35 @@
       "category": "modal",
       "composedIn": [],
       "status": "ready",
-      "summary": "Sign-in / sign-up modal shell (hub-auth.css). Golden P0004 HubAuthGate; tools clone markup.",
+      "summary": "Auth gate V2 — HubAuthGateModal (Sign In / Sign Up / Anonymous optional). Canonical: packages/hub-ui; tools ship createWorkspaceAuthGate adapters only.",
       "golden": {
-        "ref": "P0004/auth",
-        "label": "HubAuthGate",
-        "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
-        "sourcePath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx"
+        "ref": "hub-ui/auth",
+        "label": "HubAuthGateModal",
+        "screenPath": "packages/hub-ui/src/auth/HubAuthGateGoldenPreview.tsx",
+        "sourcePath": "packages/hub-ui/src/auth/HubAuthGateModal.tsx",
+        "factoryPath": "packages/hub-ui/src/auth/WorkspaceAuthGate.tsx"
       },
       "clones": [
         {
+          "product": "P0004",
+          "screen": "auth",
+          "authVariant": "standard",
+          "sourcePath": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
+          "notes": "HubAuthGate adapter — Users tab"
+        },
+        {
+          "product": "P0016",
+          "screen": "auth",
+          "authVariant": "standard",
+          "sourcePath": "Tool/P0016-ChatCenter/src/features/auth/ChatCenterAuthGate.tsx",
+          "notes": "ChatCenterAuthGate adapter — app-level"
+        },
+        {
           "product": "P0020",
           "screen": "auth",
+          "authVariant": "anonymous-dual",
           "sourcePath": "Tool/P0020-Data-Box/src/features/notes/NotesAuthGate.tsx",
-          "notes": "Synced from P0004 HubAuthGate"
+          "notes": "NotesAuthGate adapter — Anonymous + dual auth"
         }
       ]
     }

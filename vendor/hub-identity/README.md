@@ -4,7 +4,7 @@ Shared login helpers for **Tool Hub Supabase identity** (`fmnrafpzctuhxjaaomzt`,
 
 Used by P0004, P0020 (`signInWorkspaceDual`), P0006, and dev admin proxies.
 
-- **User ID** → internal auth email `id@id.hub.x1z10.local`
+- **User ID** → internal auth email `id@infix1.io.vn` (legacy `@id.hub.x1z10.local` still matched for sign-in)
 - **Real email** → normal Supabase `signInWithPassword` / link-email flows
 
 Sync into tool vendors:

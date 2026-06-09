@@ -91,7 +91,7 @@ export function readDesignVariant(): DesignVariant {
 /** `/system/template` or `/system/template/3` */
 export function patchDesignVariant(
   variant: DesignVariant,
-  template: "tool-access" | "agent-context" = "agent-context",
+  template: "tool-access" | "agent-context" | "auth-gate" = "auth-gate",
 ) {
   const route = readSystemRoute();
   route.tab = "template";

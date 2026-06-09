@@ -35,7 +35,7 @@ import {
   Server,
   Shield,
   ShieldCheck,
-  Sparkles,
+  Star,
   LayoutTemplate,
   Tag,
   Terminal,
@@ -63,10 +63,14 @@ import type { Mode } from "./hub-schema-spec";
 import { deployLabel } from "./tooling";
 import type { MetricBadgeTone } from "../components/sales-shell/MetricBadge";
 import {
+  AGENT_KIND_SEMANTIC,
+  AGENT_SCOPE_SEMANTIC,
   HUB_APP_TAB_GROUP_META,
   HUB_UI_TEMPLATE_META,
+  navBadgeIconClass,
   resolveHubAppTabGroupBadge,
   resolveHubUiTemplateBadge,
+  semanticFilterMeta,
 } from "@tool-workspace/hub-ui";
 
 export type FilterIconMeta = {
@@ -181,8 +185,14 @@ const FILTER_ALL: Record<string, FilterIconMeta> = {
   plan: { icon: CreditCard, className: "text-amber-300" },
   tool: { icon: Package, className: "text-indigo-300" },
   entity: { icon: Database, className: "text-indigo-300" },
-  group: { icon: Layers, className: "text-indigo-300" },
-  template: { icon: LayoutTemplate, className: "text-violet-300" },
+  group: {
+    icon: HUB_APP_TAB_GROUP_META.hub.icon,
+    className: navBadgeIconClass(HUB_APP_TAB_GROUP_META.hub.iconTone),
+  },
+  template: {
+    icon: HUB_UI_TEMPLATE_META.directory.icon,
+    className: navBadgeIconClass(HUB_UI_TEMPLATE_META.directory.iconTone),
+  },
   kind: { icon: Link2, className: "text-cyan-300" },
   agentKind: { icon: Shield, className: "text-emerald-300" },
   agentScope: { icon: FolderOpen, className: "text-cyan-300" },
@@ -249,14 +259,9 @@ export const SCHEMA_MODE: Record<Mode, FilterIconMeta> = {
 };
 
 /** Agent context tab — kind / scope chips (Schema-style tones). */
-export const AGENT_KIND_META: Record<string, FilterIconMeta> = {
-  pattern: { icon: LayoutTemplate, className: "text-violet-300" },
-  rule: { icon: Shield, className: "text-emerald-300" },
-  skill: { icon: Sparkles, className: "text-purple-300" },
-  command: { icon: Terminal, className: "text-cyan-300" },
-  doc: { icon: BookOpen, className: "text-amber-300" },
-  agent: { icon: Bot, className: "text-indigo-300" },
-};
+export const AGENT_KIND_META: Record<string, FilterIconMeta> = Object.fromEntries(
+  Object.entries(AGENT_KIND_SEMANTIC).map(([kind, key]) => [kind, semanticFilterMeta(key)]),
+);
 
 export const AGENT_KIND_LABEL: Record<string, string> = {
   pattern: "Pattern",
@@ -276,11 +281,9 @@ export const AGENT_KIND_TONE: Record<string, string> = {
   agent: "border-indigo-500/40 bg-indigo-500/[.04] text-indigo-300",
 };
 
-export const AGENT_SCOPE_META: Record<string, FilterIconMeta> = {
-  workspace: { icon: FolderOpen, className: "text-cyan-300" },
-  user: { icon: UserRound, className: "text-emerald-300" },
-  package: { icon: Package, className: "text-indigo-300" },
-};
+export const AGENT_SCOPE_META: Record<string, FilterIconMeta> = Object.fromEntries(
+  Object.entries(AGENT_SCOPE_SEMANTIC).map(([scope, key]) => [scope, semanticFilterMeta(key)]),
+);
 
 export const AGENT_SCOPE_LABEL: Record<string, string> = {
   workspace: "Workspace",
@@ -412,6 +415,10 @@ export function resolveFilterOptionIcon(filterKey: string, option: FilterOption)
       return resolveLinkGroupBadge(option.value as LinkGroup).iconMeta;
     case "template":
       return resolveHubUiTemplateBadge(option.value).iconMeta;
+    case "pinned":
+      return option.value === "pinned"
+        ? { icon: Star, className: navBadgeIconClass("amber") }
+        : null;
     case "kind":
       return resolveLinkKindBadge(option.value).iconMeta;
     case "grant":
@@ -488,8 +495,8 @@ export function resolveChartLegendIcon(label: string): FilterIconMeta | null {
   const scopeHit = pick(AGENT_SCOPE_META, key.toLowerCase());
   if (scopeHit) return scopeHit;
 
-  if (key === "Always apply") return { icon: BookOpen, className: "text-amber-300" };
-  if (key === "Agent requestable") return { icon: Sparkles, className: "text-purple-300" };
+  if (key === "Always apply") return semanticFilterMeta("agent.alwaysApply");
+  if (key === "Agent requestable") return semanticFilterMeta("agent.requestable");
   if (key.startsWith("Manual")) return { icon: Wrench, className: "text-slate-400" };
 
   for (const mode of Object.keys(SCHEMA_MODE) as Mode[]) {
@@ -498,12 +505,14 @@ export function resolveChartLegendIcon(label: string): FilterIconMeta | null {
 
   for (const meta of Object.values(HUB_UI_TEMPLATE_META)) {
     if (meta.label === key || meta.id === key) {
-      return { icon: meta.icon, className: meta.iconClassName };
+      const badge = resolveHubUiTemplateBadge(meta.id);
+      return { icon: badge.iconMeta!.icon, className: badge.iconMeta!.className };
     }
   }
   for (const meta of Object.values(HUB_APP_TAB_GROUP_META)) {
     if (meta.label === key || meta.id === key) {
-      return { icon: meta.icon, className: meta.iconClassName };
+      const badge = resolveHubAppTabGroupBadge(meta.id);
+      return { icon: badge.iconMeta!.icon, className: badge.iconMeta!.className };
     }
   }
 

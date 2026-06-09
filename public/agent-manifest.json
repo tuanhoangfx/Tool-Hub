@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T08:40:43.310Z",
+  "generatedAt": "2026-06-09T08:37:31.674Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -101,8 +101,8 @@
       "agentRequestable": true,
       "summary": "Ship verify gate — machine-readable acceptance checklist (ship-until-done)",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Agent verify gate — machine-readable ship checklist for ship-until-done skill.\n *\n * Usage:\n *   node Tool/scripts/agent-verify-gate.mjs --code P0016 --json\n *   node Tool/scripts/agent-verify-gate.mjs --code P0020 --json --ensure-dev --mark-active\n */\nimport { spawnSync } from \"node:child_process\";\nimport { createRequire } from \"node:module\";\nimport fs from \"node:fs\";\nimport path from \"node:path\";\nimport { fileURLToPath } from \"node:url\";\nimport { prepareBrowserSmoke, SMOKE_CONTRACT } from \"./hub-ui-browser-smoke.mjs\";\n\nconst require = createRequire(import.meta.url);\nconst { loadWorkspacePorts, probeUrl } = require(\"./lib/ensure-dev-core.cjs\");\nconst { findProductRoot } = require(\"./lib/resolve-product-root.cjs\");\n\nconst __dirname = path.dirname(fileURLToPath(import.meta.url));\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst stateDir = path.join(devRoot, \".cursor\", \"state\");\nconst shipGatePath = path.join(stateDir, \"ship-gate-active.json\");\n\nconst HUB_UI_CODES = new Set([\"P0004\", \"P0016\", \"P0020\", \"P0008\", \"P0021\"]);\n\n/** Products that may show Supabase Sign In on production SPA routes. */\nconst AUTH_PROBE_CODES = new Set([\"P0020\", \"P0004\"]);\n",
-      "lines": 508,
-      "updatedAt": "2026-06-07T19:59:30.225Z",
+      "lines": 545,
+      "updatedAt": "2026-06-08T12:07:29.498Z",
       "tags": [
         "infrastructure",
         "script",
@@ -172,7 +172,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -244,7 +244,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -315,7 +315,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -371,7 +371,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -438,7 +438,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -494,7 +494,7 @@
       ],
       "keywordGroup": "hub-ui",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -512,8 +512,8 @@
       "agentRequestable": true,
       "summary": "Browser MCP smoke contract per product (ship-until-done ladder)",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Hub UI browser smoke prep — Cursor IDE Browser MCP only (no Chrome 0010).\n *\n * Ensures local dev is reachable, then emits an MCP step contract for agents.\n * Actual UI interaction runs via cursor-ide-browser MCP (not Playwright / external Chrome).\n *\n * Usage:\n *   node Tool/scripts/hub-ui-browser-smoke.mjs\n *   node Tool/scripts/hub-ui-browser-smoke.mjs --code P0004\n *   node Tool/scripts/hub-ui-browser-smoke.mjs --code P0004 --json\n *   node Tool/scripts/hub-ui-browser-smoke.mjs --ensure-dev\n */\nimport { spawn } from \"node:child_process\";\nimport { createRequire } from \"node:module\";\nimport path from \"node:path\";\nimport { fileURLToPath } from \"node:url\";\n\nconst require = createRequire(import.meta.url);\nconst { loadWorkspacePorts, probeUrl, waitForUrl } = require(\"./lib/ensure-dev-core.cjs\");\n\nconst __dirname = path.dirname(fileURLToPath(import.meta.url));\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst ensureScript = path.join(__dirname, \"ensure-dev-product.cjs\");\n\nexport const SMOKE_CONTRACT = {\n  browser: \"cursor-ide-browser-mcp-only\",\n  forbiddenBrowsers: [\"chrome-0010\", \"playwright-external\", \"cmd-start\"],\n  playbook: {\n    tabFlow: [\n   ",
-      "lines": 438,
-      "updatedAt": "2026-06-08T08:39:12.574Z",
+      "lines": 483,
+      "updatedAt": "2026-06-08T18:54:11.610Z",
       "tags": [
         "infrastructure",
         "script",
@@ -529,9 +529,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "Hub UI script: hub-ui-stack.cjs",
-      "bodyPreview": "#!/usr/bin/env node\n/**\n * One-shot Hub UI stack refresh (package + P0004 agent catalog).\n * Usage:\n *   node hub-ui-stack.cjs\n *   node hub-ui-stack.cjs P0016 dashboard   → also runs sync-hub-ui-screen\n */\nconst { execSync } = require(\"node:child_process\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst scripts = path.join(devRoot, \"Tool\", \"scripts\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\n\nfunction run(cmd, cwd = devRoot) {\n  console.log(`\\n$ ${cmd}`);\n  execSync(cmd, { cwd, stdio: \"inherit\" });\n}\n\nfunction main() {\n  const tool = (process.argv[2] || \"\").toUpperCase();\n  const screen = (process.argv[3] || \"\").toLowerCase();\n\n  console.log(\"\\n=== Hub UI stack refresh ===\\n\");\n\n  run(`node \"${path.join(scripts, \"sync-hub-ui-vendor.cjs\")}\"`);\n  run(`node \"${path.join(scripts, \"sync-workspace-snapshots.cjs\")}\"`);\n  run(`node \"${path.join(scripts, \"hub-ui-duplication-check.mjs\")}\"`);\n  run(`node \"${path.join(hubRoot, \"scripts\", \"sync-agent-manifest.mjs\")}\"`, hubRoot);\n\n  if (tool && tool !== \"P0004\") {\n    try {\n      run(`node \"${path.join(scripts, \"hub-ui-css-check.mjs\")}\" --code ${tool}`);\n    } catch {\n      co",
-      "lines": 52,
-      "updatedAt": "2026-06-07T19:53:51.047Z",
+      "bodyPreview": "#!/usr/bin/env node\n/**\n * One-shot Hub UI stack refresh (package + P0004 agent catalog).\n * Usage:\n *   node hub-ui-stack.cjs\n *   node hub-ui-stack.cjs P0016 dashboard   → sync screen scaffold\n *   node hub-ui-stack.cjs P0022 auth        → scaffold auth-gate adapter (GoldenAuthGateAdapter)\n */\nconst { execSync } = require(\"node:child_process\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst scripts = path.join(devRoot, \"Tool\", \"scripts\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\n\nfunction run(cmd, cwd = devRoot) {\n  console.log(`\\n$ ${cmd}`);\n  execSync(cmd, { cwd, stdio: \"inherit\" });\n}\n\nfunction main() {\n  const tool = (process.argv[2] || \"\").toUpperCase();\n  const screen = (process.argv[3] || \"\").toLowerCase();\n\n  console.log(\"\\n=== Hub UI stack refresh ===\\n\");\n\n  run(`node \"${path.join(scripts, \"sync-hub-ui-vendor.cjs\")}\"`);\n  run(`node \"${path.join(scripts, \"sync-hub-ui-vendor-full.cjs\")}\" --all`);\n  run(`node \"${path.join(scripts, \"sync-workspace-snapshots.cjs\")}\"`);\n  run(`node \"${path.join(scripts, \"hub-ui-duplication-check.mjs\")}\"`);\n  run(`node \"${path.join(scripts, \"hub-auth-migration-check.mjs\")}\"`)",
+      "lines": 60,
+      "updatedAt": "2026-06-09T08:13:24.052Z",
       "tags": [
         "hub-ui",
         "command",
@@ -600,7 +600,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -661,7 +661,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -717,7 +717,7 @@
       ],
       "keywordGroup": "supabase",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -788,7 +788,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -859,7 +859,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -926,7 +926,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -993,7 +993,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1049,7 +1049,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1067,8 +1067,8 @@
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
       "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Deploy / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Deploy\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Deploy\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try",
-      "lines": 319,
-      "updatedAt": "2026-06-08T08:24:30.555Z",
+      "lines": 334,
+      "updatedAt": "2026-06-08T16:44:55.326Z",
       "tags": [
         "infrastructure",
         "ship",
@@ -1123,7 +1123,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1157,9 +1157,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-screen.cjs",
-      "bodyPreview": "#!/usr/bin/env node\n/**\n * Clone P0004 Hub UI for a tool + screen.\n * Usage: node sync-hub-ui-screen.cjs P0016 groups\n *        node sync-hub-ui-screen.cjs P0020 notes\n */\nconst { execSync } = require(\"node:child_process\");\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst scriptsDir = path.join(devRoot, \"Tool\", \"scripts\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\nconst catalogPath = path.join(devRoot, \"Tool\", \"schemas\", \"ui-screens.catalog.json\");\nconst patternsCatalogPath = path.join(devRoot, \"Tool\", \"schemas\", \"ui-patterns.catalog.json\");\nconst SCAFFOLD_MARK = \"HUB_UI_SCAFFOLD\";\n\n/** Golden analytics band — KPI max 8, Charts max 4 (pattern `analytics-band`). */\nconst ANALYTICS_BAND_CAPS = { kpi: 8, chart: 4 };\n\nconst SCAFFOLD_BY_TEMPLATE = {\n  directory: \"GoldenDirectoryScreen.tsx\",\n  analytics: \"GoldenAnalyticsScreen.tsx\",\n  dashboard: \"GoldenAnalyticsScreen.tsx\",\n  \"system-panels\": \"GoldenSystemPanelsScreen.tsx\",\n  \"auth-gate\": \"GoldenAuthGateScreen.tsx\",\n};\n\nconst TOOLS = {\n  P0004: {\n    label: \"Tool Hub\",\n    srcRoo",
-      "lines": 295,
-      "updatedAt": "2026-06-07T19:53:53.299Z",
+      "bodyPreview": "#!/usr/bin/env node\n/**\n * Clone P0004 Hub UI for a tool + screen.\n * Usage: node sync-hub-ui-screen.cjs P0016 groups\n *        node sync-hub-ui-screen.cjs P0020 notes\n *        node sync-hub-ui-screen.cjs P0022 auth   → GoldenAuthGateAdapter scaffold\n */\nconst { execSync } = require(\"node:child_process\");\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst scriptsDir = path.join(devRoot, \"Tool\", \"scripts\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\nconst catalogPath = path.join(devRoot, \"Tool\", \"schemas\", \"ui-screens.catalog.json\");\nconst patternsCatalogPath = path.join(devRoot, \"Tool\", \"schemas\", \"ui-patterns.catalog.json\");\nconst SCAFFOLD_MARK = \"HUB_UI_SCAFFOLD\";\n\n/** Golden analytics band — KPI max 8, Charts max 4 (pattern `analytics-band`). */\nconst ANALYTICS_BAND_CAPS = { kpi: 8, chart: 4 };\n\nconst SCAFFOLD_BY_TEMPLATE = {\n  directory: \"GoldenDirectoryScreen.tsx\",\n  analytics: \"GoldenAnalyticsScreen.tsx\",\n  dashboard: \"GoldenAnalyticsScreen.tsx\",\n  \"system-panels\": \"GoldenSystemPanelsScreen.tsx\",\n  \"auth-gate\": \"GoldenA",
+      "lines": 359,
+      "updatedAt": "2026-06-09T08:13:29.167Z",
       "tags": [
         "hub-ui",
         "command",
@@ -1175,8 +1175,8 @@
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\nconst { syncHubBootPublic } = require(\"./lib/sync-hub-boot-public.cjs\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst p0008Root = path.join(devRoot, \"Tool\", \"P0008-Sales-Console\", \"app\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\nconst p0008Vendor = path.join(p0008Root, \"vendor\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubTablePager.tsx\", \"src/content/HubTablePager.tsx\"],\n  [\"src/content/HubPaginatedTableShell.tsx\", \"src/content/HubPaginatedTableShell.tsx\"],\n  [\"src/content/HubPaginatedDataTable.tsx\", \"src/content/HubPaginatedDataTable.tsx\"],\n  [\"src/co",
-      "lines": 282,
-      "updatedAt": "2026-06-07T19:52:27.188Z",
+      "lines": 312,
+      "updatedAt": "2026-06-09T05:59:42.321Z",
       "tags": [
         "hub-ui",
         "command",
@@ -1245,7 +1245,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1264,7 +1264,7 @@
       "summary": "Agent keyword guide (ưu tiên prompt 1 dòng)",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-ver",
       "lines": 231,
-      "updatedAt": "2026-06-08T08:40:43.156Z",
+      "updatedAt": "2026-06-09T08:37:31.525Z",
       "tags": [
         "playbook",
         "workspace"
@@ -1280,7 +1280,7 @@
       "summary": "16 keywords · verify · git · pattern · migrate · screensByProduct · tiếng Việt",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent loop`\n- **Gate intent:** `loop`\n\n### Fix P00xx\n\n**Khi nào:** Bug UI/layout/API surface đã biết.\n**Agent:** sửa tối thiểu → cùng ladder Ship.\n**Mẹo:** nêu rõ màn + hành vi mong đợi trong 1 dòng.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Fix P0004 — modal Settings hẹp, loop đến khi pass`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Smoke P00xx\n\n**Khi nào:** Code đã xong, chỉ cần regression / contract browser.\n**Agent:** không thêm feature; chỉ gate + smoke steps.\n**Sau deploy:** có thể kết hợp Deploy keyword.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Smoke P0004 — hub-ui browser contract Settings/Log/User`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 2. Git / Production pipeline\n\n### Git / Commit P00xx\n\n**Khi nào:** Backup snapshot Git **trên máy** — chưa cần GitHub/production.\n**Version:** Minor bump + CHANGELOG block đầy đủ.\n**Script:** `ship-product.ps1 -Keyword Git`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Git P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm (cumulative):** auto-commit WIP (nếu version triple + CHANGELOG sẵn) → push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Push P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gồm (cumulative):** auto-commit → push → production smoke (`ship-product.ps1 -Keyword Deploy`).\n**Gate:** `--intent deploy` (prod MCP hint). **Không** tạo GitHub Release — dùng Release keyword.\n\n- **Skill:** p00xx-ship-keywords + ship-until-done\n- **Prompt mẫu:** `Deploy P0016`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy`\n- **Gate intent:** `deploy`\n\n### Release E00xx\n\n**Khi nào:** Phát hành chính thức — tag GitHub, catalog, audit.\n**Version:** Major bump.\n**Gồm:** Deploy + `gh release create`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Release E0001`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 3. Hub UI — full shell\n\n### Hub P00xx\n\n**Khi nào:** Tool mới hoặc migrate **cả console** hub-ui.\n**Khác Directory/Inbox:** không chỉ 1 tab — full shell.\n**Sau clone:** bắt buộc Ship/Loop verify.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Hub P0017 — clone toàn bộ hub-ui shell từ P0004`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 4. Hub UI — clone từng pattern (tab)\n\n### Directory P00xx\n\n**Khi nào:** Thêm/sửa **1 tab dạng directory** (list + filter + card/table).\n**Lệnh:** `hub-ui-stack.cjs P00xx <tab>` — thay `<tab>` bằng tên screen (bots, users…).\n**Golden:** P0004 HubListPage. **Catalog id:** `directory`.\n**Luôn kết thúc:** Ship hoặc Smoke verify tab vừa clone.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Directory P0017 bots — tab bots directory golden P0004 Hub`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx <tab>`\n- **Pattern catalog:** `directory` · golden `P0004/hub-list`\n- **Tab gợi ý:** P0004→hub|users · P0016→bots|groups|logs|channels · P0020→cookie|twofa · P0008→buyers|orders|products\n\n### Inbox P00xx\n\n**Khi nào:** Màn chat/inbox 3 cột (list thread + nội dung).\n**Lệnh:** `hub-ui-stack.cjs P00xx inbox` — screen luôn là `inbox`.\n**Golden:** P0016 InboxHubChrome. **Catalog id:** `inbox-split`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Inbox P0017 — clone inbox split giống P0016`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx inbox`\n- **Pattern catalog:** `inbox-split` · golden `P0016/inbox`\n- **Tab gợi ý:** P0004→inbox · P0016→inbox · P0020→inbox · P0008→inbox\n\n### Dashboard P00xx\n\n**Khi nào:** Tab analytics/KPI + biểu đồ nhỏ.\n**Lệnh:** `hub-ui-stack.cjs P00xx dashboard`.\n**Golden:** P0004 DashboardListPage. **Catalog id:** `dashboard`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Dashboard P0017 — KPI dashboard tab`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx dashboard`\n- **Pattern catalog:** `dashboard` · golden `P0004/dashboard`\n- **Tab gợi ý:** P0004→dashboard · P0016→dashboard · P0020→dashboard · P0008→dashboard\n\n### Overview P00xx\n\n**Khi nào:** Tab Overview/TOC + bảng link tool (chuẩn P0004 tab Overview).\n**Lệnh:** `hub-u",
       "lines": 231,
-      "updatedAt": "2026-06-08T08:40:43.303Z",
+      "updatedAt": "2026-06-09T08:37:31.667Z",
       "tags": [
         "infrastructure",
         "keyword",
@@ -1680,9 +1680,9 @@
       "path": "Tool\\packages\\hub-load\\src\\index.ts",
       "scope": "package",
       "summary": "Hub reference: index.ts",
-      "bodyPreview": "export { createClientCache, type ClientCache, type ClientCacheOptions } from \"./createClientCache\";\nexport { prefetchJson } from \"./prefetchJson\";\nexport {\n  useBackgroundRefresh,\n  type BackgroundRefreshOpts,\n  type UseBackgroundRefreshOptions,\n  type UseBackgroundRefreshResult,\n} from \"./useBackgroundRefresh\";\nexport { useVisitedScreens } from \"./useVisitedScreens\";\n",
-      "lines": 10,
-      "updatedAt": "2026-06-01T18:21:25.008Z",
+      "bodyPreview": "export { createClientCache, type ClientCache, type ClientCacheOptions } from \"./createClientCache\";\nexport {\n  createKeyedClientCache,\n  type KeyedClientCache,\n  type KeyedClientCacheOptions,\n} from \"./createKeyedClientCache\";\nexport { prefetchJson } from \"./prefetchJson\";\nexport {\n  useBackgroundRefresh,\n  type BackgroundRefreshOpts,\n  type UseBackgroundRefreshOptions,\n  type UseBackgroundRefreshResult,\n} from \"./useBackgroundRefresh\";\nexport { useVisitedScreens } from \"./useVisitedScreens\";\nexport { createMemoFetch, createMemoFetchClear, type MemoFetchOptions } from \"./createMemoFetch\";\nexport { createLazyScreens, type LazyScreenLoaders } from \"./lazy-screen\";\nexport { createModulePrefetch } from \"./createModulePrefetch\";\n",
+      "lines": 18,
+      "updatedAt": "2026-06-09T08:25:03.090Z",
       "tags": [
         "hub-ui",
         "hub-load"
@@ -1775,7 +1775,7 @@
       "summary": "Bảng nhanh — chi tiết xem Agent keyword guide",
       "bodyPreview": "# Ship keywords (quick)\n\n**Chi tiết:** mở doc **Agent keyword guide** cùng tab Agent.\n\n| Keyword | Skill | Example |\n|---------|-------|--------|\n| **Ship P00xx** | ship-until-done | Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại |\n| **Loop P00xx** | ship-until-done | Loop P0016 — Messenger parity Zalo, unlimited turns |\n| **Fix P00xx** | ship-until-done | Fix P0004 — modal Settings hẹp, loop đến khi pass |\n| **Smoke P00xx** | ship-until-done | Smoke P0004 — hub-ui browser contract Settings/Log/User |\n| **Git / Commit P00xx** | p00xx-ship-keywords | Git P0020 |\n| **Push P00xx** | p00xx-ship-keywords | Push P0020 |\n| **Deploy P00xx** | p00xx-ship-keywords + ship-until-done | Deploy P0016 |\n| **Release E00xx** | p00xx-ship-keywords | Release E0001 |\n| **Hub P00xx** | p00xx-clone-hub-shell + ship-until-done | Hub P0017 — clone toàn bộ hub-ui shell từ P0004 |\n| **Migrate P00xx** | p00xx-supabase-ops | Migrate P0020 — thêm cột can_edit note_shares |\n| **Directory P00xx** | p00xx-clone-hub-shell + ship-until-done · `directory` | Directory P0017 bots — tab bots directory golden P0004 Hub |\n| **Inbox P00xx** | p00xx-clone-hub-shell + ship-until-done · `inbox-split` | Inbox P0017 — clone inbox split giống P0016 |\n| **Dashboard P00xx** | p00xx-clone-hub-shell + ship-until-done · `dashboard` | Dashboard P0017 — KPI dashboard tab |\n| **Overview P00xx** | p00xx-clone-hub-shell + ship-until-done · `document-toc` | Overview P0017 — tab Overview chuẩn P0004 |\n| **System P00xx** | p00xx-clone-hub-shell + ship-until-done · `system-panels` | System P0020 — panel System giống P0004 |\n| **Notes P00xx** | p00xx-clone-hub-shell + ship-until-done · `workspace-composer` | Notes P0017 — split editor giống P0020 Notes |\n\nGate:\n`node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`",
       "lines": 24,
-      "updatedAt": "2026-06-08T08:40:43.305Z",
+      "updatedAt": "2026-06-09T08:37:31.668Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1857,12 +1857,12 @@
       "path": "packages\\hub-ui\\UI_PATTERNS.md",
       "scope": "package",
       "agentRequestable": true,
-      "summary": "Hub UI unified patterns (15) — ui-patterns.catalog.json",
+      "summary": "Hub UI unified patterns (17) — ui-patterns.catalog.json",
       "golden": "P0004",
       "clone": "P0016, P0008, P0020, P0021",
-      "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | P0004/auth |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Filter (golden — P0004 Hub)\n\n**Canonical source:** `P0004/vendor/hub-ui` → promot\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0016** (clone): bots, groups, logs, channels\n- **P0008** (clone): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system\n- **P0021** (clone-partial): studio, system",
-      "lines": 232,
-      "updatedAt": "2026-06-08T07:51:40.904Z",
+      "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | hub-ui/auth (V2) |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Auth gate (golden V2 — hub-ui)\n\n**Canonical source:** `packages/hub-ui/src/\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0016** (clone): bots, groups, logs, channels, auth\n- **P0008** (clone): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system\n- **P0021** (clone-partial): studio, system",
+      "lines": 413,
+      "updatedAt": "2026-06-09T08:14:22.499Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -1951,15 +1951,15 @@
       "kind": "pattern",
       "name": "Auth gate",
       "layer": "modal",
-      "path": "Tool\\P0004-Tool-Hub\\src\\features\\identity\\HubAuthGate.tsx",
+      "path": "packages\\hub-ui\\src\\auth\\HubAuthGateGoldenPreview.tsx",
       "scope": "workspace",
       "agentRequestable": true,
-      "trigger": "modal · P0004/auth",
-      "summary": "Sign-in modal (hub-auth.css). Golden HubAuthGate.",
-      "golden": "P0004/auth",
-      "clone": "P0020/auth",
-      "cloneTooltip": "P0020/auth — NotesAuthGate",
-      "bodyPreview": "# Auth gate\nLayer: modal\nPattern ID: auth-gate\nScreen template: auth-gate\nStatus: ready\nGolden: P0004/auth\nScreen: Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx\nSign-in modal (hub-auth.css). Golden HubAuthGate.\n## Clones\n\n- P0020/auth — NotesAuthGate",
+      "trigger": "modal · hub-ui/auth",
+      "summary": "Modal-only auth gate V2 — Sign In / Sign Up / Anonymous (optional). Canonical UI in packages/hub-ui; tools ship thin adapters only.",
+      "golden": "hub-ui/auth",
+      "clone": "P0004/auth, P0016/auth, P0020/auth",
+      "cloneTooltip": "P0004/auth — HubAuthGate — Users tab only; non-dismissible\nP0016/auth — ChatCenterAuthGate — app-level gate\nP0020/auth — NotesAuthGate — per-screen gate + onAnonymous",
+      "bodyPreview": "# Auth gate\nLayer: modal\nPattern ID: auth-gate\nScreen template: auth-gate\nStatus: ready\nGolden: hub-ui/auth\nScreen: packages/hub-ui/src/auth/HubAuthGateGoldenPreview.tsx\nModal-only auth gate V2 — Sign In / Sign Up / Anonymous (optional). Canonical UI in packages/hub-ui; tools ship thin adapters only.\nVerify: node Tool/scripts/hub-auth-migration-check.mjs\n## Clones\n\n- P0004/auth — HubAuthGate — Users tab only; non-dismissible\n- P0016/auth — ChatCenterAuthGate — app-level gate\n- P0020/auth — NotesAuthGate — per-screen gate + onAnonymous",
       "contentFields": [
         {
           "label": "Pattern ID",
@@ -1973,12 +1973,12 @@
         },
         {
           "label": "Golden",
-          "value": "P0004/auth",
+          "value": "hub-ui/auth",
           "variant": "code"
         },
         {
           "label": "Golden screen",
-          "value": "Tool/P0004-Tool-Hub/src/features/identity/HubAuthGate.tsx",
+          "value": "packages/hub-ui/src/auth/HubAuthGateGoldenPreview.tsx",
           "variant": "code"
         },
         {
@@ -1988,17 +1988,22 @@
         },
         {
           "label": "Summary",
-          "value": "Sign-in modal (hub-auth.css). Golden HubAuthGate.",
+          "value": "Modal-only auth gate V2 — Sign In / Sign Up / Anonymous (optional). Canonical UI in packages/hub-ui; tools ship thin adapters only.",
+          "variant": "text"
+        },
+        {
+          "label": "Verify",
+          "value": "node Tool/scripts/hub-auth-migration-check.mjs",
           "variant": "text"
         },
         {
           "label": "Clones",
-          "value": "P0020/auth — NotesAuthGate",
+          "value": "P0004/auth — HubAuthGate — Users tab only; non-dismissible\nP0016/auth — ChatCenterAuthGate — app-level gate\nP0020/auth — NotesAuthGate — per-screen gate + onAnonymous",
           "variant": "multiline"
         }
       ],
-      "lines": 11,
-      "updatedAt": "2026-06-06T17:36:40.922Z",
+      "lines": 14,
+      "updatedAt": "2026-06-09T07:10:52.925Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2125,7 +2130,7 @@
         }
       ],
       "lines": 13,
-      "updatedAt": "2026-06-07T19:47:55.916Z",
+      "updatedAt": "2026-06-09T08:17:37.604Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2252,7 +2257,7 @@
         }
       ],
       "lines": 16,
-      "updatedAt": "2026-06-07T19:47:55.916Z",
+      "updatedAt": "2026-06-09T08:17:37.604Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2379,7 +2384,7 @@
         }
       ],
       "lines": 13,
-      "updatedAt": "2026-06-07T19:36:28.122Z",
+      "updatedAt": "2026-06-09T08:30:33.862Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2500,12 +2505,134 @@
         }
       ],
       "lines": 14,
-      "updatedAt": "2026-06-07T19:47:55.916Z",
+      "updatedAt": "2026-06-09T08:17:37.604Z",
       "tags": [
         "hub-ui",
         "pattern",
         "shell-part",
         "sidebar-footer",
+        "ready"
+      ]
+    },
+    {
+      "id": "pattern-sidebar-nav-group",
+      "kind": "pattern",
+      "name": "Sidebar nav group",
+      "layer": "shell-part",
+      "path": "Tool\\P0004-Tool-Hub\\src\\components\\sales-shell\\Sidebar.tsx",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "trigger": "shell-part · packages/hub-ui/sidebar-nav-group",
+      "summary": "Expandable sidebar group — HubSidebarNavGroup + NavGroupSubNav. Registry: NavScreenGroupConfig (AppScreen children) vs NavViewGroupConfig (URL sub-view children).",
+      "golden": "packages/hub-ui/sidebar-nav-group",
+      "clone": "P0016/shell",
+      "cloneTooltip": "P0016/shell — Chatbot + Zalo (screen groups) + Facebook (view group)",
+      "bodyPreview": "# Sidebar nav group\nLayer: shell-part\nPattern ID: sidebar-nav-group\nStatus: ready\nGolden: packages/hub-ui/sidebar-nav-group\nScreen: Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx\nExpandable sidebar group — HubSidebarNavGroup + NavGroupSubNav. Registry: NavScreenGroupConfig (AppScreen children) vs NavViewGroupConfig (URL sub-view children).\nComposed: HubSidebarNavGroup, HubSidebarNavGroupHeader, NavGroupSubNav, NavScreenGroupConfig, NavViewGroupConfig, navGroupSubnavOpenKey, flatMapNavScreenItems, navScreenGroupSubNavItems, navViewGroupSubNavItems\nVerify: hub-ui-duplication-check.mjs; P0004 SalesSidebar System group; P0016 multi-group shell\n## Clones\n\n- P0016/shell — Chatbot + Zalo (screen groups) + Facebook (view group)",
+      "contentFields": [
+        {
+          "label": "Pattern ID",
+          "value": "sidebar-nav-group",
+          "variant": "code"
+        },
+        {
+          "label": "Layer",
+          "value": "shell-part",
+          "variant": "text"
+        },
+        {
+          "label": "Golden",
+          "value": "packages/hub-ui/sidebar-nav-group",
+          "variant": "code"
+        },
+        {
+          "label": "Golden screen",
+          "value": "Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx",
+          "variant": "code"
+        },
+        {
+          "label": "Summary",
+          "value": "Expandable sidebar group — HubSidebarNavGroup + NavGroupSubNav. Registry: NavScreenGroupConfig (AppScreen children) vs NavViewGroupConfig (URL sub-view children).",
+          "variant": "text"
+        },
+        {
+          "label": "Verify",
+          "value": "hub-ui-duplication-check.mjs; P0004 SalesSidebar System group; P0016 multi-group shell",
+          "variant": "text"
+        },
+        {
+          "label": "Clones",
+          "value": "P0016/shell — Chatbot + Zalo (screen groups) + Facebook (view group)",
+          "variant": "multiline"
+        }
+      ],
+      "lines": 12,
+      "updatedAt": "2026-06-09T05:32:31.055Z",
+      "tags": [
+        "hub-ui",
+        "pattern",
+        "shell-part",
+        "sidebar-nav-group",
+        "ready"
+      ]
+    },
+    {
+      "id": "pattern-sidebar-nav-tones",
+      "kind": "pattern",
+      "name": "Sidebar nav tones",
+      "layer": "shell-part",
+      "path": "Tool\\P0004-Tool-Hub\\src\\components\\sales-shell\\Sidebar.tsx",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "trigger": "shell-part · packages/hub-ui/sidebar-nav-tones",
+      "summary": "Per-menu iconTone palette — icon, dot, rail, active bar/bg/text for Hub sidebars and Dashboard screen registry.",
+      "golden": "packages/hub-ui/sidebar-nav-tones",
+      "clone": "P0020/workspace, P0016/shell, P0008/shell, P0021/workspace",
+      "cloneTooltip": "P0020/workspace\nP0016/shell\nP0008/shell\nP0021/workspace",
+      "bodyPreview": "# Sidebar nav tones\nLayer: shell-part\nPattern ID: sidebar-nav-tones\nStatus: ready\nGolden: packages/hub-ui/sidebar-nav-tones\nScreen: Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx\nPer-menu iconTone palette — icon, dot, rail, active bar/bg/text for Hub sidebars and Dashboard screen registry.\nComposed: navIconClass, navDotClass, navRailClass, navActiveBarClass, navActiveBgClass, navActiveTextClass, HubSidebarNavGroup, NavGroupSubNav\nVerify: hub-ui-duplication-check.mjs; no local sidebar-nav-tones copies\n## Clones\n\n- P0020/workspace\n- P0016/shell\n- P0008/shell\n- P0021/workspace",
+      "contentFields": [
+        {
+          "label": "Pattern ID",
+          "value": "sidebar-nav-tones",
+          "variant": "code"
+        },
+        {
+          "label": "Layer",
+          "value": "shell-part",
+          "variant": "text"
+        },
+        {
+          "label": "Golden",
+          "value": "packages/hub-ui/sidebar-nav-tones",
+          "variant": "code"
+        },
+        {
+          "label": "Golden screen",
+          "value": "Tool/P0004-Tool-Hub/src/components/sales-shell/Sidebar.tsx",
+          "variant": "code"
+        },
+        {
+          "label": "Summary",
+          "value": "Per-menu iconTone palette — icon, dot, rail, active bar/bg/text for Hub sidebars and Dashboard screen registry.",
+          "variant": "text"
+        },
+        {
+          "label": "Verify",
+          "value": "hub-ui-duplication-check.mjs; no local sidebar-nav-tones copies",
+          "variant": "text"
+        },
+        {
+          "label": "Clones",
+          "value": "P0020/workspace\nP0016/shell\nP0008/shell\nP0021/workspace",
+          "variant": "multiline"
+        }
+      ],
+      "lines": 15,
+      "updatedAt": "2026-06-09T05:32:31.055Z",
+      "tags": [
+        "hub-ui",
+        "pattern",
+        "shell-part",
+        "sidebar-nav-tones",
         "ready"
       ]
     },
@@ -2571,7 +2698,7 @@
         }
       ],
       "lines": 14,
-      "updatedAt": "2026-06-06T08:37:50.312Z",
+      "updatedAt": "2026-06-09T06:55:08.987Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2693,7 +2820,7 @@
         }
       ],
       "lines": 13,
-      "updatedAt": "2026-06-07T19:47:55.916Z",
+      "updatedAt": "2026-06-09T08:17:37.604Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2748,7 +2875,7 @@
         }
       ],
       "lines": 8,
-      "updatedAt": "2026-06-06T14:57:55.125Z",
+      "updatedAt": "2026-06-09T06:33:31.782Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2823,7 +2950,25 @@
       "summary": "Dev workspace E:\\Dev — policy duy nhất (Always Apply)",
       "bodyPreview": "# Dev workspace (E:\\Dev)\n\n## Giao tiếp & mỗi câu trả lời\n\n- Trao đổi với user bằng **tiếng Việt**; mọi **chuỗi UI** Tool/Extension bằng **tiếng Anh**.\n- **Luôn** kết thúc bằng **3 đề xuất** đánh số `1.` `2.` `3.` (kể cả trả lời ngắn / xong việc).\n- **Tự động** thực hiện các đề xuất (setup, migration, verify browser, script…) — **không** chờ `ok 1` trừ khi user nói rõ chỉ tư vấn / không làm.\n- Dòng cuối: `Version: X.Y.Z → A.B.C` hoặc `Version: no bump (lý do)`.\n- **Không** xóa dữ liệu quan trọng; **không** commit secret; commit/push/release chỉ khi user yêu cầu rõ.\n- Hooks kiểm tra format — xem Settings → Hooks → Execution Log nếu thiếu 3 đề xuất / Version.\n\n## P0004 golden pattern (Hub · Users · Overview)\n\n- **P0004 Tool Hub** — tab **Hub / Users / Overview** là chuẩn layout & typography cho mọi P00xx.\n- Tuân thủ **format text/UI P004** (title case có chừng mực, không ALL CAPS lung tung; copy UI English).\n- Clone shell: `packages/hub-ui/README.md` · `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` · verify `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n- Design source: `Tool/P0004-Tool-Hub` (`HubListPage`, `UserDirectoryTable`, Overview TOC). Dùng `@tool-workspace/hub-ui`, ",
       "lines": 85,
-      "updatedAt": "2026-06-08T08:40:43.154Z",
+      "updatedAt": "2026-06-09T08:37:31.523Z",
+      "tags": [
+        "rule",
+        "cursor",
+        "workspace"
+      ]
+    },
+    {
+      "id": "cursor-rules-p0016-engine-worker-restart-mdc",
+      "kind": "rule",
+      "name": "p0016-engine-worker-restart",
+      "path": ".cursor\\rules\\p0016-engine-worker-restart.mdc",
+      "scope": "workspace",
+      "alwaysApply": false,
+      "agentRequestable": true,
+      "summary": "P0016 — auto-restart worker after engine changes (agent must run, not ask user)",
+      "bodyPreview": "# P0016 engine → restart worker\n\nWhen you **edit or add** files under `packages/engine/` or `apps/worker/`:\n\n**Dev stack:** `pnpm dev` / `pnpm open` starts Vite `:5186` + worker `:3921` + `engine-watch-restart` (auto-restart on save). Manual restart still required if watcher is off.\n\n1. **Finish the code change first**, then **immediately run** (do not ask the user):\n   ```bash\n   cd Tool/P0016-ChatCenter && pnpm worker:daemon:restart\n   ```\n2. If daemon/PM2 is unavailable, use `pnpm dev:worker` (background) or `pnpm --filter @p0016/worker start`.\n3. **Verify** personalities/API routes when relevant:\n   ```bash\n   # expect 200 (401 without token is OK — means route exists)\n   curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:3921/api/personalities\n   ```\n4. Mention in the work summary that worker was restarted (one line).\n\n**Why:** Vite hot-reloads the console (`:5186`) but **not** the Node worker (`:3921`). Stale worker causes `404 Not found` on `/api/personalities` and other new routes.\n\n**Skip restart** only when the diff is docs/comments with zero runtime effect.",
+      "lines": 21,
+      "updatedAt": "2026-06-08T09:53:38.433Z",
       "tags": [
         "rule",
         "cursor",

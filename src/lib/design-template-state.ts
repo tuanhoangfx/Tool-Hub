@@ -1,8 +1,8 @@
 const STORAGE_KEY = "hub:design-template:locked";
 
-export type DesignFeatureId = "user-access-modal" | "agent-context";
+export type DesignFeatureId = "user-access-modal" | "agent-context" | "auth-gate";
 
-const ALL_FEATURES: DesignFeatureId[] = ["user-access-modal", "agent-context"];
+const ALL_FEATURES: DesignFeatureId[] = ["user-access-modal", "agent-context", "auth-gate"];
 
 function readLocked(): DesignFeatureId[] {
   if (typeof window === "undefined") return [];
@@ -42,4 +42,18 @@ export function clearAllLockedDesigns() {
 /** Dev helper: restore agent-context preview after accidental lock. */
 export function unlockAgentContextDesign() {
   unlockDesign("agent-context");
+}
+
+/** Auth gate V1 shipped — locked by default in localStorage on first read if missing. */
+export function ensureAuthGateDesignLocked() {
+  if (!readLocked().includes("auth-gate")) {
+    lockDesign("auth-gate");
+  }
+}
+
+/** User modal shell V5 shipped — lock on Design Template mount. */
+export function ensureUserAccessModalShellLocked() {
+  if (!readLocked().includes("user-access-modal")) {
+    lockDesign("user-access-modal");
+  }
 }

@@ -1,4 +1,4 @@
-import { memoFetch } from "../lib/cache";
+import { memoFetchGitHubApi, memoFetchRawFile } from "../lib/github-api-cache";
 import type {
   GitHubRelease,
   GitHubRepoInfo,
@@ -76,10 +76,8 @@ async function fetchRemoteFile(repo: ToolRepository, path: string): Promise<Remo
 }
 
 export async function readRemoteFile(repo: ToolRepository, path: string): Promise<RemoteFileState> {
-  const cached = await memoFetch(
-    `raw:${repo.repo}@${repo.branch}/${path}`,
-    () => fetchRemoteFile(repo, path),
-    FILE_CACHE_TTL_MS,
+  const cached = await memoFetchRawFile(`raw:${repo.repo}@${repo.branch}/${path}`, () =>
+    fetchRemoteFile(repo, path),
   );
   return cached ?? { path, ok: false, status: 0, size: 0, error: "Fetch failed" };
 }
@@ -99,24 +97,20 @@ async function readJson<T>(repo: ToolRepository, path: string): Promise<T | unde
 }
 
 async function readPublicGitHub<T>(repo: ToolRepository, path: string): Promise<T | undefined> {
-  return memoFetch<T>(
-    `api:${repo.repo}${path}`,
-    async () => {
-      try {
-        const response = await fetchWithTimeout(`https://api.github.com/repos/${repo.repo}${path}`, {
-          headers: {
-            Accept: "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
-        });
-        if (!response.ok) return undefined;
-        return (await response.json()) as T;
-      } catch {
-        return undefined;
-      }
-    },
-    API_CACHE_TTL_MS,
-  );
+  return memoFetchGitHubApi<T>(`api:${repo.repo}${path}`, async () => {
+    try {
+      const response = await fetchWithTimeout(`https://api.github.com/repos/${repo.repo}${path}`, {
+        headers: {
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      });
+      if (!response.ok) return undefined;
+      return (await response.json()) as T;
+    } catch {
+      return undefined;
+    }
+  });
 }
 
 export async function hydrateRepository(repo: ToolRepository): Promise<ToolRemoteState> {

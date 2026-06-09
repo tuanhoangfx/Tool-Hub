@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { prefetchAgentManifest } from "../../lib/hub-background-prefetch";
-import { AlertTriangle, BookOpen, Bot, Command, GitBranch, Layers, RefreshCw, ScrollText, Sparkles, Wand2, Zap } from "lucide-react";
+import { AlertTriangle, BookOpen, Bot, Command, GitBranch, RefreshCw, Zap } from "lucide-react";
+import { HubPaginatedCardGrid, semanticKpiIcon } from "@tool-workspace/hub-ui";
 import {
   HubResultCount,
   MiniBarChart,
@@ -9,7 +10,6 @@ import {
   type FilterValues,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { HubPaginatedCardGrid } from "@tool-workspace/hub-ui";
 import { compactIconSize } from "../../lib/ui-scale";
 import { useSessionState } from "../../hooks/useSessionState";
 import { SystemHubShell } from "./SystemHubShell";
@@ -74,14 +74,14 @@ export function SystemAgentContextPanel() {
 
   const kpiItems = useMemo<KpiTileData[]>(
     () => [
-      { prefKey: "total", label: "Items (shown)", value: kpis.shown, icon: Bot, tone: "indigo" },
-      { prefKey: "rules", label: "Rules", value: kpis.rules, icon: ScrollText, tone: "emerald" },
-      { prefKey: "skills", label: "Skills", value: kpis.skills, icon: Sparkles, tone: "purple" },
-      { prefKey: "patterns", label: "Patterns", value: kpis.patterns, icon: Wand2, tone: "indigo" },
-      { prefKey: "agents", label: "Subagents", value: kpis.agents, icon: Bot, tone: "indigo" },
-      { prefKey: "commands", label: "Commands", value: kpis.commands, icon: Command, tone: "amber" },
-      { prefKey: "always", label: "Always on", value: kpis.always, icon: BookOpen, tone: "amber" },
-      { prefKey: "requestable", label: "Agent requestable", value: kpis.requestable, icon: Layers, tone: "purple" },
+      { prefKey: "total", label: "Items (shown)", value: kpis.shown, ...semanticKpiIcon("kpi.agent.items") },
+      { prefKey: "rules", label: "Rules", value: kpis.rules, ...semanticKpiIcon("kpi.agent.rules") },
+      { prefKey: "skills", label: "Skills", value: kpis.skills, ...semanticKpiIcon("kpi.agent.skills") },
+      { prefKey: "patterns", label: "Patterns", value: kpis.patterns, ...semanticKpiIcon("kpi.agent.patterns") },
+      { prefKey: "agents", label: "Subagents", value: kpis.agents, ...semanticKpiIcon("kpi.agent.subagents") },
+      { prefKey: "commands", label: "Commands", value: kpis.commands, ...semanticKpiIcon("kpi.agent.commands") },
+      { prefKey: "always", label: "Always on", value: kpis.always, ...semanticKpiIcon("kpi.agent.always") },
+      { prefKey: "requestable", label: "Agent requestable", value: kpis.requestable, ...semanticKpiIcon("kpi.agent.requestable") },
     ],
     [kpis],
   );

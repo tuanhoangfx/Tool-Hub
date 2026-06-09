@@ -2,6 +2,8 @@ import {
   HubAppTabGroupBadge,
   HubDirectoryTableShell,
   HubUiTemplateBadge,
+  navIconClass,
+  navMetaTextClass,
   type HubSortDir,
   type HubTableColumnRole,
 } from "@tool-workspace/hub-ui";
@@ -105,7 +107,7 @@ export function DashboardScreensTable({
           <>
             <td className="hub-users-col--dash-screen">
               <div className="hub-users-cell-name">
-                <Icon size={compactIconSize(15)} className="shrink-0 text-indigo-300" aria-hidden />
+                <Icon size={compactIconSize(15)} className={`shrink-0 ${navIconClass(entry.iconTone, true)}`} aria-hidden />
                 <span className="hub-users-name-title">{entry.label}</span>
               </div>
             </td>
@@ -128,7 +130,7 @@ export function DashboardScreensTable({
         <td className="hub-users-col--dash-summary">
           <span className="line-clamp-2 text-[var(--muted)]">{entry.description}</span>
           {entry.meta ? (
-            <div className="mt-1 text-[11px] font-medium text-indigo-300/85">{entry.meta}</div>
+            <div className={`mt-1 text-[11px] font-medium ${navMetaTextClass(entry.iconTone)}`}>{entry.meta}</div>
           ) : null}
         </td>
       )}

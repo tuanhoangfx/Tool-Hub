@@ -1,4 +1,5 @@
 import {
+  Suspense,
   useCallback,
   useEffect,
   useLayoutEffect,
@@ -17,8 +18,6 @@ import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
 import { dispatchAgentManifestRefresh } from "./features/system-hub/agent-manifest-events";
 import { dispatchSupabaseQuotaRefresh } from "./features/system-hub/supabase-quota-events";
-import { UserManagementScreen } from "./features/identity/UserManagementScreen";
-import { SystemHubScreen } from "./features/system-hub/SystemHubScreen";
 import { systemDisplayDefs } from "./features/system-hub/system-display-prefs";
 import {
   DEFAULT_HUB_CHART_KEYS,
@@ -39,8 +38,7 @@ import {
   defaultSystemHeaderStatKeys,
   systemHeaderStatDefs,
 } from "./features/system-hub/system-header-metrics";
-import { DashboardListPage } from "./features/dashboard";
-import { HubListPage } from "./features/hub";
+import { LazyAppScreens } from "./lib/app-lazy-screens";
 import {
   DEFAULT_DASHBOARD_CHART_KEYS,
   DEFAULT_DASHBOARD_FILTER_KEYS,
@@ -54,7 +52,7 @@ import {
 
 import { useRepositories, useSessionState, useUrlState } from "./hooks";
 import { migrateAppUrl, readAppScreen, setAppScreen, type AppScreen } from "./lib/app-screen";
-import { prefetchAllAppScreens } from "./lib/app-screen-prefetch";
+import { prefetchAppScreenIdle } from "./lib/app-lazy-screens";
 import { prefetchHubBackgroundData } from "./lib/hub-background-prefetch";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
 import { formatDate } from "./lib/tooling";
@@ -62,7 +60,6 @@ import { compactIconSize } from "./lib/ui-scale";
 import { runWorkspaceRefresh } from "./services/workspace-scan";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
-const ALL_APP_SCREENS: AppScreen[] = ["dashboard", "library", "users", "system"];
 type ScanStatus = "idle" | "scanning" | "success" | "error";
 
 function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: boolean; scope?: "tab" | "global" }) {
@@ -168,8 +165,7 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
   const { state: urlState, update: updateUrl } = useUrlState();
 
   useHubActiveScreenSync(screen, systemTab);
-  /** Eager keep-mounted — avoids blank main when URL is /system/* before visited effect runs. */
-  const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set(ALL_APP_SCREENS));
+  const [visitedScreens, setVisitedScreens] = useState<Set<AppScreen>>(() => new Set([readAppScreen()]));
   const [viewMode, setViewMode] = useSessionState<"grid" | "table">("lib:viewMode", "grid");
   const [scanningWorkspace, setScanningWorkspace] = useState(false);
   const [scanStatus, setScanStatus] = useState<ScanStatus>("idle");
@@ -217,18 +213,12 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
   }, []);
 
   useEffect(() => {
-    const warm = () => {
-      prefetchHubBackgroundData();
-      prefetchAllAppScreens();
-    };
     prefetchHubBackgroundData();
-    const idle = window.requestIdleCallback?.(warm, { timeout: 1500 });
-    if (idle == null) {
-      const t = window.setTimeout(warm, 200);
-      return () => window.clearTimeout(t);
-    }
+    prefetchAppScreenIdle(screen);
+    const idle = window.requestIdleCallback?.(() => prefetchHubBackgroundData(), { timeout: 1500 });
+    if (idle == null) return;
     return () => window.cancelIdleCallback(idle);
-  }, []);
+  }, [screen]);
 
   useEffect(() => {
     if (!urlState.tool || resolvedTools.length === 0) return;
@@ -339,18 +329,21 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
         <HubLoaderRoot />
         {visitedScreens.has("dashboard") ? (
           <div className={screen !== "dashboard" ? "hidden" : undefined} aria-hidden={screen !== "dashboard"}>
-            <DashboardListPage
+            <Suspense fallback={<ScreenChunkFallback label="Dashboard" />}>
+            <LazyAppScreens.dashboard
               allTools={resolvedTools}
               registryLive={registryLive}
               registryLabel={registryLabel}
               versionReleaseDate={versionRelease.shortLabel}
               headerActions={headerActions}
             />
+            </Suspense>
           </div>
         ) : null}
         {visitedScreens.has("library") ? (
           <div className={screen !== "library" ? "hidden" : undefined} aria-hidden={screen !== "library"}>
-            <HubListPage
+            <Suspense fallback={<ScreenChunkFallback label="Hub" />}>
+            <LazyAppScreens.library
               allTools={resolvedTools}
               selectedId={selectedId}
               onSelect={handleSelectTool}
@@ -369,19 +362,23 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
               versionReleaseLive={versionRelease.live}
               headerActions={headerActions}
             />
+            </Suspense>
           </div>
         ) : null}
         {visitedScreens.has("users") ? (
           <div className={screen !== "users" ? "hidden" : undefined} aria-hidden={screen !== "users"}>
-            <UserManagementScreen
+            <Suspense fallback={<ScreenChunkFallback label="Users" />}>
+            <LazyAppScreens.users
               versionReleaseDate={versionRelease.shortLabel}
               headerActions={headerActions}
             />
+            </Suspense>
           </div>
         ) : null}
         {visitedScreens.has("system") ? (
           <div className={screen !== "system" ? "hidden" : undefined} aria-hidden={screen !== "system"}>
-            <SystemHubScreen
+            <Suspense fallback={<ScreenChunkFallback label="System" />}>
+            <LazyAppScreens.system
               tools={resolvedTools}
               registryLive={registryLive}
               registryLabel={registryLabel}
@@ -389,9 +386,18 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
               versionReleaseLive={versionRelease.live}
               headerActions={headerActions}
             />
+            </Suspense>
           </div>
         ) : null}
       </main>
+    </div>
+  );
+}
+
+function ScreenChunkFallback({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-[12rem] items-center justify-center text-sm text-[var(--muted)]">
+      Loading {label}…
     </div>
   );
 }

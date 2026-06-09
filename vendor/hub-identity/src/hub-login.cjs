@@ -1,10 +1,12 @@
 "use strict";
 
-const HUB_ID_EMAIL_DOMAIN = "@id.hub.x1z10.local";
+const HUB_ID_EMAIL_DOMAIN = "@infix1.io.vn";
+const HUB_ID_EMAIL_LEGACY_DOMAIN = "@id.hub.x1z10.local";
+const HUB_ID_EMAIL_DOMAINS = [HUB_ID_EMAIL_DOMAIN, HUB_ID_EMAIL_LEGACY_DOMAIN];
 
 function isHubSyntheticEmail(email) {
   const v = String(email ?? "").trim().toLowerCase();
-  return v.endsWith(HUB_ID_EMAIL_DOMAIN);
+  return HUB_ID_EMAIL_DOMAINS.some((domain) => v.endsWith(domain));
 }
 
 function looksLikeEmail(input) {
@@ -15,6 +17,18 @@ function normalizeLoginId(raw) {
   const id = String(raw ?? "").trim().toLowerCase();
   if (!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(id)) return null;
   return id;
+}
+
+function hubAuthEmailsFromLogin(input) {
+  const trimmed = String(input ?? "").trim().toLowerCase();
+  if (looksLikeEmail(trimmed)) return [trimmed];
+  const loginId = normalizeLoginId(trimmed);
+  if (!loginId) throw new Error("Invalid user ID");
+  return [`${loginId}${HUB_ID_EMAIL_DOMAIN}`, `${loginId}${HUB_ID_EMAIL_LEGACY_DOMAIN}`];
+}
+
+function hubAuthEmailFromLogin(input) {
+  return hubAuthEmailsFromLogin(input)[0];
 }
 
 function resolveHubLogin(input) {
@@ -42,8 +56,12 @@ function hubAuthEmailFromLoginOrEmail({ loginId, email }) {
 
 module.exports = {
   HUB_ID_EMAIL_DOMAIN,
+  HUB_ID_EMAIL_LEGACY_DOMAIN,
+  HUB_ID_EMAIL_DOMAINS,
   isHubSyntheticEmail,
   normalizeLoginId,
+  hubAuthEmailFromLogin,
+  hubAuthEmailsFromLogin,
   resolveHubLogin,
   hubAuthEmailFromLoginOrEmail,
 };

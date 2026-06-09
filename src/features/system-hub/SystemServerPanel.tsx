@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import { Gauge, Server } from "lucide-react";
-import { HubPaginatedCardGrid, HubPaginatedTableShell } from "@tool-workspace/hub-ui";
+import { Server } from "lucide-react";
+import { HubPaginatedCardGrid, HubPaginatedTableShell, semanticKpiIcon } from "@tool-workspace/hub-ui";
 import {
   HubResultCount,
   MiniBarChart,
@@ -178,14 +178,14 @@ export function SystemServerPanel({ tools }: { tools: ResolvedTool[] }) {
 
   const kpiItems = useMemo(
     () => [
-      { prefKey: "total", label: "Deployments (shown)", value: kpis.total, icon: Gauge, tone: "indigo" as const },
-      { prefKey: "metrics", label: "Live URL", value: kpis.withUrl, icon: Gauge, tone: "emerald" as const },
-      { prefKey: "catalog", label: "No public URL", value: kpis.catalogOnly, icon: Gauge, tone: "purple" as const },
-      { prefKey: "orgs", label: "Hosts", value: kpis.hosts, icon: Gauge, tone: "emerald" as const },
-      { prefKey: "errors", label: "Errors", value: kpis.errors, icon: Gauge, tone: "rose" as const },
-      { prefKey: "restricted", label: "Drift alerts", value: kpis.restricted, icon: Gauge, tone: "rose" as const },
-      { prefKey: "api_total", label: "Tools linked", value: kpis.toolsLinked, icon: Gauge, tone: "blue" as const },
-      { prefKey: "api_rest", label: "Ready", value: kpis.ready, icon: Gauge, tone: "purple" as const },
+      { prefKey: "total", label: "Deployments (shown)", value: kpis.total, ...semanticKpiIcon("kpi.total") },
+      { prefKey: "metrics", label: "Live URL", value: kpis.withUrl, ...semanticKpiIcon("kpi.live") },
+      { prefKey: "catalog", label: "No public URL", value: kpis.catalogOnly, ...semanticKpiIcon("kpi.catalog") },
+      { prefKey: "orgs", label: "Hosts", value: kpis.hosts, ...semanticKpiIcon("kpi.hosts") },
+      { prefKey: "errors", label: "Errors", value: kpis.errors, ...semanticKpiIcon("kpi.errors") },
+      { prefKey: "restricted", label: "Drift alerts", value: kpis.restricted, ...semanticKpiIcon("kpi.drift") },
+      { prefKey: "api_total", label: "Tools linked", value: kpis.toolsLinked, ...semanticKpiIcon("kpi.toolsLinked") },
+      { prefKey: "api_rest", label: "Ready", value: kpis.ready, ...semanticKpiIcon("kpi.ready") },
     ],
     [kpis],
   );

@@ -4,6 +4,7 @@ import {
   HUB_UI_TEMPLATE_META,
   type HubAppTabGroup,
   type HubUiTemplate,
+  type NavIconTone,
 } from "@tool-workspace/hub-ui";
 import { SYSTEM_TAB_ITEMS, type SystemTab } from "../system-hub/components/SystemTabs";
 import type { AppScreen } from "../../lib/app-screen";
@@ -23,6 +24,7 @@ export type DashboardTabEntry = {
   description: string;
   template: string;
   icon: LucideIcon;
+  iconTone: NavIconTone;
   screen: AppScreen;
   systemTab?: SystemTab;
   meta?: string;
@@ -48,6 +50,7 @@ const TOP_LEVEL: Omit<DashboardTabEntry, "path" | "meta" | "goldenRef" | "golden
     description: "Workspace screen console — KPI, charts, and catalog of P0004 tabs.",
     template: catalogTemplate("dashboard") ?? "dashboard",
     icon: Gauge,
+    iconTone: "sky",
     screen: "dashboard",
   },
   {
@@ -58,6 +61,7 @@ const TOP_LEVEL: Omit<DashboardTabEntry, "path" | "meta" | "goldenRef" | "golden
     description: "Workspace tool catalog with GitHub health, drift alerts, and local registry.",
     template: catalogTemplate("hub") ?? "directory",
     icon: LayoutGrid,
+    iconTone: "indigo",
     screen: "library",
   },
   {
@@ -68,6 +72,7 @@ const TOP_LEVEL: Omit<DashboardTabEntry, "path" | "meta" | "goldenRef" | "golden
     description: "Hub identity directory — roles, access, and Supabase-backed user management.",
     template: catalogTemplate("users") ?? "directory",
     icon: Users,
+    iconTone: "emerald",
     screen: "users",
   },
 ];
@@ -156,7 +161,7 @@ export function buildDashboardTabRegistry(opts?: {
     };
   });
 
-  const system: DashboardTabEntry[] = SYSTEM_TAB_ITEMS.map(({ id, label, icon }) => {
+  const system: DashboardTabEntry[] = SYSTEM_TAB_ITEMS.map(({ id, label, icon, iconTone }) => {
     const meta = SYSTEM_TAB_META[id];
     const cat = catalogFields(meta?.catalogScreen ?? "system");
     const template =
@@ -172,6 +177,7 @@ export function buildDashboardTabRegistry(opts?: {
       description: meta?.description ?? `System panel — ${label}.`,
       template,
       icon,
+      iconTone,
       screen: "system",
       systemTab: id,
       goldenRef: id === "overview" ? catalogGoldenRef("overview") : cat.goldenRef,

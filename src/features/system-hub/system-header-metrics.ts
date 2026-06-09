@@ -9,9 +9,8 @@ import {
   Link2,
   Rocket,
   ScrollText,
-  Sparkles,
 } from "lucide-react";
-import type { TabHeaderStatItem } from "@tool-workspace/hub-ui";
+import { semanticHeaderStat, type TabHeaderStatItem } from "@tool-workspace/hub-ui";
 import type { PrefItem } from "../../components/sales-shell/DisplayPrefs";
 import { agentManifestCache } from "../../lib/agent-manifest-cache";
 import { groupsForEntity, specForEntity } from "../../lib/hub-schema-spec";
@@ -179,9 +178,9 @@ export function buildSystemHeaderStats(
     const items = agentManifestCache.readStale()?.items ?? [];
     const kpis = agentContextKpis(items);
     const defs = [
-      { key: "rules" as const, icon: ScrollText, label: "rules", toneClass: "text-emerald-300", value: kpis.rules },
-      { key: "skills" as const, icon: Sparkles, label: "skills", toneClass: "text-purple-300", value: kpis.skills },
-      { key: "always" as const, icon: BookOpen, label: "always", toneClass: "text-amber-300", value: kpis.always },
+      { key: "rules" as const, ...semanticHeaderStat("kpi.agent.rules"), label: "rules", value: kpis.rules },
+      { key: "skills" as const, ...semanticHeaderStat("kpi.agent.skills"), label: "skills", value: kpis.skills },
+      { key: "always" as const, ...semanticHeaderStat("kpi.agent.always"), label: "always", value: kpis.always },
     ];
     return defs
       .filter((d) => visibleKeys.has(d.key))
@@ -190,9 +189,9 @@ export function buildSystemHeaderStats(
 
   if (tab === "template") {
     const defs = [
-      { key: "templates" as const, icon: LayoutGrid, label: "templates", toneClass: "text-indigo-300", value: 0 },
-      { key: "locked" as const, icon: CheckCircle2, label: "locked", toneClass: "text-emerald-300", value: 0 },
-      { key: "preview" as const, icon: Bot, label: "preview", toneClass: "text-violet-300", value: 0 },
+      { key: "templates" as const, ...semanticHeaderStat("template.total"), label: "templates", value: 0 },
+      { key: "locked" as const, ...semanticHeaderStat("template.locked"), label: "locked", value: 0 },
+      { key: "preview" as const, ...semanticHeaderStat("template.preview"), label: "preview", value: 0 },
     ];
     return defs
       .filter((d) => visibleKeys.has(d.key))

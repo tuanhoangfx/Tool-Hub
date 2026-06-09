@@ -3,6 +3,10 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { execFileSync } = require("node:child_process");
 const { bumpAndSyncDocs } = require("./lib/version-bump.cjs");
+const {
+  readVersionTriple,
+  syncToolManifestReleaseVersion,
+} = require(path.join(__dirname, "..", "..", "scripts", "lib", "version-sync-lib.cjs"));
 
 function exists(filePath) {
   return fs.existsSync(path.join(process.cwd(), filePath));
@@ -34,6 +38,17 @@ const stagedFiles = git(["diff", "--cached", "--name-only"])
 if (stagedFiles.length > 0 && stagedFiles.every((file) => file === "CHANGELOG.md")) {
   console.log("[version-hook] Changelog-only commit; skipping version bump.");
   process.exit(0);
+}
+
+const triple = readVersionTriple(process.cwd());
+if (triple.package && triple.manifest && triple.manifest !== triple.package) {
+  const synced = syncToolManifestReleaseVersion(process.cwd(), triple.package, { write: true });
+  if (synced.changed) {
+    git(["add", "tool.manifest.json"]);
+    console.log(
+      `[version-hook] Synced tool.manifest release.version ${synced.current || "—"} → ${synced.version}.`,
+    );
+  }
 }
 
 const title = process.env.TOOL_HUB_VERSION_TITLE || "Git commit version stamp";

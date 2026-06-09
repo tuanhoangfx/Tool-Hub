@@ -4,6 +4,15 @@ import { formatTabHeaderTimestamp } from "./hub-tab-header-meta";
 import { formatDate, normalizeVersion } from "./tooling";
 import type { ResolvedTool } from "../types";
 
+function normalizeChangelogTimestampRaw(raw: string): string | undefined {
+  const match = raw.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+\(UTC([+-]\d{1,2})\)$/i);
+  if (!match) return raw;
+  const [, date, time, offset] = match;
+  const sign = offset.startsWith("-") ? "-" : "+";
+  const hour = offset.replace(/^[+-]/, "").padStart(2, "0");
+  return `${date}T${time}:00${sign}${hour}:00`;
+}
+
 function parseChangelogTimestamp(version: string, changelog = changelogRaw): string | undefined {
   const escaped = version.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const entry = changelog.match(
@@ -11,12 +20,15 @@ function parseChangelogTimestamp(version: string, changelog = changelogRaw): str
   );
   const raw = entry?.[1]?.trim();
   if (!raw) return undefined;
-  const match = raw.match(/^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+\(UTC([+-]\d{1,2})\)$/i);
-  if (!match) return raw;
-  const [, date, time, offset] = match;
-  const sign = offset.startsWith("-") ? "-" : "+";
-  const hour = offset.replace(/^[+-]/, "").padStart(2, "0");
-  return `${date}T${time}:00${sign}${hour}:00`;
+  return normalizeChangelogTimestampRaw(raw);
+}
+
+/** Latest CHANGELOG block when GitHub/manifest miss the current semver (local dev). */
+function parseLatestChangelogTimestamp(changelog = changelogRaw): string | undefined {
+  const entry = changelog.match(/- Version:[\s\S]*?- Timestamp:\s*([^\n]+)/i);
+  const raw = entry?.[1]?.trim();
+  if (!raw) return undefined;
+  return normalizeChangelogTimestampRaw(raw);
 }
 
 /** GitHub `published_at` for the release whose tag matches `APP_VERSION`. */
@@ -44,7 +56,8 @@ export function resolveVersionReleaseMeta(hubTool: ResolvedTool | undefined): {
     };
   }
 
-  const changelogTimestamp = parseChangelogTimestamp(currentVersion);
+  const changelogTimestamp =
+    parseChangelogTimestamp(currentVersion) ?? parseLatestChangelogTimestamp();
   if (changelogTimestamp) {
     return {
       label: formatDate(changelogTimestamp),

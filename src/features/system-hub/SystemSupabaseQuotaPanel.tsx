@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, Gauge, RefreshCcw } from "lucide-react";
-import { HubPaginatedCardGrid, HubPaginatedTableShell } from "@tool-workspace/hub-ui";
+import { AlertTriangle, LayoutGrid, RefreshCcw } from "lucide-react";
+import { HubPaginatedCardGrid, HubPaginatedTableShell, semanticKpiIcon } from "@tool-workspace/hub-ui";
 import { SUPABASE_QUOTA_REFRESH_EVENT } from "./supabase-quota-events";
 import {
   HubResultCount,
@@ -543,31 +543,28 @@ export function SystemSupabaseQuotaPanel() {
 
   const kpiItems = useMemo(
     () => [
-      { prefKey: "total", label: "Projects (shown)", value: kpis.total, icon: Gauge, tone: "indigo" as const },
-      { prefKey: "metrics", label: "Live metrics", value: kpis.withMetrics, icon: Gauge, tone: "emerald" as const },
-      { prefKey: "catalog", label: "Catalog only", value: kpis.catalogOnly, icon: Gauge, tone: "purple" as const },
-      { prefKey: "orgs", label: "Organizations", value: kpis.orgs, icon: Gauge, tone: "emerald" as const },
-      { prefKey: "errors", label: "Errors", value: kpis.errors, icon: Gauge, tone: "rose" as const },
+      { prefKey: "total", label: "Projects (shown)", value: kpis.total, ...semanticKpiIcon("kpi.total") },
+      { prefKey: "metrics", label: "Live metrics", value: kpis.withMetrics, ...semanticKpiIcon("kpi.live") },
+      { prefKey: "catalog", label: "Catalog only", value: kpis.catalogOnly, ...semanticKpiIcon("kpi.catalog") },
+      { prefKey: "orgs", label: "Organizations", value: kpis.orgs, ...semanticKpiIcon("kpi.orgs") },
+      { prefKey: "errors", label: "Errors", value: kpis.errors, ...semanticKpiIcon("kpi.errors") },
       {
         prefKey: "restricted",
         label: "Restricted",
         value: kpis.restricted,
-        icon: Gauge,
-        tone: "rose" as const,
+        ...semanticKpiIcon("kpi.restricted"),
       },
       {
         prefKey: "api_total",
         label: "API requests (sum)",
         value: usageSum.apiRequestsTotal > 0 ? formatCompact(usageSum.apiRequestsTotal) : "—",
-        icon: Gauge,
-        tone: "blue" as const,
+        ...semanticKpiIcon("kpi.apiTotal"),
       },
       {
         prefKey: "api_rest",
         label: "REST / min (sum)",
         value: usageSum.restLatest > 0 ? formatCompact(usageSum.restLatest) : "—",
-        icon: Gauge,
-        tone: "purple" as const,
+        ...semanticKpiIcon("kpi.apiRest"),
       },
     ],
     [kpis, usageSum],
@@ -588,7 +585,7 @@ export function SystemSupabaseQuotaPanel() {
           {refreshing && payload ? "Updating…" : "Refresh"}
           <CacheStatusDot status={cacheHint} />
         </button>
-        <HubResultCount icon={Gauge} shown={projectsFiltered.length} total={projectsRaw.length} label="projects" />
+        <HubResultCount icon={LayoutGrid} shown={projectsFiltered.length} total={projectsRaw.length} label="projects" />
       </>
     );
   }, [viewMode, setViewMode, fetchData, refreshing, payload, projectsFiltered.length, projectsRaw.length, cacheHint]);

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Database } from "lucide-react";
+import { semanticKpiIcon } from "@tool-workspace/hub-ui";
 import {
   groupsForEntity,
   specForEntity,
@@ -79,14 +80,14 @@ export function SystemSchemaPanel() {
 
   const kpiItems = useMemo(
     () => [
-      { prefKey: "fields", label: "Fields (shown)", value: kpis.fields, icon: Database, tone: "indigo" as const },
-      { prefKey: "groups", label: "Groups", value: kpis.groups, icon: Database, tone: "emerald" as const },
-      { prefKey: "input", label: "Input fields", value: kpis.input, icon: Database, tone: "amber" as const },
-      { prefKey: "options", label: "With options", value: kpis.options, icon: Database, tone: "purple" as const },
-      { prefKey: "pk", label: "Primary keys", value: kpis.pk, icon: Database, tone: "blue" as const },
-      { prefKey: "auto", label: "Auto fields", value: kpis.auto, icon: Database, tone: "purple" as const },
-      { prefKey: "derive", label: "Derived / compute", value: kpis.derive, icon: Database, tone: "indigo" as const },
-      { prefKey: "readonly", label: "Read-only", value: kpis.readonly, icon: Database, tone: "rose" as const },
+      { prefKey: "fields", label: "Fields (shown)", value: kpis.fields, ...semanticKpiIcon("kpi.schema.fields") },
+      { prefKey: "groups", label: "Groups", value: kpis.groups, ...semanticKpiIcon("kpi.schema.groups") },
+      { prefKey: "input", label: "Input fields", value: kpis.input, ...semanticKpiIcon("kpi.schema.input") },
+      { prefKey: "options", label: "With options", value: kpis.options, ...semanticKpiIcon("kpi.schema.options") },
+      { prefKey: "pk", label: "Primary keys", value: kpis.pk, ...semanticKpiIcon("kpi.schema.pk") },
+      { prefKey: "auto", label: "Auto fields", value: kpis.auto, ...semanticKpiIcon("kpi.schema.auto") },
+      { prefKey: "derive", label: "Derived / compute", value: kpis.derive, ...semanticKpiIcon("kpi.schema.derive") },
+      { prefKey: "readonly", label: "Read-only", value: kpis.readonly, ...semanticKpiIcon("kpi.schema.readonly") },
     ],
     [kpis],
   );

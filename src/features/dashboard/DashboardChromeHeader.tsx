@@ -1,6 +1,6 @@
 import { Gauge } from "lucide-react";
 import type { ReactNode } from "react";
-import { useHubChromePrefs } from "@tool-workspace/hub-ui";
+import { HUB_UI_TEMPLATE_META, navBadgeIconClass, useHubChromePrefs } from "@tool-workspace/hub-ui";
 import { AppTabHeader } from "../../components/sales-shell/AppTabHeader";
 import { buildVersionMetaItems } from "../../lib/hub-tab-header-meta";
 import { DEFAULT_DASHBOARD_HEADER_STAT_KEYS } from "./dashboard-prefs";
@@ -33,7 +33,7 @@ export function DashboardChromeHeader({
       embedded={stackChrome}
       metaItems={buildVersionMetaItems(versionReleaseDate)}
       centerStats={buildDashboardHeaderStats(statKeys, kpi)}
-      titleIconClass="text-indigo-300"
+      titleIconClass={navBadgeIconClass(HUB_UI_TEMPLATE_META.dashboard.iconTone)}
       actions={actions}
     />
   );

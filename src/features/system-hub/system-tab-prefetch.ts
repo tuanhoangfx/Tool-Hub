@@ -1,36 +1,20 @@
+import { createModulePrefetch } from "@dev/hub-load";
 import type { SystemTab } from "./components/SystemTabs";
+
+const systemTabPrefetch = createModulePrefetch<SystemTab>({
+  overview: () => import("./SystemOverviewPanel"),
+  schema: () => import("./SystemSchemaPanel"),
+  "supabase-quota": () => import("./SystemSupabaseQuotaPanel"),
+  server: () => import("./SystemServerPanel"),
+  agent: () => import("./SystemAgentContextPanel"),
+  template: () => import("./design-template/DesignTemplateHub"),
+});
 
 /** Warm lazy chunks before tab switch (hover / idle prefetch). */
 export function prefetchSystemTab(tab: SystemTab): void {
-  switch (tab) {
-    case "overview":
-      void import("./SystemOverviewPanel");
-      break;
-    case "schema":
-      void import("./SystemSchemaPanel");
-      break;
-    case "supabase-quota":
-      void import("./SystemSupabaseQuotaPanel");
-      break;
-    case "server":
-      void import("./SystemServerPanel");
-      break;
-    case "agent":
-      void import("./SystemAgentContextPanel");
-      break;
-    case "template":
-      void import("./design-template/DesignTemplateHub");
-      break;
-    default:
-      break;
-  }
+  systemTabPrefetch.prefetch(tab);
 }
 
 export function prefetchAllSystemTabs(): void {
-  prefetchSystemTab("overview");
-  prefetchSystemTab("schema");
-  prefetchSystemTab("supabase-quota");
-  prefetchSystemTab("server");
-  prefetchSystemTab("agent");
-  prefetchSystemTab("template");
+  systemTabPrefetch.prefetchAll();
 }
