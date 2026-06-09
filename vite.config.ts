@@ -5,7 +5,7 @@ import react from "@vitejs/plugin-react";
 import { createRequire } from "node:module";
 import { loadEnv } from "vite";
 // @ts-expect-error shared chunk helper (JS module)
-import { createHubManualChunks } from "../scripts/vite-hub-chunks.mjs";
+import { createHubManualChunks } from "./scripts/vite-hub-chunks.mjs";
 
 const toolRoot = path.dirname(fileURLToPath(import.meta.url));
 const hubUiSrc = path.resolve(toolRoot, "vendor/hub-ui/src");
