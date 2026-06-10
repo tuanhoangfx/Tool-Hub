@@ -67,6 +67,10 @@ export {
 export { mountHubApp } from "./loading/mount-hub-app";
 export { HubLoaderRoot } from "./shell/HubLoaderRoot";
 export { HubLoadingView, type HubLoadingViewProps } from "./shell/HubLoadingView";
+export {
+  HubScreenChunkFallback,
+  type HubScreenChunkFallbackProps,
+} from "./shell/HubScreenChunkFallback";
 export { CacheHitBadge } from "./shell/CacheHitBadge";
 export {
   hubThreadPreviewFromContent,
@@ -362,12 +366,19 @@ export {
   AGENT_SCOPE_SEMANTIC,
   buildSemanticTocIcon,
   configureSemanticIcons,
+  normalizeSemanticIconKey,
   resolveSemanticIcon,
+  SEMANTIC_ICON_ALIASES,
   semanticFilterMeta,
   semanticHeaderStat,
   semanticKpiIcon,
 } from "./lib/semantic-icon-registry";
-export type { SemanticIconKey, SemanticIconMeta } from "./types/semantic-icon";
+export type {
+  DeprecatedSemanticIconKey,
+  SemanticIconKey,
+  SemanticIconLookupKey,
+  SemanticIconMeta,
+} from "./types/semantic-icon";
 export {
   CHART_OTHERS_LABEL,
   configureChartLegend,

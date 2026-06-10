@@ -1,6 +1,11 @@
 import type { LucideIcon } from "lucide-react";
-import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Server, Users } from "lucide-react";
-import { HubLoadingView as HubLoadingViewBase, type HubLoadingViewProps } from "@tool-workspace/hub-ui";
+import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Server, Settings2, Users } from "lucide-react";
+import {
+  HubLoadingView as HubLoadingViewBase,
+  HubScreenChunkFallback,
+  type HubLoadingViewProps,
+} from "@tool-workspace/hub-ui";
+import type { AppScreen } from "../../lib/app-screen";
 
 export type { HubLoadingViewProps };
 
@@ -21,3 +26,15 @@ export const HUB_LOADING_PRESETS = {
   agent: { icon: Bot, ariaLabel: "Loading agent context" },
   template: { icon: Palette, ariaLabel: "Loading design template" },
 } as const satisfies Record<string, { icon: LucideIcon; ariaLabel: string }>;
+
+export const APP_LOADING_PRESETS = {
+  dashboard: { icon: Gauge, ariaLabel: "Loading dashboard" },
+  library: { icon: LayoutGrid, ariaLabel: "Loading hub" },
+  users: { icon: Users, ariaLabel: "Loading users" },
+  system: { icon: Settings2, ariaLabel: "Loading system" },
+} as const satisfies Record<AppScreen, { icon: LucideIcon; ariaLabel: string }>;
+
+export function AppScreenLoadingView({ screen }: { screen: AppScreen }) {
+  const preset = APP_LOADING_PRESETS[screen];
+  return <HubScreenChunkFallback icon={preset.icon} ariaLabel={preset.ariaLabel} />;
+}

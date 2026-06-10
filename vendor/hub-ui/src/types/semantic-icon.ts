@@ -101,18 +101,23 @@ export type SemanticIconKey =
   | "kpi.inbox.groups"
   | "kpi.inbox.dms"
   | "kpi.inbox.unread"
+  | "kpi.inbox.zaloReplies"
+  | "kpi.inbox.messengerReplies"
   | "kpi.bots.total"
   | "kpi.bots.online"
   | "kpi.bots.chatbotLive"
-  | "kpi.analytics.worker"
-  | "kpi.analytics.bots"
-  | "kpi.analytics.running"
-  | "kpi.analytics.threads"
   | "kpi.fanpages.worker"
   | "kpi.fanpages.webhook"
   | "kpi.fanpages.tokenHealth"
   | "kpi.fanpages.lastReply"
-  | "kpi.fanpages.rag"
+  | "kpi.fanpages.rag";
+
+/** @deprecated Analytics tab removed — resolve via `SEMANTIC_ICON_ALIASES` in hub-ui. */
+export type DeprecatedSemanticIconKey =
+  | "kpi.analytics.worker"
+  | "kpi.analytics.bots"
+  | "kpi.analytics.running"
+  | "kpi.analytics.threads"
   | "kpi.analytics.zaloReplies"
   | "kpi.analytics.messengerReplies"
   | "kpi.analytics.replies24h"
@@ -123,3 +128,5 @@ export type SemanticIconKey =
   | "kpi.analytics.latencyP95"
   | "kpi.analytics.chatbotLive"
   | "kpi.analytics.router";
+
+export type SemanticIconLookupKey = SemanticIconKey | DeprecatedSemanticIconKey;

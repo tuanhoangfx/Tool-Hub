@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-05T07:11:35.188Z",
+  "generatedAt": "2026-06-09T11:21:34.918Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -463,25 +463,27 @@
     {
       "id": "infi-project-performance-tracker",
       "code": "LOCAL-015",
-      "name": "P0019-Work-Performance",
-      "repo": "",
+      "name": "P0019-Work-Performance (Legacy)",
+      "repo": "tuanhoangfx/-Work-Performance",
       "branch": "main",
       "remoteEnabled": false,
       "localVersion": "0.0.0",
       "category": "Local",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Local workspace asset discovered by scanner.",
+      "status": "Retired",
+      "summary": "Legacy Kanban — Todo migrated to P0020-Data-Box tab /todo. Folder kept until decommission.",
       "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
       "tags": [
         "Local",
-        "Workspace"
+        "Workspace",
+        "migrated-to-P0020/todo"
       ],
-      "localUrl": "http://127.0.0.1:5179",
+      "localUrl": "http://127.0.0.1:5177/todo",
+      "migratedTo": "P0020/todo",
       "deployTarget": "vercel",
       "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Use P0020 Todo: http://127.0.0.1:5177/todo",
+        "Legacy dev (deprecated): npm run dev in P0019 folder"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -501,7 +503,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "3.2.3",
+      "localVersion": "4.3.16",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
@@ -512,16 +514,17 @@
         "TypeScript",
         "Vite",
         "Supabase",
-        "Inter",
-        "Chrome extension E0001-cookie-bridge"
+        "Todo",
+        "Hub-UI"
       ],
       "appUrl": "https://databox.infi.io.vn",
-      "localUrl": "http://127.0.0.1:5177",
+      "localUrl": "http://127.0.0.1:5177/todo",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
-        "Build: corepack pnpm build",
-        "App: https://databox.infi.io.vn"
+        "Todo tab: http://127.0.0.1:5177/todo",
+        "Verify Todo: corepack pnpm verify:todo && corepack pnpm verify:todo:standalone",
+        "Build: corepack pnpm build"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -533,12 +536,8 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/apply-all-p0020.mjs",
-        "scripts/apply-batches-pg.mjs",
-        "scripts/apply-databox-env.mjs",
-        "scripts/apply-databox-migrations-api.mjs",
-        "scripts/apply-fix-v-note-api.mjs",
-        "scripts/apply-fix-v-note.mjs"
+        "scripts/verify-todo-standalone.mjs",
+        "scripts/decommission-p0019-check.mjs"
       ]
     },
     {
@@ -712,6 +711,44 @@
         "scripts/package-extension.ps1",
         "scripts/test-bindings-pull-logic.mjs"
       ]
+    },
+    {
+      "id": "infi-work-performance",
+      "code": "P0019",
+      "name": "Infi Work Performance (Legacy)",
+      "repo": "tuanhoangfx/-Work-Performance",
+      "branch": "main",
+      "remoteEnabled": false,
+      "localVersion": "0.0.0",
+      "category": "Web",
+      "audience": "Tool maintainers",
+      "status": "Retired",
+      "summary": "Legacy Kanban repo — Todo migrated to P0020-Data-Box tab /todo. Keep folder until explicit decommission.",
+      "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
+      "tags": [
+        "React",
+        "Vite",
+        "Supabase",
+        "migrated-to-P0020/todo"
+      ],
+      "appUrl": "https://inptracker.vercel.app",
+      "localUrl": "http://127.0.0.1:5177/todo",
+      "migratedTo": "P0020/todo",
+      "deployTarget": "vercel",
+      "usage": [
+        "Use P0020-Data-Box Todo tab: http://127.0.0.1:5177/todo",
+        "Legacy dev (deprecated): npm run dev in P0019 folder"
+      ],
+      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
+      "manifestPath": "tool.manifest.json",
+      "trackedFiles": [
+        "tool.manifest.json",
+        "package.json",
+        "README.md",
+        "CHANGELOG.md",
+        "RELEASE.md"
+      ],
+      "scriptFiles": []
     }
   ]
 }

@@ -47,7 +47,6 @@ import {
   RefreshCw,
   Rows3,
   ScrollText,
-  Send,
   Server,
   Shield,
   ShieldCheck,
@@ -60,11 +59,15 @@ import {
   Webhook,
   Wifi,
   WifiOff,
-  Zap,
 } from "lucide-react";
 import type { FilterIconMeta } from "../types/filter-badge";
 import type { KpiStripTone } from "../shell/KpiStrip";
-import type { SemanticIconKey, SemanticIconMeta } from "../types/semantic-icon";
+import type {
+  DeprecatedSemanticIconKey,
+  SemanticIconKey,
+  SemanticIconLookupKey,
+  SemanticIconMeta,
+} from "../types/semantic-icon";
 import { compactIconSize } from "../ui-scale";
 
 const REGISTRY: Record<SemanticIconKey, SemanticIconMeta> = {
@@ -160,28 +163,34 @@ const REGISTRY: Record<SemanticIconKey, SemanticIconMeta> = {
   "kpi.inbox.groups": { icon: Users, className: "text-purple-300", tone: "purple" },
   "kpi.inbox.dms": { icon: MessageSquare, className: "text-blue-300", tone: "blue" },
   "kpi.inbox.unread": { icon: MessageSquare, className: "text-amber-300", tone: "amber" },
+  "kpi.inbox.zaloReplies": { icon: MessageSquare, className: "text-purple-300", tone: "purple" },
+  "kpi.inbox.messengerReplies": { icon: Facebook, className: "text-blue-300", tone: "blue" },
   "kpi.bots.total": { icon: Bot, className: "text-indigo-300", tone: "indigo" },
   "kpi.bots.online": { icon: CheckCircle2, className: "text-emerald-300", tone: "emerald" },
   "kpi.bots.chatbotLive": { icon: Play, className: "text-blue-300", tone: "blue" },
-  "kpi.analytics.worker": { icon: Activity, className: "text-emerald-300", tone: "emerald" },
-  "kpi.analytics.bots": { icon: Bot, className: "text-indigo-300", tone: "indigo" },
-  "kpi.analytics.running": { icon: Activity, className: "text-emerald-300", tone: "emerald" },
-  "kpi.analytics.threads": { icon: MessageSquare, className: "text-purple-300", tone: "purple" },
   "kpi.fanpages.worker": { icon: Activity, className: "text-emerald-300", tone: "emerald" },
   "kpi.fanpages.webhook": { icon: Webhook, className: "text-emerald-300", tone: "emerald" },
   "kpi.fanpages.tokenHealth": { icon: ShieldCheck, className: "text-emerald-300", tone: "emerald" },
   "kpi.fanpages.lastReply": { icon: Clock, className: "text-emerald-300", tone: "emerald" },
   "kpi.fanpages.rag": { icon: Brain, className: "text-purple-300", tone: "purple" },
-  "kpi.analytics.zaloReplies": { icon: MessageSquare, className: "text-purple-300", tone: "purple" },
-  "kpi.analytics.messengerReplies": { icon: Facebook, className: "text-blue-300", tone: "blue" },
-  "kpi.analytics.replies24h": { icon: Send, className: "text-emerald-300", tone: "emerald" },
-  "kpi.analytics.latency": { icon: Timer, className: "text-cyan-300", tone: "cyan" },
-  "kpi.analytics.botReplies": { icon: Send, className: "text-purple-300", tone: "purple" },
-  "kpi.analytics.repliesToday": { icon: Zap, className: "text-emerald-300", tone: "emerald" },
-  "kpi.analytics.latencyP50": { icon: Timer, className: "text-cyan-300", tone: "cyan" },
-  "kpi.analytics.latencyP95": { icon: Timer, className: "text-slate-300", tone: "sky" },
-  "kpi.analytics.chatbotLive": { icon: Bot, className: "text-indigo-300", tone: "indigo" },
-  "kpi.analytics.router": { icon: Wifi, className: "text-emerald-300", tone: "emerald" },
+};
+
+/** Legacy `kpi.analytics.*` → domain keys (P0016 Analytics tab removed). */
+export const SEMANTIC_ICON_ALIASES: Record<DeprecatedSemanticIconKey, SemanticIconKey> = {
+  "kpi.analytics.worker": "kpi.fanpages.worker",
+  "kpi.analytics.bots": "kpi.bots.total",
+  "kpi.analytics.running": "kpi.bots.chatbotLive",
+  "kpi.analytics.threads": "kpi.inbox.threads",
+  "kpi.analytics.zaloReplies": "kpi.inbox.zaloReplies",
+  "kpi.analytics.messengerReplies": "kpi.inbox.messengerReplies",
+  "kpi.analytics.replies24h": "kpi.inbox.unread",
+  "kpi.analytics.latency": "kpi.fanpages.lastReply",
+  "kpi.analytics.botReplies": "kpi.inbox.unread",
+  "kpi.analytics.repliesToday": "kpi.inbox.unread",
+  "kpi.analytics.latencyP50": "kpi.fanpages.lastReply",
+  "kpi.analytics.latencyP95": "kpi.fanpages.lastReply",
+  "kpi.analytics.chatbotLive": "kpi.bots.chatbotLive",
+  "kpi.analytics.router": "kpi.channels.connected",
 };
 
 /** Agent kind slug → semantic key (Cursor skills / rules manifest). */
@@ -207,16 +216,21 @@ export function configureSemanticIcons(next: Partial<Record<SemanticIconKey, Sem
   overrides = { ...overrides, ...next };
 }
 
-export function resolveSemanticIcon(key: SemanticIconKey): SemanticIconMeta {
-  return { ...REGISTRY[key], ...overrides[key] };
+export function normalizeSemanticIconKey(key: SemanticIconLookupKey): SemanticIconKey {
+  return SEMANTIC_ICON_ALIASES[key as DeprecatedSemanticIconKey] ?? (key as SemanticIconKey);
 }
 
-export function semanticFilterMeta(key: SemanticIconKey): FilterIconMeta {
+export function resolveSemanticIcon(key: SemanticIconLookupKey): SemanticIconMeta {
+  const resolved = normalizeSemanticIconKey(key);
+  return { ...REGISTRY[resolved], ...overrides[resolved] };
+}
+
+export function semanticFilterMeta(key: SemanticIconLookupKey): FilterIconMeta {
   const { icon, className } = resolveSemanticIcon(key);
   return { icon, className };
 }
 
-export function semanticKpiIcon(key: SemanticIconKey): {
+export function semanticKpiIcon(key: SemanticIconLookupKey): {
   icon: SemanticIconMeta["icon"];
   tone: KpiStripTone;
 } {
@@ -225,7 +239,7 @@ export function semanticKpiIcon(key: SemanticIconKey): {
 }
 
 /** Tab header stat line — icon + Tailwind tone class. */
-export function semanticHeaderStat(key: SemanticIconKey): {
+export function semanticHeaderStat(key: SemanticIconLookupKey): {
   icon: SemanticIconMeta["icon"];
   toneClass: string;
 } {
@@ -234,7 +248,7 @@ export function semanticHeaderStat(key: SemanticIconKey): {
 }
 
 /** TOC rail + HubToolDetailSection header — golden Settings pattern. */
-export function buildSemanticTocIcon(key: SemanticIconKey, size = 11): ReactNode {
+export function buildSemanticTocIcon(key: SemanticIconLookupKey, size = 11): ReactNode {
   const { icon: Icon, className } = resolveSemanticIcon(key);
   return createElement(
     "span",

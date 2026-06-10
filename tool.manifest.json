@@ -100,7 +100,9 @@
     "previewUrl": "https://tool-hub.vercel.app",
     "productionBranch": "main",
     "team": "tuanhoangfxs-projects",
-    "notes": "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infi.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy."
+    "notes": "Vite SPA (Tool Hub). vercel.json rewrites. Custom domain infi.io.vn — DNS A → 76.76.21.21 (Tino). Git push main triggers deploy.",
+    "deployHookUrl": "https://api.vercel.com/v1/integrations/deploy/prj_tuOhhInjLzjWDrVYfeQanSqSqWMi/82uSC8C2AU",
+    "deployHookName": "ship-production"
   },
   "supabase": {
     "projectRef": "fmnrafpzctuhxjaaomzt",

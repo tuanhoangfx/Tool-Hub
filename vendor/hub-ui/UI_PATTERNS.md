@@ -16,6 +16,9 @@
 | `document-toc` | screen | P0004/overview-toc |
 | `system-panels` | screen | P0004/system |
 | `workspace-composer` | screen | P0020/notes |
+| `task-board` | screen | P0020/todo — `TodoHubChrome` + `HubDashboardScreen` |
+| `inbox-split` | screen | P0016/inbox |
+| `split-pane-scroll` | primitive | packages/hub-ui/split-pane-scroll |
 | `auth-gate` | modal | hub-ui/auth (V2) |
 | `user-access-modal` | modal | P0004/users |
 
@@ -51,14 +54,16 @@
 - Settings toggle label: **Anonymous mode** (not Offline).
 - **Do not** import `theme/hub-auth.css` in tools — overrides golden `hub-auth-gate.css` (blur 14px / 26rem).
 
-**Golden refs**
+**Golden refs (single source)**
 
-- Package — `HubAuthGateGoldenPreview` · `examples/GoldenAuthGateScreen.tsx`
-- P0004 — `HubAuthGate.tsx` · Design Template tab
-- P0020 — `NotesAuthGate.tsx` → `WorkspaceAuthGate` (+ Anonymous)
-- P0016 — `ChatCenterAuthGate.tsx` → `WorkspaceAuthGate`
-- CI — `node Tool/scripts/hub-auth-migration-check.mjs`
-- E0001 — `popup.html` / `popup-theme.css` (parity script)
+- **Canonical UI** — `packages/hub-ui/src/auth/HubAuthGateModal.tsx` · registry ref **`hub-ui/auth`**
+- **Factory** — `WorkspaceAuthGate` + `createWorkspaceAuthGate` in `packages/hub-ui/src/auth/WorkspaceAuthGate.tsx`
+- **Scaffold** — `node Tool/scripts/sync-hub-ui-screen.cjs P00xx auth` → `examples/GoldenAuthGateAdapter.tsx`
+- **authVariant** — `standard` (P0004, P0016) · `anonymous-dual` (P0020) — see `ui-patterns.catalog.json` → `auth-gate.authVariants`
+- **Adapters** — P0004 `HubAuthGate.tsx` · P0016 `ChatCenterAuthGate.tsx` · P0020 `NotesAuthGate.tsx`
+- **Preview** — `HubAuthGateGoldenPreview` · `examples/GoldenAuthGateScreen.tsx`
+- **CI** — `node Tool/scripts/hub-auth-migration-check.mjs`
+- **E0001** — `popup.html` / `popup-theme.css` (parity script)
 
 ---
 
@@ -85,6 +90,65 @@
 - **P0008** — `app/src/components/table/FilterBar.tsx` fork for Next.js RSC (icon keys as strings). Align visually with golden tokens; do not copy into Vite tools.
 
 **Removed legacy:** `ToolFilterBar` + `.filter-toolbar` / `.chip` CSS (P0004, P0020).
+
+---
+
+## Split-pane scroll (golden — hub-ui)
+
+**Canonical source:** `packages/hub-ui/src/styles/hub-split-scroll.css` + tokens in tool `p0008-globals.css` → fan-out via `node Tool/scripts/sync-hub-ui-vendor.cjs`.
+
+**CSS tokens** (`:root` / `.theme-hub` in `p0008-globals.css`):
+
+| Token | Default | Role |
+|-------|---------|------|
+| `--hub-split-scroll-size` | `10px` | WebKit scrollbar width (matches global `::-webkit-scrollbar`) |
+| `--hub-split-scroll-track` | `transparent` | Track |
+| `--hub-split-scroll-thumb` | `#2a3158` | Thumb |
+| `--hub-split-scroll-thumb-hover` | `#3a4178` | Thumb hover |
+| `--hub-split-scroll-radius` | `6px` | Thumb radius |
+
+**Classes**
+
+| Class | When to use |
+|-------|-------------|
+| `hub-split-scroll` | Any fixed-height split pane body (list rail, editor body, History TOC, diff panes) |
+| `hub-split-scroll--rail` | Left TOC / thread list / snapshot rail |
+| `hub-split-scroll--panel` | Main editor / message body / compare center |
+
+**Layout rules (workspace-composer / inbox-split)**
+
+- Tab shell: `hub-main--notes` / `hub-main--inbox` → `overflow: hidden` (no page scroll).
+- Flex chain: `hub-tab-content-zone` → `hub-tab-body-zone--split` → `notes-workspace__body` / `inbox-split-pane` — all `flex: 1; min-height: 0; overflow: hidden`.
+- **One scroll layer per pane** — attach `hub-split-scroll` on the inner scroll container only; parent `overflow: hidden`.
+- Editor textarea: `overflow: hidden` on `.notes-editor__textarea` — long content scrolls on `.notes-editor__body.hub-split-scroll`, not nested scrollbars.
+- Import: `@import "…/hub-split-scroll.css"` in tool `hub-ui-styles.css` (after `hub-shell-layout.css`).
+
+**Virtual list (Notes / Inbox rail)**
+
+| Constant | Value | Location |
+|----------|-------|----------|
+| `VIRTUAL_THRESHOLD` | `48` notes | P0020 `useNotesListVirtualWindow.ts` |
+| Row height compact | `38px` | `NOTES_LIST_ROW_HEIGHT.compact` |
+| Row height comfortable | `46px` | `NOTES_LIST_ROW_HEIGHT.comfortable` |
+
+**Selected row scroll-into-view**
+
+- P0020 `NotesListRail`: `scrollNoteIntoView(noteId, index)` on `selectedId` change (`block: nearest`, virtual = index × rowHeight math).
+- Row button: `data-note-id="{id}"` for non-virtual DOM path.
+- Skip scroll when row already in viewport (`isIndexInScrollView` margin `6px`).
+
+**Golden refs**
+
+- CSS — `vendor/hub-ui/src/styles/hub-split-scroll.css`
+- P0020 — `NotesListRail.tsx`, `NoteEditorPanel.tsx`, `noteHistoryTocRails.tsx`, `theme/data-box-layout.css`
+- P0016 — `InboxThreadsRail.tsx`, `InboxThreadPanel.tsx`, `theme/inbox-layout.css`
+- History modal — `note-history-modal.css` + `hub-split-scroll` on TOC / diff panes
+
+**Do not**
+
+- Duplicate webkit scrollbar rules per tool (`inbox-layout.css` local overrides — removed).
+- Use `overflow-y: scroll` on both `hub-main` and pane body (double scrollbar).
+- Expand textarea to `scrollHeight` without constraining pane height.
 
 ---
 

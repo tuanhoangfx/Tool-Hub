@@ -13,7 +13,7 @@ import {
   useHubActiveScreenSync,
   useHubAppLog,
 } from "@tool-workspace/hub-ui";
-import { DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
+import { AppScreenLoadingView, DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
 import { readSystemTab } from "./features/system-hub/components/SystemTabs";
 import { dispatchAgentManifestRefresh } from "./features/system-hub/agent-manifest-events";
@@ -329,7 +329,7 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
         <HubLoaderRoot />
         {visitedScreens.has("dashboard") ? (
           <div className={screen !== "dashboard" ? "hidden" : undefined} aria-hidden={screen !== "dashboard"}>
-            <Suspense fallback={<ScreenChunkFallback label="Dashboard" />}>
+            <Suspense fallback={<AppScreenLoadingView screen="dashboard" />}>
             <LazyAppScreens.dashboard
               allTools={resolvedTools}
               registryLive={registryLive}
@@ -342,7 +342,7 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
         ) : null}
         {visitedScreens.has("library") ? (
           <div className={screen !== "library" ? "hidden" : undefined} aria-hidden={screen !== "library"}>
-            <Suspense fallback={<ScreenChunkFallback label="Hub" />}>
+            <Suspense fallback={<AppScreenLoadingView screen="library" />}>
             <LazyAppScreens.library
               allTools={resolvedTools}
               selectedId={selectedId}
@@ -367,7 +367,7 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
         ) : null}
         {visitedScreens.has("users") ? (
           <div className={screen !== "users" ? "hidden" : undefined} aria-hidden={screen !== "users"}>
-            <Suspense fallback={<ScreenChunkFallback label="Users" />}>
+            <Suspense fallback={<AppScreenLoadingView screen="users" />}>
             <LazyAppScreens.users
               versionReleaseDate={versionRelease.shortLabel}
               headerActions={headerActions}
@@ -377,7 +377,7 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
         ) : null}
         {visitedScreens.has("system") ? (
           <div className={screen !== "system" ? "hidden" : undefined} aria-hidden={screen !== "system"}>
-            <Suspense fallback={<ScreenChunkFallback label="System" />}>
+            <Suspense fallback={<AppScreenLoadingView screen="system" />}>
             <LazyAppScreens.system
               tools={resolvedTools}
               registryLive={registryLive}
@@ -390,14 +390,6 @@ function AppShellContent({ screen, setScreen, systemTab, setSystemTab }: AppShel
           </div>
         ) : null}
       </main>
-    </div>
-  );
-}
-
-function ScreenChunkFallback({ label }: { label: string }) {
-  return (
-    <div className="flex min-h-[12rem] items-center justify-center text-sm text-[var(--muted)]">
-      Loading {label}…
     </div>
   );
 }

@@ -1,8 +1,9 @@
 import { HubAuthGateGoldenPreview } from "../src/auth/HubAuthGateGoldenPreview";
 
 /**
- * HUB_UI_SCAFFOLD — auth-gate golden (modal-only · 3 tabs · HubAuthLogoutChip).
- * Canonical: packages/hub-ui/src/auth/* · consumers P0004/P0020/P0016/E0001.
+ * HUB_UI_SCAFFOLD — auth-gate golden preview (Design Template · onboarding).
+ * Adapter scaffold: examples/GoldenAuthGateAdapter.tsx · node Tool/scripts/sync-hub-ui-screen.cjs P00xx auth
+ * Canonical UI: packages/hub-ui/src/auth/HubAuthGateModal.tsx (registry ref hub-ui/auth)
  */
 export function GoldenAuthGateScreen() {
   return <HubAuthGateGoldenPreview />;

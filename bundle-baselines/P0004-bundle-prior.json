@@ -1,0 +1,237 @@
+{
+  "code": "P0004",
+  "generatedAt": "2026-06-09T10:17:02.522Z",
+  "totals": {
+    "jsChunks": 26,
+    "cssChunks": 2,
+    "jsGzipKb": 316.4,
+    "cssGzipKb": 29.5,
+    "allGzipKb": 345.9
+  },
+  "chunks": [
+    {
+      "name": "index-CiXChUrj.js",
+      "type": "js",
+      "bytes": 231983,
+      "gzipBytes": 68622,
+      "gzipKb": 67,
+      "kb": 226.5
+    },
+    {
+      "name": "vendor-react-CQc3Zyh3.js",
+      "type": "js",
+      "bytes": 192363,
+      "gzipBytes": 60295,
+      "gzipKb": 58.9,
+      "kb": 187.9
+    },
+    {
+      "name": "vendor-supabase-Bfd5Thr0.js",
+      "type": "js",
+      "bytes": 208031,
+      "gzipBytes": 54148,
+      "gzipKb": 52.9,
+      "kb": 203.2
+    },
+    {
+      "name": "vendor-hub-ui-Cs2ZT-K4.js",
+      "type": "js",
+      "bytes": 128723,
+      "gzipBytes": 35348,
+      "gzipKb": 34.5,
+      "kb": 125.7
+    },
+    {
+      "name": "index-DrpwyLVe.css",
+      "type": "css",
+      "bytes": 164016,
+      "gzipBytes": 29949,
+      "gzipKb": 29.2,
+      "kb": 160.2
+    },
+    {
+      "name": "UserManagementScreen-CpVRH0UG.js",
+      "type": "js",
+      "bytes": 46824,
+      "gzipBytes": 14892,
+      "gzipKb": 14.5,
+      "kb": 45.7
+    },
+    {
+      "name": "ToolDetailSections-DEjZY50Q.js",
+      "type": "js",
+      "bytes": 40976,
+      "gzipBytes": 12525,
+      "gzipKb": 12.2,
+      "kb": 40
+    },
+    {
+      "name": "vendor-icons-CcnZqXDt.js",
+      "type": "js",
+      "bytes": 35182,
+      "gzipBytes": 11746,
+      "gzipKb": 11.5,
+      "kb": 34.4
+    },
+    {
+      "name": "SystemAgentContextPanel-DXyb1p8a.js",
+      "type": "js",
+      "bytes": 40839,
+      "gzipBytes": 11567,
+      "gzipKb": 11.3,
+      "kb": 39.9
+    },
+    {
+      "name": "SystemSupabaseQuotaPanel-DyIsYX_P.js",
+      "type": "js",
+      "bytes": 34481,
+      "gzipBytes": 10849,
+      "gzipKb": 10.6,
+      "kb": 33.7
+    },
+    {
+      "name": "DashboardListPage-BzBBWucq.js",
+      "type": "js",
+      "bytes": 24956,
+      "gzipBytes": 8031,
+      "gzipKb": 7.8,
+      "kb": 24.4
+    },
+    {
+      "name": "HubListPage-B6_PfHmP.js",
+      "type": "js",
+      "bytes": 18710,
+      "gzipBytes": 6473,
+      "gzipKb": 6.3,
+      "kb": 18.3
+    },
+    {
+      "name": "SystemOverviewPanel-BN1rvAon.js",
+      "type": "js",
+      "bytes": 15829,
+      "gzipBytes": 5868,
+      "gzipKb": 5.7,
+      "kb": 15.5
+    },
+    {
+      "name": "SystemSchemaPanel-BazNlS69.js",
+      "type": "js",
+      "bytes": 15808,
+      "gzipBytes": 5177,
+      "gzipKb": 5.1,
+      "kb": 15.4
+    },
+    {
+      "name": "SystemServerPanel-xIo-W37C.js",
+      "type": "js",
+      "bytes": 14739,
+      "gzipBytes": 5023,
+      "gzipKb": 4.9,
+      "kb": 14.4
+    },
+    {
+      "name": "hub-tool-ui-BWrAVFpJ.js",
+      "type": "js",
+      "bytes": 7206,
+      "gzipBytes": 2647,
+      "gzipKb": 2.6,
+      "kb": 7
+    },
+    {
+      "name": "SystemHubScreen-DqP7yvOn.js",
+      "type": "js",
+      "bytes": 5518,
+      "gzipBytes": 1930,
+      "gzipKb": 1.9,
+      "kb": 5.4
+    },
+    {
+      "name": "vendor-hub-identity-BpnEKRza.js",
+      "type": "js",
+      "bytes": 3955,
+      "gzipBytes": 1685,
+      "gzipKb": 1.6,
+      "kb": 3.9
+    },
+    {
+      "name": "DesignTemplateHub-C0fHgtMF.js",
+      "type": "js",
+      "bytes": 3767,
+      "gzipBytes": 1548,
+      "gzipKb": 1.5,
+      "kb": 3.7
+    },
+    {
+      "name": "SystemHubShell-jF1Bve91.js",
+      "type": "js",
+      "bytes": 2231,
+      "gzipBytes": 1074,
+      "gzipKb": 1,
+      "kb": 2.2
+    },
+    {
+      "name": "SupabaseProjectToolBadges-BTCp-FPw.js",
+      "type": "js",
+      "bytes": 1777,
+      "gzipBytes": 1008,
+      "gzipKb": 1,
+      "kb": 1.7
+    },
+    {
+      "name": "supabase-quota-budget-Cj31iNp0.js",
+      "type": "js",
+      "bytes": 2309,
+      "gzipBytes": 1004,
+      "gzipKb": 1,
+      "kb": 2.3
+    },
+    {
+      "name": "vendor-hub-load-BMNC21i7.js",
+      "type": "js",
+      "bytes": 1841,
+      "gzipBytes": 891,
+      "gzipKb": 0.9,
+      "kb": 1.8
+    },
+    {
+      "name": "HubCardAvatar-CxJugt7m.js",
+      "type": "js",
+      "bytes": 788,
+      "gzipBytes": 483,
+      "gzipKb": 0.5,
+      "kb": 0.8
+    },
+    {
+      "name": "system-filter-registry-Cr-dZ1WI.js",
+      "type": "js",
+      "bytes": 847,
+      "gzipBytes": 474,
+      "gzipKb": 0.5,
+      "kb": 0.8
+    },
+    {
+      "name": "TocSectionNav-BTIhxW8L.js",
+      "type": "js",
+      "bytes": 549,
+      "gzipBytes": 392,
+      "gzipKb": 0.4,
+      "kb": 0.5
+    },
+    {
+      "name": "vendor-hub-ui-BaF-X3EL.css",
+      "type": "css",
+      "bytes": 568,
+      "gzipBytes": 294,
+      "gzipKb": 0.3,
+      "kb": 0.6
+    },
+    {
+      "name": "user-management-client-cache-CIXoUDoI.js",
+      "type": "js",
+      "bytes": 350,
+      "gzipBytes": 271,
+      "gzipKb": 0.3,
+      "kb": 0.3
+    }
+  ]
+}

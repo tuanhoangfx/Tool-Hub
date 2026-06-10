@@ -9,6 +9,7 @@ import { HubTabSectionRule } from "../shell/HubTabSectionRule";
  */
 export function HubTabScreenBody({
   kpis,
+  kpiBand,
   charts,
   chartCount,
   sectionRuleLabel,
@@ -20,6 +21,8 @@ export function HubTabScreenBody({
   children,
 }: {
   kpis?: KpiTileData[];
+  /** Custom KPI row (e.g. sparkline tiles); takes precedence over `kpis`. */
+  kpiBand?: ReactNode;
   charts?: ReactNode;
   chartCount?: number;
   sectionRuleLabel?: string;
@@ -30,18 +33,18 @@ export function HubTabScreenBody({
   embedded?: boolean;
   children: ReactNode;
 }) {
-  const hasAnalytics = Boolean(kpis?.length || charts);
+  const hasAnalytics = Boolean(kpiBand || kpis?.length || charts);
   const showAnalyticsZone = hasAnalytics || reserveAnalyticsBand;
   const showSectionRule = Boolean(sectionRuleLabel && showAnalyticsZone);
   const bodyClass = bodyFlex
     ? "hub-tab-body-zone hub-tab-body-zone--split space-y-3"
     : "hub-tab-body-zone space-y-3";
 
-  const kpiBand = kpis?.length ? (
+  const kpiRow = kpiBand ?? (kpis?.length ? (
     <KpiStrip items={kpis} />
   ) : reserveAnalyticsBand ? (
     <div className="hub-kpi-strip hub-kpi-strip--reserve" aria-hidden />
-  ) : null;
+  ) : null);
 
   const chartsBand = charts ? (
     <ChartsBand count={chartCount}>{charts}</ChartsBand>
@@ -64,11 +67,11 @@ export function HubTabScreenBody({
           {bandOrder === "charts-first" ? (
             <>
               {chartsBand}
-              {kpiBand}
+              {kpiRow}
             </>
           ) : (
             <>
-              {kpiBand}
+              {kpiRow}
               {chartsBand}
             </>
           )}

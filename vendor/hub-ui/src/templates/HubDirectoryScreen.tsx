@@ -11,6 +11,7 @@ export type HubDirectoryScreenProps = {
   header: ReactNode;
   centerStats?: TabHeaderStatItem[];
   kpis?: KpiTileData[];
+  kpiBand?: ReactNode;
   charts?: ReactNode;
   chartCount?: number;
   sectionRuleLabel?: string;
@@ -43,6 +44,7 @@ export type HubDirectoryScreenProps = {
 export function HubDirectoryScreen({
   header,
   kpis,
+  kpiBand,
   charts,
   chartCount,
   sectionRuleLabel,
@@ -97,6 +99,7 @@ export function HubDirectoryScreen({
     <HubTabChrome header={header} filterBar={filterBar}>
       <HubTabScreenBody
         kpis={kpis}
+        kpiBand={kpiBand}
         charts={charts}
         chartCount={chartCount}
         sectionRuleLabel={sectionRuleLabel}

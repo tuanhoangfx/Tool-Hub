@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T08:53:16.808Z",
+  "generatedAt": "2026-06-09T10:16:16.652Z",
   "workspaceRoot": "E:\\Dev",
   "items": [
     {
@@ -101,8 +101,8 @@
       "agentRequestable": true,
       "summary": "Ship verify gate — machine-readable acceptance checklist (ship-until-done)",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Agent verify gate — machine-readable ship checklist for ship-until-done skill.\n *\n * Usage:\n *   node Tool/scripts/agent-verify-gate.mjs --code P0016 --json\n *   node Tool/scripts/agent-verify-gate.mjs --code P0020 --json --ensure-dev --mark-active\n */\nimport { spawnSync } from \"node:child_process\";\nimport { createRequire } from \"node:module\";\nimport fs from \"node:fs\";\nimport path from \"node:path\";\nimport { fileURLToPath } from \"node:url\";\nimport { prepareBrowserSmoke, SMOKE_CONTRACT } from \"./hub-ui-browser-smoke.mjs\";\n\nconst require = createRequire(import.meta.url);\nconst { loadWorkspacePorts, probeUrl } = require(\"./lib/ensure-dev-core.cjs\");\nconst { findProductRoot } = require(\"./lib/resolve-product-root.cjs\");\n\nconst __dirname = path.dirname(fileURLToPath(import.meta.url));\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst stateDir = path.join(devRoot, \".cursor\", \"state\");\nconst shipGatePath = path.join(stateDir, \"ship-gate-active.json\");\n\nconst HUB_UI_CODES = new Set([\"P0004\", \"P0016\", \"P0020\", \"P0008\", \"P0021\"]);\n\n/** Products that may show Supabase Sign In on production SPA routes. */\nconst AUTH_PROBE_CODES = new Set([\"P0020\", \"P0004\"]);\n",
-      "lines": 545,
-      "updatedAt": "2026-06-08T12:07:29.498Z",
+      "lines": 601,
+      "updatedAt": "2026-06-09T10:12:15.656Z",
       "tags": [
         "infrastructure",
         "script",
@@ -172,7 +172,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -244,7 +244,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -315,7 +315,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -371,7 +371,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -438,7 +438,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -494,7 +494,7 @@
       ],
       "keywordGroup": "hub-ui",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -600,7 +600,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -661,7 +661,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -717,7 +717,7 @@
       ],
       "keywordGroup": "supabase",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -788,7 +788,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -859,7 +859,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -926,7 +926,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -993,7 +993,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1049,7 +1049,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1066,9 +1066,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "Git / Push / Release pipeline (PowerShell)",
-      "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Deploy / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Deploy\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Deploy\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n      $manifest = Join-Path $d.FullName \"tool.manifest.json\"\n      if (Test-Path -LiteralPath $manifest) {\n        try",
-      "lines": 334,
-      "updatedAt": "2026-06-08T16:44:55.326Z",
+      "bodyPreview": "#!/usr/bin/env pwsh\n<#\n.SYNOPSIS\n  Unified Git / Push / Deploy / Release pipeline for Tool/P00xx and Extension/E00xx.\n.EXAMPLE\n  ship-product.ps1 -Code P0020 -Keyword Push\n  ship-product.ps1 -Code P0004 -Keyword Deploy\n  ship-product.ps1 -Code P0004 -Keyword Release\n  ship-product.ps1 -Code P0004 -Keyword Release -NoAutoCommit\n  ship-product.ps1 -Code P0020 -Keyword Deploy -WithLocalBuild\n#>\nparam(\n  [Parameter(Mandatory)]\n  [string]$Code,\n  [ValidateSet(\"Git\", \"Push\", \"Deploy\", \"Release\")]\n  [string]$Keyword = \"Push\",\n  [switch]$SkipBuild,\n  [switch]$WithLocalBuild,\n  [switch]$SkipPostReleaseCommit,\n  [switch]$AutoCommit,\n  [switch]$NoAutoCommit,\n  [switch]$SkipSmoke,\n  [switch]$UseVercelCli\n)\n\nSet-StrictMode -Version Latest\n$ErrorActionPreference = \"Stop\"\n\n$DevRoot = \"E:\\Dev\"\n$ToolScripts = Join-Path $DevRoot \"Tool\\scripts\"\n$Code = $Code.ToUpper()\n\nfunction Find-ProductDir {\n  param([string]$ProductCode)\n  foreach ($base in @(\"Tool\", \"Extension\")) {\n    $root = Join-Path $DevRoot $base\n    if (-not (Test-Path -LiteralPath $root)) { continue }\n    $dirs = @(Get-ChildItem -LiteralPath $root -Directory | Where-Object { $_.Name -like \"$ProductCode*\" })\n    foreach ($d in $dirs) {\n   ",
+      "lines": 386,
+      "updatedAt": "2026-06-09T10:10:34.137Z",
       "tags": [
         "infrastructure",
         "ship",
@@ -1123,7 +1123,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1175,8 +1175,8 @@
       "agentRequestable": true,
       "summary": "Hub UI script: sync-hub-ui-vendor.cjs",
       "bodyPreview": "#!/usr/bin/env node\n/**\n * Copy portable Hub shell UI from P0004 → vendor/hub-ui.\n * FilterBar + badge-registry stay in P0004 src (Hub-coupled); copy per target from reference.md.\n */\nconst fs = require(\"node:fs\");\nconst path = require(\"node:path\");\nconst { syncHubBootPublic } = require(\"./lib/sync-hub-boot-public.cjs\");\n\nconst devRoot = path.resolve(__dirname, \"..\", \"..\");\nconst hubRoot = path.join(devRoot, \"Tool\", \"P0004-Tool-Hub\");\nconst p0020Root = path.join(devRoot, \"Tool\", \"P0020-Data-Box\");\nconst p0008Root = path.join(devRoot, \"Tool\", \"P0008-Sales-Console\", \"app\");\nconst packagesHubUi = path.join(devRoot, \"packages\", \"hub-ui\");\nconst p0008Vendor = path.join(p0008Root, \"vendor\", \"hub-ui\");\n\n/** Fan-out content + layout CSS from packages/hub-ui (canonical for layer 3). */\nconst PACKAGES_COPY_PAIRS = [\n  [\"src/content/HubAlert.tsx\", \"src/content/HubAlert.tsx\"],\n  [\"src/content/HubDataTable.tsx\", \"src/content/HubDataTable.tsx\"],\n  [\"src/content/HubTablePager.tsx\", \"src/content/HubTablePager.tsx\"],\n  [\"src/content/HubPaginatedTableShell.tsx\", \"src/content/HubPaginatedTableShell.tsx\"],\n  [\"src/content/HubPaginatedDataTable.tsx\", \"src/content/HubPaginatedDataTable.tsx\"],\n  [\"src/co",
-      "lines": 312,
-      "updatedAt": "2026-06-09T05:59:42.321Z",
+      "lines": 317,
+      "updatedAt": "2026-06-09T09:45:47.141Z",
       "tags": [
         "hub-ui",
         "command",
@@ -1245,7 +1245,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1264,7 +1264,7 @@
       "summary": "Agent keyword guide (ưu tiên prompt 1 dòng)",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-ver",
       "lines": 231,
-      "updatedAt": "2026-06-09T08:53:16.640Z",
+      "updatedAt": "2026-06-09T10:16:16.493Z",
       "tags": [
         "playbook",
         "workspace"
@@ -1280,7 +1280,7 @@
       "summary": "16 keywords · verify · git · pattern · migrate · screensByProduct · tiếng Việt",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent loop`\n- **Gate intent:** `loop`\n\n### Fix P00xx\n\n**Khi nào:** Bug UI/layout/API surface đã biết.\n**Agent:** sửa tối thiểu → cùng ladder Ship.\n**Mẹo:** nêu rõ màn + hành vi mong đợi trong 1 dòng.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Fix P0004 — modal Settings hẹp, loop đến khi pass`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Smoke P00xx\n\n**Khi nào:** Code đã xong, chỉ cần regression / contract browser.\n**Agent:** không thêm feature; chỉ gate + smoke steps.\n**Sau deploy:** có thể kết hợp Deploy keyword.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Smoke P0004 — hub-ui browser contract Settings/Log/User`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 2. Git / Production pipeline\n\n### Git / Commit P00xx\n\n**Khi nào:** Backup snapshot Git **trên máy** — chưa cần GitHub/production.\n**Version:** Minor bump + CHANGELOG block đầy đủ.\n**Script:** `ship-product.ps1 -Keyword Git`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Git P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm (cumulative):** auto-commit WIP (nếu version triple + CHANGELOG sẵn) → push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Push P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gồm (cumulative):** auto-commit → push → production smoke (`ship-product.ps1 -Keyword Deploy`).\n**Gate:** `--intent deploy` (prod MCP hint). **Không** tạo GitHub Release — dùng Release keyword.\n\n- **Skill:** p00xx-ship-keywords + ship-until-done\n- **Prompt mẫu:** `Deploy P0016`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy`\n- **Gate intent:** `deploy`\n\n### Release E00xx\n\n**Khi nào:** Phát hành chính thức — tag GitHub, catalog, audit.\n**Version:** Major bump.\n**Gồm:** Deploy + `gh release create`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Release E0001`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 3. Hub UI — full shell\n\n### Hub P00xx\n\n**Khi nào:** Tool mới hoặc migrate **cả console** hub-ui.\n**Khác Directory/Inbox:** không chỉ 1 tab — full shell.\n**Sau clone:** bắt buộc Ship/Loop verify.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Hub P0017 — clone toàn bộ hub-ui shell từ P0004`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 4. Hub UI — clone từng pattern (tab)\n\n### Directory P00xx\n\n**Khi nào:** Thêm/sửa **1 tab dạng directory** (list + filter + card/table).\n**Lệnh:** `hub-ui-stack.cjs P00xx <tab>` — thay `<tab>` bằng tên screen (bots, users…).\n**Golden:** P0004 HubListPage. **Catalog id:** `directory`.\n**Luôn kết thúc:** Ship hoặc Smoke verify tab vừa clone.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Directory P0017 bots — tab bots directory golden P0004 Hub`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx <tab>`\n- **Pattern catalog:** `directory` · golden `P0004/hub-list`\n- **Tab gợi ý:** P0004→hub|users · P0016→bots|groups|logs|channels · P0020→cookie|twofa · P0008→buyers|orders|products\n\n### Inbox P00xx\n\n**Khi nào:** Màn chat/inbox 3 cột (list thread + nội dung).\n**Lệnh:** `hub-ui-stack.cjs P00xx inbox` — screen luôn là `inbox`.\n**Golden:** P0016 InboxHubChrome. **Catalog id:** `inbox-split`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Inbox P0017 — clone inbox split giống P0016`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx inbox`\n- **Pattern catalog:** `inbox-split` · golden `P0016/inbox`\n- **Tab gợi ý:** P0004→inbox · P0016→inbox · P0020→inbox · P0008→inbox\n\n### Dashboard P00xx\n\n**Khi nào:** Tab analytics/KPI + biểu đồ nhỏ.\n**Lệnh:** `hub-ui-stack.cjs P00xx dashboard`.\n**Golden:** P0004 DashboardListPage. **Catalog id:** `dashboard`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Dashboard P0017 — KPI dashboard tab`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx dashboard`\n- **Pattern catalog:** `dashboard` · golden `P0004/dashboard`\n- **Tab gợi ý:** P0004→dashboard · P0016→dashboard · P0020→dashboard · P0008→dashboard\n\n### Overview P00xx\n\n**Khi nào:** Tab Overview/TOC + bảng link tool (chuẩn P0004 tab Overview).\n**Lệnh:** `hub-u",
       "lines": 231,
-      "updatedAt": "2026-06-09T08:53:16.802Z",
+      "updatedAt": "2026-06-09T10:16:16.647Z",
       "tags": [
         "infrastructure",
         "keyword",
@@ -1580,10 +1580,10 @@
       "path": ".cursor\\hooks.json",
       "scope": "workspace",
       "agentRequestable": true,
-      "summary": "Active: lite · Telegram OFF (telegram-hooks.off) · lite=8 cmds, no sessionStart",
-      "bodyPreview": "# Cursor hooks profile\n\n**Active file:** `.cursor/hooks.json` → profile **lite**\n**Telegram wrapper:** OFF (telegram-hooks.off)\n\n| Profile | Events | Commands | sessionStart | Events list |\n|---------|--------|----------|--------------|-------------|\n| **lite (default)** | 5 | 8 | no | beforeShellExecution, afterFileEdit, afterShellExecution, afterAgentResponse, stop |\n| **full (+ Telegram)** | 8 | 14 | yes | sessionStart, beforeSubmitPrompt, beforeShellExecution, afterFileEdit, afterShellExecution, afterAgentResponse, sessionEnd, stop |\n| **active** | 5 | 8 | no | beforeShellExecution, afterFileEdit, afterShellExecution, afterAgentResponse, stop |\n\n## Switch profile\n\n```powershell\npowershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Lite\npowershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Full   # + CURSOR_TELEGRAM_HOOKS=1\n```\n\nLite: audit (afterAgentResponse) + stop ship gates only — **no sessionStart** (faster new chat).\nFull: sessionStart + Telegram on every prompt/response (heavier).\n\nReload Cursor after switching.",
+      "summary": "Active: lite · Telegram OFF (telegram-hooks.off) · lite=9 cmds, no sessionStart",
+      "bodyPreview": "# Cursor hooks profile\n\n**Active file:** `.cursor/hooks.json` → profile **lite**\n**Telegram wrapper:** OFF (telegram-hooks.off)\n\n| Profile | Events | Commands | sessionStart | Events list |\n|---------|--------|----------|--------------|-------------|\n| **lite (default)** | 5 | 9 | no | beforeShellExecution, afterFileEdit, afterShellExecution, afterAgentResponse, stop |\n| **full (+ Telegram)** | 8 | 15 | yes | sessionStart, beforeSubmitPrompt, beforeShellExecution, afterFileEdit, afterShellExecution, afterAgentResponse, sessionEnd, stop |\n| **active** | 5 | 9 | no | beforeShellExecution, afterFileEdit, afterShellExecution, afterAgentResponse, stop |\n\n## Switch profile\n\n```powershell\npowershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Lite\npowershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Full   # + CURSOR_TELEGRAM_HOOKS=1\n```\n\nLite: audit (afterAgentResponse) + stop ship gates only — **no sessionStart** (faster new chat).\nFull: sessionStart + Telegram on every prompt/response (heavier).\n\nReload Cursor after switching.",
       "lines": 22,
-      "updatedAt": "2026-06-07T19:38:26.257Z",
+      "updatedAt": "2026-06-09T10:12:31.500Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1599,9 +1599,9 @@
       "scope": "workspace",
       "agentRequestable": true,
       "summary": "3 stop hooks · ship gate diff · loop_limit 2 (loop intent: 12)",
-      "bodyPreview": "# Cursor stop hooks (ship enforcement)\n\n**Event:** `stop` — runs when agent tries to end turn (profile: active `.cursor/hooks.json`)\n\n| # | Script | Role | loop_limit | Checks |\n|---|--------|------|------------|--------|\n| 1 | `verify-working-rules-on-stop.ps1\"` | — | 2 | — |\n| 2 | `verify-ship-gate-on-stop.ps1\"` | — | 2 | — |\n| 3 | `verify-version-bump-on-stop.ps1\"` | — | 2 | — |\n\n## Ship gate diff (verify-ship-gate-on-stop)\n\nWhen `working-rules-audit.json` reports missing ship verify block:\n\n1. Reads `ship-gate-active.json` for code + intent (loop → 12 nudges)\n2. Runs `agent-verify-gate.mjs --json --ensure-dev`\n3. Injects **Gate diff** — pending acceptance items into `followup_message`\n\n## Related\n\n- `audit-agent-response.ps1` (afterAgentResponse) — writes audit state\n- SSOT keywords: `Tool/scripts/lib/ship-keywords.json`\n- Sync rule table: `node Tool/scripts/sync-ship-keywords.mjs`",
-      "lines": 23,
-      "updatedAt": "2026-06-07T19:38:26.257Z",
+      "bodyPreview": "# Cursor stop hooks (ship enforcement)\n\n**Event:** `stop` — runs when agent tries to end turn (profile: active `.cursor/hooks.json`)\n\n| # | Script | Role | loop_limit | Checks |\n|---|--------|------|------------|--------|\n| 1 | `verify-p0016-predev-smoke-on-stop.ps1\"` | — | 3 | — |\n| 2 | `verify-working-rules-on-stop.ps1\"` | — | 2 | — |\n| 3 | `verify-ship-gate-on-stop.ps1\"` | — | 2 | — |\n| 4 | `verify-version-bump-on-stop.ps1\"` | — | 2 | — |\n\n## Ship gate diff (verify-ship-gate-on-stop)\n\nWhen `working-rules-audit.json` reports missing ship verify block:\n\n1. Reads `ship-gate-active.json` for code + intent (loop → 12 nudges)\n2. Runs `agent-verify-gate.mjs --json --ensure-dev`\n3. Injects **Gate diff** — pending acceptance items into `followup_message`\n\n## Related\n\n- `audit-agent-response.ps1` (afterAgentResponse) — writes audit state\n- SSOT keywords: `Tool/scripts/lib/ship-keywords.json`\n- Sync rule table: `node Tool/scripts/sync-ship-keywords.mjs`",
+      "lines": 24,
+      "updatedAt": "2026-06-09T10:12:31.500Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1775,7 +1775,7 @@
       "summary": "Bảng nhanh — chi tiết xem Agent keyword guide",
       "bodyPreview": "# Ship keywords (quick)\n\n**Chi tiết:** mở doc **Agent keyword guide** cùng tab Agent.\n\n| Keyword | Skill | Example |\n|---------|-------|--------|\n| **Ship P00xx** | ship-until-done | Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại |\n| **Loop P00xx** | ship-until-done | Loop P0016 — Messenger parity Zalo, unlimited turns |\n| **Fix P00xx** | ship-until-done | Fix P0004 — modal Settings hẹp, loop đến khi pass |\n| **Smoke P00xx** | ship-until-done | Smoke P0004 — hub-ui browser contract Settings/Log/User |\n| **Git / Commit P00xx** | p00xx-ship-keywords | Git P0020 |\n| **Push P00xx** | p00xx-ship-keywords | Push P0020 |\n| **Deploy P00xx** | p00xx-ship-keywords + ship-until-done | Deploy P0016 |\n| **Release E00xx** | p00xx-ship-keywords | Release E0001 |\n| **Hub P00xx** | p00xx-clone-hub-shell + ship-until-done | Hub P0017 — clone toàn bộ hub-ui shell từ P0004 |\n| **Migrate P00xx** | p00xx-supabase-ops | Migrate P0020 — thêm cột can_edit note_shares |\n| **Directory P00xx** | p00xx-clone-hub-shell + ship-until-done · `directory` | Directory P0017 bots — tab bots directory golden P0004 Hub |\n| **Inbox P00xx** | p00xx-clone-hub-shell + ship-until-done · `inbox-split` | Inbox P0017 — clone inbox split giống P0016 |\n| **Dashboard P00xx** | p00xx-clone-hub-shell + ship-until-done · `dashboard` | Dashboard P0017 — KPI dashboard tab |\n| **Overview P00xx** | p00xx-clone-hub-shell + ship-until-done · `document-toc` | Overview P0017 — tab Overview chuẩn P0004 |\n| **System P00xx** | p00xx-clone-hub-shell + ship-until-done · `system-panels` | System P0020 — panel System giống P0004 |\n| **Notes P00xx** | p00xx-clone-hub-shell + ship-until-done · `workspace-composer` | Notes P0017 — split editor giống P0020 Notes |\n\nGate:\n`node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`",
       "lines": 24,
-      "updatedAt": "2026-06-09T08:53:16.803Z",
+      "updatedAt": "2026-06-09T10:16:16.648Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1857,12 +1857,12 @@
       "path": "packages\\hub-ui\\UI_PATTERNS.md",
       "scope": "package",
       "agentRequestable": true,
-      "summary": "Hub UI unified patterns (17) — ui-patterns.catalog.json",
+      "summary": "Hub UI unified patterns (18) — ui-patterns.catalog.json",
       "golden": "P0004",
       "clone": "P0016, P0008, P0020, P0021",
-      "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `auth-gate` | modal | hub-ui/auth (V2) |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `panels[]` (not separate rows).\n\n---\n\n## Auth gate (golden V2 — hub-ui)\n\n**Canonical source:** `packages/hub-ui/src/\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0016** (clone): bots, groups, logs, channels, auth\n- **P0008** (clone): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system\n- **P0021** (clone-partial): studio, system",
-      "lines": 413,
-      "updatedAt": "2026-06-09T08:14:22.499Z",
+      "bodyPreview": "# Hub UI patterns (unified)\n\n**Catalog:** `Tool/schemas/ui-patterns.catalog.json`  \n**Clone:** `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>`  \n**Agent tab:** Kind **Pattern** (ready goldens only)\n\n**Deferred** (không có row Agent — chuẩn hóa sau): `dashboard`, `inbox-split` → `deferredPatterns[]` trong catalog.\n\n---\n\n## Ready patterns (Agent)\n\n| ID | Layer | Golden |\n|----|-------|--------|\n| `directory` | screen | P0004/hub-list |\n| `document-toc` | screen | P0004/overview-toc |\n| `system-panels` | screen | P0004/system |\n| `workspace-composer` | screen | P0020/notes |\n| `inbox-split` | screen | P0016/inbox |\n| `split-pane-scroll` | primitive | packages/hub-ui/split-pane-scroll |\n| `auth-gate` | modal | hub-ui/auth (V2) |\n| `user-access-modal` | modal | P0004/users |\n\n**Directory** = card + table via **ViewToggle** (one pattern).  \n**System** = Agent table + Quota table inside `pa\n\n## Tools\n- **P0004** (golden-source): hub, users, overview, system, auth\n- **P0016** (clone): bots, groups, logs, channels, auth\n- **P0008** (clone): buyers, orders, products\n- **P0020** (clone): notes, cookie, twofa, auth, system\n- **P0021** (clone-partial): studio, system",
+      "lines": 474,
+      "updatedAt": "2026-06-09T10:13:44.596Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2003,7 +2003,7 @@
         }
       ],
       "lines": 14,
-      "updatedAt": "2026-06-09T07:10:52.925Z",
+      "updatedAt": "2026-06-09T10:13:44.499Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2130,7 +2130,7 @@
         }
       ],
       "lines": 13,
-      "updatedAt": "2026-06-09T08:17:37.604Z",
+      "updatedAt": "2026-06-09T10:13:06.286Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2257,7 +2257,7 @@
         }
       ],
       "lines": 16,
-      "updatedAt": "2026-06-09T08:17:37.604Z",
+      "updatedAt": "2026-06-09T10:13:06.286Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2340,7 +2340,7 @@
       "golden": "P0016/inbox",
       "clone": "P0016/inbox",
       "cloneTooltip": "P0016/inbox",
-      "bodyPreview": "# Inbox master-detail\nLayer: screen\nPattern ID: inbox-split\nScreen template: inbox-split\nStatus: ready\nGolden: P0016/inbox\nScreen: Tool/P0016-ChatCenter/src/features/inbox/InboxHubChrome.tsx\nHub chrome + threads rail + message panel — HubSplitWorkspaceScreen shell.\nComposed: HubSplitWorkspaceScreen, DirectorySearchToolbar, FilterBar\nVerify: hub-ui-parity-check.mjs --template inbox-split\n## Clones\n\n- P0016/inbox",
+      "bodyPreview": "# Inbox master-detail\nLayer: screen\nPattern ID: inbox-split\nScreen template: inbox-split\nStatus: ready\nGolden: P0016/inbox\nScreen: Tool/P0016-ChatCenter/src/features/inbox/InboxHubChrome.tsx\nHub chrome + threads rail + message panel — HubSplitWorkspaceScreen shell.\nComposed: HubSplitWorkspaceScreen, DirectorySearchToolbar, FilterBar, hub-split-scroll\nVerify: hub-ui-parity-check.mjs --template inbox-split\n## Clones\n\n- P0016/inbox",
       "contentFields": [
         {
           "label": "Pattern ID",
@@ -2505,7 +2505,7 @@
         }
       ],
       "lines": 14,
-      "updatedAt": "2026-06-09T08:17:37.604Z",
+      "updatedAt": "2026-06-09T10:13:06.286Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2633,6 +2633,67 @@
         "pattern",
         "shell-part",
         "sidebar-nav-tones",
+        "ready"
+      ]
+    },
+    {
+      "id": "pattern-split-pane-scroll",
+      "kind": "pattern",
+      "name": "Split-pane scroll",
+      "layer": "primitive",
+      "path": "Tool\\P0020-Data-Box\\src\\features\\notes\\NotesListRail.tsx",
+      "scope": "workspace",
+      "agentRequestable": true,
+      "trigger": "primitive · packages/hub-ui/split-pane-scroll",
+      "summary": "Fixed-height split panes — hub-split-scroll class + p0008 scrollbar tokens. One scroll layer per rail/editor; no hub-main page scroll on notes/inbox tabs.",
+      "golden": "packages/hub-ui/split-pane-scroll",
+      "clone": "5× P0020/notes, P0020/notes, P0016/inbox…",
+      "cloneTooltip": "P0020/notes — scrollNoteIntoView + useNotesListVirtualWindow\nP0020/notes — History TOC + diff panes\nP0016/inbox — scrollSplitRailItemIntoView\nP0016/inbox\nP0016/fanpages",
+      "bodyPreview": "# Split-pane scroll\nLayer: primitive\nPattern ID: split-pane-scroll\nStatus: ready\nGolden: packages/hub-ui/split-pane-scroll\nScreen: Tool/P0020-Data-Box/src/features/notes/NotesListRail.tsx\nFixed-height split panes — hub-split-scroll class + p0008 scrollbar tokens. One scroll layer per rail/editor; no hub-main page scroll on notes/inbox tabs.\nComposed: hub-split-scroll, hub-split-scroll--rail, hub-split-scroll--panel\nVerify: hub-ui-duplication-check.mjs; no per-tool webkit scrollbar overrides on notes-rail__scroll / notes-editor__body\n## Clones\n\n- P0020/notes — scrollNoteIntoView + useNotesListVirtualWindow\n- P0020/notes — History TOC + diff panes\n- P0016/inbox — scrollSplitRailItemIntoView\n- P0016/inbox\n- P0016/fanpages",
+      "contentFields": [
+        {
+          "label": "Pattern ID",
+          "value": "split-pane-scroll",
+          "variant": "code"
+        },
+        {
+          "label": "Layer",
+          "value": "primitive",
+          "variant": "text"
+        },
+        {
+          "label": "Golden",
+          "value": "packages/hub-ui/split-pane-scroll",
+          "variant": "code"
+        },
+        {
+          "label": "Golden screen",
+          "value": "Tool/P0020-Data-Box/src/features/notes/NotesListRail.tsx",
+          "variant": "code"
+        },
+        {
+          "label": "Summary",
+          "value": "Fixed-height split panes — hub-split-scroll class + p0008 scrollbar tokens. One scroll layer per rail/editor; no hub-main page scroll on notes/inbox tabs.",
+          "variant": "text"
+        },
+        {
+          "label": "Verify",
+          "value": "hub-ui-duplication-check.mjs; no per-tool webkit scrollbar overrides on notes-rail__scroll / notes-editor__body",
+          "variant": "text"
+        },
+        {
+          "label": "Clones",
+          "value": "P0020/notes — scrollNoteIntoView + useNotesListVirtualWindow\nP0020/notes — History TOC + diff panes\nP0016/inbox — scrollSplitRailItemIntoView\nP0016/inbox\nP0016/fanpages",
+          "variant": "multiline"
+        }
+      ],
+      "lines": 16,
+      "updatedAt": "2026-06-09T09:43:57.848Z",
+      "tags": [
+        "hub-ui",
+        "pattern",
+        "primitive",
+        "split-pane-scroll",
         "ready"
       ]
     },
@@ -2820,7 +2881,7 @@
         }
       ],
       "lines": 13,
-      "updatedAt": "2026-06-09T08:17:37.604Z",
+      "updatedAt": "2026-06-09T10:13:06.286Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2896,7 +2957,7 @@
       "summary": "Split notes / editor (P0020) — HubSplitWorkspaceScreen + bodyFlex.",
       "golden": "P0020/notes",
       "clone": "—",
-      "bodyPreview": "# Workspace composer\nLayer: screen\nPattern ID: workspace-composer\nScreen template: workspace-composer\nStatus: ready\nGolden: P0020/notes\nScreen: Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx\nSplit notes / editor (P0020) — HubSplitWorkspaceScreen + bodyFlex.\nComposed: HubSplitWorkspaceScreen, FilterBar, WorkspaceTabHeader",
+      "bodyPreview": "# Workspace composer\nLayer: screen\nPattern ID: workspace-composer\nScreen template: workspace-composer\nStatus: ready\nGolden: P0020/notes\nScreen: Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx\nSplit notes / editor (P0020) — HubSplitWorkspaceScreen + bodyFlex.\nComposed: HubSplitWorkspaceScreen, FilterBar, WorkspaceTabHeader, hub-split-scroll",
       "contentFields": [
         {
           "label": "Pattern ID",
@@ -2950,7 +3011,7 @@
       "summary": "Dev workspace E:\\Dev — policy duy nhất (Always Apply)",
       "bodyPreview": "# Dev workspace (E:\\Dev)\n\n## Giao tiếp & mỗi câu trả lời\n\n- Trao đổi với user bằng **tiếng Việt**; mọi **chuỗi UI** Tool/Extension bằng **tiếng Anh**.\n- **Luôn** kết thúc bằng **3 đề xuất** đánh số `1.` `2.` `3.` (kể cả trả lời ngắn / xong việc).\n- **Tự động** thực hiện các đề xuất (setup, migration, verify browser, script…) — **không** chờ `ok 1` trừ khi user nói rõ chỉ tư vấn / không làm.\n- Dòng cuối: `Version: X.Y.Z → A.B.C` hoặc `Version: no bump (lý do)`.\n- **Không** xóa dữ liệu quan trọng; **không** commit secret; commit/push/release chỉ khi user yêu cầu rõ.\n- Hooks kiểm tra format — xem Settings → Hooks → Execution Log nếu thiếu 3 đề xuất / Version.\n\n## P0004 golden pattern (Hub · Users · Overview)\n\n- **P0004 Tool Hub** — tab **Hub / Users / Overview** là chuẩn layout & typography cho mọi P00xx.\n- Tuân thủ **format text/UI P004** (title case có chừng mực, không ALL CAPS lung tung; copy UI English).\n- Clone shell: `packages/hub-ui/README.md` · `node Tool/scripts/hub-ui-stack.cjs P00xx <screen>` · verify `hub-ui-css-check.mjs` · `hub-ui-parity-check.mjs`.\n- Design source: `Tool/P0004-Tool-Hub` (`HubListPage`, `UserDirectoryTable`, Overview TOC). Dùng `@tool-workspace/hub-ui`, ",
       "lines": 85,
-      "updatedAt": "2026-06-09T08:53:16.636Z",
+      "updatedAt": "2026-06-09T10:16:16.492Z",
       "tags": [
         "rule",
         "cursor",

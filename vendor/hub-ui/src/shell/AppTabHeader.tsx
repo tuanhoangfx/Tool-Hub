@@ -23,6 +23,9 @@ export type TabHeaderStatItem = {
   label: string;
   value: number | string;
   toneClass: string;
+  /** Optional — interactive header stat (P0020 Todo preview popover). */
+  onClick?: () => void;
+  active?: boolean;
 };
 
 type AppTabHeaderProps = {
@@ -146,9 +149,9 @@ function MetaLine({ icon: Icon, title, value, live }: TabHeaderMetaItem) {
   );
 }
 
-function StatLine({ icon: Icon, dotClass, value, label, toneClass }: TabHeaderStatItem) {
-  return (
-    <div className="inline-flex items-center gap-1 text-[12px] leading-none text-[var(--muted)]" title={label}>
+function StatLine({ icon: Icon, dotClass, value, label, toneClass, onClick, active }: TabHeaderStatItem) {
+  const content = (
+    <>
       {dotClass ? (
         <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${dotClass}`} aria-hidden />
       ) : Icon ? (
@@ -156,6 +159,27 @@ function StatLine({ icon: Icon, dotClass, value, label, toneClass }: TabHeaderSt
       ) : null}
       <span className="font-semibold tabular-nums text-[var(--text)]/90">{value}</span>
       <span className="text-[var(--muted)]/80">{label}</span>
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        title={label}
+        className={`inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-[12px] leading-none transition-colors ${
+          active ? "bg-white/10 text-[var(--text)]" : "text-[var(--muted)] hover:bg-white/5"
+        }`}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <div className="inline-flex items-center gap-1 text-[12px] leading-none text-[var(--muted)]" title={label}>
+      {content}
     </div>
   );
 }

@@ -210,6 +210,16 @@ export function FilterBar({
             <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">{row2Actions}</div>
           ) : null}
         </div>
+        {hasActive ? (
+          <ActivePills
+            query={query}
+            onClearQ={() => onQueryChange("")}
+            filters={filters}
+            values={values}
+            onClearAll={clearAll}
+            onRemove={setFilter}
+          />
+        ) : null}
       </div>
     );
 

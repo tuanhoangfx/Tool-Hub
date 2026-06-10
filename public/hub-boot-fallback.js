@@ -54,9 +54,12 @@
 
   window.setTimeout(function () {
     if (window.__hubBootReady) return;
-    showBootError(
-      "JavaScript did not start in time.",
-      "Stale Vite cache, port conflict, or broken import. Try: pnpm dev:recover in the tool folder.",
-    );
+    var hungHint =
+      "Hung Vite zombie or stale cache. In the tool folder run:\n" +
+      "  pnpm dev:recover\n" +
+      "If recover fails (Access Denied), in PowerShell:\n" +
+      "  tskill <PID> /A\n" +
+      "  (find PID: netstat -ano | findstr :5186)";
+    showBootError("JavaScript did not start in time.", hungHint);
   }, TIMEOUT_MS);
 })();

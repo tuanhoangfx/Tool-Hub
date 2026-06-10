@@ -5,7 +5,7 @@
 - Version: `5.2.18`
 - Timestamp: 2026-06-09 13:30 (UTC+7)
 - Type: Patch
-- Status: Verified
+- Status: Committed
 - Release: https://infi.io.vn
 
 ### Changes
