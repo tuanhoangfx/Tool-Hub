@@ -84,7 +84,7 @@
     "latestPublished": {
       "tag": "v5.2.18",
       "url": "https://github.com/tuanhoangfx/Tool-Hub/releases/tag/v5.1.3",
-      "publishedAt": "2026-06-09T09:09:13.251Z"
+      "publishedAt": "2026-06-10T07:35:51.979Z"
     }
   },
   "urls": {
@@ -115,7 +115,7 @@
       "migrateDoc": "docs/IDENTITY.md"
     }
   },
-  "manifestUpdatedAt": "2026-06-09T09:09:13.251Z",
+  "manifestUpdatedAt": "2026-06-10T07:35:51.979Z",
   "health": {
     "status": "Ready",
     "note": "Production on Vercel (infi.io.vn). Library-only catalog."
