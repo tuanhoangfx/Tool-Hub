@@ -148,7 +148,7 @@ export const WORKSPACE_ROLE: Record<string, FilterIconMeta> = {
 };
 
 /** Users tab — presence / activity filter (key `status`, label Activity). */
-const USER_ACTIVITY: Record<string, FilterIconMeta> = {
+export const USER_PRESENCE: Record<string, FilterIconMeta> = {
   online: { icon: CheckCircle2, className: "text-emerald-400" },
   active: { icon: Zap, className: "text-cyan-400" },
   idle: { icon: Clock, className: "text-amber-400" },
@@ -185,14 +185,12 @@ const FILTER_ALL: Record<string, FilterIconMeta> = {
   plan: { icon: CreditCard, className: "text-amber-300" },
   tool: { icon: Package, className: "text-indigo-300" },
   entity: { icon: Database, className: "text-indigo-300" },
-  group: {
-    icon: HUB_APP_TAB_GROUP_META.hub.icon,
-    className: navBadgeIconClass(HUB_APP_TAB_GROUP_META.hub.iconTone),
-  },
+  group: { icon: Layers, className: "text-indigo-400" },
   template: {
     icon: HUB_UI_TEMPLATE_META.directory.icon,
     className: navBadgeIconClass(HUB_UI_TEMPLATE_META.directory.iconTone),
   },
+  pinned: { icon: Star, className: navBadgeIconClass("amber") },
   kind: { icon: Link2, className: "text-cyan-300" },
   agentKind: { icon: Shield, className: "text-emerald-300" },
   agentScope: { icon: FolderOpen, className: "text-cyan-300" },
@@ -386,7 +384,7 @@ export function resolveFilterOptionIcon(filterKey: string, option: FilterOption)
       );
     case "status":
       return (
-        pick(USER_ACTIVITY, option.value) ??
+        pick(USER_PRESENCE, option.value) ??
         pick(STATUS_HEALTH, option.label) ??
         pick(STATUS_HEALTH, option.value) ??
         LINK_STATUS[option.value] ??
@@ -484,7 +482,7 @@ export function resolveHubKpiIcon(key: string): FilterIconMeta | null {
   return HUB_KPI[key] ?? null;
 }
 
-export function resolveChartLegendIcon(label: string): FilterIconMeta | null {
+export function resolveHubChartLegendIcon(label: string): FilterIconMeta | null {
   const key = label.trim();
   if (!key || key === "—") return null;
   if (key === CHART_OTHERS_LABEL || key === "Other") return CHART_LEGEND_EXTRA[CHART_OTHERS_LABEL];
@@ -633,3 +631,4 @@ export function badgeRegistryPreviewSections(): BadgePreviewSection[] {
   ];
 }
 
+/** Chart legend lives in `./badge-registry-chart` — do not re-export here (circular import TDZ). */

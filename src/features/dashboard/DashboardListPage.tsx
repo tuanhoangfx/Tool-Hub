@@ -1,16 +1,19 @@
+/** Dashboard screen registry — DirectorySearchToolbar + ViewToggle card/table toggle. */
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { LayoutGrid } from "lucide-react";
 import {
+  DirectorySearchToolbar,
   HubDirectoryScreen,
   HubPaginatedCardGrid,
-  HubResultCount,
+  directoryChartBandNode,
+  hubDirectoryListResetKey,
+  resolveVisibleChartKeys,
+  HubDirectoryBulkActionBar,
   resolveVisibleKpiKeys,
   useDirectoryTableSort,
   useHubPageShortcuts,
 } from "@tool-workspace/hub-ui";
 import {
-  MiniBarChart,
-  ViewToggle,
   type FilterDef,
   type FilterValues,
   type HubViewMode,
@@ -20,9 +23,9 @@ import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool } from "../../types";
 import { buildDashboardKpiItems } from "./dashboard-kpi-items";
 import { enrichDashboardRegistryMeta } from "./dashboard-runtime-meta";
-import { DashboardBulkActionBar } from "./DashboardBulkActionBar";
 import { DashboardChromeHeader } from "./DashboardChromeHeader";
 import { DashboardScreenPreviewModal } from "./DashboardScreenPreviewModal";
+import { DashboardDirectoryBulkActions } from "./DashboardDirectoryBulkActions";
 import { DashboardTabCard } from "./DashboardTabCard";
 import {
   DashboardScreensTable,
@@ -36,7 +39,7 @@ import {
   filterDashboardTabs,
 } from "./dashboard-aggregates";
 import { navigateToDashboardTab } from "./dashboard-nav";
-import { pinScreenIds, readPinnedScreenIds, togglePinnedScreenId } from "./dashboard-pinned";
+import { readPinnedScreenIds, togglePinnedScreenId } from "./dashboard-pinned";
 import { dashboardStatusContext, enrichDashboardStatuses } from "./dashboard-screen-status";
 import {
   buildDashboardTabRegistry,
@@ -49,6 +52,7 @@ import {
   DEFAULT_DASHBOARD_FILTER_KEYS,
   DEFAULT_DASHBOARD_HEADER_STAT_KEYS,
   DEFAULT_DASHBOARD_KPI_KEYS,
+  DASHBOARD_CHART_DEFS,
   DASHBOARD_KPI_DEFS,
   DASHBOARD_PINNED_FILTER_OPTIONS,
 } from "./dashboard-prefs";
@@ -125,14 +129,19 @@ export function DashboardListPage({
   }, [allTools, registryLive, registryLabel, runtimeStats, driftCount, pinnedIds]);
 
   const filtered = useMemo(
-    () => filterDashboardTabs(registry, query, filterValues, { pinnedIds }),
-    [registry, query, filterValues, pinnedIds],
+    () => filterDashboardTabs(registry, query, filterValues, { pinnedIds, range: prefs.range }),
+    [registry, query, filterValues, pinnedIds, prefs.range],
   );
 
   const { sortKey, sortDir, onSort } = useDirectoryTableSort(
     filtered,
     "label" as DashboardTableSortKey,
     sortableDashboardValue,
+  );
+
+  const listResetKey = useMemo(
+    () => hubDirectoryListResetKey(query, filterValues, sortKey, sortDir, prefs.range),
+    [query, filterValues, sortKey, sortDir, prefs.range],
   );
 
   const allVisibleSelected =
@@ -142,7 +151,7 @@ export function DashboardListPage({
   const charts = useMemo(() => dashboardCharts(filtered), [filtered]);
 
   const visKpi = resolveVisibleKpiKeys(prefs.kpi, DEFAULT_DASHBOARD_KPI_KEYS, DASHBOARD_KPI_DEFS);
-  const visCharts = visibleSet(prefs.charts, DEFAULT_DASHBOARD_CHART_KEYS);
+  const visCharts = resolveVisibleChartKeys(prefs.charts, DEFAULT_DASHBOARD_CHART_KEYS, DASHBOARD_CHART_DEFS);
   const visFilterKeys = visibleSet(prefs.dashFilters, DEFAULT_DASHBOARD_FILTER_KEYS);
   const visHeaderStats = visibleSet(prefs.headerStats, DEFAULT_DASHBOARD_HEADER_STAT_KEYS);
 
@@ -185,13 +194,14 @@ export function DashboardListPage({
     [registry, dashboardFiltersBase, query, filterValues, pinnedIds],
   );
 
-  const hasCharts = visCharts.has("group_bar") || visCharts.has("template_bar");
-  const chartsBand = hasCharts ? (
-    <>
-      {visCharts.has("group_bar") ? <MiniBarChart title="By group" items={charts.group} /> : null}
-      {visCharts.has("template_bar") ? <MiniBarChart title="By template" items={charts.template} /> : null}
-    </>
-  ) : undefined;
+  const chartsBand = directoryChartBandNode({
+    visCharts,
+    defs: DASHBOARD_CHART_DEFS,
+    data: {
+      group_bar: charts.group,
+      template_bar: charts.template,
+    },
+  });
 
   const handleOpen = (entry: DashboardTabEntry) => {
     navigateToDashboardTab(entry);
@@ -228,25 +238,9 @@ export function DashboardListPage({
     [filtered, selectedIds],
   );
 
-  const handleOpenFirst = () => {
-    const first = selectedEntries[0];
-    if (first) handleOpen(first);
-  };
-
-  const handleOpenAllTabs = () => {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
-    for (const entry of selectedEntries) {
-      window.open(`${origin}${entry.path}`, "_blank", "noopener,noreferrer");
-    }
-  };
-
   const handleCopyPaths = () => {
     const text = selectedEntries.map((e) => e.path).join("\n");
     void navigator.clipboard?.writeText(text);
-  };
-
-  const handlePinSelected = () => {
-    setPinnedIds(pinScreenIds(selectedEntries.map((e) => e.id)));
   };
 
   useHubPageShortcuts("dashboard", {
@@ -273,22 +267,39 @@ export function DashboardListPage({
         filterPlaceholder="Search screens by name, group, path, template..."
         filterShortcutScope="dashboard"
         filterToolbar={
-          <>
-            <ViewToggle value={viewMode} onChange={setViewMode} />
-            <HubResultCount icon={LayoutGrid} shown={filtered.length} total={registry.length} label="screens" />
-          </>
+          <DirectorySearchToolbar
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            countIcon={LayoutGrid}
+            shown={filtered.length}
+            total={registry.length}
+            countLabel="screens"
+            refreshing={false}
+            onRefresh={() => {}}
+            showRefresh={false}
+            showTablePageSize
+          />
         }
         filterRowActions={
-          <>
-            <DashboardBulkActionBar
+          <HubDirectoryBulkActionBar
+            selectAll={
+              viewMode === "card"
+                ? {
+                    visibleCount: filtered.length,
+                    selectedCount: selectedIds.size,
+                    allVisibleSelected,
+                    onToggleSelectAll: handleToggleSelectAll,
+                    noun: "screens",
+                  }
+                : null
+            }
+          >
+            <DashboardDirectoryBulkActions
               hasSelection={selectedIds.size > 0}
               selectedCount={selectedIds.size}
-              onOpenFirst={handleOpenFirst}
-              onOpenAllTabs={handleOpenAllTabs}
               onCopyPaths={handleCopyPaths}
-              onPinSelected={handlePinSelected}
             />
-          </>
+          </HubDirectoryBulkActionBar>
         }
         kpis={kpiItems.length > 0 ? kpiItems : undefined}
         charts={chartsBand}
@@ -299,7 +310,7 @@ export function DashboardListPage({
         ) : viewMode === "card" ? (
           <HubPaginatedCardGrid
             items={filtered}
-            resetKey={`${query}|${JSON.stringify(filterValues)}|${sortKey}|${sortDir}`}
+            resetKey={listResetKey}
             ariaLabel="Dashboard screens card pages"
           >
             {(pageEntries) =>
@@ -308,6 +319,8 @@ export function DashboardListPage({
                   key={entry.id}
                   entry={entry}
                   pinned={pinnedIds.has(entry.id)}
+                  selected={selectedIds.has(entry.id)}
+                  onToggleSelect={handleToggleSelect}
                   onOpen={handleOpen}
                   onPreview={setPreview}
                   onTogglePin={handleTogglePin}
@@ -326,6 +339,8 @@ export function DashboardListPage({
             onToggleSelectAll={handleToggleSelectAll}
             allVisibleSelected={allVisibleSelected}
             onPreview={setPreview}
+            pinnedIds={pinnedIds}
+            resetKey={listResetKey}
           />
         )}
       </HubDirectoryScreen>

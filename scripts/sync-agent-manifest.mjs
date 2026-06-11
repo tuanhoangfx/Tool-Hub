@@ -545,6 +545,91 @@ function buildInfraShipStackContentFields(links) {
   ];
 }
 
+function formatCatalogSkillBody(row) {
+  const golden = row.golden ?? {};
+  const goldenLines = Object.entries(golden).map(([k, v]) => `- **${k}:** \`${v}\``);
+  return [
+    `# ${row.name}`,
+    "",
+    `ID: \`${row.id}\``,
+    `Status: ${row.status ?? "ready"}`,
+    row.skillPath ? `Skill: \`${row.skillPath}\`` : "",
+    row.doc ? `Doc: ${row.doc}` : "",
+    "",
+    row.summary ?? "",
+    "",
+    (row.triggers ?? []).length ? `## Triggers\n${row.triggers.map((t) => `- ${t}`).join("\n")}` : "",
+    (row.antiTriggers ?? []).length
+      ? `\n## Anti-triggers\n${row.antiTriggers.map((t) => `- ${t}`).join("\n")}`
+      : "",
+    (row.workflow ?? []).length ? `\n## Workflow\n${row.workflow.map((s, i) => `${i + 1}. ${s}`).join("\n")}` : "",
+    goldenLines.length ? `\n## Golden refs\n${goldenLines.join("\n")}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+function buildCatalogSkillContentFields(row) {
+  const golden = row.golden ?? {};
+  const fields = [
+    { label: "Catalog ID", value: row.id, variant: "code" },
+    { label: "Status", value: row.status ?? "ready", variant: "text" },
+    { label: "Skill path", value: row.skillPath ?? "—", variant: "code", copy: Boolean(row.skillPath) },
+    { label: "Doc", value: row.doc ?? "—", variant: "code" },
+    { label: "Summary", value: String(row.summary ?? ""), variant: "text" },
+  ];
+  if ((row.triggers ?? []).length) {
+    fields.push({ label: "Triggers", value: row.triggers.join("\n"), variant: "multiline" });
+  }
+  if ((row.antiTriggers ?? []).length) {
+    fields.push({ label: "Anti-triggers", value: row.antiTriggers.join("\n"), variant: "multiline" });
+  }
+  if ((row.workflow ?? []).length) {
+    fields.push({ label: "Workflow", value: row.workflow.map((s, i) => `${i + 1}. ${s}`).join("\n"), variant: "multiline" });
+  }
+  if (Object.keys(golden).length) {
+    fields.push({
+      label: "Golden refs",
+      value: Object.entries(golden)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join("\n"),
+      variant: "multiline",
+    });
+  }
+  return fields;
+}
+
+function scanCatalogSkills(items) {
+  const catalogPath = path.join(toolRoot, "schemas", "ui-patterns.catalog.json");
+  if (!fs.existsSync(catalogPath)) return;
+
+  const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
+  const catalogMtime = fs.statSync(catalogPath).mtime.toISOString();
+  const skills = Array.isArray(catalog.skills) ? catalog.skills : [];
+
+  for (const row of skills) {
+    if (!row?.id || !row?.name) continue;
+    const skillRel = row.skillPath ? String(row.skillPath).replace(/\//g, path.sep) : null;
+    const skillAbs = skillRel ? path.join(cursorRoot, skillRel) : null;
+    const body = formatCatalogSkillBody(row);
+    addItem(items, {
+      id: `catalog-skill-${row.id}`,
+      kind: "skill",
+      name: row.name,
+      path: skillAbs && fs.existsSync(skillAbs) ? relWorkspace(skillAbs) : relWorkspace(catalogPath),
+      scope: "workspace",
+      agentRequestable: true,
+      trigger: (row.triggers ?? []).slice(0, 2).join(" · ") || row.id,
+      summary: String(row.summary || row.id).slice(0, 240),
+      bodyPreview: body.slice(0, 1200),
+      contentFields: buildCatalogSkillContentFields(row),
+      lines: body.split(/\r?\n/).length,
+      updatedAt: skillAbs && fs.existsSync(skillAbs) ? fs.statSync(skillAbs).mtime.toISOString() : catalogMtime,
+      tags: ["skill", "catalog-skill", "cursor", row.status ?? "ready"],
+    });
+  }
+}
+
 function patternPathMeta(row, catalogPath, catalogMtime) {
   const g = row.golden ?? {};
   const relPath = g.screenPath ?? g.tablePath ?? row.screenPath;
@@ -652,71 +737,59 @@ function scanHubPatterns(items) {
 function scanCursorHooksProfile(items) {
   const cursorDir = path.join(cursorRoot, ".cursor");
   const activePath = path.join(cursorDir, "hooks.json");
-  const offFlag = path.join(cursorDir, "hooks", "telegram-hooks.off");
 
-  function profileStats(filePath) {
-    if (!fs.existsSync(filePath)) return null;
+  let active = null;
+  if (fs.existsSync(activePath)) {
     try {
-      const j = JSON.parse(fs.readFileSync(filePath, "utf8"));
+      const j = JSON.parse(fs.readFileSync(activePath, "utf8"));
       const hooks = j.hooks || {};
-      const events = Object.keys(hooks);
-      const commandCount = events.reduce((n, key) => n + (hooks[key]?.length ?? 0), 0);
-      return {
-        profile: j.profile || path.basename(filePath, ".json"),
+      const eventNames = Object.keys(hooks);
+      const commandCount = eventNames.reduce((n, key) => n + (hooks[key]?.length ?? 0), 0);
+      active = {
         notes: j.notes || "",
-        events: events.length,
+        events: eventNames.length,
         commandCount,
-        hasSessionStart: events.includes("sessionStart") && (hooks.sessionStart?.length ?? 0) > 0,
-        eventNames: events,
+        hasSessionStart: eventNames.includes("sessionStart") && (hooks.sessionStart?.length ?? 0) > 0,
+        hasAfterFileEdit: eventNames.includes("afterFileEdit"),
+        eventNames,
       };
     } catch {
-      return null;
+      active = null;
     }
   }
 
-  const lite = profileStats(path.join(cursorDir, "hooks-lite.json"));
-  const full = profileStats(path.join(cursorDir, "hooks-full.json"));
-  const active = profileStats(activePath);
-  const telegramOff = fs.existsSync(offFlag);
-  const telegramEnv = process.env.CURSOR_TELEGRAM_HOOKS === "1";
-  const telegramStatus = telegramOff ? "OFF (telegram-hooks.off)" : telegramEnv ? "ON (CURSOR_TELEGRAM_HOOKS=1)" : "OFF (default)";
-
-  const row = (label, p) =>
-    p
-      ? `| **${label}** | ${p.events} | ${p.commandCount} | ${p.hasSessionStart ? "yes" : "no"} | ${p.eventNames.join(", ")} |`
-      : `| **${label}** | — | — | — | — |`;
-
   const bodyPreview = `# Cursor hooks profile
 
-**Active file:** \`.cursor/hooks.json\` → profile **${active?.profile ?? "unknown"}**
-**Telegram wrapper:** ${telegramStatus}
+**Active file:** \`.cursor/hooks.json\` (source of truth)
+**Notes:** ${active?.notes ?? "—"}
 
-| Profile | Events | Commands | sessionStart | Events list |
-|---------|--------|----------|--------------|-------------|
-${row("lite (default)", lite)}
-${row("full (+ Telegram)", full)}
-${row("active", active)}
+| Events | Commands | sessionStart | afterFileEdit |
+|--------|----------|--------------|---------------|
+| ${active?.events ?? "—"} | ${active?.commandCount ?? "—"} | ${active?.hasSessionStart ? "yes" : "no"} | ${active?.hasAfterFileEdit ? "yes (heavy)" : "no"} |
 
-## Switch profile
+**Events:** ${active?.eventNames?.join(", ") ?? "—"}
+
+## Doc sync (manual — no afterFileEdit hook)
+
+After editing \`.cursor/rules\`, \`commands/\`, \`skills/\`, \`agents/\`, or playbooks:
 
 \`\`\`powershell
-powershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Lite
-powershell -File E:\\Dev\\.cursor\\hooks\\apply-hooks-profile.ps1 -Profile Full   # + CURSOR_TELEGRAM_HOOKS=1
+cd E:\\Dev\\Tool\\P0004-Tool-Hub
+pnpm agent:manifest
 \`\`\`
 
-Lite: audit (afterAgentResponse) + stop ship gates only — **no sessionStart** (faster new chat).
-Full: sessionStart + Telegram on every prompt/response (heavier).
+Optional tool-docs sync: \`powershell -File E:\\Dev\\.cursor\\hooks\\sync-tool-docs.ps1\`
 
-Reload Cursor after switching.`;
+Reload Cursor after editing \`hooks.json\`.`;
 
   addItem(items, {
     id: "cursor-hooks-profile",
     kind: "doc",
-    name: "Cursor hooks profile (lite / full)",
+    name: "Cursor hooks profile",
     path: relWorkspace(activePath),
     scope: "workspace",
     agentRequestable: true,
-    summary: `Active: ${active?.profile ?? "?"} · Telegram ${telegramStatus} · lite=${lite?.commandCount ?? "?"} cmds, no sessionStart`,
+    summary: `Active hooks · ${active?.commandCount ?? "?"} cmds · no afterFileEdit · manifest via pnpm agent:manifest`,
     bodyPreview,
     lines: bodyPreview.split("\n").length,
     updatedAt: fs.existsSync(activePath) ? fs.statSync(activePath).mtime.toISOString() : new Date().toISOString(),
@@ -1014,6 +1087,7 @@ function main() {
   scanAgentsCatalog(items);
   scanHubUiPackage(items);
   scanHubPatterns(items);
+  scanCatalogSkills(items);
   scanCursorHooksProfile(items);
   scanCursorStopHooks(items);
   scanInfraShipStackBundle(items);

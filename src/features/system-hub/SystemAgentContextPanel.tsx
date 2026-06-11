@@ -1,20 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { prefetchAgentManifest } from "../../lib/hub-background-prefetch";
-import { AlertTriangle, BookOpen, Bot, Command, GitBranch, RefreshCw, Zap } from "lucide-react";
-import { HubPaginatedCardGrid, semanticKpiIcon } from "@tool-workspace/hub-ui";
+import { AlertTriangle, Bot } from "lucide-react";
 import {
-  HubResultCount,
-  MiniBarChart,
-  ViewToggle,
+  HubDirectoryBulkActionBar,
+  HubPaginatedCardGrid,
+  hubDirectoryListResetKey,
+  semanticKpiIcon,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
+import {
   type HubViewMode,
   type FilterValues,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { compactIconSize } from "../../lib/ui-scale";
+
+import { readHubListPrefs } from "../../lib/url-prefs";
+import { matchesTimeRange } from "../hub/hub-aggregates";
 import { useSessionState } from "../../hooks/useSessionState";
+import { SystemDirectoryToolbar } from "./SystemDirectoryToolbar";
+import { setSystemTab } from "./components/SystemTabs";
+import { SYSTEM_AGENT_CHART_DEFS } from "./system-display-prefs";
 import { SystemHubShell } from "./SystemHubShell";
 import { AgentContextDetailModal } from "./agent-context/AgentContextDetailModal";
 import { AgentContextCard } from "./agent-context/AgentContextCard";
+import { AgentContextDirectoryBulkActions } from "./agent-context/AgentContextDirectoryBulkActions";
 import { AgentContextTableView } from "./agent-context/AgentContextTableView";
 import { agentContextCharts, agentContextKpis } from "./agent-context/agent-context-aggregates";
 import {
@@ -34,7 +43,15 @@ export function SystemAgentContextPanel() {
   const [detail, setDetail] = useState<AgentContextItem | null>(null);
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:agent:viewMode", "table");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [prefs, setPrefs] = useState(readHubListPrefs);
   const searchDebounceRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const sync = () => setPrefs(readHubListPrefs());
+    window.addEventListener("popstate", sync);
+    return () => window.removeEventListener("popstate", sync);
+  }, []);
 
   useEffect(() => {
     prefetchAgentManifest();
@@ -48,9 +65,48 @@ export function SystemAgentContextPanel() {
   );
 
   const filtered = useMemo(
-    () => sortedItems.filter((item) => matchesAgentContext(item, query, filterValues)),
-    [sortedItems, query, filterValues],
+    () =>
+      sortedItems.filter(
+        (item) => matchesAgentContext(item, query, filterValues) && matchesTimeRange(item.updatedAt, prefs.range),
+      ),
+    [sortedItems, query, filterValues, prefs.range],
   );
+
+  const listResetKey = useMemo(
+    () => hubDirectoryListResetKey(query, filterValues, prefs.range, viewMode, selectedIds.size),
+    [query, filterValues, prefs.range, viewMode, selectedIds.size],
+  );
+
+  const allVisibleSelected =
+    filtered.length > 0 && filtered.every((item) => selectedIds.has(item.id));
+
+  const handleToggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const handleToggleSelectAll = useCallback(() => {
+    setSelectedIds((prev) => {
+      if (allVisibleSelected) {
+        const next = new Set(prev);
+        for (const item of filtered) next.delete(item.id);
+        return next;
+      }
+      const next = new Set(prev);
+      for (const item of filtered) next.add(item.id);
+      return next;
+    });
+  }, [allVisibleSelected, filtered]);
+
+  const openSelectedDetail = useCallback(() => {
+    const firstId = [...selectedIds][0];
+    const item = filtered.find((row) => row.id === firstId) ?? items.find((row) => row.id === firstId);
+    if (item) setDetail(item);
+  }, [filtered, items, selectedIds]);
 
   useEffect(() => {
     if (searchDebounceRef.current) window.clearTimeout(searchDebounceRef.current);
@@ -86,93 +142,81 @@ export function SystemAgentContextPanel() {
     [kpis],
   );
 
-  const chartSlots = useMemo(
+  const chartBand = useMemo(
     () => ({
-      health_bar: <MiniBarChart title="By kind" items={charts.kind.slice(0, 8)} />,
-      category_bar: <MiniBarChart title="By scope" items={charts.scope.slice(0, 6)} />,
-      deploy_bar: <MiniBarChart title="Apply mode" items={charts.apply} />,
-      status_bar: <MiniBarChart title="Size (lines)" items={charts.size} />,
+      defs: SYSTEM_AGENT_CHART_DEFS,
+      data: {
+        health_bar: charts.kind,
+        category_bar: charts.scope,
+        deploy_bar: charts.apply,
+        status_bar: charts.size,
+      },
     }),
     [charts],
   );
 
-  const applyKeywordPreset = (preset: (typeof AGENT_KEYWORD_PRESETS)[keyof typeof AGENT_KEYWORD_PRESETS]) => {
+  const applyKeywordPreset = useCallback((preset: (typeof AGENT_KEYWORD_PRESETS)[keyof typeof AGENT_KEYWORD_PRESETS]) => {
     setFilterValues({ ...preset });
     setQuery("");
-  };
+  }, []);
 
   const toolbar = useMemo(
     () => (
-      <>
-        <ViewToggle value={viewMode} onChange={setViewMode} />
-        <button
-          type="button"
-          onClick={() => {
+      <SystemDirectoryToolbar
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        countIcon={Bot}
+        shown={filtered.length}
+        total={items.length}
+        countLabel="items"
+        refreshing={loading}
+        onRefresh={() => void reload()}
+        showTimeRange
+        timeRange={prefs.range}
+      />
+    ),
+    [filtered.length, items.length, loading, reload, viewMode, setViewMode, prefs.range],
+  );
+
+  const filterRowActions = useMemo(
+    () => (
+      <HubDirectoryBulkActionBar
+        selectAll={
+          viewMode === "card"
+            ? {
+                visibleCount: filtered.length,
+                selectedCount: selectedIds.size,
+                allVisibleSelected,
+                onToggleSelectAll: handleToggleSelectAll,
+                noun: "items",
+              }
+            : null
+        }
+      >
+        <AgentContextDirectoryBulkActions
+          hasSelection={selectedIds.size > 0}
+          selectedCount={selectedIds.size}
+          onOpenSelected={openSelectedDetail}
+          onApplyPreset={applyKeywordPreset}
+          onOnboarding={() => {
             setFilterValues({ ...AGENT_ONBOARDING_PRESET });
             setQuery("");
           }}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-100 hover:bg-emerald-500/20"
-          title="Keyword guide + infra stack + 5 core skills"
-        >
-          <BookOpen size={compactIconSize(14)} />
-          Onboarding
-        </button>
-        <button
-          type="button"
-          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.allKeywords)}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
-          title="All 16 ship/pattern keywords"
-        >
-          <Command size={compactIconSize(13)} />
-          Keywords
-        </button>
-        <button
-          type="button"
-          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.verify)}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
-          title="Ship · Loop · Fix · Smoke"
-        >
-          Verify
-        </button>
-        <button
-          type="button"
-          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.git)}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
-          title="Git · Push · Deploy · Release"
-        >
-          <GitBranch size={compactIconSize(13)} />
-          Git
-        </button>
-        <button
-          type="button"
-          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.pattern)}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
-          title="Directory · Inbox · Dashboard · …"
-        >
-          Pattern
-        </button>
-        <button
-          type="button"
-          onClick={() => applyKeywordPreset(AGENT_KEYWORD_PRESETS.supabase)}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center rounded-lg border border-white/10 bg-white/[.04] px-2.5 text-xs font-medium text-[var(--muted)] hover:border-indigo-300/25 hover:text-indigo-100"
-          title="Migrate P00xx"
-        >
-          <Zap size={compactIconSize(13)} />
-          Supabase
-        </button>
-        <HubResultCount icon={Bot} shown={filtered.length} total={items.length} />
-        <button
-          type="button"
-          onClick={() => void reload()}
-          disabled={loading}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-indigo-400/30 bg-indigo-500/10 px-3 text-xs font-medium text-indigo-100 hover:bg-indigo-500/20 disabled:opacity-50"
-        >
-          <RefreshCw size={compactIconSize(14)} className={loading ? "animate-spin" : ""} />
-          Refresh
-        </button>
-      </>
+          onOpenSkillsCatalog={() => setSystemTab("skills")}
+        />
+      </HubDirectoryBulkActionBar>
     ),
-    [filtered.length, items.length, loading, reload, viewMode, setViewMode, setFilterValues, setQuery],
+    [
+      allVisibleSelected,
+      applyKeywordPreset,
+      filtered.length,
+      handleToggleSelectAll,
+      openSelectedDetail,
+      selectedIds.size,
+      setFilterValues,
+      setQuery,
+      viewMode,
+    ],
   );
 
   const body = (
@@ -194,14 +238,31 @@ export function SystemAgentContextPanel() {
           No agent manifest items. Use sidebar <strong>Refresh</strong> or the toolbar button (rebuilds manifest in dev).
         </p>
       ) : filtered.length === 0 ? null : viewMode === "table" ? (
-        <AgentContextTableView items={filtered} highlightId={highlightId} onOpen={setDetail} />
+        <AgentContextTableView
+          items={filtered}
+          highlightId={highlightId}
+          resetKey={listResetKey}
+          selectedIds={selectedIds}
+          onToggleSelect={handleToggleSelect}
+          onOpen={setDetail}
+        />
       ) : (
         <HubPaginatedCardGrid
           items={filtered}
-          resetKey={`${query}|${JSON.stringify(filterValues)}`}
+          resetKey={listResetKey}
           ariaLabel="Agent context card pages"
         >
-          {(pageItems) => pageItems.map((item) => <AgentContextCard key={item.id} item={item} onOpen={setDetail} />)}
+          {(pageItems) =>
+            pageItems.map((item) => (
+              <AgentContextCard
+                key={item.id}
+                item={item}
+                selected={selectedIds.has(item.id)}
+                onToggleSelect={handleToggleSelect}
+                onOpen={setDetail}
+              />
+            ))
+          }
         </HubPaginatedCardGrid>
       )}
     </>
@@ -219,8 +280,9 @@ export function SystemAgentContextPanel() {
         values={filterValues}
         onValuesChange={setFilterValues}
         toolbar={toolbar}
+        filterRowActions={filterRowActions}
         kpiItems={kpiItems}
-        chartSlots={chartSlots}
+        chartBand={chartBand}
       >
         {body}
       </SystemHubShell>

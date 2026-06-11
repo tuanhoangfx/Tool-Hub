@@ -1,3 +1,7 @@
+/**
+ * User directory — HubDirectoryScreen parity (read-only-directory, useDirectoryTableSort,
+ * HubFormFieldLabel, hub-users-empty).
+ */
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   Activity,
@@ -10,26 +14,36 @@ import {
   Users,
 } from "lucide-react";
 import {
-  HubResultCount,
-  MiniBarChart,
-  ViewToggle,
   UsersLoadingView,
-  type BarItem,
-  type DonutItem,
   type FilterDef,
   type FilterValues,
   type HubViewMode,
   type KpiTileData,
 } from "../../components/sales-shell";
-import { HubDirectoryScreen, HubPaginatedTableShell, useHubPageShortcuts } from "@tool-workspace/hub-ui";
+import {
+  HubDirectoryCardCheckbox,
+  HubDirectoryInteractiveCard,
+  HubDirectoryScreen,
+  HubBulkActionButton,
+  HubDirectoryBulkActionBar,
+  HubPaginatedCardGrid,
+  HubUsersDirectoryBulkActions,
+  DirectorySearchToolbar,
+  directoryChartBandNode,
+  hubDirectoryListResetKey,
+  matchesDirectoryTimeRange,
+  resolveVisibleChartKeys,
+  useHubPageShortcuts,
+} from "@tool-workspace/hub-ui";
 import { UserListChromeHeader } from "./UserListChromeHeader";
 import {
   buildUserHeaderStats,
   DEFAULT_USER_HEADER_STAT_KEYS,
 } from "./user-header-metrics";
 import { readHubListPrefs } from "../../lib/url-prefs";
-import { DEFAULT_USER_KPI_KEYS } from "./user-display-prefs";
+import { DEFAULT_USER_CHART_KEYS, DEFAULT_USER_KPI_KEYS, USER_CHART_DEFS } from "./user-display-prefs";
 import { buildUserKpiItems } from "./user-kpi-items";
+import { userCharts } from "./user-chart-aggregates";
 import { pushUsersLog } from "../../lib/users-log";
 
 function visibleKpiSet(set: Set<string> | null, defaults: Set<string>) {
@@ -41,7 +55,6 @@ import { HubUserAvatar } from "./HubUserAvatar";
 import { hubRoleLabel, resolveSessionActorRole } from "./hubUserDisplay";
 import { UserDirectoryTable, type UserTableSortKey } from "./UserDirectoryTable";
 import { readUserTableColumns, type UserTableColumnKey } from "./user-table-prefs";
-import { UserBulkActionBar } from "./UserBulkActionBar";
 import { UserAccessModal } from "./UserAccessModal";
 import { UserAddModal } from "./UserAddModal";
 import { HubConfirmDialog } from "../../components/HubConfirmDialog";
@@ -146,36 +159,25 @@ function UserCards({
   onOpenUser: (user: UserManagementRow) => void;
 }) {
   return (
-    <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <>
       {users.map((user) => (
-        <article
+        <HubDirectoryInteractiveCard
           key={user.id}
-          role="button"
-          tabIndex={0}
-          onClick={() => onOpenUser(user)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              onOpenUser(user);
-            }
-          }}
-          className={`anim-slide cursor-pointer rounded-2xl border border-white/5 bg-[var(--panel)] p-4 transition-all hover:-translate-y-0.5 hover:ring-2 hover:ring-emerald-500/25 ${
-            detailUserId === user.id ? "ring-2 ring-emerald-500/40" : ""
-          } ${selectedIds.has(user.id) ? "border-indigo-400/30 bg-indigo-500/5" : ""}`}
+          variant="panel"
+          selected={selectedIds.has(user.id)}
+          isDetail={detailUserId === user.id}
+          detailRingClass="ring-emerald-500/40"
+          ariaLabel={`Open ${user.fullName}`}
+          onActivate={() => onOpenUser(user)}
         >
           <div className="flex items-start gap-3">
-            <label
+            <HubDirectoryCardCheckbox
+              corner={false}
               className="hub-users-select-row shrink-0 pt-1"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <input
-                type="checkbox"
-                className="hub-checkbox"
-                checked={selectedIds.has(user.id)}
-                onChange={() => onToggleSelect(user.id)}
-                aria-label={`Select ${user.fullName}`}
-              />
-            </label>
+              checked={selectedIds.has(user.id)}
+              label={`Select ${user.fullName}`}
+              onChange={() => onToggleSelect(user.id)}
+            />
             <HubUserAvatar user={user} size="md" />
             <div className="min-w-0 flex-1">
               <div className="truncate text-sm font-semibold">{user.fullName}</div>
@@ -208,9 +210,9 @@ function UserCards({
             <StatusBadge status={user.status} />
             <span className="text-[11px] text-[var(--muted)]">{fmtDate(user.lastActiveAt)}</span>
           </div>
-        </article>
+        </HubDirectoryInteractiveCard>
       ))}
-    </div>
+    </>
   );
 }
 
@@ -435,8 +437,13 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
   );
 
   const filteredRows = useMemo(
-    () => rows.filter((row) => matchesUserFilters(row, query, filterValues)),
-    [filterValues, query, rows],
+    () =>
+      rows.filter(
+        (row) =>
+          matchesUserFilters(row, query, filterValues) &&
+          matchesDirectoryTimeRange(row.lastActiveAt ?? row.updatedAt ?? row.createdAt, hubPrefs.range),
+      ),
+    [filterValues, query, rows, hubPrefs.range],
   );
 
   const sortedRows = useMemo(() => {
@@ -454,6 +461,11 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
   );
 
   const allVisibleSelected = sortedRows.length > 0 && sortedRows.every((row) => selectedIds.has(row.id));
+
+  const listResetKey = useMemo(
+    () => hubDirectoryListResetKey(query, filterValues, sortKey, sortDir, hubPrefs.range),
+    [query, filterValues, sortKey, sortDir, hubPrefs.range],
+  );
   const hasSelection = selectedIds.size > 0;
   const isAdmin = actorRole === "admin";
   const isManager = actorRole === "manager";
@@ -549,38 +561,17 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
   }, [filteredRows]);
 
   const visKpi = useMemo(() => visibleKpiSet(hubPrefs.kpi, DEFAULT_USER_KPI_KEYS), [hubPrefs.kpi]);
+  const visCharts = useMemo(
+    () => resolveVisibleChartKeys(hubPrefs.charts, DEFAULT_USER_CHART_KEYS, USER_CHART_DEFS),
+    [hubPrefs.charts],
+  );
 
   const kpis = useMemo(
     () => buildUserKpiItems(stats).filter((item) => !item.prefKey || visKpi.has(item.prefKey)),
     [stats, visKpi],
   );
 
-  const charts = useMemo<{
-    roleItems: BarItem[];
-    statusItems: BarItem[];
-    toolItems: BarItem[];
-    activityItems: DonutItem[];
-  }>(() => {
-    const roleItems = [
-      { label: "Admin", value: filteredRows.filter((row) => row.role === "admin").length, color: "#818cf8" },
-      { label: "Manager", value: filteredRows.filter((row) => row.role === "manager").length, color: "#a855f7" },
-      { label: "User", value: filteredRows.filter((row) => row.role === "user").length, color: "#22c55e" },
-    ];
-    const statusItems = ["online", "active", "idle", "offline"].map((status, index) => ({
-      label: status,
-      value: filteredRows.filter((row) => row.status === status).length,
-      color: ["#22c55e", "#06b6d4", "#f59e0b", "#64748b"][index],
-    }));
-    const toolItems = [...filteredRows]
-      .sort((a, b) => b.toolCount - a.toolCount)
-      .slice(0, 6)
-      .map((row) => ({ label: row.fullName, value: row.toolCount, color: "#10b981" }));
-    const activityItems = [
-      { label: "Has activity", value: filteredRows.filter((row) => row.activityCount > 0).length, color: "#818cf8" },
-      { label: "No activity", value: filteredRows.filter((row) => row.activityCount === 0).length, color: "#64748b" },
-    ];
-    return { roleItems, statusItems, toolItems, activityItems };
-  }, [filteredRows]);
+  const charts = useMemo(() => userCharts(filteredRows), [filteredRows]);
 
   useEffect(() => {
     const sync = () => setHubPrefs(readHubListPrefs());
@@ -661,14 +652,16 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
     }
   }
 
-  const chartsBand = (
-    <>
-      <MiniBarChart title="By Role" items={charts.roleItems} />
-      <MiniBarChart title="By Activity" items={charts.statusItems} />
-      <MiniBarChart title="Tool access" items={charts.toolItems} />
-      <MiniBarChart title="Activity Distribution" items={charts.activityItems} />
-    </>
-  );
+  const chartsBand = directoryChartBandNode({
+    visCharts,
+    defs: USER_CHART_DEFS,
+    data: {
+      role_bar: charts.role,
+      activity_bar: charts.activity,
+      tool_bar: charts.tool,
+      distribution_bar: charts.distribution,
+    },
+  });
 
   return (
     <>
@@ -688,41 +681,62 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
         filterPlaceholder="Search users…"
         filterShortcutScope="users"
         filterToolbar={
-          <>
-            <ViewToggle
-              value={viewMode}
-              onChange={(next) => {
-                pushUsersLog("View", `Switched to ${next === "card" ? "Cards" : "Table"}`);
-                setViewMode(next);
-              }}
-            />
-            <HubResultCount icon={Users} shown={filteredRows.length} total={rows.length} />
-            <button
-              type="button"
-              onClick={() => void refresh({ silent: true })}
-              disabled={refreshing && !session}
-              className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-emerald-500/25 bg-emerald-500/10 px-3 text-xs font-medium text-emerald-200 transition-colors hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <RefreshCw size={14} className={loading || refreshing ? "animate-spin" : ""} />
-              {refreshing && rows.length > 0 ? "Updating…" : "Refresh"}
-            </button>
-          </>
+          <DirectorySearchToolbar
+            viewMode={viewMode}
+            onViewModeChange={(next) => {
+              pushUsersLog("View", `Switched to ${next === "card" ? "Cards" : "Table"}`);
+              setViewMode(next);
+            }}
+            countIcon={Users}
+            shown={filteredRows.length}
+            total={rows.length}
+            countLabel="users"
+            refreshing={refreshing}
+            onRefresh={() => void refresh({ silent: true })}
+            showRefresh={false}
+            showTablePageSize
+            trailing={
+              <HubBulkActionButton
+                icon={<RefreshCw size={14} aria-hidden />}
+                label={refreshing && rows.length > 0 ? "Updating…" : "Refresh"}
+                title="Refresh user directory"
+                tone="emerald"
+                disabled={refreshing && !session}
+                iconSpinning={loading || refreshing}
+                onClick={() => void refresh({ silent: true })}
+              />
+            }
+          />
         }
         filterRowActions={
           session ? (
-            <UserBulkActionBar
-              hasSelection={hasSelection}
-              selectedCount={selectedIds.size}
-              isAdmin={isAdmin}
-              isManager={isManager}
-              roleLoading={roleLoading}
-              onAdd={handleAddUserOpen}
-              onEdit={handleBulkEdit}
-              onDelete={() => void handleBulkDelete()}
-            />
+            <HubDirectoryBulkActionBar
+              selectAll={
+                viewMode === "card"
+                  ? {
+                      visibleCount: sortedRows.length,
+                      selectedCount: selectedIds.size,
+                      allVisibleSelected,
+                      onToggleSelectAll: toggleSelectAll,
+                      noun: "users",
+                    }
+                  : null
+              }
+            >
+              <HubUsersDirectoryBulkActions
+                hasSelection={hasSelection}
+                selectedCount={selectedIds.size}
+                isAdmin={isAdmin}
+                isManager={isManager}
+                roleLoading={roleLoading}
+                onAdd={handleAddUserOpen}
+                onEdit={handleBulkEdit}
+                onDelete={() => void handleBulkDelete()}
+              />
+            </HubDirectoryBulkActionBar>
           ) : null
         }
-        kpis={kpis}
+        kpis={kpis.length > 0 ? kpis : undefined}
         charts={chartsBand}
         sectionRuleLabel="Users"
       >
@@ -750,9 +764,9 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
               <p className="py-10 text-center text-sm text-[var(--muted)]">Loading users in background…</p>
             ) : null}
             {rows.length > 0 && viewMode === "card" ? (
-              <HubPaginatedTableShell
+              <HubPaginatedCardGrid
                 items={sortedRows}
-                resetKey={`${query}|${JSON.stringify(filterValues)}|${sortKey}|${sortDir}`}
+                resetKey={listResetKey}
                 ariaLabel="Users card pages"
               >
                 {(pageUsers) => (
@@ -767,7 +781,7 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
                     }}
                   />
                 )}
-              </HubPaginatedTableShell>
+              </HubPaginatedCardGrid>
             ) : null}
             {rows.length > 0 && viewMode === "table" ? (
               <UserDirectoryTable
@@ -785,6 +799,7 @@ export function UserManagementScreen({ versionReleaseDate, headerActions }: User
                   pushUsersLog("Access", `Opened ${user.loginId || user.fullName || user.id.slice(0, 8)}`);
                 }}
                 visibleColumns={visibleColumns}
+                resetKey={listResetKey}
               />
             ) : null}
           </div>

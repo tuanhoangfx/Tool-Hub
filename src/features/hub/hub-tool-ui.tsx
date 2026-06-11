@@ -5,7 +5,7 @@ import { MetricBadge, RegistryMetricBadge } from "../../components/sales-shell";
 import type { FilterIconMeta } from "../../lib/badge-registry";
 import { resolveCategoryDisplayIcon, resolveLinkGapChipIcon, resolveLocalPortIcon } from "../../lib/badge-registry";
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import { folderName } from "../../lib/tooling";
 import type { HealthState } from "../../hooks/useLocalHealth";
 import type { ManifestLinkGap } from "../overview/manifest-link-audit";

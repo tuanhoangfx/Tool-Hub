@@ -1,9 +1,14 @@
 import type { ReactNode } from "react";
-import { BookOpen, CalendarDays, Layers, Pencil, Tag } from "lucide-react";
+import { BookOpen, CalendarDays, Layers, Tag } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import {
+  HubDirectoryCardCheckbox,
+  HubDirectoryInteractiveCard,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
 import { HubCardAvatar } from "../../../components/HubCardAvatar";
 import { QuietChip } from "../../hub/hub-tool-ui";
-import { compactIconSize } from "../../../lib/ui-scale";
+
 import { formatDate } from "../../../lib/tooling";
 import type { AgentContextItem } from "./types";
 import { AgentKindBadge, AgentScopeBadge } from "./AgentContextBadges";
@@ -38,69 +43,78 @@ function fileName(path: string) {
 
 type AgentContextCardProps = {
   item: AgentContextItem;
+  selected: boolean;
+  onToggleSelect: (id: string) => void;
   onOpen: (item: AgentContextItem) => void;
 };
 
-export function AgentContextCard({ item, onOpen }: AgentContextCardProps) {
+export function AgentContextCard({ item, selected, onToggleSelect, onOpen }: AgentContextCardProps) {
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(item)}
-      className="group flex h-full min-h-[var(--hub-card-min-h)] w-full flex-col rounded-xl border border-white/5 bg-[var(--panel)] p-4 text-left transition-[border-color,box-shadow,background-color] duration-200 hover:border-indigo-500/40 hover:bg-white/[0.02] hover:shadow-[0_8px_24px_rgba(99,102,241,0.12)]"
+    <HubDirectoryInteractiveCard
+      variant="grid"
+      selected={selected}
+      ariaLabel={`Open ${item.name}`}
+      onActivate={() => onOpen(item)}
     >
-      <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
-        <div className="flex min-w-0 flex-1 items-center gap-2.5">
-          <HubCardAvatar
-            variant="agent"
-            icon={agentKindIcon(item.kind)}
-            size="sm"
-            statusColor={agentStatusDotColor(item)}
-            statusTitle={applyModeLabel(item)}
-          />
-          <div className="min-w-0 flex-1">
-            <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
-              <AgentKindBadge kind={item.kind} className="shrink-0 rounded-full px-2" />
-              <p className="min-w-0 line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">{item.name}</p>
+      <HubDirectoryCardCheckbox
+        checked={selected}
+        label={`Select ${item.name}`}
+        onChange={() => onToggleSelect(item.id)}
+      />
+      <div className="flex flex-1 flex-col p-4 pr-10">
+        <div className="mb-3 flex shrink-0 items-center gap-2">
+          <div className="flex min-w-0 flex-1 items-center gap-2.5">
+            <HubCardAvatar
+              variant="agent"
+              icon={agentKindIcon(item.kind)}
+              size="sm"
+              statusColor={agentStatusDotColor(item)}
+              statusTitle={applyModeLabel(item)}
+            />
+            <div className="min-w-0 flex-1">
+              <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                <AgentKindBadge kind={item.kind} className="shrink-0 rounded-full px-2" />
+                <p className="min-w-0 line-clamp-2 text-sm font-medium leading-snug text-[var(--text)]">{item.name}</p>
+              </div>
+              <p className="mt-1 truncate font-mono text-[10px] text-indigo-200/75">{fileName(item.path)}</p>
             </div>
-            <p className="mt-1 truncate font-mono text-[10px] text-indigo-200/75">{fileName(item.path)}</p>
           </div>
         </div>
-        <Pencil size={compactIconSize(14)} className="mt-0.5 shrink-0 text-[var(--muted)] opacity-0 transition-opacity group-hover:opacity-100" />
-      </div>
 
-      <div className="min-h-[var(--hub-card-meta-min-h)] shrink-0 space-y-1.5 text-xs text-[var(--muted)]">
-        <MetaRow kind="summary">
-          <span className="line-clamp-2">{item.summary || "—"}</span>
-        </MetaRow>
-        {item.golden || (item.clone && item.clone !== "—") ? (
-          <MetaRow kind="scope">
-            <span className="line-clamp-2 font-mono text-[10px] text-indigo-200/90">
-              {item.golden && item.golden !== "—" ? `Golden: ${item.golden}` : null}
-              {item.golden && item.clone && item.clone !== "—" ? " · " : null}
-              {item.clone && item.clone !== "—" ? `Clone: ${item.clone}` : null}
-            </span>
+        <div className="min-h-[var(--hub-card-meta-min-h)] shrink-0 space-y-1.5 text-xs text-[var(--muted)]">
+          <MetaRow kind="summary">
+            <span className="line-clamp-2">{item.summary || "—"}</span>
           </MetaRow>
-        ) : null}
-        <MetaRow kind="scope">
-          <AgentScopeBadge scope={item.scope} />
-        </MetaRow>
-        <MetaRow kind="lines">
-          <span>{item.lines > 0 ? `${item.lines} lines` : "—"}</span>
-        </MetaRow>
-        <MetaRow kind="updated">
-          {item.updatedAt ? <span>{formatDate(item.updatedAt)}</span> : <span>—</span>}
-        </MetaRow>
-      </div>
+          {item.golden || (item.clone && item.clone !== "—") ? (
+            <MetaRow kind="scope">
+              <span className="line-clamp-2 font-mono text-[10px] text-indigo-200/90">
+                {item.golden && item.golden !== "—" ? `Golden: ${item.golden}` : null}
+                {item.golden && item.clone && item.clone !== "—" ? " · " : null}
+                {item.clone && item.clone !== "—" ? `Clone: ${item.clone}` : null}
+              </span>
+            </MetaRow>
+          ) : null}
+          <MetaRow kind="scope">
+            <AgentScopeBadge scope={item.scope} />
+          </MetaRow>
+          <MetaRow kind="lines">
+            <span>{item.lines > 0 ? `${item.lines} lines` : "—"}</span>
+          </MetaRow>
+          <MetaRow kind="updated">
+            {item.updatedAt ? <span>{formatDate(item.updatedAt)}</span> : <span>—</span>}
+          </MetaRow>
+        </div>
 
-      <div className="mt-auto shrink-0 pt-3">
-        <div className="flex min-h-[var(--hub-card-chip-row-min-h)] flex-wrap items-center gap-1.5">
-          <QuietChip label={applyModeLabel(item)} tone={applyModeTone(item)} />
-          {item.tags.slice(0, 2).map((tag) => (
-            <QuietChip key={tag} label={tag} tone="neutral" />
-          ))}
+        <div className="mt-auto shrink-0 pt-3">
+          <div className="flex min-h-[var(--hub-card-chip-row-min-h)] flex-wrap items-center gap-1.5">
+            <QuietChip label={applyModeLabel(item)} tone={applyModeTone(item)} />
+            {item.tags.slice(0, 2).map((tag) => (
+              <QuietChip key={tag} label={tag} tone="neutral" />
+            ))}
+          </div>
         </div>
       </div>
-    </button>
+    </HubDirectoryInteractiveCard>
   );
 }
 

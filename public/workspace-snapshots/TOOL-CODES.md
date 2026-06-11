@@ -22,8 +22,6 @@ Mã **P00xx** là duy nhất trong workspace. Tên folder = `{code}-{slug}`.
 
 | P0009 | P0009-Mie-Hair-Performance | tuanhoangfx/P0009-Mie-Hair-Performance | Web app |
 
-| P0010 | P0010-Cursor-Telegram | tuanhoangfx/Cursor-Telegram | Telegram bridge |
-
 | P0011 | P0011-Infix1-Mail | tuanhoangfx/P0011-Infix1-Mail | **Infix1 Mail** — CF Workers Plan 1 webmail (`infix1.io.vn`) |
 
 | P0012 | P0012-Apps-Script-Sync | tuanhoangfx/Apps-Script-Sync | clasp monorepo |

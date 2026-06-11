@@ -1,7 +1,7 @@
 {
   "name": "tool-hub",
   "private": true,
-  "version": "5.2.18",
+  "version": "5.2.19",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "description": "Tool Hub — workspace tool catalog with GitHub health and local registry.",
@@ -22,7 +22,7 @@
     "build:vercel": "node scripts/build-supabase-quota-snapshot.mjs && tsc --noEmit && vite build",
     "deploy:vercel-cli": "vercel deploy --prod --yes",
     "deploy:vercel-hook": "node ../scripts/vercel-trigger-hook.mjs --product-root .",
-    "lint": "node ../scripts/audit-public-shadow.cjs P0004 && eslint src && node ../scripts/vercel-standalone-gate.mjs --product-root . && node ../scripts/hub-ui-parity-check.mjs --code P0004 && node ../scripts/hub-vendor-hash-check.mjs --code P0004 && node ../scripts/hub-load-vendor-hash-check.mjs --code P0004",
+    "lint": "node ../scripts/audit-public-shadow.cjs P0004 && eslint src && node ../scripts/vercel-standalone-gate.mjs --product-root . && node ../scripts/hub-ui-parity-check.mjs --code P0004 && node ../scripts/hub-vendor-hash-check.mjs --code P0004 && node ../scripts/hub-load-vendor-hash-check.mjs --code P0004 && node ../scripts/hub-identity-vendor-hash-check.mjs --code P0004",
     "parity:modal": "node ../scripts/hub-ui-parity-check.mjs --code P0004",
     "deadcode": "knip --no-config-hints",
     "test": "vitest run && node --test scripts/lib/version-bump.test.cjs",
@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "@dev/hub-load": "file:./vendor/hub-load",
+    "@dev/hub-identity": "file:./vendor/hub-identity",
     "@tool-workspace/hub-identity": "file:./vendor/hub-identity",
     "@tool-workspace/hub-ui": "file:./vendor/hub-ui",
     "@supabase/supabase-js": "^2.106.2",

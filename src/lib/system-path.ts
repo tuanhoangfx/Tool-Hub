@@ -20,6 +20,7 @@ const TAB_SEGMENT: Record<SystemTab, string> = {
   "supabase-quota": "supabase-quota",
   server: "server",
   agent: "agent",
+  skills: "skills",
   template: "template",
 };
 
@@ -29,6 +30,7 @@ const SEGMENT_TAB: Record<string, SystemTab> = {
   "supabase-quota": "supabase-quota",
   server: "server",
   agent: "agent",
+  skills: "skills",
   template: "template",
 };
 
@@ -139,19 +141,6 @@ export function buildSystemUrl(route: SystemRoute, search = ""): string {
     path += `/${route.schemaEntity}`;
   }
 
-  if (route.tab === "template" && route.design) {
-    if (route.design.template === "auth-gate") {
-      path += "/auth-gate";
-    } else if (route.design.template === "agent-context") {
-      path += "/agent-context";
-    } else if (route.design.template === "tool-access") {
-      path += "/tool-access";
-    }
-    if (route.design.variant > 1) {
-      path += `/${route.design.variant}`;
-    }
-  }
-
   const p = new URLSearchParams(search);
   for (const k of ["stab", "table", "dt", "dtpl", "qv", "sqv", "qm", "sqm", "live"]) {
     p.delete(k);
@@ -167,10 +156,6 @@ export function migrateSystemUrl(): string | null {
   const p = new URLSearchParams(window.location.search);
   for (const k of ["stab", "table", "dt", "dtpl", "qv", "sqv", "qm", "sqm", "screen", "tab", "live"]) {
     p.delete(k);
-  }
-
-  if (route.tab === "template" && window.location.pathname.includes("supabase-quota")) {
-    route.design = { template: "tool-access", variant: route.design?.variant ?? 1, live: false };
   }
 
   const target = buildSystemUrl(route, p.toString());

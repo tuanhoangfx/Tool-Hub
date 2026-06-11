@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Database } from "lucide-react";
-import { semanticKpiIcon } from "@tool-workspace/hub-ui";
+import { HubDirectoryToolbarSlots, semanticKpiIcon } from "@tool-workspace/hub-ui";
 import {
   groupsForEntity,
   specForEntity,
   type HubEntity,
 } from "../../lib/hub-schema-spec";
-import { readHubListPrefs } from "../../lib/url-prefs";
 import { readSchemaEntity, setSchemaEntity } from "./components/SystemTabs";
 import {
   HubResultCount,
-  HubTimeRangeSelect,
-  MiniBarChart,
   ViewToggle,
   type FilterDef,
   type FilterValues,
@@ -20,6 +17,7 @@ import {
 import { useSessionState } from "../../hooks";
 import { SchemaGraph } from "./components/SchemaGraph";
 import { SpecTable } from "./components/SpecTable";
+import { SYSTEM_SCHEMA_CHART_DEFS } from "./system-display-prefs";
 import { SystemHubShell } from "./SystemHubShell";
 import { filterSchemaSpec, schemaCharts, schemaKpis } from "./system-hub-aggregates";
 
@@ -35,12 +33,10 @@ export function SystemSchemaPanel() {
   const [filterValues, setFilterValues] = useState<FilterValues>(() => ({
     entity: [readSchemaEntity()],
   }));
-  const [prefs, setPrefs] = useState(readHubListPrefs);
   const [viewMode, setViewMode] = useSessionState<HubViewMode>("system:schema:viewMode", "table");
 
   useEffect(() => {
     const sync = () => {
-      setPrefs(readHubListPrefs());
       const entity = readSchemaEntity();
       setCurrent(entity);
       setFilterValues((v) => ({ ...v, entity: [entity] }));
@@ -92,10 +88,13 @@ export function SystemSchemaPanel() {
     [kpis],
   );
 
-  const chartSlots = useMemo(
+  const chartBand = useMemo(
     () => ({
-      health_bar: <MiniBarChart title="By mode" items={charts.mode.slice(0, 8)} />,
-      category_bar: <MiniBarChart title="By group" items={charts.group.slice(0, 8)} />,
+      defs: SYSTEM_SCHEMA_CHART_DEFS,
+      data: {
+        health_bar: charts.mode,
+        category_bar: charts.group,
+      },
     }),
     [charts],
   );
@@ -123,13 +122,13 @@ export function SystemSchemaPanel() {
       onValuesChange={handleFilterValuesChange}
       toolbar={
         <>
-          <HubTimeRangeSelect value={prefs.range} />
+          <HubDirectoryToolbarSlots showTablePageSize />
           <ViewToggle value={viewMode} onChange={setViewMode} />
           <HubResultCount icon={Database} shown={spec.length} total={fullSpec.length} label="fields" />
         </>
       }
       kpiItems={kpiItems}
-      chartSlots={chartSlots}
+      chartBand={chartBand}
     >
       <div className="space-y-3">
         {viewMode === "card" ? (

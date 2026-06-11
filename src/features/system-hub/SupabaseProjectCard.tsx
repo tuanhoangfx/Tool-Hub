@@ -14,7 +14,7 @@ import {
 import type { ReactNode } from "react";
 import { MetricBadge } from "../../components/sales-shell/MetricBadge";
 import { HubCardAvatar } from "../../components/HubCardAvatar";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import { resolveHealthStatusIcon } from "../../lib/badge-registry";
 import type { OrgRow, ProjectRow } from "./SystemSupabaseQuotaPanel.types";
 import { computeQuotaBudget, formatQuotaLineInline, resolveQuotaHeadlineStatus } from "./supabase-quota-budget";

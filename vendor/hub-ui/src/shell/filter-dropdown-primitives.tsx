@@ -1,10 +1,14 @@
 import { Check, ChevronDown, FolderOpen, type LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { compactIconSize } from "../ui-scale";
+import { HUB_SHELL_LABEL_TYPO_CLASS } from "./hub-typography";
+
+/** Golden filter trigger typography — matches `HUB_FILTER_DROPDOWN_ROW_CLASS` label weight/size. */
+export const HUB_FILTER_DROPDOWN_TRIGGER_TYPO_CLASS = HUB_SHELL_LABEL_TYPO_CLASS;
 
 /** Shared Hub filter dropdown trigger — FilterBar + folder pickers. */
 export function hubFilterTriggerClass(active: boolean, extra = "") {
-  return `inline-flex h-[var(--hub-control-h)] max-w-full items-center gap-1.5 rounded-lg border px-3 text-xs font-normal transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+  return `inline-flex h-[var(--hub-control-h)] max-w-full items-center gap-1.5 rounded-lg border px-3 ${HUB_FILTER_DROPDOWN_TRIGGER_TYPO_CLASS} transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
     active
       ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-200"
       : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
@@ -103,6 +107,9 @@ export function HubFilterDropdownCircle({ checked, indeterminate }: { checked: b
   );
 }
 
+/** Scrollable option list inside filter / period dropdown panels. */
+export const HUB_FILTER_DROPDOWN_LIST_CLASS = "max-h-72 overflow-auto p-1";
+
 export const HUB_FILTER_DROPDOWN_PANEL_CLASS =
   "anim-pop absolute top-full z-30 mt-1 w-72 rounded-xl border border-white/10 bg-[var(--panel)] shadow-xl shadow-black/40";
 
@@ -110,5 +117,6 @@ export const HUB_FILTER_DROPDOWN_PANEL_CLASS =
 export const HUB_FILTER_DROPDOWN_PANEL_PORTAL_CLASS =
   "anim-pop fixed z-[2600] w-72 rounded-xl border border-white/10 bg-[var(--panel)] shadow-xl shadow-black/40";
 
+/** Golden filter panel row — All {label} + options share one weight (P0004 Group filter). */
 export const HUB_FILTER_DROPDOWN_ROW_CLASS =
-  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-white/5";
+  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:bg-white/5";

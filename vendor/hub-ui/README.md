@@ -4,7 +4,8 @@ Shared Hub UI for P0004, P0006, P0020, P0008. **Design source:** `Tool/P0004-Too
 
 **Monorepo:** `E:\Dev\pnpm-workspace.yaml` gom `packages/*` + `Tool/P0004-Tool-Hub` · `P0016-ChatCenter` · `P0020-Data-Box`. Chạy `pnpm install` tại **`E:\Dev`** sau khi đổi `workspace:*` deps.
 
-**Screen templates:** see [UI_TEMPLATES.md](./UI_TEMPLATES.md) (`HubDirectoryScreen`, `uiScreens` in `tool.manifest.json`).
+**Screen templates:** see [UI_TEMPLATES.md](./UI_TEMPLATES.md) (`HubDirectoryScreen`, `uiScreens` in `tool.manifest.json`).  
+**Tab loading contract:** [HubTabLoadingContract.md](./HubTabLoadingContract.md) — portaled orb, `enabled={active}`, chrome inset.
 
 Refresh from P0004: `node E:\Dev\Tool\scripts\sync-hub-ui-vendor.cjs`
 
@@ -145,7 +146,7 @@ import {
 | `HubTabSectionRule` | Pill divider (thường qua `HubTabScreenBody`) |
 | `MetricBadge`, `ViewToggle`, `HubResultCount` | Header stats, table/card toggle, count |
 | `HubDisplayPrefs` | Settings menu (wrap với app `DisplayPrefs.tsx`) |
-| `HubLoadingView`, `HubLoaderRoot` | Zero-cache loading |
+| `HubLoadingView`, `HubLoaderRoot`, `HubMainChromeStack` | Tab loading — see [HubTabLoadingContract.md](./HubTabLoadingContract.md) |
 | `configureFilterIcons`, `configureHubChromePrefs` | App setup |
 
 ### Content (package-only — chưa có trong P0004 src)

@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { compactIconSize } from "../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 
 export type HubCardAvatarVariant = "supabase" | "agent";
 export type HubCardAvatarSize = "xs" | "sm" | "md";

@@ -1,7 +1,12 @@
 import { Mail, Package } from "lucide-react";
-import { HubDirectoryTableShell, type HubSortDir, type HubTableColumnRole } from "@tool-workspace/hub-ui";
-import { compactIconSize } from "../../lib/ui-scale";
-import { HubCopyBadge } from "@tool-workspace/hub-ui";
+import {
+  HubDirectoryTableShell,
+  type HubSortDir,
+  type HubTableColumnRole,
+  compactIconSize,
+  HubCopyBadge,
+} from "@tool-workspace/hub-ui";
+
 import { HubRoleBadge } from "./HubRoleBadge";
 import { HubUserAvatar } from "./HubUserAvatar";
 import type { UserTableColumnKey } from "./user-table-prefs";
@@ -175,6 +180,7 @@ export function UserDirectoryTable({
   detailUserId,
   onOpenUser,
   visibleColumns,
+  resetKey,
 }: {
   users: UserManagementRow[];
   sortKey: UserTableSortKey;
@@ -187,6 +193,7 @@ export function UserDirectoryTable({
   detailUserId: string | null;
   onOpenUser: (user: UserManagementRow) => void;
   visibleColumns: Set<UserTableColumnKey>;
+  resetKey?: string | number | boolean | null;
 }) {
   const visibleDefs = COLUMNS.filter((col) => visibleColumns.has(col.key as UserTableColumnKey));
 
@@ -207,6 +214,7 @@ export function UserDirectoryTable({
       allVisibleSelected={allVisibleSelected}
       selectAllLabel="Select all visible users"
       emptyMessage="No users match the current filters."
+      resetKey={resetKey}
       getRowClassName={(user) => (detailUserId === user.id ? " is-detail" : "")}
       renderRowCells={(user) => (
         <>{visibleDefs.map((col) => renderBodyCell(col.key as UserTableColumnKey, user))}</>

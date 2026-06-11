@@ -115,7 +115,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "5.1.3",
+    "localVersion": "5.2.18",
     "remoteEnabled": true
   },
   {
@@ -245,45 +245,6 @@
     ]
   },
   {
-    "id": "cursor-telegram",
-    "code": "P0010",
-    "name": "Cursor Telegram",
-    "repo": "tuanhoangfx/P0010-Cursor-Telegram",
-    "branch": "main",
-    "remoteEnabled": true,
-    "localVersion": "1.0.0",
-    "category": "Bot",
-    "audience": "Tool maintainers",
-    "status": "Ready",
-    "summary": "Bridge Cursor local Agent ↔ Telegram forum topics; admin UI, 2-way sync, stop command.",
-    "localPath": "E:\\Dev\\Tool\\P0010-Cursor-Telegram",
-    "tags": [
-      "Node.js",
-      "PowerShell",
-      "Telegram Bot API",
-      "Cursor Hooks"
-    ],
-    "localUrl": "http://127.0.0.1:3922",
-    "deployTarget": "local",
-    "usage": [
-      "Run the configured dev command from package.json.",
-      "Run the configured build command from package.json."
-    ],
-    "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-    "manifestPath": "tool.manifest.json",
-    "trackedFiles": [
-      "tool.manifest.json",
-      "package.json",
-      "README.md",
-      "CHANGELOG.md",
-      "RELEASE.md"
-    ],
-    "scriptFiles": [
-      "scripts/sync-changelog.mjs",
-      "scripts/sync-metadata-version.mjs"
-    ]
-  },
-  {
     "id": "infix1-mail",
     "code": "P0011",
     "name": "Infix1 Mail",
@@ -371,7 +332,7 @@
   },
   {
     "id": "youtube-channel-dashboard",
-    "code": "LOCAL-011",
+    "code": "LOCAL-010",
     "name": "P0013-czp-youtube-tda-team",
     "repo": "",
     "branch": "main",
@@ -410,7 +371,7 @@
     "repo": "tuanhoangfx/chat-center",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "1.1.0",
+    "localVersion": "1.6.69",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Draft",
@@ -444,7 +405,7 @@
   },
   {
     "id": "infi-project-performance-tracker",
-    "code": "LOCAL-015",
+    "code": "LOCAL-013",
     "name": "P0019-Work-Performance",
     "repo": "",
     "branch": "main",
@@ -483,7 +444,7 @@
     "repo": "tuanhoangfx/Tool-Manager",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "3.2.3",
+    "localVersion": "4.3.27",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Beta",
@@ -612,13 +573,13 @@
     "name": "Fanpage Dashboard",
     "repo": "tuanhoangfx/P0023-Fanpage-Dashboard",
     "branch": "main",
-    "remoteEnabled": false,
+    "remoteEnabled": true,
     "localVersion": "2.1.1",
     "category": "Web",
     "audience": "Tool maintainers",
     "status": "Archived",
     "supersededBy": "P0016",
-    "summary": "Archived — Fanpage ops on P0016 only (https://chathub.infi.io.vn/fanpages). Repo to be removed.",
+    "summary": "Archived — use P0016 Chat Center → Fanpages only. Repo scheduled for removal.",
     "localPath": "E:\\Dev\\Tool\\P0023-Fanpage-Dashboard",
     "tags": [
       "React",
@@ -652,7 +613,7 @@
     "repo": "tuanhoangfx/E0001-cookie-bridge",
     "branch": "main",
     "remoteEnabled": true,
-    "localVersion": "1.1.1",
+    "localVersion": "1.1.2",
     "category": "Extension",
     "audience": "Tool maintainers",
     "status": "Active",

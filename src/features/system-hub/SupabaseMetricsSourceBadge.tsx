@@ -1,5 +1,5 @@
 import { Database, Radio } from "lucide-react";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import {
   metricsSourceTitle,
   type ProjectMetricsSource,

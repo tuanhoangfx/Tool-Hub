@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
 import { Check, CheckCircle2, Circle, Copy, ExternalLink, GitCompare, MoreHorizontal } from "lucide-react";
-import { HubPaginatedTableShell } from "@tool-workspace/hub-ui";
+import {
+  HubPaginatedTableShell,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
 import type { ToolVersionHistoryRow } from "./tool-versions";
 import {

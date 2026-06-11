@@ -1,11 +1,11 @@
 {
   "ok": true,
-  "generatedAt": "2026-06-05T07:11:35.375Z",
+  "generatedAt": "2026-06-11T13:42:57.119Z",
   "summary": {
-    "projectCount": 7,
+    "projectCount": 8,
     "toolBindingCount": 28,
-    "toolsScanned": 19,
-    "toolsWithSupabase": 10
+    "toolsScanned": 17,
+    "toolsWithSupabase": 8
   },
   "projects": [
     {
@@ -141,23 +141,11 @@
           "toolName": "Chat Center",
           "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
           "workspaceRoot": "tool",
-          "envFile": ".env.example",
-          "envKey": "VITE_SUPABASE_URL",
-          "envLabel": "Chat Center data",
-          "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
-          "ref": "ynlslntczthxwdvlrhyi"
-        },
-        {
-          "toolId": "chat-center",
-          "toolCode": "P0016",
-          "toolName": "Chat Center",
-          "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
-          "workspaceRoot": "tool",
-          "envFile": ".env.local",
-          "envKey": "VITE_SUPABASE_URL",
-          "envLabel": "Chat Center data",
-          "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
-          "ref": "ynlslntczthxwdvlrhyi"
+          "envFile": "tool.manifest.json",
+          "envKey": "tool.manifest.json",
+          "envLabel": "Manifest/docs",
+          "url": "https://fmnrafpzctuhxjaaomzt.supabase.co",
+          "ref": "fmnrafpzctuhxjaaomzt"
         },
         {
           "toolId": "p0020-data-box",
@@ -207,7 +195,7 @@
       "bindings": [
         {
           "toolId": "youtube-channel-dashboard",
-          "toolCode": "LOCAL-011",
+          "toolCode": "LOCAL-010",
           "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
@@ -219,7 +207,7 @@
         },
         {
           "toolId": "youtube-channel-dashboard",
-          "toolCode": "LOCAL-011",
+          "toolCode": "LOCAL-010",
           "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
@@ -231,7 +219,7 @@
         },
         {
           "toolId": "youtube-channel-dashboard",
-          "toolCode": "LOCAL-011",
+          "toolCode": "LOCAL-010",
           "toolName": "P0013-czp-youtube-tda-team",
           "localPath": "E:\\Dev\\Tool\\P0013-czp-youtube-tda-team",
           "workspaceRoot": "tool",
@@ -287,7 +275,7 @@
       "bindings": [
         {
           "toolId": "infi-project-performance-tracker",
-          "toolCode": "LOCAL-015",
+          "toolCode": "LOCAL-013",
           "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
@@ -299,7 +287,7 @@
         },
         {
           "toolId": "infi-project-performance-tracker",
-          "toolCode": "LOCAL-015",
+          "toolCode": "LOCAL-013",
           "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
@@ -311,7 +299,7 @@
         },
         {
           "toolId": "infi-project-performance-tracker",
-          "toolCode": "LOCAL-015",
+          "toolCode": "LOCAL-013",
           "toolName": "P0019-Work-Performance",
           "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
           "workspaceRoot": "tool",
@@ -366,6 +354,52 @@
           "envLabel": "Manifest/docs",
           "url": "https://xrnzsmjjbtclmkmrlfxj.supabase.co",
           "ref": "xrnzsmjjbtclmkmrlfxj"
+        }
+      ]
+    },
+    {
+      "ref": "ynlslntczthxwdvlrhyi",
+      "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
+      "labels": [
+        "Primary",
+        "Manifest/docs"
+      ],
+      "bindings": [
+        {
+          "toolId": "chat-center",
+          "toolCode": "P0016",
+          "toolName": "Chat Center",
+          "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
+          "workspaceRoot": "tool",
+          "envFile": ".env.example",
+          "envKey": "VITE_SUPABASE_URL",
+          "envLabel": "Primary",
+          "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
+          "ref": "ynlslntczthxwdvlrhyi"
+        },
+        {
+          "toolId": "chat-center",
+          "toolCode": "P0016",
+          "toolName": "Chat Center",
+          "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
+          "workspaceRoot": "tool",
+          "envFile": ".env.local",
+          "envKey": "VITE_SUPABASE_URL",
+          "envLabel": "Primary",
+          "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
+          "ref": "ynlslntczthxwdvlrhyi"
+        },
+        {
+          "toolId": "chat-center",
+          "toolCode": "P0016",
+          "toolName": "Chat Center",
+          "localPath": "E:\\Dev\\Tool\\P0016-ChatCenter",
+          "workspaceRoot": "tool",
+          "envFile": "tool.manifest.json",
+          "envKey": "tool.manifest.json",
+          "envLabel": "Manifest/docs",
+          "url": "https://ynlslntczthxwdvlrhyi.supabase.co",
+          "ref": "ynlslntczthxwdvlrhyi"
         }
       ]
     },

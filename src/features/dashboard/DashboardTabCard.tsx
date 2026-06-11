@@ -1,6 +1,16 @@
-import { ArrowUpRight, Star } from "lucide-react";
-import { HubAppTabGroupBadge, HubUiTemplateBadge, navIconClass, navMetaTextClass } from "@tool-workspace/hub-ui";
-import { compactIconSize } from "../../lib/ui-scale";
+import { ArrowUpRight } from "lucide-react";
+import {
+  HubAppTabGroupBadge,
+  HubDirectoryCardCheckbox,
+  HubDirectoryCardCornerRail,
+  HubDirectoryCardPinButton,
+  HubDirectoryCardShell,
+  HubUiTemplateBadge,
+  navIconClass,
+  navMetaTextClass,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
+
 import type { DashboardTabEntry } from "./dashboard-tab-registry";
 import { DashboardStatusBadge } from "./DashboardStatusBadge";
 
@@ -14,18 +24,41 @@ const STATUS_DOT: Record<string, string> = {
 type DashboardTabCardProps = {
   entry: DashboardTabEntry;
   pinned: boolean;
+  selected: boolean;
+  onToggleSelect: (id: string) => void;
   onOpen: (entry: DashboardTabEntry) => void;
   onPreview: (entry: DashboardTabEntry) => void;
   onTogglePin: (id: string) => void;
 };
 
-export function DashboardTabCard({ entry, pinned, onOpen, onPreview, onTogglePin }: DashboardTabCardProps) {
+export function DashboardTabCard({
+  entry,
+  pinned,
+  selected,
+  onToggleSelect,
+  onOpen,
+  onPreview,
+  onTogglePin,
+}: DashboardTabCardProps) {
   const Icon = entry.icon;
   const dot = entry.status ? STATUS_DOT[entry.status.tone] ?? STATUS_DOT.neutral : undefined;
 
   return (
-    <article className="group flex h-full min-h-[var(--hub-card-min-h)] w-full flex-col rounded-xl border border-white/5 bg-[var(--panel)] transition-[border-color,box-shadow,background-color] duration-200 hover:border-indigo-500/40 hover:bg-white/[0.02] hover:shadow-[0_8px_24px_rgba(99,102,241,0.12)]">
-      <button type="button" onClick={() => onPreview(entry)} className="flex flex-1 flex-col p-4 text-left">
+    <HubDirectoryCardShell selected={selected} pinned={pinned} className="group">
+      <HubDirectoryCardCornerRail>
+        <HubDirectoryCardPinButton
+          pinned={pinned}
+          label={entry.label}
+          onClick={() => onTogglePin(entry.id)}
+        />
+        <HubDirectoryCardCheckbox
+          corner={false}
+          checked={selected}
+          label={`Select ${entry.label}`}
+          onChange={() => onToggleSelect(entry.id)}
+        />
+      </HubDirectoryCardCornerRail>
+      <button type="button" onClick={() => onPreview(entry)} className="flex flex-1 flex-col p-4 pr-14 text-left">
         <div className="mb-3 flex shrink-0 items-start justify-between gap-2">
           <div className="flex min-w-0 items-center gap-2.5">
             <div className="relative shrink-0">
@@ -67,18 +100,6 @@ export function DashboardTabCard({ entry, pinned, onOpen, onPreview, onTogglePin
         <div className="flex shrink-0 items-center gap-1">
           <button
             type="button"
-            title={pinned ? "Unpin" : "Pin"}
-            onClick={() => onTogglePin(entry.id)}
-            className={`grid h-7 w-7 place-items-center rounded-lg border transition-colors ${
-              pinned
-                ? "border-amber-400/40 bg-amber-500/20 text-amber-200"
-                : "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:text-amber-200"
-            }`}
-          >
-            <Star size={compactIconSize(13)} className={pinned ? "fill-current" : ""} aria-hidden />
-          </button>
-          <button
-            type="button"
             title="Preview"
             onClick={() => onPreview(entry)}
             className="grid h-7 w-7 place-items-center rounded-lg border border-white/10 bg-white/[0.03] text-indigo-300 hover:bg-indigo-500/15"
@@ -95,6 +116,6 @@ export function DashboardTabCard({ entry, pinned, onOpen, onPreview, onTogglePin
           </button>
         </div>
       </footer>
-    </article>
+    </HubDirectoryCardShell>
   );
 }

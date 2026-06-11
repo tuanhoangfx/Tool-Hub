@@ -12,6 +12,7 @@ import {
   HubUserToolsDirectoryTableSkeleton,
   HUB_TOOL_DETAIL_SCROLL_ROOT,
   HUB_TOOL_DETAIL_SECTIONS_CLASS,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
 import { HubConfirmDialog } from "../../components/HubConfirmDialog";
 import { FilterBar } from "../../components/sales-shell";
@@ -19,7 +20,7 @@ import { HubSingleFilterDropdown } from "../../components/sales-shell/FilterBar"
 import { HubEmailBadge } from "./HubEmailBadge";
 import { HubUserAvatar } from "./HubUserAvatar";
 import { resolveCategoryDisplayIcon } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { HubRoleBadge } from "./HubRoleBadge";
 import { countRegistryOnlyTools, fetchUserToolCodes, setUserToolAccess, type HubToolRow } from "./toolAccessRepository";
 import { hubRoleLabel } from "./hubUserDisplay";

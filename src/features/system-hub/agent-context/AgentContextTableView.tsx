@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 import { BookOpen, CalendarDays } from "lucide-react";
 import {
-  HubPaginatedTableShell,
-  HubSortIndicator,
-  HubTableColumnHeader,
+  HubDirectoryTableShell,
+  hubDirectoryListResetKey,
   type HubSortDir,
   type HubTableColumnRole,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
-import { compactIconSize } from "../../../lib/ui-scale";
+
 import { formatDate } from "../../../lib/tooling";
 import { HubCardAvatar } from "../../../components/HubCardAvatar";
 import { QuietChip } from "../../hub/hub-tool-ui";
@@ -115,14 +115,28 @@ function sortItems(items: AgentContextItem[], sortKey: AgentSortKey, sortDir: Hu
 type AgentContextTableViewProps = {
   items: AgentContextItem[];
   highlightId?: string | null;
+  resetKey?: string | number | boolean | null;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
   onOpen: (item: AgentContextItem) => void;
 };
 
-export function AgentContextTableView({ items, highlightId, onOpen }: AgentContextTableViewProps) {
+export function AgentContextTableView({
+  items,
+  highlightId,
+  resetKey,
+  selectedIds,
+  onToggleSelect,
+  onOpen,
+}: AgentContextTableViewProps) {
   const [sortKey, setSortKey] = useState<AgentSortKey>("kind");
   const [sortDir, setSortDir] = useState<HubSortDir>("asc");
 
   const sorted = useMemo(() => sortItems(items, sortKey, sortDir), [items, sortKey, sortDir]);
+  const pagerResetKey = useMemo(
+    () => hubDirectoryListResetKey(resetKey, sortKey, sortDir, items.length),
+    [items.length, resetKey, sortDir, sortKey],
+  );
 
   const handleSort = (key: AgentSortKey) => {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -133,129 +147,115 @@ export function AgentContextTableView({ items, highlightId, onOpen }: AgentConte
   };
 
   return (
-    <HubPaginatedTableShell items={sorted} ariaLabel="Agent context table pages">
-      {(pageItems) => (
-    <div className="hub-users-table-wrap overflow-x-auto rounded-2xl border border-white/5">
-      <table className="hub-users-table">
-        <thead>
-          <tr>
-            {COLUMNS.map((col) => (
-              <th key={col.key} className={col.colClass} scope="col">
-                <button
-                  type="button"
-                  className="hub-users-th-btn"
-                  onClick={() => handleSort(col.key)}
-                  aria-sort={sortKey === col.key ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
-                >
-                  <span className="hub-users-th-label">
-                    <HubTableColumnHeader label={col.label} role={col.role} />
-                    <HubSortIndicator active={sortKey === col.key} dir={sortDir} />
-                  </span>
-                </button>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {pageItems.map((item) => (
-            <tr
-              key={item.id}
-              className={`hub-users-row${highlightId === item.id ? " is-highlighted" : ""}`}
-              onClick={() => onOpen(item)}
-            >
-              <td className="hub-users-col--hub-code">
-                <AgentKindBadge kind={item.kind} className="rounded-full px-2" />
-              </td>
-              <td className="hub-users-col--agent-layer">
-                {item.kind === "pattern" && item.layer ? (
-                  <QuietChip label={layerLabel(item.layer)} tone={layerTone(item.layer)} />
-                ) : (
-                  <span className="hub-users-cell-muted text-[11px]">—</span>
-                )}
-              </td>
-              <td className="hub-users-col--hub-project">
-                <div className="flex min-w-0 items-start gap-2 text-left">
-                  <HubCardAvatar
-                    variant="agent"
-                    icon={agentKindIcon(item.kind)}
-                    size="xs"
-                    statusColor={agentStatusDotColor(item)}
-                    statusTitle={applyModeLabel(item)}
-                    className="mt-0.5"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="hub-users-name-title">{item.name}</p>
-                    {item.summary ? (
-                      <p className="hub-users-cell-sub mt-0.5 line-clamp-2">{item.summary}</p>
-                    ) : null}
-                  </div>
+    <HubDirectoryTableShell
+      items={sorted}
+      resetKey={pagerResetKey}
+      ariaLabel="Agent context table pages"
+      tableClassName="hub-users-table hub-users-table--directory"
+      columns={COLUMNS}
+      sortKey={sortKey}
+      sortDir={sortDir}
+      onSort={handleSort}
+      getRowKey={(item) => item.id}
+      selectedIds={selectedIds}
+      onToggleSelect={onToggleSelect}
+      selectAllLabel="Select all items on this page"
+      onRowClick={onOpen}
+      emptyMessage="No agent context items match search or filters."
+      getRowClassName={(item) =>
+        `${highlightId === item.id ? " is-highlighted" : ""}${selectedIds.has(item.id) ? " is-selected" : ""}`
+      }
+      renderRowCells={(item) => (
+        <>
+          <td className="hub-users-col--hub-code">
+            <AgentKindBadge kind={item.kind} className="rounded-full px-2" />
+          </td>
+          <td className="hub-users-col--agent-layer">
+            {item.kind === "pattern" && item.layer ? (
+              <QuietChip label={layerLabel(item.layer)} tone={layerTone(item.layer)} />
+            ) : (
+              <span className="hub-users-cell-muted text-[11px]">—</span>
+            )}
+          </td>
+          <td className="hub-users-col--hub-project">
+            <div className="flex min-w-0 items-start gap-2 text-left">
+              <HubCardAvatar
+                variant="agent"
+                icon={agentKindIcon(item.kind)}
+                size="xs"
+                statusColor={agentStatusDotColor(item)}
+                statusTitle={applyModeLabel(item)}
+                className="mt-0.5"
+              />
+              <div className="min-w-0 flex-1">
+                <p className="hub-users-name-title">{item.name}</p>
+                {item.summary ? (
+                  <p className="hub-users-cell-sub mt-0.5 line-clamp-2">{item.summary}</p>
+                ) : null}
+              </div>
+            </div>
+          </td>
+          <td className="hub-users-col--hub-version">
+            {item.keywordGroup ? (
+              <QuietChip label={agentKeywordGroupLabel(item.keywordGroup)} tone="neutral" />
+            ) : (
+              <span className="hub-users-cell-muted text-[11px]">—</span>
+            )}
+          </td>
+          <td className="hub-users-col--agent-golden">
+            {item.golden && item.golden !== "—" ? (
+              <span
+                className="inline-block max-w-full truncate rounded-md border border-emerald-400/35 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-100"
+                title={item.golden}
+              >
+                {item.golden}
+              </span>
+            ) : (
+              <span className="hub-users-cell-muted text-[11px]">—</span>
+            )}
+          </td>
+          <td className="hub-users-col--agent-clone">
+            {item.clone && item.clone !== "—" ? (
+              <p
+                className="line-clamp-2 font-mono text-[10px] leading-snug text-sky-200/85"
+                title={item.cloneTooltip ?? item.clone}
+              >
+                {item.clone}
+              </p>
+            ) : (
+              <span className="hub-users-cell-muted text-[11px]">—</span>
+            )}
+          </td>
+          <td className="hub-users-col--agent-path">
+            <p className="font-mono text-[10px] leading-snug text-indigo-200/85 break-all" title={item.path}>
+              {item.path}
+            </p>
+          </td>
+          <td className="hub-users-col--hub-version">
+            <AgentScopeBadge scope={item.scope} />
+          </td>
+          <td className="hub-users-col--agent-lines hub-users-cell-muted">
+            <span className="tabular-nums font-medium text-[var(--text)]">{item.lines > 0 ? item.lines : "—"}</span>
+          </td>
+          <td className="hub-users-col--hub-status">
+            <div className="hub-users-role-cell flex-col gap-1">
+              <QuietChip label={applyModeLabel(item)} tone={applyModeTone(item)} />
+              {item.alwaysApply ? (
+                <div className="flex items-center justify-center gap-1 text-[10px] text-amber-200/80">
+                  <BookOpen size={compactIconSize(10)} />
+                  <span>Always on</span>
                 </div>
-              </td>
-              <td className="hub-users-col--hub-version">
-                {item.keywordGroup ? (
-                  <QuietChip label={agentKeywordGroupLabel(item.keywordGroup)} tone="neutral" />
-                ) : (
-                  <span className="hub-users-cell-muted text-[11px]">—</span>
-                )}
-              </td>
-              <td className="hub-users-col--agent-golden">
-                {item.golden && item.golden !== "—" ? (
-                  <span
-                    className="inline-block max-w-full truncate rounded-md border border-emerald-400/35 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-100"
-                    title={item.golden}
-                  >
-                    {item.golden}
-                  </span>
-                ) : (
-                  <span className="hub-users-cell-muted text-[11px]">—</span>
-                )}
-              </td>
-              <td className="hub-users-col--agent-clone">
-                {item.clone && item.clone !== "—" ? (
-                  <p
-                    className="line-clamp-2 font-mono text-[10px] leading-snug text-sky-200/85"
-                    title={item.cloneTooltip ?? item.clone}
-                  >
-                    {item.clone}
-                  </p>
-                ) : (
-                  <span className="hub-users-cell-muted text-[11px]">—</span>
-                )}
-              </td>
-              <td className="hub-users-col--agent-path">
-                <p className="font-mono text-[10px] leading-snug text-indigo-200/85 break-all" title={item.path}>
-                  {item.path}
-                </p>
-              </td>
-              <td className="hub-users-col--hub-version">
-                <AgentScopeBadge scope={item.scope} />
-              </td>
-              <td className="hub-users-col--agent-lines hub-users-cell-muted">
-                <span className="tabular-nums font-medium text-[var(--text)]">{item.lines > 0 ? item.lines : "—"}</span>
-              </td>
-              <td className="hub-users-col--hub-status">
-                <div className="hub-users-role-cell flex-col gap-1">
-                  <QuietChip label={applyModeLabel(item)} tone={applyModeTone(item)} />
-                  {item.alwaysApply ? (
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-amber-200/80">
-                      <BookOpen size={compactIconSize(10)} />
-                      <span>Always on</span>
-                    </div>
-                  ) : null}
-                </div>
-              </td>
-              <td className="hub-users-col--hub-updated hub-users-cell-muted">
-                <div className="hub-users-cell-stack hub-users-cell-stack--center">
-                  <CalendarDays size={compactIconSize(12)} className="mx-auto opacity-70" aria-hidden />
-                  <span>{item.updatedAt ? formatDate(item.updatedAt) : "—"}</span>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              ) : null}
+            </div>
+          </td>
+          <td className="hub-users-col--hub-updated hub-users-cell-muted">
+            <div className="hub-users-cell-stack hub-users-cell-stack--center">
+              <CalendarDays size={compactIconSize(12)} className="mx-auto opacity-70" aria-hidden />
+              <span>{item.updatedAt ? formatDate(item.updatedAt) : "—"}</span>
+            </div>
+          </td>
+        </>
       )}
-    </HubPaginatedTableShell>
+    />
   );
 }

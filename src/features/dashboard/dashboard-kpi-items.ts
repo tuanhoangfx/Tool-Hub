@@ -45,7 +45,7 @@ export function buildDashboardKpiItems(kpis: DashboardKpis): KpiTileData[] {
 
   return [
     {
-      label: "Screens (shown)",
+      label: "Screens shown",
       value: kpis.total,
       icon: LayoutGrid,
       prefKey: "total",

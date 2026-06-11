@@ -1,8 +1,7 @@
+import { chartBreakdownFromPicker } from "@tool-workspace/hub-ui";
 import type { BarItem } from "../../../components/sales-shell";
-import { resolveChartLegendIcon } from "../../../lib/badge-registry";
+import { resolveChartLegendIcon } from "../../../lib/badge-registry-chart";
 import type { AgentContextItem, AgentContextKind } from "./types";
-
-const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
 
 const AGENT_KIND_CHART_LABEL: Record<AgentContextKind, string> = {
   pattern: "Pattern",
@@ -14,19 +13,7 @@ const AGENT_KIND_CHART_LABEL: Record<AgentContextKind, string> = {
 };
 
 function breakdown(items: AgentContextItem[], pick: (item: AgentContextItem) => string): BarItem[] {
-  const map = new Map<string, number>();
-  for (const item of items) {
-    const label = pick(item) || "—";
-    map.set(label, (map.get(label) ?? 0) + 1);
-  }
-  return [...map.entries()]
-    .map(([label, value], i) => ({
-      label,
-      value,
-      color: CHART_COLORS[i % CHART_COLORS.length],
-      iconMeta: resolveChartLegendIcon(label),
-    }))
-    .sort((a, b) => b.value - a.value);
+  return chartBreakdownFromPicker(items, pick, { iconFor: resolveChartLegendIcon });
 }
 
 function applyMode(item: AgentContextItem): string {

@@ -1,5 +1,5 @@
 import { MetricBadge, RegistryMetricBadge } from "../../components/sales-shell";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import { resolveVersionSyncBadge } from "../../lib/version-badges";
 import type { RoadmapNode } from "./roadmap-nodes";
 

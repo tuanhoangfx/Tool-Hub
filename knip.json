@@ -2,9 +2,20 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "entry": ["src/main.tsx"],
   "project": ["src/**/*.{ts,tsx}"],
-  "ignore": ["src/**/*.test.ts"],
-  "ignoreBinaries": ["powershell"],
-  "ignoreDependencies": ["autoprefixer", "postcss", "tailwindcss", "@vitest/ui"],
+  "ignore": ["src/**/*.test.ts", "vendor/**"],
+  "ignoreBinaries": ["powershell", "vercel"],
+  "ignoreDependencies": [
+    "autoprefixer",
+    "postcss",
+    "tailwindcss",
+    "@vitest/ui",
+    "@dev/hub-load",
+    "@dev/hub-identity",
+    "@tool-workspace/hub-identity",
+    "@tool-workspace/hub-ui",
+    "chrome-cookies-secure",
+    "playwright"
+  ],
   "ignoreExportsUsedInFile": true,
   "exclude": ["exports", "types", "enumMembers", "duplicates"]
 }

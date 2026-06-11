@@ -1,27 +1,14 @@
+import { chartBreakdownFromPicker, matchesDirectoryTimeRange } from "@tool-workspace/hub-ui";
 import { hasManifestLinkGaps } from "../overview/manifest-link-audit";
 import type { TimeRange } from "../../lib/url-prefs";
-import { resolveChartLegendIcon } from "../../lib/badge-registry";
+import { resolveChartLegendIcon } from "../../lib/badge-registry-chart";
 import { deployLabel } from "../../lib/tooling";
 import type { ResolvedTool } from "../../types";
 import type { BarItem, FilterDef, FilterValues } from "../../components/sales-shell";
 import { enrichFilterDefs } from "../../lib/filter-option-counts";
 
-const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
-
 function breakdown(tools: ResolvedTool[], pick: (t: ResolvedTool) => string): BarItem[] {
-  const map = new Map<string, number>();
-  for (const t of tools) {
-    const label = pick(t) || "—";
-    map.set(label, (map.get(label) ?? 0) + 1);
-  }
-  return [...map.entries()]
-    .map(([label, value], i) => ({
-      label,
-      value,
-      color: CHART_COLORS[i % CHART_COLORS.length],
-      iconMeta: resolveChartLegendIcon(label),
-    }))
-    .sort((a, b) => b.value - a.value);
+  return chartBreakdownFromPicker(tools, pick, { iconFor: resolveChartLegendIcon });
 }
 
 const HOSTED_TARGETS = new Set(["vps", "vercel", "cloudflare"]);
@@ -63,34 +50,8 @@ export function filterOptions(tools: ResolvedTool[]) {
   };
 }
 
-function dayBounds(offsetDays = 0) {
-  const start = new Date();
-  start.setHours(0, 0, 0, 0);
-  start.setDate(start.getDate() + offsetDays);
-  const end = new Date(start);
-  end.setHours(23, 59, 59, 999);
-  return { start: start.getTime(), end: end.getTime() };
-}
-
 export function matchesTimeRange(updatedAt: string | undefined, range: TimeRange): boolean {
-  if (range === "all") return true;
-  if (!updatedAt?.trim()) return false;
-  const at = new Date(updatedAt).getTime();
-  if (Number.isNaN(at)) return false;
-
-  const now = Date.now();
-  if (range === "today") {
-    const { start, end } = dayBounds(0);
-    return at >= start && at <= end;
-  }
-  if (range === "yesterday") {
-    const { start, end } = dayBounds(-1);
-    return at >= start && at <= end;
-  }
-  const days: Record<string, number> = { "7d": 7, "30d": 30, "90d": 90, "1y": 365 };
-  const d = days[range];
-  if (d) return at >= now - d * 86400000;
-  return true;
+  return matchesDirectoryTimeRange(updatedAt, range);
 }
 
 export function filterHubTools(

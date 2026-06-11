@@ -2,7 +2,7 @@ import type { PrefItem } from "../../components/sales-shell/DisplayPrefs";
 import { defaultKpiKeysFromDefs } from "../../lib/kpi-display-defaults";
 
 export const DASHBOARD_KPI_DEFS: PrefItem[] = [
-  { key: "total", label: "Screens (shown)" },
+  { key: "total", label: "Screens shown" },
   { key: "hub", label: "Hub group" },
   { key: "users", label: "Users group" },
   { key: "system", label: "System group" },

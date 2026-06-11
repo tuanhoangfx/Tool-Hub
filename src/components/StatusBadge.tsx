@@ -1,5 +1,5 @@
 import { MaterialIcon } from "./MaterialIcon";
-import { compactIconSize } from "../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 
 type StatusBadgeProps = {
   icon: string;

@@ -1,29 +1,27 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { Gauge, LayoutGrid, RefreshCcw, Settings2, Upload, Users } from "lucide-react";
+import { Gauge, LayoutGrid, RefreshCcw, Settings2, Users } from "lucide-react";
 import { HubUserModal } from "../../features/identity/HubUserModal";
 import { hubSessionLabels } from "@tool-workspace/hub-identity";
 import { useExtensionIdentityRelay } from "../../features/identity/useExtensionIdentityRelay";
 import { useHubReturnToRelay } from "../../features/identity/useHubReturnToRelay";
 import { useHubAuth } from "../../features/identity/useHubAuth";
+import { supabase } from "../../lib/supabase";
 import { readSystemTab, type SystemTab } from "../../features/system-hub/components/SystemTabs";
 import { readHubListPrefs } from "../../lib/url-prefs";
 import { formatHubHeaderDate } from "../../lib/tooling";
 import { ToolAvatar } from "../ToolAvatar";
 import type { AppScreen } from "../../lib/app-screen";
 import { prefetchAppScreen } from "../../lib/app-screen-prefetch";
-import { compactIconSize } from "../../lib/ui-scale";
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import {
   HubLogButton,
   HubSidebarFooterButton,
   HubSidebarNavGroup,
+  HubSidebarNavScreenButton,
+  HubSidebarShell,
   HubUiZoomControl,
   HubWorkspaceUserShell,
   resolveWorkspaceRoleKey,
-  navActiveBarClass,
-  navActiveBgClass,
-  navActiveTextClass,
-  navIconClass,
   navGroupSubnavOpenKey,
   subscribeHubListPrefs,
   type NavIconTone,
@@ -94,99 +92,91 @@ export function SalesSidebar({
   const scanIndicator = buildScanIndicator(scanStatus, scanMessage, lastScanAt);
 
   return (
-    <aside className="flex h-full min-h-0 w-60 shrink-0 flex-col overflow-visible border-r border-white/5 bg-[var(--panel)] p-4">
-      <div className="mb-4 shrink-0 flex items-center gap-3">
+    <HubSidebarShell
+      brandLeading={
         <ToolAvatar
           code="P0004"
           iconName={toolIconName({ code: "P0004" })}
           svgSrc={toolSvgIcon({ code: "P0004" }) ?? undefined}
           size="md"
         />
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold leading-tight">Tool Hub</div>
-          <div className="text-[10px] text-[var(--muted)]">Workspace catalog</div>
-        </div>
-      </div>
+      }
+      brandTitle="Tool Hub"
+      brandTagline="Workspace catalog"
+      nav={
+        <>
+          {items.map(({ screen: id, label, icon: Icon, iconTone }) => {
+            if (id === "system") {
+              const systemActive = screen === "system";
+              return (
+                <HubSidebarNavGroup
+                  key={id}
+                  label={label}
+                  icon={Icon}
+                  iconTone={iconTone}
+                  active={systemActive}
+                  subnavOpen={systemSubnavOpen}
+                  showToggleIcon={showSubnavToggleIcon}
+                  onMouseEnter={() => prefetchAppScreen(id)}
+                  onFocus={() => prefetchAppScreen(id)}
+                  onClick={() => {
+                    if (systemActive) {
+                      setSystemSubnavOpen((v) => !v);
+                      return;
+                    }
+                    onNavigate(id);
+                    setSystemSubnavOpen(true);
+                  }}
+                  subnav={<SystemTabSubNav activeTab={systemActive ? systemTab : null} />}
+                />
+              );
+            }
 
-      <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
-        {items.map(({ screen: id, label, icon: Icon, iconTone }) => {
-          if (id === "system") {
-            const systemActive = screen === "system";
             return (
-              <HubSidebarNavGroup
+              <HubSidebarNavScreenButton
                 key={id}
                 label={label}
                 icon={Icon}
                 iconTone={iconTone}
-                active={systemActive}
-                subnavOpen={systemSubnavOpen}
-                showToggleIcon={showSubnavToggleIcon}
+                active={screen === id}
+                onClick={() => onNavigate(id)}
                 onMouseEnter={() => prefetchAppScreen(id)}
                 onFocus={() => prefetchAppScreen(id)}
-                onClick={() => {
-                  if (systemActive) {
-                    setSystemSubnavOpen((v) => !v);
-                    return;
-                  }
-                  onNavigate(id);
-                  setSystemSubnavOpen(true);
-                }}
-                subnav={<SystemTabSubNav activeTab={systemActive ? systemTab : null} />}
               />
             );
-          }
-
-          const active = screen === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              onMouseEnter={() => prefetchAppScreen(id)}
-              onFocus={() => prefetchAppScreen(id)}
-              onClick={() => onNavigate(id)}
-              className={`group relative flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-all ${
-                active
-                  ? `${navActiveBgClass(iconTone)} ${navActiveTextClass(iconTone)}`
-                  : "text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
-              }`}
-            >
-              {active ? (
-                <span
-                  className={`absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-r ${navActiveBarClass(iconTone)}`}
-                />
-              ) : null}
-              <Icon size={compactIconSize(16)} className={`shrink-0 ${navIconClass(iconTone, active)}`} />
-              <span className="flex-1 text-left">{label}</span>
-            </button>
-          );
-        })}
-      </nav>
-
-      <footer className="mt-2 shrink-0 space-y-0.5 overflow-visible border-t border-white/5 pt-2.5">
-        <HubWorkspaceUserShell
-          session={session}
-          labels={labels}
-          roleKey={resolveWorkspaceRoleKey(session, session ? "user" : "anonymous")}
-          footerGuestLabel="Sign in"
-          renderModal={({ open, onClose }) => (
-            <HubUserModal open={open} onClose={onClose} session={session} />
-          )}
-        />
-        <HubSidebarFooterButton
-          icon={RefreshCcw}
-          iconClass="text-emerald-300"
-          label="Refresh"
-          onClick={onRefreshAll}
-          disabled={scanningWorkspace || loadingAll}
-          loading={scanningWorkspace || loadingAll}
-          trailing={scanIndicator}
-          title={scanMessage || "Scan local workspace, check GitHub dry-run, then refresh metadata"}
-        />
-        <HubLogButton variant="global" />
-        {displayPrefs}
-        <HubUiZoomControl />
-      </footer>
-    </aside>
+          })}
+        </>
+      }
+      footer={
+        <>
+          <HubWorkspaceUserShell
+            session={session}
+            labels={labels}
+            roleKey={resolveWorkspaceRoleKey(session, session ? "user" : "anonymous")}
+            profileRoleClient={supabase}
+            profileRoleUserId={session?.user?.id}
+            profileRoleEmail={session?.user?.email}
+            footerGuestLabel="Sign in"
+            renderModal={({ open, onClose }) => (
+              <HubUserModal open={open} onClose={onClose} session={session} />
+            )}
+          />
+          <HubSidebarFooterButton
+            icon={RefreshCcw}
+            iconClass="text-emerald-300"
+            label="Refresh"
+            onClick={onRefreshAll}
+            disabled={scanningWorkspace || loadingAll}
+            loading={scanningWorkspace || loadingAll}
+            trailing={scanIndicator}
+            title={scanMessage || "Scan local workspace, check GitHub dry-run, then refresh metadata"}
+          />
+          <HubLogButton variant="global" />
+          {displayPrefs}
+          <HubUiZoomControl />
+        </>
+      }
+    />
   );
 }
 

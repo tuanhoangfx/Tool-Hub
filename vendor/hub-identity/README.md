@@ -1,14 +1,26 @@
-# @tool-workspace/hub-identity
+# @dev/hub-identity
 
-Shared login helpers for **Tool Hub Supabase identity** (`fmnrafpzctuhxjaaomzt`, x1z10 P01).
+Canonical SSOT for Tool Hub JWT cache, dual sign-in, and workspace auth boot.
 
-Used by P0004, P0020 (`signInWorkspaceDual`), P0006, and dev admin proxies.
+## Layout
 
-- **User ID** → internal auth email `id@infix1.io.vn` (legacy `@id.hub.x1z10.local` still matched for sign-in)
-- **Real email** → normal Supabase `signInWithPassword` / link-email flows
+| Path | Role |
+|------|------|
+| `Tool/packages/hub-identity` | **Canonical** — edit here |
+| `Tool/*/vendor/hub-identity` | Vendored copies for each tool |
+| `x1z10:hub-identity-v2` | Browser localStorage JWT (cross-tab) |
 
-Sync into tool vendors:
+## Sync to tools
 
-```powershell
-node E:\Dev\Tool\scripts\sync-hub-identity-vendor.cjs
+```bash
+node Tool/scripts/sync-hub-identity-vendor.cjs
+node Tool/scripts/hub-identity-vendor-hash-check.mjs
 ```
+
+## Import
+
+Prefer `@dev/hub-identity`. Legacy `@tool-workspace/hub-identity` alias remains in vite/tsconfig.
+
+## Auth storage
+
+Identity Supabase clients use `persistSession: false` — hub cache is the only JWT SSOT (avoids `sb-*` refresh races).

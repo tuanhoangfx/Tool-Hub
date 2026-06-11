@@ -40,6 +40,9 @@ export type SystemHeaderStatKey =
   | "rules"
   | "skills"
   | "always"
+  | "catalog_skills"
+  | "catalog_ready"
+  | "catalog_triggers"
   | "templates"
   | "locked"
   | "preview";
@@ -72,6 +75,12 @@ export function systemHeaderStatDefs(tab: SystemTab): PrefItem[] {
         { key: "skills", label: "Skills" },
         { key: "always", label: "Always on" },
       ];
+    case "skills":
+      return [
+        { key: "catalog_skills", label: "Catalog skills" },
+        { key: "catalog_ready", label: "Ready" },
+        { key: "catalog_triggers", label: "With triggers" },
+      ];
     case "template":
       return [
         { key: "templates", label: "Templates" },
@@ -92,6 +101,8 @@ export function defaultSystemHeaderStatKeys(tab: SystemTab): Set<string> {
       return new Set(["projects", "live_metrics"]);
     case "agent":
       return new Set(["rules", "skills"]);
+    case "skills":
+      return new Set(["catalog_skills", "catalog_ready"]);
     case "template":
       return new Set(["templates", "locked"]);
     default:
@@ -181,6 +192,34 @@ export function buildSystemHeaderStats(
       { key: "rules" as const, ...semanticHeaderStat("kpi.agent.rules"), label: "rules", value: kpis.rules },
       { key: "skills" as const, ...semanticHeaderStat("kpi.agent.skills"), label: "skills", value: kpis.skills },
       { key: "always" as const, ...semanticHeaderStat("kpi.agent.always"), label: "always", value: kpis.always },
+    ];
+    return defs
+      .filter((d) => visibleKeys.has(d.key))
+      .map((d) => ({ key: d.key, icon: d.icon, label: d.label, value: d.value, toneClass: d.toneClass }));
+  }
+
+  if (tab === "skills") {
+    const items = agentManifestCache.readStale()?.items ?? [];
+    const catalog = items.filter((i) => i.tags?.includes("catalog-skill"));
+    const defs = [
+      {
+        key: "catalog_skills" as const,
+        ...semanticHeaderStat("kpi.agent.skills"),
+        label: "catalog",
+        value: catalog.length,
+      },
+      {
+        key: "catalog_ready" as const,
+        ...semanticHeaderStat("template.published"),
+        label: "ready",
+        value: catalog.filter((i) => i.tags?.includes("ready")).length,
+      },
+      {
+        key: "catalog_triggers" as const,
+        ...semanticHeaderStat("template.features"),
+        label: "triggers",
+        value: catalog.filter((i) => Boolean(i.trigger?.trim())).length,
+      },
     ];
     return defs
       .filter((d) => visibleKeys.has(d.key))

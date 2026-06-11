@@ -92,6 +92,21 @@ export const DEFAULT_SYSTEM_AGENT_CHART_KEYS = new Set([
   "status_bar",
 ]);
 
+export const SYSTEM_SKILLS_KPI_DEFS: PrefItem[] = [
+  { key: "total", label: "Catalog skills" },
+  { key: "ready", label: "Ready" },
+  { key: "triggers", label: "With triggers" },
+  { key: "published", label: "Published" },
+  { key: "features", label: "Features" },
+];
+
+export const SYSTEM_SKILLS_CHART_DEFS: PrefItem[] = [
+  { key: "status_bar", label: "By status (bar)" },
+];
+
+export const DEFAULT_SYSTEM_SKILLS_KPI_KEYS = defaultKpiKeysFromDefs(SYSTEM_SKILLS_KPI_DEFS);
+export const DEFAULT_SYSTEM_SKILLS_CHART_KEYS = new Set(["status_bar"]);
+
 /** Overview: all KPI/chart defs available in Display prefs, hidden by default. */
 export const DEFAULT_SYSTEM_OVERVIEW_KPI_KEYS = new Set<string>();
 export const DEFAULT_SYSTEM_OVERVIEW_CHART_KEYS = new Set<string>();
@@ -158,6 +173,13 @@ export function systemDisplayDefs(stab: SystemTab = readSystemTab()) {
         charts: SYSTEM_AGENT_CHART_DEFS,
         defaultKpiKeys: DEFAULT_SYSTEM_AGENT_KPI_KEYS,
         defaultChartKeys: DEFAULT_SYSTEM_AGENT_CHART_KEYS,
+      };
+    case "skills":
+      return {
+        kpis: SYSTEM_SKILLS_KPI_DEFS,
+        charts: SYSTEM_SKILLS_CHART_DEFS,
+        defaultKpiKeys: DEFAULT_SYSTEM_SKILLS_KPI_KEYS,
+        defaultChartKeys: DEFAULT_SYSTEM_SKILLS_CHART_KEYS,
       };
     case "template":
       return {

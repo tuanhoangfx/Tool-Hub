@@ -7,7 +7,14 @@ const config: Config = {
     "./vendor/hub-ui/src/**/*.{ts,tsx}",
     "../../packages/hub-ui/src/**/*.{ts,tsx}",
   ],
-  theme: { extend: {} },
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["var(--font-sans)"],
+        mono: ["var(--font-mono)"],
+      },
+    },
+  },
   plugins: [],
 };
 

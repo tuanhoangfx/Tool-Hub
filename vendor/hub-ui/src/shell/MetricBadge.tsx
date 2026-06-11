@@ -45,7 +45,7 @@ export function MetricBadge({
   return (
     <span
       title={title}
-      className={`inline-flex h-[22px] shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-1.5 text-[10px] font-medium leading-none ${border} ${
+      className={`hub-chrome-type--micro inline-flex h-[22px] shrink-0 items-center gap-1 whitespace-nowrap rounded-md border px-1.5 leading-none ${border} ${
         uppercase ? "uppercase tracking-wide" : ""
       } ${mono ? "font-mono font-semibold tracking-wide" : ""} ${className}`}
     >

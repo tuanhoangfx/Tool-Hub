@@ -48,16 +48,6 @@
       "stack": "vite",
       "migrateFrom": 3000
     },
-    "P0010": {
-      "name": "Cursor Telegram",
-      "root": "P0010-Cursor-Telegram",
-      "port": 3922,
-      "probePath": "/",
-      "openPath": "/",
-      "stack": "node-admin",
-      "startCommand": "node src/cli-admin.js",
-      "migrateFrom": 3921
-    },
     "P0011": {
       "name": "Infix1 Mail",
       "root": "P0011-Infix1-Mail",

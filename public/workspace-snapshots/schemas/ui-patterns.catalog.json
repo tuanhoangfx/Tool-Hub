@@ -2,6 +2,30 @@
   "$schema": "./tool-manifest.schema.json",
   "description": "Unified Hub UI clone patterns — Agent kind=pattern only for ready goldens.",
   "packageDoc": "packages/hub-ui/UI_PATTERNS.md",
+  "filterBarHub": {
+    "layout": "hub",
+    "rows": 2,
+    "row1": [
+      "search",
+      "toolbar"
+    ],
+    "row2": [
+      "row2Leading",
+      "filterDropdowns",
+      "clearFilters",
+      "row2Actions"
+    ],
+    "forbidden": [
+      "ActivePills",
+      "activeFilterChipRow",
+      "thirdRowActiveSummary"
+    ],
+    "clearVia": "Clear filters button on row 2 (badge count) — not a separate Active: pill row",
+    "modalLayout": "inline",
+    "modalActivePills": "Allowed only for FilterBar layout=inline (modals); never on hub tab chrome",
+    "doc": "packages/hub-ui/UI_PATTERNS.md — Filter (golden — P0004 Hub)",
+    "componentPath": "packages/hub-ui/src/shell/FilterBar.tsx"
+  },
   "deferredPatterns": [],
   "patterns": [
     {
@@ -11,7 +35,7 @@
       "screenTemplate": "directory",
       "status": "ready",
       "skin": "hub-users-table",
-      "summary": "Directory screen: FilterBar, ViewToggle (card ↔ table), KPI, HubDirectoryCard / HubDataTable. One golden HubListPage — card and table are views, not separate patterns.",
+      "summary": "Directory screen: FilterBar layout=hub (2 rows — search + filters; no Active pill row), ViewToggle, KPI, HubDirectoryCard / HubDataTable.",
       "composed": [
         "HubListChromeHeader",
         "AppTabHeader",
@@ -24,6 +48,7 @@
         "HubCopyBadge",
         "HubPaginatedTableShell"
       ],
+      "filterBarHub": true,
       "preferredClone": "HubPaginatedTableShell",
       "scaffold": "packages/hub-ui/examples/GoldenDirectoryScreen.tsx",
       "verify": "hub-ui-parity-check.mjs --template directory; :5176 Hub tab",
@@ -51,8 +76,8 @@
         },
         {
           "product": "P0016",
-          "screen": "logs",
-          "screenPath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx"
+          "screen": "system",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/system/SystemDesignTemplateScreen.tsx"
         },
         {
           "product": "P0016",
@@ -177,7 +202,13 @@
       "clones": [
         {
           "product": "P0020",
-          "screen": "system"
+          "screen": "system",
+          "screenPath": "Tool/P0020-Data-Box/src/features/system/SystemDesignTemplateScreen.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "system",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/system/SystemDesignTemplateScreen.tsx"
         }
       ]
     },
@@ -187,12 +218,14 @@
       "layer": "screen",
       "screenTemplate": "workspace-composer",
       "status": "ready",
-      "summary": "Split notes / editor (P0020) — HubSplitWorkspaceScreen + bodyFlex.",
+      "summary": "Split notes / editor (P0020) — HubSplitWorkspaceScreen + bodyFlex. FilterBar hub 2-row (search · Period/count toolbar · filter dropdowns · Clear filters · row2Actions); no Active pill row.",
       "composed": [
         "HubSplitWorkspaceScreen",
         "FilterBar",
-        "WorkspaceTabHeader"
+        "WorkspaceTabHeader",
+        "hub-split-scroll"
       ],
+      "filterBarHub": true,
       "golden": {
         "ref": "P0020/notes",
         "screenPath": "Tool/P0020-Data-Box/src/features/notes/NotesWorkspaceScreen.tsx"
@@ -205,12 +238,14 @@
       "layer": "screen",
       "screenTemplate": "inbox-split",
       "status": "ready",
-      "summary": "Hub chrome + threads rail + message panel — HubSplitWorkspaceScreen shell.",
+      "summary": "Hub chrome + threads rail + message panel — HubSplitWorkspaceScreen shell. FilterBar hub 2-row; no Active pill row.",
       "composed": [
         "HubSplitWorkspaceScreen",
         "DirectorySearchToolbar",
-        "FilterBar"
+        "FilterBar",
+        "hub-split-scroll"
       ],
+      "filterBarHub": true,
       "verify": "hub-ui-parity-check.mjs --template inbox-split",
       "golden": {
         "ref": "P0016/inbox",
@@ -220,6 +255,145 @@
         {
           "product": "P0016",
           "screen": "inbox"
+        }
+      ]
+    },
+    {
+      "id": "split-pane-scroll",
+      "name": "Split-pane scroll",
+      "layer": "primitive",
+      "status": "ready",
+      "summary": "Fixed-height split panes — hub-split-scroll class + p0008 scrollbar tokens. One scroll layer per rail/editor; no hub-main page scroll on notes/inbox tabs.",
+      "composed": [
+        "hub-split-scroll",
+        "hub-split-scroll--rail",
+        "hub-split-scroll--panel"
+      ],
+      "scaffold": "packages/hub-ui/src/styles/hub-split-scroll.css",
+      "verify": "hub-ui-duplication-check.mjs; no per-tool webkit scrollbar overrides on notes-rail__scroll / notes-editor__body",
+      "golden": {
+        "ref": "packages/hub-ui/split-pane-scroll",
+        "cssPath": "packages/hub-ui/src/styles/hub-split-scroll.css",
+        "tokensPath": "Tool/P0020-Data-Box/src/theme/p0008-globals.css",
+        "screenPath": "Tool/P0020-Data-Box/src/features/notes/NotesListRail.tsx",
+        "editorPath": "Tool/P0020-Data-Box/src/features/notes/NoteEditorPanel.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0020",
+          "screen": "notes",
+          "screenPath": "Tool/P0020-Data-Box/src/features/notes/NotesListRail.tsx",
+          "notes": "scrollNoteIntoView + useNotesListVirtualWindow"
+        },
+        {
+          "product": "P0020",
+          "screen": "notes",
+          "screenPath": "Tool/P0020-Data-Box/src/features/notes/noteHistoryTocRails.tsx",
+          "notes": "History TOC + diff panes"
+        },
+        {
+          "product": "P0016",
+          "screen": "inbox",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxThreadsRail.tsx",
+          "notes": "scrollSplitRailItemIntoView"
+        },
+        {
+          "product": "P0016",
+          "screen": "inbox",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/inbox/InboxThreadPanel.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "fanpages",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/fanpages/FanpageUploaderPagesRail.tsx"
+        }
+      ]
+    },
+    {
+      "id": "directory-card-shell",
+      "name": "Directory card shell",
+      "layer": "primitive",
+      "status": "ready",
+      "summary": "Golden directory card surface — HubDirectoryCardShell / HubDirectoryInteractiveCard + corner checkbox + bulk bar primitives. No pencil hover icon.",
+      "composed": [
+        "HubDirectoryCardShell",
+        "HubDirectoryInteractiveCard",
+        "HubDirectoryCardCheckbox",
+        "HubDirectoryCardMetaRow",
+        "HubDirectoryCardHeader",
+        "HubDirectorySelectAllChip",
+        "HubBulkActionButton",
+        "HUB_DIRECTORY_CARD_SURFACE",
+        "HUB_DIRECTORY_CARD_SELECTED"
+      ],
+      "scaffold": "packages/hub-ui/src/content/HubDirectoryCardShell.tsx",
+      "verify": "hub-ui-parity-check.mjs; P0004 Hub/Users/Dashboard card grids + System panels (Agent/Hosting/Supabase)",
+      "golden": {
+        "ref": "packages/hub-ui/directory-card-shell",
+        "componentPath": "packages/hub-ui/src/content/HubDirectoryCardShell.tsx",
+        "docsPath": "packages/hub-ui/UI_PATTERNS.md",
+        "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubToolCard.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screen": "dashboard",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/dashboard/DashboardTabCard.tsx",
+          "notes": "HubDirectoryCardShell + checkbox; footer actions split"
+        },
+        {
+          "product": "P0004",
+          "screen": "hub",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/hub/HubToolCard.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "users",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/identity/UserCard.tsx",
+          "notes": "variant=panel"
+        },
+        {
+          "product": "P0004",
+          "screen": "system-agent",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/agent-context/AgentContextCard.tsx",
+          "notes": "read-only — shell only, no checkbox"
+        },
+        {
+          "product": "P0004",
+          "screen": "system-hosting",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/HostingDeployCard.tsx"
+        },
+        {
+          "product": "P0004",
+          "screen": "system-supabase",
+          "screenPath": "Tool/P0004-Tool-Hub/src/features/system-hub/SupabaseProjectCard.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "bots",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/directory/BotDirectoryCard.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "channels",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/directory/ChannelDirectoryCard.tsx"
+        },
+        {
+          "product": "P0016",
+          "screen": "groups",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/directory/GroupDirectoryCard.tsx",
+          "notes": "HubDirectoryCardShell + allowlist action (non-interactive open)"
+        },
+        {
+          "product": "P0016",
+          "screen": "personalities",
+          "screenPath": "Tool/P0016-ChatCenter/src/features/personalities/PersonalitiesScreen.tsx"
+        },
+        {
+          "product": "P0020",
+          "screen": "cookie",
+          "screenPath": "Tool/P0020-Data-Box/src/features/cookie/CookieAutoSyncTable.tsx",
+          "notes": "CookieRouteCard + HubPaginatedCardGrid"
         }
       ]
     },
@@ -347,11 +521,6 @@
           "product": "P0016",
           "screen": "channels",
           "tablePath": "Tool/P0016-ChatCenter/src/features/channels/ChannelDirectoryTable.tsx"
-        },
-        {
-          "product": "P0016",
-          "screen": "logs",
-          "tablePath": "Tool/P0016-ChatCenter/src/features/logs/LogsScreen.tsx"
         },
         {
           "product": "P0020",
@@ -699,6 +868,45 @@
           "screenPath": "Tool/P0008-Sales-Console/app/src/app/orders/page.tsx"
         }
       ]
+    },
+    {
+      "id": "tab-loading",
+      "name": "Tab loading",
+      "layer": "shell-part",
+      "status": "ready",
+      "summary": "Portaled orb loader centered in main pane — Suspense chunk fallback + directory zero-cache fetch. Chrome inset via HubMainChromeStack + --hub-main-chrome-top.",
+      "composed": [
+        "HubLoadingView",
+        "HubScreenChunkFallback",
+        "HubLoaderRoot",
+        "HubMainChromeStack",
+        "hub-tab-loader-fill",
+        "ConsoleLoadingView",
+        "ConsolePaneLoading",
+        "AppScreenLoadingView"
+      ],
+      "scaffold": "packages/hub-ui/HubTabLoadingContract.md",
+      "verify": "node scripts/smoke-tab-loading.mjs --geometry; HubTabLoadingContract.md checklist",
+      "golden": {
+        "ref": "packages/hub-ui/tab-loading",
+        "contractPath": "packages/hub-ui/HubTabLoadingContract.md",
+        "componentPath": "packages/hub-ui/src/shell/HubLoadingView.tsx",
+        "cssPath": "packages/hub-ui/src/styles/hub-boot.css",
+        "screenPath": "Tool/P0016-ChatCenter/src/App.tsx",
+        "wrapperPath": "Tool/P0016-ChatCenter/src/components/sales-shell/ConsoleLoadingView.tsx"
+      },
+      "clones": [
+        {
+          "product": "P0004",
+          "screenPath": "Tool/P0004-Tool-Hub/src/components/sales-shell/HubLoadingView.tsx",
+          "notes": "AppScreenLoadingView — Suspense fallback"
+        },
+        {
+          "product": "P0016",
+          "screenPath": "Tool/P0016-ChatCenter/src/components/sales-shell/ConsoleLoadingView.tsx",
+          "notes": "ConsoleLoadingView + ConsolePaneLoading; smoke-tab-loading.mjs"
+        }
+      ]
     }
   ],
   "toolsWithHubUi": {
@@ -717,8 +925,8 @@
       "screens": [
         "bots",
         "groups",
-        "logs",
         "channels",
+        "system",
         "auth"
       ]
     },
@@ -752,7 +960,6 @@
     "P0001",
     "P0002",
     "P0007",
-    "P0010",
     "P0011",
     "P0012",
     "P0013",
@@ -775,5 +982,42 @@
       "role": "scaffold",
       "template": "directory"
     }
-  }
+  },
+  "skills": [
+    {
+      "id": "design-preview-5",
+      "kind": "skill",
+      "name": "Design Preview 5",
+      "status": "ready",
+      "summary": "Scaffold 5 layout-direction mockups ONLY when user explicitly requests design review. Mount in System tab (/system) via design-registry — default HubDesignTemplateEmpty, no /design/* routes or sidebar footer links.",
+      "triggers": [
+        "tạo 5 design mẫu",
+        "5 mockup",
+        "design preview",
+        "Design Template preview",
+        "review design trước"
+      ],
+      "antiTriggers": [
+        "add System tab",
+        "chuẩn hóa System",
+        "new UI feature without mockup request",
+        "skip design",
+        "code thẳng"
+      ],
+      "skillPath": ".cursor/skills/design-preview-5/SKILL.md",
+      "doc": "packages/hub-ui/UI_PATTERNS.md — System Design Template (P00xx — empty by default)",
+      "golden": {
+        "emptyState": "packages/hub-ui/src/content/HubDesignTemplateEmpty.tsx",
+        "P0016": "Tool/P0016-ChatCenter/src/features/system/design-template/DesignTemplatePage.tsx",
+        "P0020": "Tool/P0020-Data-Box/src/features/system/design-template/DesignTemplatePage.tsx",
+        "P0004": "Tool/P0004-Tool-Hub/src/features/system-hub/design-template/DesignTemplatePage.tsx"
+      },
+      "workflow": [
+        "Register feature in design-registry.ts",
+        "Add design-preview/<slug>/ under features/system/design-template/",
+        "Wire DesignTemplatePage pills + ?dtpl= URL param",
+        "After Design V1–V5 lock: delete preview folder + registry entry → HubDesignTemplateEmpty"
+      ]
+    }
+  ]
 }

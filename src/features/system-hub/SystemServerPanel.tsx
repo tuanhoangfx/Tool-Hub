@@ -1,20 +1,21 @@
 import { useCallback, useMemo, useState } from "react";
 import { Server } from "lucide-react";
-import { HubPaginatedCardGrid, HubPaginatedTableShell, semanticKpiIcon } from "@tool-workspace/hub-ui";
 import {
-  HubResultCount,
-  MiniBarChart,
-  ViewToggle,
-  type FilterDef,
-  type FilterValues,
-  type HubViewMode,
-} from "../../components/sales-shell";
+  chartBreakdownFromLabels,
+  HubPaginatedCardGrid,
+  HubPaginatedTableShell,
+  hubDirectoryListResetKey,
+  semanticKpiIcon,
+} from "@tool-workspace/hub-ui";
+import { type FilterDef, type FilterValues, type HubViewMode } from "../../components/sales-shell";
+import { SystemDirectoryToolbar } from "./SystemDirectoryToolbar";
 import { EmptyState } from "../../components/EmptyState";
 import { resolveDeployBadge } from "../../lib/badge-registry";
 import { useSessionState } from "../../hooks";
 import type { ResolvedTool } from "../../types";
 import { QuietChip, ToolCodeBadge } from "../hub/hub-tool-ui";
 import { toolCategoryForCode } from "./supabase-project-tools";
+import { SYSTEM_SERVER_CHART_DEFS } from "./system-display-prefs";
 import { SystemHubShell } from "./SystemHubShell";
 import { buildHostingDeployRows, hostingRowsForQuotaTab } from "./hosting-quota-build";
 import { hostingFiltersWithCounts, matchesHostingRow } from "./hosting-quota-filters";
@@ -22,31 +23,28 @@ import type { HostingDeployRow } from "./hosting-quota-types";
 import { HostingDeployCard } from "./HostingDeployCard";
 import { HostingDeployDetailModal } from "./HostingDeployDetailModal";
 
-function normLabel(v: string | null | undefined) {
-  const t = (v ?? "").trim();
-  return t ? t : "—";
-}
-
 function uniq<T>(items: T[]) {
   return [...new Set(items)];
 }
 
-function breakdown(labels: Array<string | null | undefined>): Array<{ label: string; value: number }> {
-  const map = new Map<string, number>();
-  for (const label of labels) {
-    const key = normLabel(label);
-    map.set(key, (map.get(key) ?? 0) + 1);
-  }
-  return [...map.entries()]
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value);
+function normLabel(v: string | null | undefined) {
+  const s = (v ?? "").trim();
+  return s || "—";
 }
 
 const DEPLOY_TABLE_COLUMNS = ["Provider", "Host", "Deployment", "Tools", "Region", "Plan", "URL", "Health", "Notes"] as const;
 
-function DeployTable({ rows, onOpen }: { rows: HostingDeployRow[]; onOpen: (id: string) => void }) {
+function DeployTable({
+  rows,
+  onOpen,
+  resetKey,
+}: {
+  rows: HostingDeployRow[];
+  onOpen: (id: string) => void;
+  resetKey?: string | number | boolean | null;
+}) {
   return (
-    <HubPaginatedTableShell items={rows} ariaLabel="Deployments table pages">
+    <HubPaginatedTableShell items={rows} resetKey={resetKey} ariaLabel="Deployments table pages">
       {(pageRows) => (
     <div className="hub-users-table-wrap overflow-x-auto">
       <table className="hub-users-table hub-users-table--wide min-w-[960px]">
@@ -170,8 +168,8 @@ export function SystemServerPanel({ tools }: { tools: ResolvedTool[] }) {
 
   const charts = useMemo(
     () => ({
-      byProvider: breakdown(rowsFiltered.map((r) => r.providerLabel)),
-      byHealth: breakdown(rowsFiltered.map((r) => r.healthLabel)),
+      byProvider: chartBreakdownFromLabels(rowsFiltered.map((r) => r.providerLabel)),
+      byHealth: chartBreakdownFromLabels(rowsFiltered.map((r) => r.healthLabel)),
     }),
     [rowsFiltered],
   );
@@ -190,32 +188,40 @@ export function SystemServerPanel({ tools }: { tools: ResolvedTool[] }) {
     [kpis],
   );
 
-  const chartSlots = useMemo(() => {
-    const palette = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
-    const providerItems = charts.byProvider.slice(0, 8).map((i, idx) => ({
-      ...i,
-      color: palette[idx % palette.length],
-    }));
-    const healthItems = charts.byHealth.slice(0, 8).map((i, idx) => ({
-      ...i,
-      color: palette[idx % palette.length],
-    }));
-    return {
-      category_bar: <MiniBarChart title="By provider" items={providerItems} />,
-      health_bar: <MiniBarChart title="By health" items={healthItems} />,
-    };
-  }, [charts]);
+  const chartBand = useMemo(
+    () => ({
+      defs: SYSTEM_SERVER_CHART_DEFS,
+      data: {
+        category_bar: charts.byProvider,
+        health_bar: charts.byHealth,
+      },
+    }),
+    [charts],
+  );
 
   const modalRow = useMemo(() => rowsRaw.find((r) => r.id === modalId) ?? null, [rowsRaw, modalId]);
   const openRow = useCallback((id: string) => setModalId(id), []);
   const closeModal = useCallback(() => setModalId(null), []);
 
+  const listResetKey = useMemo(
+    () => hubDirectoryListResetKey(query, filterValues, viewMode),
+    [query, filterValues, viewMode],
+  );
+
   const toolbar = useMemo(
     () => (
-      <>
-        <ViewToggle value={viewMode} onChange={setViewMode} />
-        <HubResultCount icon={Server} shown={rowsFiltered.length} total={rowsRaw.length} label="deployments" />
-      </>
+      <SystemDirectoryToolbar
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        countIcon={Server}
+        shown={rowsFiltered.length}
+        total={rowsRaw.length}
+        countLabel="deployments"
+        refreshing={false}
+        onRefresh={() => {}}
+        showTimeRange={false}
+        showRefresh={false}
+      />
     ),
     [viewMode, setViewMode, rowsFiltered.length, rowsRaw.length],
   );
@@ -232,14 +238,14 @@ export function SystemServerPanel({ tools }: { tools: ResolvedTool[] }) {
       ) : (
         <HubPaginatedCardGrid
           items={rowsFiltered}
-          resetKey={`${query}|${JSON.stringify(filterValues)}`}
+          resetKey={listResetKey}
           ariaLabel="Deployments card pages"
         >
           {(pageRows) => pageRows.map((row) => <HostingDeployCard key={row.id} row={row} onOpen={openRow} />)}
         </HubPaginatedCardGrid>
       )
     ) : (
-      <DeployTable rows={rowsFiltered} onOpen={openRow} />
+      <DeployTable rows={rowsFiltered} onOpen={openRow} resetKey={listResetKey} />
     );
 
   return (
@@ -255,7 +261,7 @@ export function SystemServerPanel({ tools }: { tools: ResolvedTool[] }) {
         onValuesChange={setFilterValues}
         toolbar={toolbar}
         kpiItems={kpiItems}
-        chartSlots={chartSlots}
+        chartBand={chartBand}
       >
         {body}
       </SystemHubShell>

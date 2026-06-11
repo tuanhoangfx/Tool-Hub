@@ -1,4 +1,4 @@
-/** Pre-zoom hub density; zoom default is 100% via `--hub-user-zoom-pct`. */
+/** Pre-zoom hub density; zoom default is 90% via `--hub-user-zoom-pct`. */
 export const HUB_COMPACT_SCALE = 0.9;
 
 function readZoomScale(): number {

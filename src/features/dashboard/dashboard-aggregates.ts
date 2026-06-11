@@ -1,10 +1,16 @@
-import { HUB_APP_TAB_GROUP_META, HUB_UI_TEMPLATE_META, navChartColor } from "@tool-workspace/hub-ui";
-import type { BarItem, FilterDef, FilterValues } from "../../components/sales-shell";
+import {
+  chartBreakdownFromPicker,
+  HUB_APP_TAB_GROUP_META,
+  HUB_UI_TEMPLATE_META,
+  matchesDirectoryTimeRange,
+  type TimeRange,
+} from "@tool-workspace/hub-ui";
+import type { FilterDef, FilterValues } from "../../components/sales-shell";
+import { resolveP0004ChartLegendIcon } from "../../lib/badge-registry-chart";
 import { enrichFilterDefs } from "../../lib/filter-option-counts";
 import type { DashboardTabEntry } from "./dashboard-tab-registry";
 
-const DASHBOARD_GROUP_IDS = ["hub", "users", "system"] as const;
-const DASHBOARD_TEMPLATE_IDS = ["directory", "system-panels", "document-toc"] as const;
+const iconFor = resolveP0004ChartLegendIcon;
 
 export type DashboardKpis = {
   total: number;
@@ -35,22 +41,21 @@ export function dashboardKpis(entries: DashboardTabEntry[]): DashboardKpis {
 }
 
 export function dashboardCharts(entries: DashboardTabEntry[]) {
-  const kpis = dashboardKpis(entries);
-  const group: BarItem[] = DASHBOARD_GROUP_IDS.map((id) => ({
-    label: HUB_APP_TAB_GROUP_META[id].label,
-    value: id === "hub" ? kpis.hub : id === "users" ? kpis.users : kpis.system,
-    color: navChartColor(HUB_APP_TAB_GROUP_META[id].iconTone),
-  }));
-  const template: BarItem[] = DASHBOARD_TEMPLATE_IDS.map((id) => ({
-    label: HUB_UI_TEMPLATE_META[id].label,
-    value:
-      id === "directory" ? kpis.directory : id === "system-panels" ? kpis.systemPanels : kpis.documentToc,
-    color: navChartColor(HUB_UI_TEMPLATE_META[id].iconTone),
-  }));
-  return { group, template };
+  return {
+    group: chartBreakdownFromPicker(
+      entries,
+      (e) => HUB_APP_TAB_GROUP_META[e.group].label,
+      { iconFor },
+    ),
+    template: chartBreakdownFromPicker(
+      entries,
+      (e) => HUB_UI_TEMPLATE_META[e.template].label,
+      { iconFor },
+    ),
+  };
 }
 
-type DashboardFilterOpts = { pinnedIds?: Set<string> };
+type DashboardFilterOpts = { pinnedIds?: Set<string>; range?: TimeRange };
 
 function matchesDashboardFilters(
   entry: DashboardTabEntry,
@@ -94,6 +99,12 @@ export function filterDashboardTabs(
   const q = query.trim().toLowerCase();
   return entries.filter((entry) => {
     if (!matchesDashboardFilters(entry, filters, opts)) return false;
+    if (
+      opts?.range &&
+      !matchesDirectoryTimeRange(entry.activityAt, opts.range, { staticAlwaysVisible: true })
+    ) {
+      return false;
+    }
     if (!q) return true;
     const hay = [
       entry.label,

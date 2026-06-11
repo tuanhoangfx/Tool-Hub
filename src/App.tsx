@@ -12,6 +12,7 @@ import {
   resolveHubActiveScreenId,
   useHubActiveScreenSync,
   useHubAppLog,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
 import { AppScreenLoadingView, DisplayPrefs, HubLoaderRoot, SalesSidebar } from "./components/sales-shell";
 import type { HubViewMode } from "./components/sales-shell";
@@ -33,7 +34,12 @@ import {
   DEFAULT_USER_HEADER_STAT_KEYS,
   USER_HEADER_STAT_DEFS,
 } from "./features/identity/user-header-metrics";
-import { DEFAULT_USER_KPI_KEYS, USER_KPI_DEFS } from "./features/identity/user-display-prefs";
+import {
+  DEFAULT_USER_CHART_KEYS,
+  DEFAULT_USER_KPI_KEYS,
+  USER_CHART_DEFS,
+  USER_KPI_DEFS,
+} from "./features/identity/user-display-prefs";
 import {
   defaultSystemHeaderStatKeys,
   systemHeaderStatDefs,
@@ -56,7 +62,7 @@ import { prefetchAppScreenIdle } from "./lib/app-lazy-screens";
 import { prefetchHubBackgroundData } from "./lib/hub-background-prefetch";
 import { resolveVersionReleaseMeta } from "./lib/app-release";
 import { formatDate } from "./lib/tooling";
-import { compactIconSize } from "./lib/ui-scale";
+
 import { runWorkspaceRefresh } from "./services/workspace-scan";
 
 const AUTO_REFRESH_MS = 12 * 60 * 60 * 1000;
@@ -91,7 +97,12 @@ function AppDisplayPrefs({ sidebarRow = false, scope = "tab" }: { sidebarRow?: b
       : !isGlobal && screen === "system"
         ? systemDisplayDefs(systemTab)
         : !isGlobal && screen === "users"
-          ? { kpis: USER_KPI_DEFS, charts: undefined, defaultKpiKeys: DEFAULT_USER_KPI_KEYS, defaultChartKeys: undefined }
+          ? {
+              kpis: USER_KPI_DEFS,
+              charts: USER_CHART_DEFS,
+              defaultKpiKeys: DEFAULT_USER_KPI_KEYS,
+              defaultChartKeys: DEFAULT_USER_CHART_KEYS,
+            }
           : null;
   const headerStats =
     isGlobal || screen === "library"

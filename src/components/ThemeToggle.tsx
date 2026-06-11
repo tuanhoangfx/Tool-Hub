@@ -1,5 +1,5 @@
 import type { Appearance } from "../hooks/useTheme";
-import { compactIconSize } from "../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import { MaterialIcon } from "./MaterialIcon";
 
 type ThemeToggleProps = {

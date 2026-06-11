@@ -13,6 +13,11 @@ import { SYSTEM_TAB_ITEMS, type SystemTab } from "./components/SystemTabs";
 import { useSystemChrome } from "./system-chrome-context";
 import { useRegisterSystemTabFilter } from "./system-filter-registry";
 import {
+  directoryChartBandNode,
+  type ChartRow,
+  type PrefItem,
+} from "@tool-workspace/hub-ui";
+import {
   buildSystemChartsBand,
   filterKpiByDisplay,
   useSystemTabDisplayState,
@@ -29,7 +34,15 @@ export type SystemHubShellProps = {
   values?: FilterValues;
   onValuesChange?: (v: FilterValues) => void;
   toolbar?: ReactNode;
+  /** Golden filter row 2 — bulk bar + domain actions (right of filter dropdowns). */
+  filterRowActions?: ReactNode;
   kpiItems?: KpiTileData[];
+  /** Golden chart band — defs order, Display prefs visibility, top-3 + Others. */
+  chartBand?: {
+    defs: PrefItem[];
+    data: Record<string, ChartRow[] | undefined>;
+  };
+  /** @deprecated Prefer `chartBand` — pre-rendered slots bypass golden `directoryChartBandNode`. */
   chartSlots?: SystemChartSlots;
   /** Override pill between analytics and body (default: tab label from SYSTEM_TAB_ITEMS). */
   sectionRuleLabel?: string;
@@ -47,7 +60,9 @@ export function SystemHubShell({
   values = {},
   onValuesChange,
   toolbar,
+  filterRowActions,
   kpiItems = [],
+  chartBand,
   chartSlots = {},
   sectionRuleLabel,
   showFilter = true,
@@ -64,10 +79,12 @@ export function SystemHubShell({
   }, []);
 
   const kpiVisible = useMemo(() => filterKpiByDisplay(kpiItems, visKpi), [kpiItems, visKpi]);
-  const chartsBand = useMemo(
-    () => buildSystemChartsBand(visCharts, chartSlots),
-    [visCharts, chartSlots],
-  );
+  const chartsBand = useMemo(() => {
+    if (chartBand) {
+      return directoryChartBandNode({ visCharts, defs: chartBand.defs, data: chartBand.data });
+    }
+    return buildSystemChartsBand(visCharts, chartSlots);
+  }, [chartBand, visCharts, chartSlots]);
 
   const ruleLabel =
     sectionRuleLabel ?? SYSTEM_TAB_ITEMS.find((t) => t.id === tabId)?.label ?? "Data";
@@ -88,6 +105,7 @@ export function SystemHubShell({
           values={values}
           onValuesChange={onValuesChange ?? (() => {})}
           toolbar={toolbar}
+          row2Actions={filterRowActions}
         />
       ) : null,
     [
@@ -102,6 +120,7 @@ export function SystemHubShell({
       query,
       values,
       toolbar,
+      filterRowActions,
       onValuesChange,
     ],
   );
@@ -130,7 +149,7 @@ export function SystemHubShell({
       {filterChrome}
       <HubTabScreenBody
         embedded
-        kpis={kpiVisible}
+        kpis={kpiVisible.length > 0 ? kpiVisible : undefined}
         charts={chartsBand}
         sectionRuleLabel={ruleLabel}
       >

@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import type { FieldSpec } from "../../../lib/hub-schema-spec";
 import { GROUP_TONE } from "../../../lib/hub-schema-spec";
 import { resolveFieldSpecIcon } from "../../../lib/badge-registry";
-import { compactIconSize } from "../../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import { SchemaGroupBadge, SchemaModeBadge } from "./SchemaBadges";
 
 /**

@@ -89,18 +89,27 @@ export function ToggleRow({
   on,
   onChange,
   disabled = false,
+  onDisabledClick,
 }: {
   label: string;
   on: boolean;
   onChange: () => void;
   /** Gray out when cap reached (e.g. KPI max visible). */
   disabled?: boolean;
+  /** Fires when user clicks a disabled row (e.g. show cap message in app log). */
+  onDisabledClick?: () => void;
 }) {
   return (
     <button
       type="button"
-      onClick={onChange}
-      disabled={disabled}
+      onClick={() => {
+        if (disabled) {
+          onDisabledClick?.();
+          return;
+        }
+        onChange();
+      }}
+      disabled={disabled && !onDisabledClick}
       aria-disabled={disabled || undefined}
       className={`hub-settings-toggle flex w-full items-center gap-2 rounded-md px-2 py-0.5 text-left text-[11px] focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-400/45 focus-visible:outline-offset-1${
         disabled ? " hub-settings-toggle--disabled cursor-not-allowed opacity-40" : ""

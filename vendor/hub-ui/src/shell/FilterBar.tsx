@@ -7,22 +7,34 @@ import {
   ChevronDown,
   Check,
   Activity,
+  Clock,
+  FolderOpen,
+  KeyRound,
   Layers,
   Rocket,
   Link2,
   AlertTriangle,
+  Pin,
+  RefreshCw,
+  Share2,
   ShieldCheck,
   BriefcaseBusiness,
   Package,
+  Star,
+  LayoutTemplate,
 } from "lucide-react";
 import type { FilterIconMeta } from "./filter-icons";
 import { resolveFilterAllIcon, resolveFilterOptionIcon } from "./filter-icons";
 import {
+  HUB_FILTER_DROPDOWN_LIST_CLASS,
   HUB_FILTER_DROPDOWN_PANEL_CLASS,
+  HUB_FILTER_DROPDOWN_ROW_CLASS,
   HubFilterDropdownCircle,
+  hubFilterTriggerClass,
 } from "./filter-dropdown-primitives";
 import { compactIconSize } from "../ui-scale";
 import { registerHubSearchClear, registerHubSearchFocus } from "../keyboard/hub-keyboard-shortcuts";
+import { HubSearchField } from "./HubSearchField";
 
 export type FilterOption = { value: string; label: string; color?: string; count?: number; iconSrc?: string };
 export type FilterDef = {
@@ -45,12 +57,18 @@ const FILTER_ICONS: Record<string, React.ElementType> = {
   drift: AlertTriangle,
   kind: Link2,
   links: Link2,
-  sync: Rocket,
+  sync: RefreshCw,
   org: Layers,
   region: Layers,
   plan: Layers,
   entity: Layers,
   group: Layers,
+  template: LayoutTemplate,
+  pinned: Pin,
+  share: Share2,
+  folder: FolderOpen,
+  service: KeyRound,
+  usage: Clock,
 };
 
 export type FilterValues = Record<string, string[]>;
@@ -140,33 +158,12 @@ export function FilterBar({
     (query ? 1 : 0) + filters.reduce((n, f) => n + (values[f.key]?.length ?? 0), 0);
 
   const searchField = (
-    <div className="relative min-w-[var(--hub-search-min-w)] flex-1">
-      <Search size={compactIconSize(14)} className="pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2 text-[var(--muted)]" />
-      <input
-        ref={inputRef}
-        value={query}
-        onChange={(e) => onQueryChange(e.target.value)}
-        placeholder={placeholder}
-        className="field w-full"
-        style={{ paddingLeft: 31, paddingRight: query ? 25 : 36 }}
-      />
-      {!query ? (
-        <span className="pointer-events-none absolute right-2 top-1/2 hidden -translate-y-1/2 sm:flex">
-          <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-indigo-200/90">
-            F
-          </kbd>
-        </span>
-      ) : null}
-      {query ? (
-        <button
-          type="button"
-          onClick={() => onQueryChange("")}
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-[var(--muted)] hover:bg-white/5 hover:text-[var(--text)]"
-        >
-          <X size={compactIconSize(12)} />
-        </button>
-      ) : null}
-    </div>
+    <HubSearchField
+      inputRef={inputRef}
+      value={query}
+      onChange={onQueryChange}
+      placeholder={placeholder}
+    />
   );
 
   const clearFiltersBtn = hasActive ? (
@@ -184,7 +181,7 @@ export function FilterBar({
   ) : null;
 
   const filterDropdowns = filters.map((f) => (
-    <MultiFilterDropdown
+    <HubMultiFilterDropdown
       key={f.key}
       filter={f}
       selected={values[f.key] ?? []}
@@ -210,16 +207,6 @@ export function FilterBar({
             <div className="ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2">{row2Actions}</div>
           ) : null}
         </div>
-        {hasActive ? (
-          <ActivePills
-            query={query}
-            onClearQ={() => onQueryChange("")}
-            filters={filters}
-            values={values}
-            onClearAll={clearAll}
-            onRemove={setFilter}
-          />
-        ) : null}
       </div>
     );
 
@@ -313,15 +300,17 @@ function resolveFilterTriggerIcon(filter: FilterDef, selected: string[]): Filter
   return null;
 }
 
-function MultiFilterDropdown({
-  filter,
-  selected,
-  onChange,
-}: {
+export type HubMultiFilterDropdownProps = {
   filter: FilterDef;
   selected: string[];
   onChange: (values: string[]) => void;
-}) {
+};
+
+export function HubMultiFilterDropdown({
+  filter,
+  selected,
+  onChange,
+}: HubMultiFilterDropdownProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const ref = useRef<HTMLDivElement>(null);
@@ -369,11 +358,7 @@ function MultiFilterDropdown({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex h-[var(--hub-control-h)] items-center gap-1.5 rounded-lg border px-3 text-xs transition-colors ${
-          selected.length > 0
-            ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-200"
-            : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
-        }`}
+        className={hubFilterTriggerClass(selected.length > 0)}
       >
         {triggerIconSrc ? (
           <img src={triggerIconSrc} alt="" className="h-3 w-3 shrink-0 rounded-sm object-contain" aria-hidden />
@@ -407,11 +392,11 @@ function MultiFilterDropdown({
               />
             </div>
           </div>
-          <div className="max-h-72 overflow-auto p-1">
+          <div className={HUB_FILTER_DROPDOWN_LIST_CLASS}>
             <button
               type="button"
               onClick={toggleAll}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors hover:bg-white/5"
+              className={HUB_FILTER_DROPDOWN_ROW_CLASS}
             >
               <HubFilterDropdownCircle checked={allSelected} indeterminate={someSelected} />
               {allIcon ? <FilterIconGlyph meta={allIcon} /> : null}
@@ -431,7 +416,7 @@ function MultiFilterDropdown({
                 key={o.value}
                 type="button"
                 onClick={() => toggle(o.value)}
-                className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-white/5"
+                className={HUB_FILTER_DROPDOWN_ROW_CLASS}
               >
                 <HubFilterDropdownCircle checked={selected.includes(o.value)} />
                 <FilterOptionGlyph filterKey={filter.key} option={o} />
@@ -462,7 +447,7 @@ export type HubSingleFilterDropdownProps = {
   triggerFormat?: "label-value" | "value";
 };
 
-/** Single-select — identical trigger/panel chrome as `MultiFilterDropdown`. */
+/** Single-select — identical trigger/panel chrome as `HubMultiFilterDropdown`. */
 export function HubSingleFilterDropdown({
   filterKey,
   label,
@@ -530,7 +515,7 @@ export function HubSingleFilterDropdown({
           />
         </div>
       </div>
-      <div className="max-h-72 overflow-auto p-1">
+      <div className={HUB_FILTER_DROPDOWN_LIST_CLASS}>
         {filtered.map((o) => (
           <button
             key={o.value}
@@ -539,7 +524,7 @@ export function HubSingleFilterDropdown({
               onChange(o.value);
               setOpen(false);
             }}
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-white/5"
+            className={HUB_FILTER_DROPDOWN_ROW_CLASS}
           >
             <HubFilterDropdownCircle checked={o.value === value} />
             <FilterOptionGlyph filterKey={filterKey} option={o} />
@@ -586,11 +571,7 @@ export function HubSingleFilterDropdown({
         aria-haspopup="listbox"
         aria-expanded={open}
         onClick={() => !disabled && setOpen((v) => !v)}
-        className={`inline-flex h-[var(--hub-control-h)] items-center gap-1.5 rounded-lg border px-3 text-xs transition-colors ${
-          selected.length > 0
-            ? "border-indigo-500/40 bg-indigo-500/10 text-indigo-200"
-            : "border-white/10 bg-[var(--panel-2)] text-[var(--text)] hover:bg-white/5"
-        }`}
+        className={hubFilterTriggerClass(selected.length > 0)}
       >
         {triggerIcon ? <FilterIconGlyph meta={triggerIcon} size={compactIconSize(12)} /> : null}
         <span className="min-w-0 truncate">

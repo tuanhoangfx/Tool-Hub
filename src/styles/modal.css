@@ -219,7 +219,7 @@
 }
 
 .file-list code {
-  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--color-text-main);
   background: transparent;
@@ -253,7 +253,7 @@
 
 .release-asset-name {
   flex: 1;
-  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.74rem;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -322,7 +322,7 @@
 }
 
 .asset-row code {
-  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.74rem;
   color: var(--color-text-main);
   background: transparent;

@@ -19,6 +19,7 @@ import {
   LazySystemOverviewPanel,
   LazySystemSchemaPanel,
   LazySystemServerPanel,
+  LazySystemSkillsCatalogPanel,
   LazySystemSupabaseQuotaPanel,
 } from "./system-lazy-panels";
 
@@ -156,6 +157,9 @@ export function SystemHubScreen({
           </TabPanel>
           <TabPanel tabId="agent" activeTab={tab} visited={visited}>
             <LazySystemAgentContextPanel />
+          </TabPanel>
+          <TabPanel tabId="skills" activeTab={tab} visited={visited}>
+            <LazySystemSkillsCatalogPanel />
           </TabPanel>
           {visited.has("template") ? (
             <div className={tab === "template" ? undefined : "hidden"} aria-hidden={tab !== "template"}>

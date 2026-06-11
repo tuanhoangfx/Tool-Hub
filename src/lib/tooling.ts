@@ -70,16 +70,7 @@ export function dateKey(d: Date | number | string): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-export function deployLabel(target?: string): string {
-  const map: Record<string, string> = {
-    "github-pages": "GitHub Pages",
-    vercel: "Vercel",
-    vps: "VPS · CloudFly",
-    "github-release": "GitHub Release",
-    local: "Local only",
-  };
-  return target ? (map[target] ?? target) : "—";
-}
+export { deployLabel } from "@tool-workspace/hub-ui";
 
 function firstReleaseAsset(remote?: ToolRemoteState) {
   return remote?.latestRelease?.assets?.[0]?.browser_download_url;

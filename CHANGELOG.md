@@ -1,6 +1,26 @@
 # Changelog
 
-## 2026-06-09 - AppTabHeader golden layout restore + version timestamp
+## 2026-06-12 - Hub-UI SSOT consolidation + dead code cleanup
+
+- Version: `5.2.19`
+- Timestamp: 2026-06-12 (UTC+7)
+- Type: Patch
+- Status: Committed
+- Release: https://infi.io.vn
+
+### Changes
+
+- **hub-ui SSOT:** `deployLabel`, `formatTabHeaderTimestamp`, `badge-registry-core` promoted to `@tool-workspace/hub-ui` v0.2.1; vendor full sync.
+- **Cleanup:** Removed local `ui-scale`, `hide-boot-loader`, dead re-export shims, 19 unused feature files; `compactIconSize` imports from hub-ui.
+- **Parity:** `profileRoleClient` on sidebar + auth gate; directory screen golden markers.
+- **Knip:** Expanded ignore for vendored workspace deps; deadcode gate green.
+
+### Verification
+
+- `node Tool/scripts/hub-ui-parity-check.mjs --code P0004`
+- `pnpm run deadcode`
+
+---
 
 - Version: `5.2.18`
 - Timestamp: 2026-06-09 13:30 (UTC+7)

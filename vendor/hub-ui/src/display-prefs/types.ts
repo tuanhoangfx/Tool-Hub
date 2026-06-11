@@ -84,13 +84,10 @@ export type HubDisplayPrefsProps = {
   subTabDisplay?: SubTabDisplayConfig;
   /** @deprecated Prefer `displayExtras`. */
   generalExtras?: ReactNode;
-  /** Tool-specific Display subsections (App mode, List sort, Folders, …). */
+  /** Extra toggles rendered inside App mode (e.g. 2FA mask password). */
   displayExtras?: ReactNode;
-  /**
-   * @deprecated Subsections inside `displayExtras` are nested under the Display TOC group.
-   * Use `SettingsSubsection` / `Section` — no separate TOC rows.
-   */
-  generalSectionToc?: { id: string; label: string; icon?: ReactNode; emoji?: string }[];
+  /** Extra footer actions before “Reset to defaults” (e.g. tab-specific Save). */
+  footerActions?: ReactNode;
   tablePanel?: ReactNode;
   /** Actions in the Table columns section header (e.g. Reset columns). */
   tableSectionActions?: ReactNode;

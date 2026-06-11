@@ -253,7 +253,7 @@
         "adminSetupAt": {
           "type": "string",
           "format": "date-time",
-          "description": "ISO UTC — lần thiết lập urls.admin (P0010 và bot admin UI)."
+          "description": "ISO UTC — lần thiết lập urls.admin (local admin UI)."
         },
         "appSetupAt": {
           "type": "string",

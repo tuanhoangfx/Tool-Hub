@@ -4,8 +4,6 @@ import manifestJson from "../../../tool.manifest.json";
 import { Boxes } from "lucide-react";
 import {
   HubResultCount,
-  HubTimeRangeSelect,
-  MiniBarChart,
   ViewToggle,
   type FilterDef,
   type FilterValues,
@@ -17,6 +15,8 @@ import { readHubListPrefs } from "../../lib/url-prefs";
 import type { ResolvedTool, ToolManifest, ToolRepository } from "../../types";
 import { hubCharts, hubKpis, matchesTimeRange } from "../hub/hub-aggregates";
 import { ToolOverviewContent } from "../overview/ToolOverviewContent";
+import { HubDirectoryToolbarSlots } from "@tool-workspace/hub-ui";
+import { HUB_CHART_DEFS } from "../hub/hub-prefs";
 import { SystemHubShell } from "./SystemHubShell";
 import { filterToolsForSystem } from "./system-hub-aggregates";
 
@@ -127,12 +127,15 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
 
   const kpiItems = useMemo(() => buildHubKpiItems(kpis), [kpis]);
 
-  const chartSlots = useMemo(
+  const chartBand = useMemo(
     () => ({
-      health_bar: <MiniBarChart title="By Health" items={charts.health.slice(0, 8)} />,
-      category_bar: <MiniBarChart title="By Category" items={charts.category.slice(0, 6)} />,
-      deploy_bar: <MiniBarChart title="Deploy distribution" items={charts.deploy} />,
-      status_bar: <MiniBarChart title="Status distribution" items={charts.status} />,
+      defs: HUB_CHART_DEFS,
+      data: {
+        health_bar: charts.health,
+        category_bar: charts.category,
+        deploy_bar: charts.deploy,
+        status_bar: charts.status,
+      },
     }),
     [charts],
   );
@@ -148,13 +151,13 @@ export function SystemOverviewPanel({ tools }: { tools: ResolvedTool[] }) {
       onValuesChange={handleFilterValuesChange}
       toolbar={
         <>
-          <HubTimeRangeSelect value={prefs.range} />
+          <HubDirectoryToolbarSlots showTimeRange timeRange={prefs.range} />
           <ViewToggle value={viewMode} onChange={setViewMode} />
-          <HubResultCount icon={Boxes} shown={filteredTools.length} total={tools.length} />
+          <HubResultCount icon={Boxes} shown={filteredTools.length} total={tools.length} label="tools" />
         </>
       }
       kpiItems={kpiItems}
-      chartSlots={chartSlots}
+      chartBand={chartBand}
     >
       <ToolOverviewContent
         tool={activeTool}

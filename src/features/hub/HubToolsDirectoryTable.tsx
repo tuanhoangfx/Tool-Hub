@@ -2,6 +2,7 @@ import {
   HubDirectoryTableShell,
   type HubSortDir,
   type HubTableColumnRole,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
 import { ToolAvatar } from "../../components/ToolAvatar";
 import { auditManifestLinks } from "../overview/manifest-link-audit";
@@ -24,7 +25,7 @@ import {
   resolveHealthStatusIcon,
   resolveLocalOnlyIcon,
 } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { toolIconName, toolSvgIcon } from "../../lib/visual";
 import type { ResolvedTool } from "../../types";
 
@@ -100,6 +101,7 @@ export function HubToolsDirectoryTable({
   onSelect,
   onCopyPath,
   linkHealth,
+  resetKey,
 }: {
   tools: ResolvedTool[];
   sortKey: HubTableSortKey;
@@ -113,6 +115,7 @@ export function HubToolsDirectoryTable({
   onSelect: (id: string) => void;
   onCopyPath: (path: string) => void;
   linkHealth?: Record<string, HealthState>;
+  resetKey?: string | number | boolean | null;
 }) {
   const driftWarn = resolveDriftChipIcon();
   const driftOk = resolveDriftCleanIcon();
@@ -140,6 +143,7 @@ export function HubToolsDirectoryTable({
       onToggleSelectAll={onToggleSelectAll}
       allVisibleSelected={allVisibleSelected}
       selectAllLabel="Select all visible tools"
+      resetKey={resetKey}
       getRowClassName={(tool) => (detailToolId === tool.id ? " is-detail" : "")}
       renderRowCells={(tool) => {
         const fresh = freshnessLevel(tool.updatedAt);

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-09T11:21:34.918Z",
+  "generatedAt": "2026-06-11T13:42:56.813Z",
   "root": "E:\\Dev",
   "repositories": [
     {
@@ -91,7 +91,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "5.1.3",
+      "localVersion": "5.2.18",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -123,10 +123,10 @@
       "scriptFiles": [
         "scripts/apply-fix-profiles-rls.ps1",
         "scripts/apply-hub-identity-migration.ps1",
+        "scripts/apply-hub-login-id-infix1-api.mjs",
         "scripts/apply-hub-login-id.mjs",
         "scripts/apply-hub-migrations-all.mjs",
-        "scripts/apply-hub-tool-access.ps1",
-        "scripts/apply-hub-user-directory-projects.ps1"
+        "scripts/apply-hub-tool-access.ps1"
       ]
     },
     {
@@ -263,44 +263,6 @@
       ]
     },
     {
-      "id": "cursor-telegram",
-      "code": "P0010",
-      "name": "Cursor Telegram",
-      "repo": "tuanhoangfx/P0010-Cursor-Telegram",
-      "branch": "main",
-      "remoteEnabled": true,
-      "localVersion": "1.0.0",
-      "category": "Bot",
-      "audience": "Tool maintainers",
-      "status": "Ready",
-      "summary": "Bridge Cursor local Agent ↔ Telegram forum topics; admin UI, 2-way sync, stop command.",
-      "localPath": "E:\\Dev\\Tool\\P0010-Cursor-Telegram",
-      "tags": [
-        "Node.js",
-        "PowerShell",
-        "Telegram Bot API",
-        "Cursor Hooks"
-      ],
-      "localUrl": "http://127.0.0.1:3922",
-      "deployTarget": "local",
-      "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": [
-        "scripts/git-push.ps1"
-      ]
-    },
-    {
       "id": "infix1-mail",
       "code": "P0011",
       "name": "Infix1 Mail",
@@ -383,7 +345,7 @@
     },
     {
       "id": "youtube-channel-dashboard",
-      "code": "LOCAL-011",
+      "code": "LOCAL-010",
       "name": "P0013-czp-youtube-tda-team",
       "repo": "",
       "branch": "main",
@@ -422,7 +384,7 @@
       "repo": "tuanhoangfx/chat-center",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.1.0",
+      "localVersion": "1.6.69",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Draft",
@@ -436,11 +398,13 @@
         "zca-js",
         "@tool-workspace/hub-ui"
       ],
+      "appUrl": "https://chathub.infi.io.vn",
       "localUrl": "http://127.0.0.1:5186",
-      "deployTarget": "vercel",
+      "deployTarget": "vps",
       "usage": [
         "Dev: node ../scripts/ensure-dev-product.cjs P0016",
-        "Build: corepack pnpm build"
+        "Build: corepack pnpm build",
+        "App: https://chathub.infi.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -452,38 +416,36 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
+        "scripts/add-local-oauth-redirect.mjs",
+        "scripts/analyze-chunks.mjs",
+        "scripts/apply-chatcenter-migrations-api.mjs",
         "scripts/apply-hub-seed.ps1",
-        "scripts/chathub-nginx-blocks.mjs",
-        "scripts/deploy-console-remote.mjs",
-        "scripts/deploy-remote.mjs",
-        "scripts/ensure-dev.cjs",
-        "scripts/load-vps-env.mjs"
+        "scripts/audit-public-shadow.cjs",
+        "scripts/audit-reexport-scope.mjs"
       ]
     },
     {
       "id": "infi-project-performance-tracker",
-      "code": "LOCAL-015",
-      "name": "P0019-Work-Performance (Legacy)",
-      "repo": "tuanhoangfx/-Work-Performance",
+      "code": "LOCAL-013",
+      "name": "P0019-Work-Performance",
+      "repo": "",
       "branch": "main",
       "remoteEnabled": false,
       "localVersion": "0.0.0",
       "category": "Local",
       "audience": "Tool maintainers",
-      "status": "Retired",
-      "summary": "Legacy Kanban — Todo migrated to P0020-Data-Box tab /todo. Folder kept until decommission.",
+      "status": "Needs review",
+      "summary": "Local workspace asset discovered by scanner.",
       "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
       "tags": [
         "Local",
-        "Workspace",
-        "migrated-to-P0020/todo"
+        "Workspace"
       ],
-      "localUrl": "http://127.0.0.1:5177/todo",
-      "migratedTo": "P0020/todo",
+      "localUrl": "http://127.0.0.1:5179",
       "deployTarget": "vercel",
       "usage": [
-        "Use P0020 Todo: http://127.0.0.1:5177/todo",
-        "Legacy dev (deprecated): npm run dev in P0019 folder"
+        "Run the configured dev command from package.json.",
+        "Run the configured build command from package.json."
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -503,7 +465,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "4.3.16",
+      "localVersion": "4.3.27",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
@@ -514,17 +476,16 @@
         "TypeScript",
         "Vite",
         "Supabase",
-        "Todo",
-        "Hub-UI"
+        "Inter",
+        "Chrome extension E0001-cookie-bridge"
       ],
       "appUrl": "https://databox.infi.io.vn",
-      "localUrl": "http://127.0.0.1:5177/todo",
+      "localUrl": "http://127.0.0.1:5177",
       "deployTarget": "vercel",
       "usage": [
         "Dev: corepack pnpm dev",
-        "Todo tab: http://127.0.0.1:5177/todo",
-        "Verify Todo: corepack pnpm verify:todo && corepack pnpm verify:todo:standalone",
-        "Build: corepack pnpm build"
+        "Build: corepack pnpm build",
+        "App: https://databox.infi.io.vn"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -536,8 +497,12 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/verify-todo-standalone.mjs",
-        "scripts/decommission-p0019-check.mjs"
+        "scripts/apply-all-p0020.mjs",
+        "scripts/apply-batches-pg.mjs",
+        "scripts/apply-cookie-share-vault-sync-api.mjs",
+        "scripts/apply-databox-env.mjs",
+        "scripts/apply-databox-migrations-api.mjs",
+        "scripts/apply-fix-v-note-api.mjs"
       ]
     },
     {
@@ -637,13 +602,12 @@
       "name": "Fanpage Dashboard",
       "repo": "tuanhoangfx/P0023-Fanpage-Dashboard",
       "branch": "main",
-      "remoteEnabled": false,
+      "remoteEnabled": true,
       "localVersion": "2.1.1",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Archived",
-      "supersededBy": "P0016",
-      "summary": "Archived — Fanpage ops on P0016 only (https://chathub.infi.io.vn/fanpages). Repo to be removed.",
+      "summary": "Archived — use P0016 Chat Center → Fanpages only. Repo scheduled for removal.",
       "localPath": "E:\\Dev\\Tool\\P0023-Fanpage-Dashboard",
       "tags": [
         "React",
@@ -656,8 +620,9 @@
       "localUrl": "http://127.0.0.1:3023",
       "deployTarget": "vercel",
       "usage": [
-        "Use P0016 → Fanpages: https://chathub.infi.io.vn/fanpages",
-        "Do not use — scheduled for repo deletion"
+        "Dev: corepack pnpm open",
+        "Build: corepack pnpm build",
+        "App: https://chathub.infi.io.vn/fanpages"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -677,7 +642,7 @@
       "repo": "tuanhoangfx/E0001-cookie-bridge",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.1.1",
+      "localVersion": "1.1.2",
       "category": "Extension",
       "audience": "Tool maintainers",
       "status": "Active",
@@ -708,47 +673,13 @@
         "RELEASE.md"
       ],
       "scriptFiles": [
-        "scripts/package-extension.ps1",
-        "scripts/test-bindings-pull-logic.mjs"
+        "scripts/complete-cws-listing.mjs",
+        "scripts/cws-finish-listing.mjs",
+        "scripts/cws-get-status.mjs",
+        "scripts/cws-notify-status.mjs",
+        "scripts/cws-oauth-token.mjs",
+        "scripts/cws-set-unlisted.mjs"
       ]
-    },
-    {
-      "id": "infi-work-performance",
-      "code": "P0019",
-      "name": "Infi Work Performance (Legacy)",
-      "repo": "tuanhoangfx/-Work-Performance",
-      "branch": "main",
-      "remoteEnabled": false,
-      "localVersion": "0.0.0",
-      "category": "Web",
-      "audience": "Tool maintainers",
-      "status": "Retired",
-      "summary": "Legacy Kanban repo — Todo migrated to P0020-Data-Box tab /todo. Keep folder until explicit decommission.",
-      "localPath": "E:\\Dev\\Tool\\P0019-Work-Performance",
-      "tags": [
-        "React",
-        "Vite",
-        "Supabase",
-        "migrated-to-P0020/todo"
-      ],
-      "appUrl": "https://inptracker.vercel.app",
-      "localUrl": "http://127.0.0.1:5177/todo",
-      "migratedTo": "P0020/todo",
-      "deployTarget": "vercel",
-      "usage": [
-        "Use P0020-Data-Box Todo tab: http://127.0.0.1:5177/todo",
-        "Legacy dev (deprecated): npm run dev in P0019 folder"
-      ],
-      "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
-      "manifestPath": "tool.manifest.json",
-      "trackedFiles": [
-        "tool.manifest.json",
-        "package.json",
-        "README.md",
-        "CHANGELOG.md",
-        "RELEASE.md"
-      ],
-      "scriptFiles": []
     }
   ]
 }

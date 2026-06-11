@@ -1,8 +1,11 @@
 import { CheckCircle2, ExternalLink, Layers } from "lucide-react";
-import { HubToolDetailSection } from "@tool-workspace/hub-ui";
+import {
+  HubToolDetailSection,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
 import { MetricBadge } from "../../components/sales-shell";
 import { resolveHealthStatusIcon } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { QuietChip } from "../hub/hub-tool-ui";
 import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
 import { resolveProjectMetricsSource } from "./supabase-project-metrics-source";

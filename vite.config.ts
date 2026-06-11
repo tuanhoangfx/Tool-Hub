@@ -116,6 +116,8 @@ export default defineConfig(({ mode }) => {
         { find: "@tool-workspace/hub-ui", replacement: path.join(hubUiSrc, "index.ts") },
         { find: /^@tool-workspace\/hub-identity\/(.+)$/, replacement: `${hubIdentitySrc}/$1` },
         { find: "@tool-workspace/hub-identity", replacement: path.join(hubIdentitySrc, "index.ts") },
+        { find: /^@dev\/hub-identity\/(.+)$/, replacement: `${hubIdentitySrc}/$1` },
+        { find: "@dev/hub-identity", replacement: path.join(hubIdentitySrc, "index.ts") },
         { find: "@dev/hub-load", replacement: hubLoadRoot },
       ],
     },

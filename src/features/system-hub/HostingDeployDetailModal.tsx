@@ -5,9 +5,10 @@ import {
   HubToolDetailSection,
   HUB_TOOL_DETAIL_SCROLL_ROOT,
   HUB_TOOL_DETAIL_SECTIONS_CLASS,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
 import { MetricBadge } from "../../components/sales-shell/MetricBadge";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { resolveDeployBadge } from "../../lib/badge-registry";
 import type { ResolvedTool } from "../../types";
 import { TocSectionNav } from "../overview/TocSectionNav";

@@ -125,7 +125,7 @@
   margin: 0.35rem 0 0.25rem;
   font-size: 0.7rem;
   color: var(--color-text-muted, #888);
-  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -375,7 +375,7 @@
 }
 
 .version-value {
-  font-family: ui-monospace, "Cascadia Mono", Menlo, monospace;
+  font-family: var(--font-mono);
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-text-main);

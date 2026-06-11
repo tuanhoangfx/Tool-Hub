@@ -6,7 +6,7 @@ import {
   type VersionPipelineAction,
   type VersionPipelineResult,
 } from "../../services/version-pipeline";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import type { ToolVersionHistoryRow } from "./tool-versions";
 import { versionChecklist } from "./version-checklist";
 

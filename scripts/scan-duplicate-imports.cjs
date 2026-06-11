@@ -34,8 +34,17 @@ function walk(dir) {
 
 walk(root);
 
+const registryPath = path.join(root, "lib", "badge-registry.ts");
+const registryText = fs.readFileSync(registryPath, "utf8");
+if (/from\s+["']\.\/badge-registry-chart["']/.test(registryText)) {
+  console.error(
+    "badge-registry.ts must not re-export badge-registry-chart (circular import → WORKSPACE_ROLE TDZ)",
+  );
+  process.exit(1);
+}
+
 if (dupes.length === 0) {
-  console.log("scan:imports — no duplicate named imports in src/");
+  console.log("scan:imports — no duplicate named imports; badge-registry cycle OK");
   process.exit(0);
 }
 

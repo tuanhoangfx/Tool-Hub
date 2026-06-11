@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { compactIconSize } from "../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import type { PipelineColDef } from "./version-pipeline-defs";
 
 export function PipelineColumnHeader({ col }: { col: PipelineColDef }) {

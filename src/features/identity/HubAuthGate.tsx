@@ -30,6 +30,7 @@ export function HubAuthGate({ onAuthed, variant = "hub" }: Props) {
           />
         ),
         onAuthed,
+        profileRoleClient: supabase,
         onSubmit: async (login, password, mode) => {
           const resolved = resolveHubLogin(login);
           const attempt = (authEmail: string) =>

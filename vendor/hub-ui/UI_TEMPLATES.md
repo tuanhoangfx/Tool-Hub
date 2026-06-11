@@ -44,7 +44,7 @@ Bootstrap: `HubLoaderRoot` + `configureFilterIcons` / `configureHubChromePrefs` 
 | ID | Vietnamese | Golden source | Package entry |
 |----|------------|---------------|---------------|
 | `directory` | Directory | P0004 Users, Hub list; P0006 Bots, Groups, Channels | `HubDirectoryScreen` |
-| `dashboard` | Dashboard (KPI + charts) | P0016 `DashboardScreen` · **P0020/todo** `TodoHubChrome` | `HubDashboardScreen` + KPI/charts |
+| `dashboard` | Dashboard (KPI + charts) | P0016 `DashboardScreen` | `HubDashboardScreen` + KPI/charts |
 | `system-panels` | System sub-tabs + panels | P0004 `SystemHubScreen` | `HubTabChrome` + `HubPanel` |
 | `inbox-split` | Inbox master-detail | P0016 `InboxHubChrome` | `HubSplitWorkspaceScreen` + `DirectorySearchToolbar` |
 | `auth-gate` | Login / gate | hub-ui `HubAuthGate` + `HubAuthGateGoldenPreview` | `HubAuthGate`, `HubAuthGateModal`, `HubAuthLogoutChip` |

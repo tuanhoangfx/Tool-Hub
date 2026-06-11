@@ -7,6 +7,7 @@ const systemTabPrefetch = createModulePrefetch<SystemTab>({
   "supabase-quota": () => import("./SystemSupabaseQuotaPanel"),
   server: () => import("./SystemServerPanel"),
   agent: () => import("./SystemAgentContextPanel"),
+  skills: () => import("./SystemSkillsCatalogPanel"),
   template: () => import("./design-template/DesignTemplateHub"),
 });
 

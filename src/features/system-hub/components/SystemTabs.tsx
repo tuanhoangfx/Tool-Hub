@@ -1,11 +1,11 @@
-import { Bot, Database, Gauge, LayoutGrid, Palette, Server } from "lucide-react";
+import { Bot, Database, Gauge, LayoutGrid, Palette, Server, Sparkles } from "lucide-react";
 import { readAppScreen, setAppScreen } from "../../../lib/app-screen";
 import type { NavIconTone } from "@tool-workspace/hub-ui";
 import { buildSystemUrl, readSystemRoute } from "../../../lib/system-path";
 import { sanitizeQueryForScreen } from "../../../lib/hub-query";
 import type { SchemaEntity } from "../../../lib/system-path";
 
-export type SystemTab = "overview" | "schema" | "supabase-quota" | "server" | "agent" | "template";
+export type SystemTab = "overview" | "schema" | "supabase-quota" | "server" | "agent" | "skills" | "template";
 
 const tabs: { id: SystemTab; label: string; icon: typeof LayoutGrid; iconTone: NavIconTone }[] = [
   { id: "overview", label: "Overview", icon: LayoutGrid, iconTone: "indigo" },
@@ -13,6 +13,7 @@ const tabs: { id: SystemTab; label: string; icon: typeof LayoutGrid; iconTone: N
   { id: "supabase-quota", label: "Supabase Quota", icon: Gauge, iconTone: "sky" },
   { id: "server", label: "Server", icon: Server, iconTone: "blue" },
   { id: "agent", label: "Agent", icon: Bot, iconTone: "violet" },
+  { id: "skills", label: "Skills", icon: Sparkles, iconTone: "amber" },
   { id: "template", label: "Design Template", icon: Palette, iconTone: "fuchsia" },
 ];
 
@@ -34,15 +35,7 @@ export function setSystemTab(id: SystemTab) {
   if (id !== "schema") delete route.schemaEntity;
   else if (!route.schemaEntity) route.schemaEntity = "catalog";
 
-  if (id === "template") {
-    route.design = {
-      template: route.design?.template ?? "tool-access",
-      variant: route.design?.variant ?? 1,
-      live: false,
-    };
-  } else {
-    delete route.design;
-  }
+  delete route.design;
 
   const p = sanitizeQueryForScreen("system", window.location.search);
   const url = buildSystemUrl(route, p.toString());

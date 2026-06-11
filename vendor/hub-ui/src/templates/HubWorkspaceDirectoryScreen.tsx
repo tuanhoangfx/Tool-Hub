@@ -23,6 +23,8 @@ export type HubWorkspaceDirectoryScreenProps = {
   filterPlaceholder?: string;
   filterShortcutScope?: string;
   directoryToolbar?: ReactNode;
+  /** Row 2 leading — before filter dropdowns (e.g. active bot selector). */
+  filterRowLeading?: ReactNode;
   filterRowActions?: ReactNode;
   kpis?: KpiTileData[];
   charts?: ReactNode;
@@ -48,6 +50,7 @@ export function HubWorkspaceDirectoryScreen({
   filterPlaceholder,
   filterShortcutScope = "default",
   directoryToolbar,
+  filterRowLeading,
   filterRowActions,
   kpis,
   charts,
@@ -98,6 +101,7 @@ export function HubWorkspaceDirectoryScreen({
       filterPlaceholder={filterPlaceholder}
       filterShortcutScope={filterShortcutScope}
       directoryToolbar={directoryToolbar}
+      filterRowLeading={filterRowLeading}
       filterRowActions={filterRowActions}
       kpis={kpis}
       charts={charts}

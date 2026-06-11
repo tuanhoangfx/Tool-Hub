@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Server, Settings2, Users } from "lucide-react";
+import { Bot, Cloud, Database, Gauge, LayoutGrid, Palette, Server, Settings2, Sparkles, Users } from "lucide-react";
 import {
   HubLoadingView as HubLoadingViewBase,
   HubScreenChunkFallback,
@@ -24,6 +24,7 @@ export const HUB_LOADING_PRESETS = {
   supabaseQuota: { icon: Cloud, ariaLabel: "Loading Supabase quota" },
   server: { icon: Server, ariaLabel: "Loading server inventory" },
   agent: { icon: Bot, ariaLabel: "Loading agent context" },
+  skills: { icon: Sparkles, ariaLabel: "Loading skills catalog" },
   template: { icon: Palette, ariaLabel: "Loading design template" },
 } as const satisfies Record<string, { icon: LucideIcon; ariaLabel: string }>;
 

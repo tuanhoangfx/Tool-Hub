@@ -17,6 +17,9 @@ const SystemServerPanel = lazy(() =>
 const SystemAgentContextPanel = lazy(() =>
   import("./SystemAgentContextPanel").then((m) => ({ default: m.SystemAgentContextPanel })),
 );
+const SystemSkillsCatalogPanel = lazy(() =>
+  import("./SystemSkillsCatalogPanel").then((m) => ({ default: m.SystemSkillsCatalogPanel })),
+);
 const DesignTemplateHub = lazy(() =>
   import("./design-template/DesignTemplateHub").then((m) => ({ default: m.DesignTemplateHub })),
 );
@@ -65,6 +68,14 @@ export function LazySystemAgentContextPanel() {
   return (
     <Suspense fallback={<PanelFallback />}>
       <SystemAgentContextPanel />
+    </Suspense>
+  );
+}
+
+export function LazySystemSkillsCatalogPanel() {
+  return (
+    <Suspense fallback={<PanelFallback />}>
+      <SystemSkillsCatalogPanel />
     </Suspense>
   );
 }

@@ -1,4 +1,4 @@
-import { ArrowUpRight, Star } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import {
   HubAppTabGroupBadge,
   HubToolDetailModal,
@@ -8,8 +8,9 @@ import {
   HubUiTemplateBadge,
   navIconClass,
   navMetaTextClass,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { navigateToDashboardTab } from "./dashboard-nav";
 import type { DashboardTabEntry } from "./dashboard-tab-registry";
 import { DashboardStatusBadge } from "./DashboardStatusBadge";

@@ -6,8 +6,10 @@ import {
   navMetaTextClass,
   type HubSortDir,
   type HubTableColumnRole,
+  compactIconSize,
 } from "@tool-workspace/hub-ui";
-import { compactIconSize } from "../../lib/ui-scale";
+import { Pin } from "lucide-react";
+
 import type { DashboardTabEntry } from "./dashboard-tab-registry";
 import { DashboardStatusBadge } from "./DashboardStatusBadge";
 
@@ -68,6 +70,8 @@ type DashboardScreensTableProps = {
   onToggleSelectAll: () => void;
   allVisibleSelected: boolean;
   onPreview: (entry: DashboardTabEntry) => void;
+  pinnedIds: Set<string>;
+  resetKey?: string | number | boolean | null;
 };
 
 export function DashboardScreensTable({
@@ -80,6 +84,8 @@ export function DashboardScreensTable({
   onToggleSelectAll,
   allVisibleSelected,
   onPreview,
+  pinnedIds,
+  resetKey,
 }: DashboardScreensTableProps) {
   const sorted = sortDashboardEntries(entries, sortKey, sortDir);
 
@@ -101,6 +107,7 @@ export function DashboardScreensTable({
       allVisibleSelected={allVisibleSelected}
       selectAllLabel="Select all visible screens"
       emptyMessage="No screens match the current filters."
+      resetKey={resetKey}
       renderRowCells={(entry) => {
         const Icon = entry.icon;
         return (
@@ -109,6 +116,13 @@ export function DashboardScreensTable({
               <div className="hub-users-cell-name">
                 <Icon size={compactIconSize(15)} className={`shrink-0 ${navIconClass(entry.iconTone, true)}`} aria-hidden />
                 <span className="hub-users-name-title">{entry.label}</span>
+                {pinnedIds.has(entry.id) ? (
+                  <Pin
+                    size={compactIconSize(12)}
+                    className="hub-directory-pin-mark shrink-0 fill-current text-amber-300"
+                    aria-label="Pinned"
+                  />
+                ) : null}
               </div>
             </td>
             <td className="hub-users-col--dash-group">

@@ -30,7 +30,6 @@ const CODE_SVG_ICONS: Record<string, string> = {
   P0007: "/icons/tools/P0007.svg",
   P0008: "/icons/tools/P0008.svg",
   P0009: "/icons/tools/P0009.svg",
-  P0010: "/icons/tools/P0010.svg",
   P0012: "/icons/tools/P0012.svg",
   P0013: "/icons/tools/P0013.svg",
   P0015: "/icons/tools/P0015.svg",

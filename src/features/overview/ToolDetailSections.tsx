@@ -1,12 +1,16 @@
 import { useMemo, type ReactNode } from "react";
 import { CheckCircle2, Layers } from "lucide-react";
-import { HubToolDetailSection, HubToolDetailSections } from "@tool-workspace/hub-ui";
+import {
+  HubToolDetailSection,
+  HubToolDetailSections,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
 import { MetricBadge } from "../../components/sales-shell";
 import {
   resolveDeployTargetIcon,
   resolveHealthStatusIcon,
 } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import type { ResolvedTool } from "../../types";
 import { QuietChip, ToolCodeBadge } from "../hub/hub-tool-ui";
 import { overviewSectionTitle } from "./overview-toc";

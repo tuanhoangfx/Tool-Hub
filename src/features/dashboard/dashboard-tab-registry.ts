@@ -31,7 +31,24 @@ export type DashboardTabEntry = {
   goldenRef?: string;
   goldenScreenPath?: string;
   status?: DashboardScreenStatus;
+  /** Latest related activity — period filter when set; static rows omit. */
+  activityAt?: string | null;
 };
+
+function latestToolActivity(tools?: ResolvedTool[]): string | undefined {
+  if (!tools?.length) return undefined;
+  let best: string | undefined;
+  let bestMs = 0;
+  for (const t of tools) {
+    if (!t.updatedAt?.trim()) continue;
+    const ms = new Date(t.updatedAt).getTime();
+    if (!Number.isNaN(ms) && ms > bestMs) {
+      bestMs = ms;
+      best = t.updatedAt;
+    }
+  }
+  return best;
+}
 
 const GROUP_LABELS: Record<DashboardTabGroup, string> = {
   hub: HUB_APP_TAB_GROUP_META.hub.label,
@@ -98,8 +115,12 @@ const SYSTEM_TAB_META: Partial<Record<SystemTab, { description: string; catalogS
     description: "Agent manifest, Cursor rules/skills registry, and automation context sync.",
     catalogScreen: "system",
   },
+  skills: {
+    description: "UI skills catalog from ui-patterns.catalog.json — triggers, workflow, and golden refs.",
+    catalogScreen: "system",
+  },
   template: {
-    description: "Design Template gate — compare V1–V5 mockups before locking production UI.",
+    description: "Design Template — empty by default; mockups only during explicit design review.",
     catalogScreen: "system",
   },
 };
@@ -158,6 +179,7 @@ export function buildDashboardTabRegistry(opts?: {
             : entry.id === "dashboard-home"
               ? "Screen console · P0004"
               : undefined,
+      activityAt: entry.id === "hub-catalog" ? latestToolActivity(opts?.tools) : undefined,
     };
   });
 

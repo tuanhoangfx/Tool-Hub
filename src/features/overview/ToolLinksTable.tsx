@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Copy, ExternalLink, RefreshCcw } from "lucide-react";
-import { HubPaginatedTableShell } from "@tool-workspace/hub-ui";
+import {
+  HubPaginatedTableShell,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
 import { FilterBar, RegistryMetricBadge } from "../../components/sales-shell";
 import {
   resolveLinkGroupBadge,
   resolveLinkKindBadge,
   resolveLinkStatusBadge,
 } from "../../lib/badge-registry";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { useLocalHealth, type HealthState } from "../../hooks/useLocalHealth";
 import type { ToolLinkRow } from "./tool-links";
 import { enrichFilterDefs } from "../../lib/filter-option-counts";

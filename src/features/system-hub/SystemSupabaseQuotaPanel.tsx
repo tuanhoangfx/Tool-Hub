@@ -1,20 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertTriangle, LayoutGrid, RefreshCcw } from "lucide-react";
-import { HubPaginatedCardGrid, HubPaginatedTableShell, semanticKpiIcon } from "@tool-workspace/hub-ui";
-import { SUPABASE_QUOTA_REFRESH_EVENT } from "./supabase-quota-events";
+import { AlertTriangle, LayoutGrid } from "lucide-react";
 import {
-  HubResultCount,
-  MiniBarChart,
-  ViewToggle,
-  type FilterDef,
-  type FilterValues,
-  type HubViewMode,
-} from "../../components/sales-shell";
+  chartBreakdownFromLabels,
+  HubPaginatedCardGrid,
+  HubPaginatedTableShell,
+  hubDirectoryListResetKey,
+  semanticKpiIcon,
+  compactIconSize,
+} from "@tool-workspace/hub-ui";
+import { SUPABASE_QUOTA_REFRESH_EVENT } from "./supabase-quota-events";
+import { type FilterDef, type FilterValues, type HubViewMode } from "../../components/sales-shell";
+import { SystemDirectoryToolbar } from "./SystemDirectoryToolbar";
 import { EmptyState } from "../../components/EmptyState";
 import { RegionInline } from "../../components/RegionFlagBadge";
-import { compactIconSize } from "../../lib/ui-scale";
+
 import { regionChartLabel, resolveRegionMeta } from "../../lib/supabase-region";
 import { useSessionState } from "../../hooks";
+import { SYSTEM_SUPABASE_QUOTA_CHART_DEFS } from "./system-display-prefs";
 import { SystemHubShell } from "./SystemHubShell";
 import { SupabaseProjectCard } from "./SupabaseProjectCard";
 import { SupabaseProjectDetailModal } from "./SupabaseProjectDetailModal";
@@ -102,17 +104,6 @@ import { resolveProjectToolCodes } from "./supabase-project-tools";
 import { SupabaseProjectToolBadges } from "./SupabaseProjectToolBadges";
 import { SupabaseMetricsSourceBadge } from "./SupabaseMetricsSourceBadge";
 
-function breakdown(labels: Array<string | null | undefined>): Array<{ label: string; value: number }> {
-  const map = new Map<string, number>();
-  for (const label of labels) {
-    const key = normLabel(label);
-    map.set(key, (map.get(key) ?? 0) + 1);
-  }
-  return [...map.entries()]
-    .map(([label, value]) => ({ label, value }))
-    .sort((a, b) => b.value - a.value);
-}
-
 function orgForProject(orgs: OrgRow[], p: ProjectRow) {
   return orgs.find((o) => o.slug === p.orgSlug) ?? null;
 }
@@ -134,9 +125,19 @@ const PROJECT_TABLE_COLUMNS = [
   "Notes",
 ] as const;
 
-function ProjectTable({ rows, orgs, onOpen }: { rows: ProjectRow[]; orgs: OrgRow[]; onOpen: (ref: string) => void }) {
+function ProjectTable({
+  rows,
+  orgs,
+  onOpen,
+  resetKey,
+}: {
+  rows: ProjectRow[];
+  orgs: OrgRow[];
+  onOpen: (ref: string) => void;
+  resetKey?: string | number | boolean | null;
+}) {
   return (
-    <HubPaginatedTableShell items={rows} ariaLabel="Supabase projects table pages">
+    <HubPaginatedTableShell items={rows} resetKey={resetKey} ariaLabel="Supabase projects table pages">
       {(pageRows) => (
     <div className="hub-users-table-wrap overflow-x-auto">
       <table className="hub-users-table hub-users-table--wide min-w-[1100px]">
@@ -536,8 +537,10 @@ export function SystemSupabaseQuotaPanel() {
 
   const charts = useMemo(() => {
     return {
-      byRegion: breakdown(projectsFiltered.map((p) => regionChartLabel(p.region))),
-      byPlan: breakdown(projectsFiltered.map((p) => effectivePlanLabel(p, organizations.find((o) => o.slug === p.orgSlug)))),
+      byRegion: chartBreakdownFromLabels(projectsFiltered.map((p) => regionChartLabel(p.region))),
+      byPlan: chartBreakdownFromLabels(
+        projectsFiltered.map((p) => effectivePlanLabel(p, organizations.find((o) => o.slug === p.orgSlug))),
+      ),
     };
   }, [projectsFiltered, organizations]);
 
@@ -570,42 +573,46 @@ export function SystemSupabaseQuotaPanel() {
     [kpis, usageSum],
   );
 
+  const listResetKey = useMemo(
+    () => hubDirectoryListResetKey(query, filterValues, viewMode),
+    [query, filterValues, viewMode],
+  );
+
   const toolbar = useMemo(() => {
     return (
-      <>
-        <ViewToggle value={viewMode} onChange={setViewMode} />
-        <button
-          type="button"
-          onClick={() => void fetchData(true)}
-          disabled={refreshing}
-          className="inline-flex h-[var(--hub-control-h)] shrink-0 items-center gap-1.5 rounded-lg border border-white/10 bg-[var(--panel-2)] px-3 text-xs text-[var(--text)] hover:bg-white/5 disabled:opacity-50"
-          title="Force refresh (bypass server cache)"
-        >
-          <RefreshCcw size={compactIconSize(12)} className={refreshing ? "anim-spin" : ""} />
-          {refreshing && payload ? "Updating…" : "Refresh"}
-          <CacheStatusDot status={cacheHint} />
-        </button>
-        <HubResultCount icon={LayoutGrid} shown={projectsFiltered.length} total={projectsRaw.length} label="projects" />
-      </>
+      <SystemDirectoryToolbar
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        countIcon={LayoutGrid}
+        shown={projectsFiltered.length}
+        total={projectsRaw.length}
+        countLabel="projects"
+        refreshing={refreshing}
+        onRefresh={() => void fetchData(true)}
+        showTimeRange={false}
+        trailing={<CacheStatusDot status={cacheHint} />}
+      />
     );
-  }, [viewMode, setViewMode, fetchData, refreshing, payload, projectsFiltered.length, projectsRaw.length, cacheHint]);
+  }, [
+    viewMode,
+    setViewMode,
+    fetchData,
+    refreshing,
+    projectsFiltered.length,
+    projectsRaw.length,
+    cacheHint,
+  ]);
 
-  const chartSlots = useMemo(() => {
-    const regionItems = charts.byRegion.slice(0, 8).map((i: { label: string; value: number }, idx: number) => ({
-      label: i.label,
-      value: i.value,
-      color: ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"][idx % 7],
-    }));
-    const planItems = charts.byPlan.slice(0, 8).map((i: { label: string; value: number }, idx: number) => ({
-      label: i.label,
-      value: i.value,
-      color: ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"][idx % 7],
-    }));
-    return {
-      category_bar: <MiniBarChart title="By region" items={regionItems} />,
-      health_bar: <MiniBarChart title="By plan" items={planItems} />,
-    };
-  }, [charts.byPlan, charts.byRegion]);
+  const chartBand = useMemo(
+    () => ({
+      defs: SYSTEM_SUPABASE_QUOTA_CHART_DEFS,
+      data: {
+        category_bar: charts.byRegion,
+        health_bar: charts.byPlan,
+      },
+    }),
+    [charts.byPlan, charts.byRegion],
+  );
 
   const body = useMemo(() => {
     if (error) {
@@ -662,7 +669,7 @@ export function SystemSupabaseQuotaPanel() {
           ) : (
             <HubPaginatedCardGrid
               items={projectsFiltered}
-              resetKey={`${query}|${JSON.stringify(filterValues)}`}
+              resetKey={listResetKey}
               ariaLabel="Supabase projects card pages"
             >
               {(pageProjects) =>
@@ -679,11 +686,11 @@ export function SystemSupabaseQuotaPanel() {
             </HubPaginatedCardGrid>
           )
         ) : (
-          <ProjectTable rows={projectsFiltered} orgs={organizations} onOpen={openProject} />
+          <ProjectTable rows={projectsFiltered} orgs={organizations} onOpen={openProject} resetKey={listResetKey} />
         )}
       </div>
     );
-  }, [error, refreshing, payload, organizations, projectsFiltered, viewMode, openProject, toolCodesByRef]);
+  }, [error, refreshing, payload, organizations, projectsFiltered, viewMode, openProject, toolCodesByRef, listResetKey]);
 
   return (
     <>
@@ -698,7 +705,7 @@ export function SystemSupabaseQuotaPanel() {
         onValuesChange={setFilterValues}
         toolbar={toolbar}
         kpiItems={kpiItems}
-        chartSlots={chartSlots}
+        chartBand={chartBand}
       >
         {body}
       </SystemHubShell>

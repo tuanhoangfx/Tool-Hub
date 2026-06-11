@@ -1,25 +1,12 @@
+import { chartBreakdownFromLabels } from "@tool-workspace/hub-ui";
 import type { BarItem } from "../../components/sales-shell";
-import { resolveChartLegendIcon } from "../../lib/badge-registry";
+import { resolveChartLegendIcon } from "../../lib/badge-registry-chart";
 import type { FieldSpec } from "../../lib/hub-schema-spec";
 import { hubCharts, hubKpis } from "../hub/hub-aggregates";
 import type { ResolvedTool } from "../../types";
 
-const CHART_COLORS = ["#818cf8", "#22c55e", "#a855f7", "#f59e0b", "#06b6d4", "#ec4899", "#f43f5e"];
-
 function breakdown(labels: string[]): BarItem[] {
-  const map = new Map<string, number>();
-  for (const label of labels) {
-    const key = label || "—";
-    map.set(key, (map.get(key) ?? 0) + 1);
-  }
-  return [...map.entries()]
-    .map(([label, value], i) => ({
-      label,
-      value,
-      color: CHART_COLORS[i % CHART_COLORS.length],
-      iconMeta: resolveChartLegendIcon(label),
-    }))
-    .sort((a, b) => b.value - a.value);
+  return chartBreakdownFromLabels(labels, { iconFor: resolveChartLegendIcon });
 }
 
 export { hubKpis, hubCharts };

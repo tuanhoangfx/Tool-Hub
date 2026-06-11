@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { BookOpen, Check, Code2, Copy } from "lucide-react";
-import { compactIconSize } from "../../../lib/ui-scale";
+import { compactIconSize } from "@tool-workspace/hub-ui";
 import { useSessionState } from "../../../hooks/useSessionState";
 import { AgentGitPipelineWizard } from "./agent-git-pipeline-wizard";
 import { AgentKeywordAxisBanner } from "./agent-keyword-axis-banner";

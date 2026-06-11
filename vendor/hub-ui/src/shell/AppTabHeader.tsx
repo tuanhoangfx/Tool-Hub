@@ -168,7 +168,7 @@ function StatLine({ icon: Icon, dotClass, value, label, toneClass, onClick, acti
         type="button"
         onClick={onClick}
         title={label}
-        className={`inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-[12px] leading-none transition-colors ${
+        className={`inline-flex items-center gap-1 rounded-md px-1 py-0.5 text-[13px] leading-none transition-colors ${
           active ? "bg-white/10 text-[var(--text)]" : "text-[var(--muted)] hover:bg-white/5"
         }`}
       >
@@ -178,7 +178,7 @@ function StatLine({ icon: Icon, dotClass, value, label, toneClass, onClick, acti
   }
 
   return (
-    <div className="inline-flex items-center gap-1 text-[12px] leading-none text-[var(--muted)]" title={label}>
+    <div className="inline-flex items-center gap-1 text-[13px] leading-none text-[var(--muted)]" title={label}>
       {content}
     </div>
   );
