@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { CHART_OTHERS_LABEL, CHART_TOP_N } from "@tool-workspace/hub-ui";
 import { userCharts } from "./user-chart-aggregates";
 import type { UserManagementRow } from "./userManagementRepository";
 
@@ -24,17 +23,20 @@ function row(partial: Partial<UserManagementRow> & Pick<UserManagementRow, "id">
 }
 
 describe("userCharts", () => {
-  it("returns golden bands with top-3 + Others per chart", () => {
+  it("returns chart bands with legend icons per dimension", () => {
     const rows = [
       row({ id: "1", role: "admin", status: "online", toolCount: 0, activityCount: 1 }),
       row({ id: "2", role: "manager", status: "active", toolCount: 1, activityCount: 0 }),
       row({ id: "3", role: "user", status: "idle", toolCount: 4, activityCount: 2 }),
-      row({ id: "4", role: "user", status: "offline", toolCount: 2, activityCount: 0 }),
+      row({ id: "4", role: "viewer", status: "offline", toolCount: 2, activityCount: 0 }),
     ];
     const charts = userCharts(rows);
+    expect(charts.role.length).toBe(3);
+    expect(charts.activity.length).toBe(4);
+    expect(charts.tool.length).toBe(4);
+    expect(charts.distribution.length).toBe(2);
     for (const band of Object.values(charts)) {
-      expect(band.length).toBe(CHART_TOP_N + 1);
-      expect(band[band.length - 1]?.label).toBe(CHART_OTHERS_LABEL);
+      expect(band.some((r) => r.iconMeta)).toBe(true);
     }
   });
 

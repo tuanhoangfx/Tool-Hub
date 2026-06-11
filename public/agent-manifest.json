@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-06-11T21:26:46.572Z",
-  "workspaceRoot": "E:\\Dev",
+  "generatedAt": "2026-06-11T21:42:19.940Z",
+  "workspaceRoot": "e:\\Dev",
   "items": [
     {
       "id": "cursor-agents-cookie-bridge-ops-md",
@@ -172,7 +172,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -244,7 +244,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -315,7 +315,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -371,7 +371,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -438,7 +438,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -494,7 +494,7 @@
       ],
       "keywordGroup": "hub-ui",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -600,7 +600,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -661,7 +661,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -717,7 +717,7 @@
       ],
       "keywordGroup": "supabase",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -788,7 +788,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -859,7 +859,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -926,7 +926,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -993,7 +993,7 @@
       ],
       "keywordGroup": "git",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1049,7 +1049,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1123,7 +1123,7 @@
       ],
       "keywordGroup": "verify",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1245,7 +1245,7 @@
       ],
       "keywordGroup": "pattern",
       "lines": 20,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1264,7 +1264,7 @@
       "summary": "Agent keyword guide (ưu tiên prompt 1 dòng)",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-ver",
       "lines": 231,
-      "updatedAt": "2026-06-11T20:10:07.611Z",
+      "updatedAt": "2026-06-11T21:42:19.799Z",
       "tags": [
         "playbook",
         "workspace"
@@ -1280,7 +1280,7 @@
       "summary": "16 keywords · verify · git · pattern · migrate · screensByProduct · tiếng Việt",
       "bodyPreview": "# Agent keyword guide (ưu tiên prompt 1 dòng)\n\nƯu tiên prompt keyword (1 dòng) thay vì gắn skill thủ công. Tra cứu đầy đủ: P0004 System → Agent → doc Agent keyword guide.\n\nSSOT: `Tool/scripts/lib/ship-keywords.json` · Sync: `node Tool/scripts/sync-ship-keywords.mjs`\n\nP0004 → System → **Agent** → preset **Onboarding** hoặc filter Tag **Keyword**.\n\n---\n\n## 1. Verify (Ship stack)\n\n### Ship P00xx\n\n**Khi nào:** Task code/UI thường, cần verify xong mới dừng.\n**Agent:** gate → parity/css → dev stack → browser MCP contract → fix loop.\n**Không dùng khi:** chỉ hỏi ý kiến, chỉ đọc code, hoặc user nói không verify browser.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Loop P00xx\n\n**Khi nào:** Parity lâu, nhiều màn, messenger/inbox lớn — không giới hạn turn.\n**Khác Ship:** `--intent loop` + stop hook cho phép 12 lần nhắc (thay vì 2).\n**Prompt:** thêm mô tả phạm vi + \"không hỏi lại\".\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Loop P0016 — Messenger parity Zalo, unlimited turns`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent loop`\n- **Gate intent:** `loop`\n\n### Fix P00xx\n\n**Khi nào:** Bug UI/layout/API surface đã biết.\n**Agent:** sửa tối thiểu → cùng ladder Ship.\n**Mẹo:** nêu rõ màn + hành vi mong đợi trong 1 dòng.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Fix P0004 — modal Settings hẹp, loop đến khi pass`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Smoke P00xx\n\n**Khi nào:** Code đã xong, chỉ cần regression / contract browser.\n**Agent:** không thêm feature; chỉ gate + smoke steps.\n**Sau deploy:** có thể kết hợp Deploy keyword.\n\n- **Skill:** ship-until-done\n- **Prompt mẫu:** `Smoke P0004 — hub-ui browser contract Settings/Log/User`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 2. Git / Production pipeline\n\n### Git / Commit P00xx\n\n**Khi nào:** Backup snapshot Git **trên máy** — chưa cần GitHub/production.\n**Version:** Minor bump + CHANGELOG block đầy đủ.\n**Script:** `ship-product.ps1 -Keyword Git`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Git P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Push P00xx\n\n**Khi nào:** Đồng bộ GitHub; Vercel thường build sau push main.\n**Gồm (cumulative):** auto-commit WIP (nếu version triple + CHANGELOG sẵn) → push origin.\n**Chưa verify prod** — dùng Deploy nếu cần smoke production.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Push P0020`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n### Deploy P00xx\n\n**Khi nào:** Xác nhận production sống + smoke pass.\n**Gồm (cumulative):** auto-commit → push → production smoke (`ship-product.ps1 -Keyword Deploy`).\n**Gate:** `--intent deploy` (prod MCP hint). **Không** tạo GitHub Release — dùng Release keyword.\n\n- **Skill:** p00xx-ship-keywords + ship-until-done\n- **Prompt mẫu:** `Deploy P0016`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev --intent deploy`\n- **Gate intent:** `deploy`\n\n### Release E00xx\n\n**Khi nào:** Phát hành chính thức — tag GitHub, catalog, audit.\n**Version:** Major bump.\n**Gồm:** Deploy + `gh release create`.\n\n- **Skill:** p00xx-ship-keywords\n- **Prompt mẫu:** `Release E0001`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 3. Hub UI — full shell\n\n### Hub P00xx\n\n**Khi nào:** Tool mới hoặc migrate **cả console** hub-ui.\n**Khác Directory/Inbox:** không chỉ 1 tab — full shell.\n**Sau clone:** bắt buộc Ship/Loop verify.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Hub P0017 — clone toàn bộ hub-ui shell từ P0004`\n- **Lệnh agent:** `node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`\n\n## 4. Hub UI — clone từng pattern (tab)\n\n### Directory P00xx\n\n**Khi nào:** Thêm/sửa **1 tab dạng directory** (list + filter + card/table).\n**Lệnh:** `hub-ui-stack.cjs P00xx <tab>` — thay `<tab>` bằng tên screen (bots, users…).\n**Golden:** P0004 HubListPage. **Catalog id:** `directory`.\n**Luôn kết thúc:** Ship hoặc Smoke verify tab vừa clone.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Directory P0017 bots — tab bots directory golden P0004 Hub`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx <tab>`\n- **Pattern catalog:** `directory` · golden `P0004/hub-list`\n- **Tab gợi ý:** P0004→hub|users · P0016→bots|groups|logs|channels · P0020→cookie|twofa · P0008→buyers|orders|products\n\n### Inbox P00xx\n\n**Khi nào:** Màn chat/inbox 3 cột (list thread + nội dung).\n**Lệnh:** `hub-ui-stack.cjs P00xx inbox` — screen luôn là `inbox`.\n**Golden:** P0016 InboxHubChrome. **Catalog id:** `inbox-split`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Inbox P0017 — clone inbox split giống P0016`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx inbox`\n- **Pattern catalog:** `inbox-split` · golden `P0016/inbox`\n- **Tab gợi ý:** P0004→inbox · P0016→inbox · P0020→inbox · P0008→inbox\n\n### Dashboard P00xx\n\n**Khi nào:** Tab analytics/KPI + biểu đồ nhỏ.\n**Lệnh:** `hub-ui-stack.cjs P00xx dashboard`.\n**Golden:** P0004 DashboardListPage. **Catalog id:** `dashboard`.\n\n- **Skill:** p00xx-clone-hub-shell + ship-until-done\n- **Prompt mẫu:** `Dashboard P0017 — KPI dashboard tab`\n- **Lệnh agent:** `node Tool/scripts/hub-ui-stack.cjs P00xx dashboard`\n- **Pattern catalog:** `dashboard` · golden `P0004/dashboard`\n- **Tab gợi ý:** P0004→dashboard · P0016→dashboard · P0020→dashboard · P0008→dashboard\n\n### Overview P00xx\n\n**Khi nào:** Tab Overview/TOC + bảng link tool (chuẩn P0004 tab Overview).\n**Lệnh:** `hub-u",
       "lines": 231,
-      "updatedAt": "2026-06-11T21:26:46.567Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "keyword",
@@ -1775,7 +1775,7 @@
       "summary": "Bảng nhanh — chi tiết xem Agent keyword guide",
       "bodyPreview": "# Ship keywords (quick)\n\n**Chi tiết:** mở doc **Agent keyword guide** cùng tab Agent.\n\n| Keyword | Skill | Example |\n|---------|-------|--------|\n| **Ship P00xx** | ship-until-done | Ship P0020 — 2FA KPI 5 cột responsive, không hỏi lại |\n| **Loop P00xx** | ship-until-done | Loop P0016 — Messenger parity Zalo, unlimited turns |\n| **Fix P00xx** | ship-until-done | Fix P0004 — modal Settings hẹp, loop đến khi pass |\n| **Smoke P00xx** | ship-until-done | Smoke P0004 — hub-ui browser contract Settings/Log/User |\n| **Git / Commit P00xx** | p00xx-ship-keywords | Git P0020 |\n| **Push P00xx** | p00xx-ship-keywords | Push P0020 |\n| **Deploy P00xx** | p00xx-ship-keywords + ship-until-done | Deploy P0016 |\n| **Release E00xx** | p00xx-ship-keywords | Release E0001 |\n| **Hub P00xx** | p00xx-clone-hub-shell + ship-until-done | Hub P0017 — clone toàn bộ hub-ui shell từ P0004 |\n| **Migrate P00xx** | p00xx-supabase-ops | Migrate P0020 — thêm cột can_edit note_shares |\n| **Directory P00xx** | p00xx-clone-hub-shell + ship-until-done · `directory` | Directory P0017 bots — tab bots directory golden P0004 Hub |\n| **Inbox P00xx** | p00xx-clone-hub-shell + ship-until-done · `inbox-split` | Inbox P0017 — clone inbox split giống P0016 |\n| **Dashboard P00xx** | p00xx-clone-hub-shell + ship-until-done · `dashboard` | Dashboard P0017 — KPI dashboard tab |\n| **Overview P00xx** | p00xx-clone-hub-shell + ship-until-done · `document-toc` | Overview P0017 — tab Overview chuẩn P0004 |\n| **System P00xx** | p00xx-clone-hub-shell + ship-until-done · `system-panels` | System P0020 — panel System giống P0004 |\n| **Notes P00xx** | p00xx-clone-hub-shell + ship-until-done · `workspace-composer` | Notes P0017 — split editor giống P0020 Notes |\n\nGate:\n`node Tool/scripts/agent-verify-gate.mjs --code P00xx --json --mark-active --ensure-dev`",
       "lines": 24,
-      "updatedAt": "2026-06-11T21:26:46.569Z",
+      "updatedAt": "2026-06-11T21:42:19.937Z",
       "tags": [
         "infrastructure",
         "cursor",
@@ -1937,7 +1937,7 @@
         }
       ],
       "lines": 20,
-      "updatedAt": "2026-06-11T15:49:50.557Z",
+      "updatedAt": "2026-06-11T21:35:14.524Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2074,7 +2074,7 @@
         }
       ],
       "lines": 14,
-      "updatedAt": "2026-06-11T13:16:41.044Z",
+      "updatedAt": "2026-06-11T21:35:21.264Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2201,7 +2201,7 @@
         }
       ],
       "lines": 23,
-      "updatedAt": "2026-06-11T15:49:50.557Z",
+      "updatedAt": "2026-06-11T21:35:14.524Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2262,7 +2262,7 @@
         }
       ],
       "lines": 22,
-      "updatedAt": "2026-06-11T13:51:09.358Z",
+      "updatedAt": "2026-06-11T21:31:14.433Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2627,7 +2627,7 @@
         }
       ],
       "lines": 12,
-      "updatedAt": "2026-06-11T13:01:12.268Z",
+      "updatedAt": "2026-06-11T21:31:00.496Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2688,7 +2688,7 @@
         }
       ],
       "lines": 15,
-      "updatedAt": "2026-06-11T13:01:12.268Z",
+      "updatedAt": "2026-06-11T21:31:00.496Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -2947,7 +2947,7 @@
         }
       ],
       "lines": 21,
-      "updatedAt": "2026-06-06T14:55:06.323Z",
+      "updatedAt": "2026-06-11T21:31:14.441Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -3058,7 +3058,7 @@
         }
       ],
       "lines": 8,
-      "updatedAt": "2026-06-10T07:44:28.390Z",
+      "updatedAt": "2026-06-11T21:31:14.519Z",
       "tags": [
         "hub-ui",
         "pattern",
@@ -3133,7 +3133,7 @@
       "summary": "Dev workspace E:\\Dev — policy duy nhất (Always Apply)",
       "bodyPreview": "# Dev workspace (E:\\Dev)\n\n## Giao tiếp & mỗi câu trả lời\n\n- Trao đổi với user bằng **tiếng Việt**; mọi **chuỗi UI** Tool/Extension bằng **tiếng Anh**.\n- **Luôn** kết thúc bằng **3 đề xuất** đánh số `1.` `2.` `3.` (kể cả trả lời ngắn / xong việc).\n- **Tự động** thực hiện các đề xuất (setup, migration, verify browser, script…) — **không** chờ `ok 1` trừ khi user nói rõ chỉ tư vấn / không làm.\n- Dòng cuối: `Version: X.Y.Z → A.B.C` hoặc `Version: no bump (lý do)`.\n- **Không** xóa dữ liệu quan trọng; **không** commit secret; commit/push/release chỉ khi user yêu cầu rõ.\n- Hooks kiểm tra format — xem Settings → Hooks → Execution Log nếu thiếu 3 đề xuất / Version.\n\n## Cursor hooks & doc sync (không auto trên mỗi edit)\n\n- **Source of truth:** `.cursor/hooks.json` — **không** có `afterFileEdit` (tránh lag scan toàn workspace).\n- **Sau khi sửa** `.cursor/rules/`, `commands/`, `skills/`, `agents/` hoặc playbooks:\n  ```powershell\n  cd E:\\Dev\\Tool\\P0004-Tool-Hub\n  pnpm agent:manifest\n  ```\n  Hoặc P0004 → System → **Agent** → **Refresh**.\n- Sync tool docs thủ công (khi cần): `powershell -File E:\\Dev\\.cursor\\hooks\\sync-tool-docs.ps1`\n\n## P0004 golden pattern (Hub · Users · Overview)\n\n- **P0004 Too",
       "lines": 102,
-      "updatedAt": "2026-06-11T20:10:07.452Z",
+      "updatedAt": "2026-06-11T21:42:19.797Z",
       "tags": [
         "rule",
         "cursor",

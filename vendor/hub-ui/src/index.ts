@@ -83,7 +83,6 @@ export {
   resolveSchemaGroupIcon,
   resolveSchemaModeIcon,
   type BadgeSpec,
-  type FilterIconMeta,
   type SchemaMode,
 } from "./lib/badge-registry-core";
 export {

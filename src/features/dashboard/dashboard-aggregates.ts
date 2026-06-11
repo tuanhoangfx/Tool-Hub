@@ -49,7 +49,8 @@ export function dashboardCharts(entries: DashboardTabEntry[]) {
     ),
     template: chartBreakdownFromPicker(
       entries,
-      (e) => HUB_UI_TEMPLATE_META[e.template].label,
+      (e) =>
+        HUB_UI_TEMPLATE_META[e.template as keyof typeof HUB_UI_TEMPLATE_META]?.label ?? e.template,
       { iconFor },
     ),
   };
