@@ -37,7 +37,7 @@
       "scripts/sync-metadata-version.mjs",
       "scripts/bump-patch-version.mjs"
     ],
-    "localVersion": "0.2.37",
+    "localVersion": "0.2.38",
     "remoteEnabled": true
   },
   {
@@ -117,7 +117,7 @@
       "scripts/scan-local-workspace.cjs",
       "scripts/publish-github-repo.cjs"
     ],
-    "localVersion": "5.2.19",
+    "localVersion": "5.2.20",
     "remoteEnabled": true
   },
   {
