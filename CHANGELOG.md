@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-06-12 - Git commit version stamp
+
+- Version: `5.2.20`
+- Timestamp: 2026-06-12 15:34 (UTC+7)
+- Commit: pending
+- Type: Patch
+- Status: Draft
+
+### Changes
+
+- Version stamp for git commit.
+
+### Verification
+
+- pending
+
+---
 ## 2026-06-12 - Hub-UI SSOT consolidation + dead code cleanup
 
 - Version: `5.2.19`

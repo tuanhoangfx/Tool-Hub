@@ -1,29 +1,31 @@
 {
-  "generatedAt": "2026-06-11T13:42:56.813Z",
+  "generatedAt": "2026-06-12T08:32:53.311Z",
   "root": "E:\\Dev",
   "repositories": [
     {
       "id": "gpm-automation-console",
-      "code": "LOCAL-001",
-      "name": "P0001-GPM-Automation-Console",
+      "code": "P0001",
+      "name": "GPM Automation Console",
       "repo": "tuanhoangfx/GPM-Automation-Console",
       "branch": "main",
       "remoteEnabled": true,
       "localVersion": "0.2.37",
-      "category": "Local",
+      "category": "Desktop",
       "audience": "Tool maintainers",
-      "status": "Needs review",
-      "summary": "Desktop console for managing and automating GPM Login profiles.",
+      "status": "Ready",
+      "summary": "Local desktop console for managing and automating GPM Login profiles through the local GPM API.",
       "localPath": "E:\\Dev\\Tool\\P0001-GPM-Automation-Console",
       "tags": [
-        "Local",
-        "Workspace"
+        "Electron",
+        "React",
+        "Vite",
+        "Playwright CDP"
       ],
       "localUrl": "http://127.0.0.1:5173",
       "deployTarget": "github-release",
       "usage": [
-        "Run the configured dev command from package.json.",
-        "Run the configured build command from package.json."
+        "Dev: corepack pnpm dev",
+        "Build: corepack pnpm build"
       ],
       "downloadHint": "Use GitHub release asset when available, otherwise clone the repository.",
       "manifestPath": "tool.manifest.json",
@@ -91,7 +93,7 @@
       "repo": "tuanhoangfx/Tool-Hub",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "5.2.18",
+      "localVersion": "5.2.19",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Ready",
@@ -345,7 +347,7 @@
     },
     {
       "id": "youtube-channel-dashboard",
-      "code": "LOCAL-010",
+      "code": "LOCAL-009",
       "name": "P0013-czp-youtube-tda-team",
       "repo": "",
       "branch": "main",
@@ -384,7 +386,7 @@
       "repo": "tuanhoangfx/chat-center",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "1.6.69",
+      "localVersion": "1.6.71",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Draft",
@@ -426,7 +428,7 @@
     },
     {
       "id": "infi-project-performance-tracker",
-      "code": "LOCAL-013",
+      "code": "LOCAL-012",
       "name": "P0019-Work-Performance",
       "repo": "",
       "branch": "main",
@@ -465,7 +467,7 @@
       "repo": "tuanhoangfx/Tool-Manager",
       "branch": "main",
       "remoteEnabled": true,
-      "localVersion": "4.3.27",
+      "localVersion": "4.3.29",
       "category": "Web",
       "audience": "Tool maintainers",
       "status": "Beta",
